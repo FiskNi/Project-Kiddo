@@ -3,7 +3,9 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
 #include <streambuf>
+#include <vector>
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 

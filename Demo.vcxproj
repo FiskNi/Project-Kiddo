@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CreatePrimitives.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderHandler.cpp" />
@@ -150,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CreatePrimitives.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="Headers.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -162,6 +165,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderHandler.h" />

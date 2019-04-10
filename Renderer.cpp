@@ -18,7 +18,7 @@ GLFWwindow* Renderer::getWindow()
 	return gWindow;
 }
 
-void Renderer::Render(GLuint gShaderProgram, GLuint gVertexAttribute, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc)
+void Renderer::Render(GLuint gShaderProgram, GLuint gVertexAttribute[], float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -32,12 +32,54 @@ void Renderer::Render(GLuint gShaderProgram, GLuint gVertexAttribute, float gCle
 	glUniform3fv(gUniformColourLoc, 1, &gUniformColour[0]);
 
 	// tell opengl we are going to use the VAO we described earlier
-	glBindVertexArray(gVertexAttribute);
+	for (int i = 0; i < 2; i++)
+	{
+		glBindVertexArray(gVertexAttribute[i]);
+		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
+		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
+		// so for one triangle we need 3 vertices!
+		glDrawArrays(GL_TRIANGLES, 0, 100);
+	}
+	
+}
 
-	// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
-	// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
-	// so for one triangle we need 3 vertices!
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+int Renderer::CreateFrameBuffer() {
+	int err = 0;
+	// =================== COLOUR BUFFER =======================================
+	// add "Attachments" to the framebuffer (textures to write to/read from)
+	glGenTextures(2, gFboTextureAttachments);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
+	// define storage for texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	// define sampler settings
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// attach texture to framebuffer object
+
+	// ===================== DEPTH BUFFER ====================================
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glGenFramebuffers(1, &gFbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gFboTextureAttachments[0], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gFboTextureAttachments[1], 0);
+
+	// check if framebuffer is complete (usable):
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+	{
+		err = 0;
+	}
+	else
+		err = -1;
+
+	// bind default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	return err;
 }
 
 void Renderer::initWindow(unsigned int w, unsigned int h)
@@ -78,4 +120,10 @@ void Renderer::initWindow(unsigned int w, unsigned int h)
 	glViewport(0, 0, w, h);
 
 	return;
+}
+
+void Renderer::SetViewport()
+{
+	// usually (not necessarily) this matches with the window size
+	glViewport(0, 0, WIDTH, HEIGHT);
 }
