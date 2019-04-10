@@ -2,7 +2,7 @@
 
 ShaderHandler::ShaderHandler()
 {
-	//gShaderProgram = 0;
+	gShaderProgram = 0;
 }
 
 
@@ -10,7 +10,7 @@ ShaderHandler::~ShaderHandler()
 {
 }
 
-void ShaderHandler::CreateShaders(GLuint* gShaderProgram)
+void ShaderHandler::CreateShaders(GLuint* gShaderProgram, const char* vertexShader, const char* fragmentShader)
 {
 	// local buffer to store error strings when compiling.
 	char buff[1024];
@@ -21,7 +21,8 @@ void ShaderHandler::CreateShaders(GLuint* gShaderProgram)
 	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
 
 	// open .glsl file and put it in a string
-	ifstream shaderFile("VertexShader.glsl");
+	//ifstream shaderFile("VertexShader.glsl");
+	ifstream shaderFile(vertexShader);
 	std::string shaderText((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
 	shaderFile.close();
 
@@ -46,7 +47,8 @@ void ShaderHandler::CreateShaders(GLuint* gShaderProgram)
 
 	// repeat process for Fragment Shader (or Pixel Shader)
 	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	shaderFile.open("Fragment.glsl");
+	//shaderFile.open("Fragment.glsl");
+	shaderFile.open(fragmentShader);
 	shaderText.assign((std::istreambuf_iterator<char>(shaderFile)), std::istreambuf_iterator<char>());
 	shaderFile.close();
 	shaderTextPtr = shaderText.c_str();
@@ -86,6 +88,11 @@ void ShaderHandler::CreateShaders(GLuint* gShaderProgram)
 	glDetachShader(*gShaderProgram, fs);
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+
+	// Store the new shader in a vector
+	shaders.push_back(*gShaderProgram);
+
+
 }
 
 void ShaderHandler::CreateFSShaders(GLuint* gShaderProgramFS)
@@ -164,4 +171,9 @@ void ShaderHandler::CreateFSShaders(GLuint* gShaderProgramFS)
 	glDetachShader(*gShaderProgramFS, fs);
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+}
+
+GLint ShaderHandler::getShader(int indice)
+{
+	return shaders[indice];
 }

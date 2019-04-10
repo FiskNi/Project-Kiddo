@@ -20,7 +20,7 @@ void GameEngine::Run()
 	ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
 
-	shaderHandler.CreateShaders(&gShaderProgram);
+	shaderHandler.CreateShaders(&gShaderProgram, "VertexShader.glsl", "Fragment.glsl");
 	shaderHandler.CreateFSShaders(&gShaderProgramFS);
 
 	if (CreateFrameBuffer() != 0)
