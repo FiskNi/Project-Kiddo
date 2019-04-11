@@ -21,6 +21,8 @@
 #include "glm/ext.hpp"
 #include <gl/GL.h>
 
+#include "stb_image.h"
+
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "glfw3.lib")

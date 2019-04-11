@@ -1,4 +1,10 @@
-﻿  GameEngine.cpp
+﻿  Camera.cpp
+  CreatePrimitives.cpp
+  GameEngine.cpp
+  main.cpp
+  Material.cpp
   Renderer.cpp
+  ShaderHandler.cpp
+  stb_image.cpp
   Generating Code...
-  Demo.vcxproj -> C:\Users\BTH Computer\Desktop\LitSpel\Project-Kiddo\x64\Debug\Demo.exe
+  Demo.vcxproj -> C:\Users\BTH\Desktop\ProjectFolder\Project-Kiddo\x64\Debug\Demo.exe
