@@ -22,7 +22,6 @@ void Renderer::Render(GLuint gShaderProgram, GLuint gVertexAttribute[], float gC
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
-
 	// use the color to clear the color buffer (clear the color buffer only)
 	glClear(GL_COLOR_BUFFER_BIT);
 

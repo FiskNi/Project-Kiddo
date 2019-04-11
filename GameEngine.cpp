@@ -77,6 +77,7 @@ void GameEngine::Run()
 		ImGui::Checkbox("Show DepthMap", &renderDepth);
 		ImGui::End();
 
+		//ImGuis uniform buffer for rotating all vertices in the VertexShader
 		const glm::mat4 identity = glm::mat4(1.0f);
 		//gRotate2D = identity;
 		gRotate2D = glm::rotate(identity, gRotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
