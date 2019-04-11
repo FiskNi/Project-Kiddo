@@ -92,7 +92,10 @@ void GameEngine::Run()
 		//glm::value_ptr(gRotate2D));
 
 		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
+		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
+		objects[1].setPosition();
 
+		
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
 		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc);
 

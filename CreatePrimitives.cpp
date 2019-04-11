@@ -4,6 +4,9 @@ CreatePrimitive::CreatePrimitive()
 {
 	this->gVertexBuffer = 0;
 	this->gVertexAttribute = 0;
+	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->worldRotation = 0.0f;
+	this->pos = glm::vec3(0, 0, -1);
 }
 CreatePrimitive::~CreatePrimitive()
 {
@@ -191,4 +194,47 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 GLuint CreatePrimitive::getVertexAttribute() const
 {
 	return this->gVertexAttribute;
+}
+
+glm::vec3 CreatePrimitive::getWorldPosition() const
+{
+	return this->worldPosition;
+}
+
+float CreatePrimitive::getWorldRotation() const
+{
+	return this->worldRotation;
+}
+
+void CreatePrimitive::MovePrimitive(GLFWwindow *window, float deltaTime)
+{
+	float moveSpeed = 5.5f*deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		this->worldPosition = glm::vec3(worldPosition.x + moveSpeed, worldPosition.y, worldPosition.z);
+
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		this->worldPosition = glm::vec3(worldPosition.x - moveSpeed, worldPosition.y, worldPosition.z);
+
+
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		this->worldPosition = glm::vec3(worldPosition.x, worldPosition.y, worldPosition.z + moveSpeed);
+
+
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		this->worldPosition = glm::vec3(worldPosition.x, worldPosition.y, worldPosition.z - moveSpeed);
+
+	}
+}
+
+void CreatePrimitive::setPosition()
+{
+	worldPosition = glm::vec3(2.0f, 4.0f, -1.0f);
 }

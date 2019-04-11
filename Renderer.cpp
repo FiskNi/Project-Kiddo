@@ -37,6 +37,9 @@ void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> object
 	// tell opengl we are going to use the VAO we described earlier
 	for (int i = 0; i < objects.size(); i++)
 	{
+		
+		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram);
+		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glBindVertexArray(objects[i].getVertexAttribute());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
@@ -129,4 +132,11 @@ void Renderer::SetViewport()
 {
 	// usually (not necessarily) this matches with the window size
 	glViewport(0, 0, WIDTH, HEIGHT);
+}
+
+void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint shaderProg)
+{
+	glm::mat4 ID_MAT = glm::mat4(1.0f);
+	MODEL_MAT = glm::translate(ID_MAT, translation);
+	MODEL_MAT = glm::rotate(MODEL_MAT, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 }
