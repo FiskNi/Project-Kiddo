@@ -17,9 +17,9 @@ void Camera::reCalcCamVecs()
 
 Camera::Camera() : face(glm::vec3(0, 0, -1)), mSpeed(3.5f), sensitivity(0.15f)//, zoom(40.0f)
 {
-	this->camPos = glm::vec3(0, 0, 0);
+	this->camPos = glm::vec3(0, 0, -1);
 	this->worldUp = glm::vec3(0, 1, 0);
-	this->camYaw = -90.0f;
+	this->camYaw = 90.0f;
 	this->camPitch = 0.0f;
 
 	this->width = WIDTH;
@@ -46,6 +46,8 @@ void Camera::FPSCamControls(GLFWwindow * window, float deltaTime)
 		this->camPos += camSpeed * this->face;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		this->camPos -= camSpeed * this->face;
+
+	// Add camera pitch/yaw here
 }
 
 glm::mat4 Camera::GetViewMatrix()
