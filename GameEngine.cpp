@@ -109,6 +109,7 @@ void GameEngine::Run()
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
+		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLo, 0);
 		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc);
 
 		// Render a second pass (temporary)
@@ -173,7 +174,8 @@ void GameEngine::secondPassRenderTemp()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
 	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	//glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
 }
 
 int GameEngine::CreateFrameBuffer() {

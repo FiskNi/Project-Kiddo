@@ -48,6 +48,37 @@ void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> object
 	}
 	
 }
+void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, float int)
+{
+	// set the color TO BE used (this does not clear the screen right away)
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	// use the color to clear the color buffer (clear the color buffer only)
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// tell opengl we want to use the gShaderProgram
+	glUseProgram(gShaderProgram);
+
+	glUniform3fv(gUniformColourLoc, 1, &gUniformColour[0]);
+
+
+	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
+
+	// tell opengl we are going to use the VAO we described earlier
+	for (int i = 0; i < objects.size(); i++)
+	{
+
+		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram);
+		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glBindVertexArray(objects[i].getVertexAttribute());
+		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
+		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
+		// so for one triangle we need 3 vertices!
+		glDrawArrays(GL_TRIANGLES, 0, 100);
+	}
+
+}
+
 
 int Renderer::CreateFrameBuffer() {
 	int err = 0;
