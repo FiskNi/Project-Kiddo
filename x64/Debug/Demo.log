@@ -1,4 +1,21 @@
-﻿  GameEngine.cpp
+﻿  Camera.cpp
+  Character.cpp
+  CreatePrimitives.cpp
+  GameEngine.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_impl_win32.cpp
+  imgui_widgets.cpp
+  InputHandler.cpp
+  Light.cpp
   main.cpp
+  Material.cpp
+  Model.cpp
+  Renderer.cpp
+  ShaderHandler.cpp
   Generating Code...
-  Demo.vcxproj -> C:\Users\BTH Computer\Desktop\LitSpel\Project-Kiddo\x64\Debug\Demo.exe
+  LINK : C:\Users\GuestProgrammer\Documents\Project-Kiddo\x64\Debug\Demo.exe not found or not built by the last incremental link; performing full link
+  Demo.vcxproj -> C:\Users\GuestProgrammer\Documents\Project-Kiddo\x64\Debug\Demo.exe

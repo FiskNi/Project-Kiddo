@@ -1,13 +1,9 @@
 #pragma once
 
 #include "Headers.h"
-
-
-
 class Camera
 {
 private:
-
 	void reCalcCamVecs();
 
 public:
