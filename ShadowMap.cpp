@@ -52,7 +52,7 @@ int ShadowMap::CreateFrameBufferSM()
 //Creates the shadow matrix from the lights position, and what shader program needs the info 
 void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 {
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-3, 3, -3, 3, -1, 10); //An orthographic matrix 
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20); //An orthographic matrix 
 	glm::mat4 depthViewMatrix = glm::lookAt(lightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //View from the light position towards origo 
 	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
 
@@ -87,4 +87,19 @@ void ShadowMap::bindForReading(GLenum textureUnit, GLuint shaderProg)
 	glBindTexture(GL_TEXTURE_2D, depthMapAttachments[0]); //PF 
 
 	glUniform1i(glGetUniformLocation(shaderProg, "shadowMap"), 2); //PF 
+}
+
+unsigned int ShadowMap::getDepthMapAttachment() const
+{
+	return depthMapAttachments[0];
+}
+
+unsigned int ShadowMap::getShadowID() const
+{
+	return shadow_id;
+}
+
+glm::mat4 ShadowMap::getShadowMatrix() const
+{
+	return shadow_matrix;
 }

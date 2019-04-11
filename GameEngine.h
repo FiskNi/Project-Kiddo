@@ -17,7 +17,7 @@ public:
 	void Run();
 
 	void firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttribute);
-	void secondPassRenderTemp();
+	void secondPassRenderTemp(ShadowMap SM);
 
 	int CreateFrameBuffer();
 	void CreateFullScreenQuad();

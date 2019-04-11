@@ -23,28 +23,45 @@ void GameEngine::Run()
 	// Create Shaders
 	ShaderHandler basicShader;
 	ShaderHandler fsqShader;
+	ShaderHandler gShaderSM;
+
+	ShadowMap shadowMap;
 
 	// Create primitive
 	CreatePrimitive trianglePrimitive;
 	CreatePrimitive trianglePrimitive2;
 	std::vector<CreatePrimitive> objects;
 
+	CreatePrimitive trianglePrimitive3;
+	//CreatePrimitive trianglePrimitive4;
+	std::vector<CreatePrimitive> objectsSM;
+
 	// Create main camera
 	Camera mainCamera;
 	mainCamera.setWinSize((float)WIDTH, (float)HEIGHT);
 
 	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
+	gShaderSM.CreateShaders("VertexShaderSM.glsl", "FragmentSM.glsl");
 	shaderHandler.CreateFSShaders(&gShaderProgramFS);
 	trianglePrimitive.CreateTriangleData(basicShader.getShader(), -0.5f);
 	trianglePrimitive2.CreateTriangleData(basicShader.getShader(), 0.3f);
 	objects.push_back(trianglePrimitive);
 	objects.push_back(trianglePrimitive2);
 
+	trianglePrimitive3.CreateTriangleData(gShaderSM.getShader(), -0.5f);
+	//trianglePrimitive4.CreateTriangleData(gShaderSM.getShader(), 0.3f);
+	objectsSM.push_back(trianglePrimitive);
+	//objectsSM.push_back(trianglePrimitive2);
+
 	CreateFullScreenQuad();
 
 	Camera newCam;
 	Light newLight;
 	if (CreateFrameBuffer() != 0)
+		shutdown = true;
+
+	//Creates the frame buffer for shadow mapping
+	if (shadowMap.CreateFrameBufferSM() != 0)
 		shutdown = true;
 
 	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
@@ -55,6 +72,16 @@ void GameEngine::Run()
 		{
 			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
 		}
+
+		//---------
+		//PrePass render for Shadow mapping 
+		shadowMap.bindForWriting();
+
+		mainRenderer.prePassRender(gShaderSM.getShader(), objectsSM, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
+
+		//resets the viewport
+		mainRenderer.SetViewport();
+		//--------
 
 		// First render pass
 		firstPassRenderTemp(basicShader.getShader(), trianglePrimitive.getVertexAttribute());
@@ -109,10 +136,10 @@ void GameEngine::Run()
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
-		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc);
+		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
 
 		// Render a second pass (temporary)
-		secondPassRenderTemp();
+		secondPassRenderTemp(shadowMap);
 
 		// Prepares matrices for usage with imGui
 		glm::mat4 translate = glm::translate(identity, glm::vec3(gTx[0], gTx[1], 0.0f));
@@ -158,7 +185,7 @@ void GameEngine::firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttrib
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GameEngine::secondPassRenderTemp()
+void GameEngine::secondPassRenderTemp(ShadowMap SM)
 {
 	// first pass is done!
 	// now render a second pass
@@ -173,7 +200,7 @@ void GameEngine::secondPassRenderTemp()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
 	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	glBindTexture(GL_TEXTURE_2D, SM.getDepthMapAttachment());
 }
 
 int GameEngine::CreateFrameBuffer() {

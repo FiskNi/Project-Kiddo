@@ -21,5 +21,9 @@ public:
 	void CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg);
 	void bindForWriting();
 	void bindForReading(GLenum textureUnit, GLuint shaderProg);
+	
+	unsigned int getDepthMapAttachment() const; 
+	unsigned int getShadowID() const;
+	glm::mat4 getShadowMatrix() const;
 
 };
