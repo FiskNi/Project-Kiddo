@@ -43,7 +43,8 @@ void GameEngine::Run()
 
 	CreateFullScreenQuad();
 
-	Camera newCam;
+	// Create main camera
+	Camera mainCamera;
 
 	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
@@ -91,16 +92,11 @@ void GameEngine::Run()
 		glUniformMatrix4fv(11, 1, GL_TRUE, &gRotate2D[0][0]);
 		//glm::value_ptr(gRotate2D));
 
-		newCam.FPSCamControls(mainRenderer.getWindow(),deltaTime);
-
-		newCam.setWinSize((float)WIDTH,(float)HEIGHT);
-
-
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
+		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
+		mainCamera.setWinSize((float)WIDTH,(float)HEIGHT);
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
-		mainRenderer.Render(basicShader.getShader(), objects, gClearColour, gUniformColour, gUniformColourLoc);
+		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc);
 
 		// Render a second pass (temporary)
 		secondPassRenderTemp();
@@ -130,9 +126,7 @@ void GameEngine::Run()
 
 	glDeleteFramebuffers(1, &gFbo);
 	glDeleteTextures(2, gFboTextureAttachments);
-	glDeleteVertexArrays(1, &gVertexAttribute);
 	glDeleteVertexArrays(1, &gVertexAttributeFS);
-	glDeleteBuffers(1, &gVertexBuffer);
 	glDeleteBuffers(1, &gVertexBufferFS);
 	glfwTerminate();
 }

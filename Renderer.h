@@ -1,6 +1,7 @@
 #pragma once
 #include "Headers.h"
 #include "CreatePrimitives.h"
+#include "Camera.h"
 
 class Renderer
 {
@@ -10,7 +11,7 @@ public:
 
 	GLFWwindow *getWindow();
 
-	void Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc);
+	void Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc);
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();

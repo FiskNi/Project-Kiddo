@@ -2,32 +2,32 @@
 
 void Camera::reCalcCamVecs()
 {
-	{
-		glm::vec3 face;
-		face.x = cos(glm::radians(this->camYaw)) * cos(glm::radians(this->camPitch));
-		face.y = sin(glm::radians(this->camPitch));
-		face.z = sin(glm::radians(this->camYaw)) * cos(glm::radians(this->camPitch));
 
-		this->face = glm::normalize(face);
+	glm::vec3 face;
+	face.x = cos(glm::radians(this->camYaw)) * cos(glm::radians(this->camPitch));
+	face.y = sin(glm::radians(this->camPitch));
+	face.z = sin(glm::radians(this->camYaw)) * cos(glm::radians(this->camPitch));
 
-		this->camRight = glm::normalize(glm::cross(this->face, this->worldUp));
-		this->camUp = glm::normalize(glm::cross(this->camRight, this->face));
-	}
+	this->face = glm::normalize(face);
+
+	this->camRight = glm::normalize(glm::cross(this->face, this->worldUp));
+	this->camUp = glm::normalize(glm::cross(this->camRight, this->face));
+	
 }
 
-Camera::Camera(glm::vec3 pos, glm::vec3 up, float camYaw, float camPitch, float width, float height, float nearPlane, float farPlane)
-	: face(glm::vec3(0, 0, -1)), mSpeed(3.5f), sensitivity(0.15f)//, zoom(40.0f)
+Camera::Camera() : face(glm::vec3(0, 0, -1)), mSpeed(3.5f), sensitivity(0.15f)//, zoom(40.0f)
 {
-	this->camPos = pos;
-	this->worldUp = up;
-	this->camYaw = camYaw;
-	this->camPitch = camPitch;
+	this->camPos = glm::vec3(0, 0, 0);
+	this->worldUp = glm::vec3(0, 1, 0);
+	this->camYaw = -90.0f;
+	this->camPitch = 0.0f;
 
-	this->width = width;
-	this->height = height;
+	this->width = WIDTH;
+	this->height = HEIGHT;
 
-	this->nearPlane = nearPlane;
-	this->farPlane = farPlane;
+	this->nearPlane = 0.1f;
+	this->farPlane = 200.0f;
+
 
 	setProjMat(this->width, this->height, this->nearPlane, this->farPlane);
 

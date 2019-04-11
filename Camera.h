@@ -31,7 +31,7 @@ public:
 	float sensitivity;
 
 	//The Camera Constructor
-	Camera(glm::vec3 pos = glm::vec3(0, 0, 0), glm::vec3 up = glm::vec3(0, 1, 0), float camYaw = -90.0f, float camPitch = 0.0f, float width = 640.0f, float height = 480.0f, float nearPlane = 0.1f, float farPlane = 200.0f);
+	Camera();
 
 	//WASD camera movement controls. Need only be called in gameLoop if you want to move the specific camera.
 	//Add custom key bindings for devs? Could send in letters as strings and use those as keybinds.

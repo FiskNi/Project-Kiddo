@@ -3,7 +3,6 @@
 #include "Renderer.h"
 #include "ShaderHandler.h"
 #include "CreatePrimitives.h"
-
 #include "Camera.h"
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
@@ -18,13 +17,10 @@ public:
 
 	void firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttribute);
 	void secondPassRenderTemp();
-	void imGuiMatrix();
-	void initImGui();
 
 	int CreateFrameBuffer();
 	void CreateFullScreenQuad();
-	void CreateTriangleData();
-	void SetViewport();
+
 	//static void keyboard(GLFWwindow * window, int key, int scancode, int action, int mods);
 
 private:
@@ -32,14 +28,11 @@ private:
 	// created resources (shaders, vertices, textures, etc)
 	// For simplicity, we make them global here, but it is
 	// safe to put them in a class and pass around...
-	GLuint gVertexBuffer = 0;
-	GLuint gVertexAttribute = 0;
 
 	// full screen quad stuff
 	GLuint gVertexBufferFS = 0;
 	GLuint gVertexAttributeFS = 0;
 	GLuint gShaderProgramFS = 0;
-	//float gTx, gTy;
 
 	float gFloat = 0;
 
