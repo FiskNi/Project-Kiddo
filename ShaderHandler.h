@@ -7,14 +7,15 @@ public:
 	ShaderHandler();
 	~ShaderHandler();
 
-	void CreateShaders(GLuint* gShaderProgram, const char* vertexShader, const char* fragmentShader);
+	void CreateShaders(const char* vertexShader, const char* fragmentShader);
 	void CreateShaders(GLuint* gShaderProgram, const char* vertexShader,const char* geometryShader, const char* fragmentShader);
 	void CreateFSShaders(GLuint *gShaderProgram);
 
-	GLint getShader(int indice);
+	GLuint getShader();
+
 
 private:
-
+	GLuint gShaderProgram;
 
 };
 
