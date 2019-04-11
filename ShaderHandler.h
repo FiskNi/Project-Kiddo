@@ -14,8 +14,7 @@ public:
 	GLint getShader(int indice);
 
 private:
-	GLuint gShaderProgram;
-	std::vector<GLuint> shaders;
+
 
 };
 

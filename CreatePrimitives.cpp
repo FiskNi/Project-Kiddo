@@ -12,10 +12,9 @@ CreatePrimitive::~CreatePrimitive()
 
 void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 {
-	struct TriangleVertex {
+	struct TriangleVertex 
+	{
 		glm::vec3 position;
-		glm::vec2 UVs;
-		glm::vec3 normals;
 	};
 
 	// Create 1 triangle with 3 vertices
@@ -36,7 +35,6 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	// this activates the first and second attributes of this VAO
 	// think of "attributes" as inputs to the Vertex Shader
 	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
 
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
 	glGenBuffers(1, &gVertexBuffer);
@@ -63,17 +61,6 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
 		sizeof(TriangleVertex), // distance between two vertices in memory (stride)
 		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	/*repeat the process for the second attribute.
-	query which "slot" corresponds to the input vertex_color in the Vertex Shader */
-	GLuint vertexColor = glGetAttribLocation(shaderID, "uv_coords");
-	glVertexAttribPointer(
-		vertexColor,
-		3,
-		GL_FLOAT,
-		GL_FALSE, sizeof(TriangleVertex), // distance between two vertexColor 
-		BUFFER_OFFSET(sizeof(float) * 3)	// note, the first color starts after the first vertex.
 	);
 }
 

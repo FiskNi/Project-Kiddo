@@ -2,7 +2,7 @@
 
 ShaderHandler::ShaderHandler()
 {
-	gShaderProgram = 0;
+	//gShaderProgram = 0;
 }
 
 
@@ -89,10 +89,6 @@ void ShaderHandler::CreateShaders(GLuint* gShaderProgram, const char* vertexShad
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 
-	// Store the new shader in a vector
-	shaders.push_back(*gShaderProgram);
-
-
 }
 
 void ShaderHandler::CreateFSShaders(GLuint* gShaderProgramFS)
@@ -171,9 +167,4 @@ void ShaderHandler::CreateFSShaders(GLuint* gShaderProgramFS)
 	glDetachShader(*gShaderProgramFS, fs);
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-}
-
-GLint ShaderHandler::getShader(int indice)
-{
-	return shaders[indice];
 }

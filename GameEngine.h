@@ -2,7 +2,6 @@
 #include "Headers.h"
 #include "Renderer.h"
 #include "ShaderHandler.h"
-#include "SimpleShape.h"
 #include "CreatePrimitives.h"
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
@@ -61,7 +60,6 @@ private:
 	ShaderHandler shaderHandler;
 
 	// Simple triangle for testing
-	SimpleShape triangleShape;
 	CreatePrimitive trianglePrimitive;
 	CreatePrimitive trianglePrimitive2;
 };
