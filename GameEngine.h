@@ -4,6 +4,7 @@
 #include "ShaderHandler.h"
 #include "CreatePrimitives.h"
 #include "Camera.h"
+#include "Light.h"
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
