@@ -15,6 +15,10 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	struct TriangleVertex 
 	{
 		glm::vec3 position;
+		glm::vec2 uv;
+		glm::vec3 normals;
+		glm::vec3 tangent;
+		glm::vec3 biTangent;
 	};
 
 	// 36 hardcoded vertices representing a cube
@@ -118,10 +122,8 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	GLint vertexPos = glGetAttribLocation(shaderID, "vertex_position");
 	// if this returns -1, it means there is a problem, and the program will likely crash.
 	// examples: the name is different or missing in the shader
-
-	if (vertexPos == -1) {
+	if (vertexPos == -1) 
 		std::cout << "VertexPos is wrong" << std::endl;
-	}
 
 	// tell OpenGL about layout in memory (input assembler information)
 	glVertexAttribPointer(
@@ -131,6 +133,58 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
 		sizeof(TriangleVertex), // distance between two vertices in memory (stride)
 		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
+	);
+
+	GLint uvCoord = glGetAttribLocation(shaderID, "vertex_uv");
+	if (uvCoord == -1)
+		std::cout << "uvCoord is wrong" << std::endl;
+
+	glVertexAttribPointer(
+		uvCoord,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(TriangleVertex),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+	GLint normals = glGetAttribLocation(shaderID, "vertex_normal");
+	if (uvCoord == -1)
+		std::cout << "normal is wrong" << std::endl;
+
+	glVertexAttribPointer(
+		normals,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(TriangleVertex),
+		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+	GLint tangent = glGetAttribLocation(shaderID, "vertex_tangent");
+	if (tangent == -1)
+		std::cout << "Tangent is wrong" << std::endl;
+
+	glVertexAttribPointer(
+		tangent,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(TriangleVertex),
+		BUFFER_OFFSET(sizeof(float) * 8)
+	);
+
+	GLint biTangent = glGetAttribLocation(shaderID, "vertex_bitangent");
+	if (biTangent == -1)
+		std::cout << "biTangent is wrong" << std::endl;
+
+	glVertexAttribPointer(
+		biTangent,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(TriangleVertex),
+		BUFFER_OFFSET(sizeof(float) * 11)
 	);
 }
 
