@@ -22,20 +22,19 @@ void GameEngine::Run()
 
 	// Create Shaders
 	ShaderHandler basicShader;
-	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
 	ShaderHandler fsqShader;
-	shaderHandler.CreateFSShaders(&gShaderProgramFS);
-
-
-	if (CreateFrameBuffer() != 0)
-		shutdown = true;
 
 	// Create primitive
 	CreatePrimitive trianglePrimitive;
 	CreatePrimitive trianglePrimitive2;
-
 	std::vector<CreatePrimitive> objects;
 
+	// Create main camera
+	Camera mainCamera;
+	mainCamera.setWinSize((float)WIDTH, (float)HEIGHT);
+
+	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
+	shaderHandler.CreateFSShaders(&gShaderProgramFS);
 	trianglePrimitive.CreateTriangleData(basicShader.getShader(), -0.5f);
 	trianglePrimitive2.CreateTriangleData(basicShader.getShader(), 0.3f);
 	objects.push_back(trianglePrimitive);
@@ -43,8 +42,8 @@ void GameEngine::Run()
 
 	CreateFullScreenQuad();
 
-	// Create main camera
-	Camera mainCamera;
+	if (CreateFrameBuffer() != 0)
+		shutdown = true;
 
 	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
@@ -93,7 +92,6 @@ void GameEngine::Run()
 		//glm::value_ptr(gRotate2D));
 
 		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
-		mainCamera.setWinSize((float)WIDTH,(float)HEIGHT);
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
 		mainRenderer.Render(basicShader.getShader(), objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc);
