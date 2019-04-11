@@ -20,7 +20,7 @@ Camera::Camera() : face(glm::vec3(0, 0, -1)), mSpeed(3.5f), sensitivity(0.15f)//
 	this->camPos = glm::vec3(0, 4, -1);
 	this->worldUp = glm::vec3(0, 1, 0);
 	this->camYaw = 90.0f;
-	this->camPitch = -45.0f;
+	this->camPitch = 0.0f;
 
 	this->width = WIDTH;
 	this->height = HEIGHT;
