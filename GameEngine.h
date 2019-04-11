@@ -14,6 +14,14 @@ public:
 
 	void Run();
 
+	void firstPassRenderTemp();
+
+	void secondPassRenderTemp();
+
+	void imGuiMatrix(const glm::mat4 &identity);
+
+	void initImGui();
+
 	int CreateFrameBuffer();
 	void CreateFullScreenQuad();
 	void CreateTriangleData();
@@ -52,6 +60,13 @@ private:
 	unsigned int gFbo;
 	unsigned int gFboTextureAttachments[2]; // first for colour, second for depth
 
+	// ImGui
+
+	float gRotate2Z;
+	float scale;
+	bool renderDepth;
+	glm::mat4 identity;
+
 
 	// Main window and renderer object
 	Renderer mainRenderer;
@@ -62,5 +77,7 @@ private:
 	// Simple triangle for testing
 	CreatePrimitive trianglePrimitive;
 	CreatePrimitive trianglePrimitive2;
+
+	std::vector<CreatePrimitive> objects;
 };
 
