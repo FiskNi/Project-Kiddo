@@ -35,7 +35,7 @@ void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> object
 	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
 
 	// tell opengl we are going to use the VAO we described earlier
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < objects.size(); i++)
 	{
 		glBindVertexArray(objects[i].getVertexAttribute());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 

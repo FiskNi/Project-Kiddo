@@ -17,16 +17,86 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 		glm::vec3 position;
 	};
 
-	// Create 1 triangle with 3 vertices
+	// 36 hardcoded vertices representing a cube
 	std::vector<TriangleVertex> vertices;
 	TriangleVertex tests;
+	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
 	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
 	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
 	vertices.push_back(tests);
-	vertices[0].position = glm::vec3((float)test, 0.5f, 0.3f);
-	vertices[1].position = glm::vec3(0.5f, -0.5f, 0.3f);
-	vertices[2].position = glm::vec3(-0.5f, -0.5f, 0.3f);
+	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
 
+	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
+	vertices.push_back(tests);
+	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
+	vertices.push_back(tests);
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -42,7 +112,7 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(TriangleVertex), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 36 * sizeof(TriangleVertex), vertices.data(), GL_STATIC_DRAW);
 
 	// query which "slot" corresponds to the input vertex_position in the Vertex Shader 
 	GLint vertexPos = glGetAttribLocation(shaderID, "vertex_position");
