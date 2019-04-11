@@ -1,7 +1,5 @@
 #include "GameEngine.h"
 
-
-
 GameEngine::GameEngine()
 {
 }
@@ -44,6 +42,8 @@ void GameEngine::Run()
 	objects.push_back(trianglePrimitive2);
 
 	CreateFullScreenQuad();
+
+	Camera newCam;
 
 	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
@@ -90,6 +90,14 @@ void GameEngine::Run()
 		gRotate2D = glm::rotate(identity, gRotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(11, 1, GL_TRUE, &gRotate2D[0][0]);
 		//glm::value_ptr(gRotate2D));
+
+		newCam.FPSCamControls(mainRenderer.getWindow(),deltaTime);
+
+		newCam.setWinSize((float)WIDTH,(float)HEIGHT);
+
+
+		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
+		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
 		mainRenderer.Render(basicShader.getShader(), objects, gClearColour, gUniformColour, gUniformColourLoc);

@@ -4,6 +4,8 @@
 #include "ShaderHandler.h"
 #include "CreatePrimitives.h"
 
+#include "Camera.h"
+
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 class GameEngine
