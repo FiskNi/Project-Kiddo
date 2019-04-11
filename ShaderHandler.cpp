@@ -10,7 +10,7 @@ ShaderHandler::~ShaderHandler()
 {
 }
 
-void ShaderHandler::CreateShaders(GLuint* gShaderProgram, const char* vertexShader, const char* fragmentShader)
+void ShaderHandler::CreateShaders(const char* vertexShader, const char* fragmentShader)
 {
 	// local buffer to store error strings when compiling.
 	char buff[1024];
@@ -66,26 +66,26 @@ void ShaderHandler::CreateShaders(GLuint* gShaderProgram, const char* vertexShad
 	}
 
 	//link shader program (connect vs and ps)
-	*gShaderProgram = glCreateProgram();
-	glAttachShader(*gShaderProgram, fs);
-	glAttachShader(*gShaderProgram, vs);
-	glLinkProgram(*gShaderProgram);
+	gShaderProgram = glCreateProgram();
+	glAttachShader(gShaderProgram, fs);
+	glAttachShader(gShaderProgram, vs);
+	glLinkProgram(gShaderProgram);
 
 	// check once more, if the Vertex Shader and the Fragment Shader can be used
 	// together
 	compileResult = GL_FALSE;
-	glGetProgramiv(*gShaderProgram, GL_LINK_STATUS, &compileResult);
+	glGetProgramiv(gShaderProgram, GL_LINK_STATUS, &compileResult);
 	if (compileResult == GL_FALSE) {
 		// query information about the compilation (nothing if compilation went fine!)
 		memset(buff, 0, 1024);
-		glGetProgramInfoLog(*gShaderProgram, 1024, nullptr, buff);
+		glGetProgramInfoLog(gShaderProgram, 1024, nullptr, buff);
 		// print to Visual Studio debug console output
 		OutputDebugStringA(buff);
 	}
 	// in any case (compile sucess or not), we only want to keep the 
 	// Program around, not the shaders.
-	glDetachShader(*gShaderProgram, vs);
-	glDetachShader(*gShaderProgram, fs);
+	glDetachShader(gShaderProgram, vs);
+	glDetachShader(gShaderProgram, fs);
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 
@@ -167,4 +167,9 @@ void ShaderHandler::CreateFSShaders(GLuint* gShaderProgramFS)
 	glDetachShader(*gShaderProgramFS, fs);
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+}
+
+GLuint ShaderHandler::getShader()
+{
+	return gShaderProgram;
 }

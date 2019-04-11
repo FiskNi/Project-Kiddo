@@ -18,7 +18,7 @@ GLFWwindow* Renderer::getWindow()
 	return gWindow;
 }
 
-void Renderer::Render(GLuint gShaderProgram, GLuint gVertexAttribute[], float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc)
+void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -33,7 +33,7 @@ void Renderer::Render(GLuint gShaderProgram, GLuint gVertexAttribute[], float gC
 	// tell opengl we are going to use the VAO we described earlier
 	for (int i = 0; i < 2; i++)
 	{
-		glBindVertexArray(gVertexAttribute[i]);
+		glBindVertexArray(objects[i].getVertexAttribute());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
 		// so for one triangle we need 3 vertices!

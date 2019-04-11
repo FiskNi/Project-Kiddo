@@ -1,5 +1,7 @@
 #include "GameEngine.h"
 
+
+
 GameEngine::GameEngine()
 {
 }
@@ -20,18 +22,30 @@ void GameEngine::Run()
 	ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
 
-	shaderHandler.CreateShaders(&gShaderProgram, "VertexShader.glsl", "Fragment.glsl");
+	// Create Shaders
+	ShaderHandler basicShader;
+	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
+	ShaderHandler fsqShader;
 	shaderHandler.CreateFSShaders(&gShaderProgramFS);
+
 
 	if (CreateFrameBuffer() != 0)
 		shutdown = true;
 
-	//6. Definiera triangelvertiser, 7. Skapa vertex buffer object (VBO), 8.Skapa vertex array object (VAO)
-	trianglePrimitive.CreateTriangleData(gShaderProgram, -0.5f);
-	trianglePrimitive2.CreateTriangleData(gShaderProgram, 0.3f);
+	// Create primitive
+	CreatePrimitive trianglePrimitive;
+	CreatePrimitive trianglePrimitive2;
+
+	std::vector<CreatePrimitive> objects;
+
+	trianglePrimitive.CreateTriangleData(basicShader.getShader(), -0.5f);
+	trianglePrimitive2.CreateTriangleData(basicShader.getShader(), 0.3f);
+	objects.push_back(trianglePrimitive);
+	objects.push_back(trianglePrimitive2);
+
 	CreateFullScreenQuad();
 
-	gUniformColourLoc = glGetUniformLocation(gShaderProgram, "colourFromImGui");
+	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
@@ -40,22 +54,15 @@ void GameEngine::Run()
 			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
 		}
 
-		// first pass
-		// render all geometry to a framebuffer object
-		glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
-		glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], gClearColour[3]);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// First render pass
+		firstPassRenderTemp(basicShader.getShader(), trianglePrimitive.getVertexAttribute());
 
-		glUseProgram(gShaderProgram);
-		glBindVertexArray(trianglePrimitive.getVertexAttribute());
-		glEnable(GL_DEPTH_TEST);
-
+		// Load imGui content	
 		float deltaTime = ImGui::GetIO().DeltaTime;
 		// move along X
 		gIncrement += 1.0f * deltaTime;
 		gOffsetX = sin(gIncrement);
 		glUniform1f(10, gOffsetX);
-
 		// prepare IMGUI output
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -69,7 +76,7 @@ void GameEngine::Run()
 		ImGui::SliderAngle("RotateZ", &gRotateZ);
 		static float gRotate2Z = 0;
 		ImGui::SliderAngle("RotateFrame", &gRotate2Z);
-		static float gTx[2] = { 0,0 };
+		static float gTx[2]{ 0, 0 };
 		ImGui::DragFloat2("Translate", gTx, 0.1f, -0.5f, 0.5f);
 		static float scale = 1.0f;
 		ImGui::SliderFloat("Scale", &scale, 0.0f, 1.0f);
@@ -78,43 +85,30 @@ void GameEngine::Run()
 		ImGui::End();
 
 		//ImGuis uniform buffer for rotating all vertices in the VertexShader
-		const glm::mat4 identity = glm::mat4(1.0f);
+		glm::mat4 identity = glm::mat4(1.0f);
 		//gRotate2D = identity;
 		gRotate2D = glm::rotate(identity, gRotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(11, 1, GL_TRUE, &gRotate2D[0][0]);
 		//glm::value_ptr(gRotate2D));
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
-		GLuint vertexAtribs[2];
-		vertexAtribs[0] = trianglePrimitive.getVertexAttribute();
-		vertexAtribs[1] = trianglePrimitive2.getVertexAttribute();
-		mainRenderer.Render(gShaderProgram, vertexAtribs, gClearColour, gUniformColour, gUniformColourLoc);
+		mainRenderer.Render(basicShader.getShader(), objects, gClearColour, gUniformColour, gUniformColourLoc);
 
-		// first pass is done!
-		// now render a second pass
-		// bind default framebuffer
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glUseProgram(gShaderProgramFS);
-		glBindVertexArray(gVertexAttributeFS);
-		glDisable(GL_DEPTH_TEST);
-		// bind texture drawn in the first pass!
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
-		glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+		// Render a second pass (temporary)
+		secondPassRenderTemp();
 
+		// Prepares matrices for usage with imGui
 		glm::mat4 translate = glm::translate(identity, glm::vec3(gTx[0], gTx[1], 0.0f));
 		glm::mat4 rotation = glm::rotate(identity, gRotate2Z, glm::vec3(0.0f, 0.0f, 1.0f));
 		glm::mat4 scaleMat = glm::scale(identity, glm::vec3(scale, scale, scale));
 		glm::mat4 transform = translate * rotation * scaleMat;
+
 		glUniformMatrix4fv(5, 1, GL_TRUE, &transform[0][0]);
-
-		// false
+		// Draw fullscreen quad
 		glUniform1i(3, renderDepth);  // 0 == false
-
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Render ImGui
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -133,6 +127,38 @@ void GameEngine::Run()
 	glDeleteBuffers(1, &gVertexBuffer);
 	glDeleteBuffers(1, &gVertexBufferFS);
 	glfwTerminate();
+}
+
+void GameEngine::firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttribute)
+{
+
+	// first pass
+	// render all geometry to a framebuffer object
+	glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], gClearColour[3]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(gShaderProgram);
+	glBindVertexArray(gVertexAttribute);
+	glEnable(GL_DEPTH_TEST);
+}
+
+void GameEngine::secondPassRenderTemp()
+{
+	// first pass is done!
+	// now render a second pass
+	// bind default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(gShaderProgramFS);
+	glBindVertexArray(gVertexAttributeFS);
+	glDisable(GL_DEPTH_TEST);
+	// bind texture drawn in the first pass!
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
 }
 
 int GameEngine::CreateFrameBuffer() {

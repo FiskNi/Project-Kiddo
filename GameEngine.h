@@ -14,6 +14,11 @@ public:
 
 	void Run();
 
+	void firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttribute);
+	void secondPassRenderTemp();
+	void imGuiMatrix();
+	void initImGui();
+
 	int CreateFrameBuffer();
 	void CreateFullScreenQuad();
 	void CreateTriangleData();
@@ -27,13 +32,12 @@ private:
 	// safe to put them in a class and pass around...
 	GLuint gVertexBuffer = 0;
 	GLuint gVertexAttribute = 0;
-	GLuint gShaderProgram = 0;
 
 	// full screen quad stuff
 	GLuint gVertexBufferFS = 0;
 	GLuint gVertexAttributeFS = 0;
 	GLuint gShaderProgramFS = 0;
-	float gTx, gTy;
+	//float gTx, gTy;
 
 	float gFloat = 0;
 
@@ -52,6 +56,13 @@ private:
 	unsigned int gFbo;
 	unsigned int gFboTextureAttachments[2]; // first for colour, second for depth
 
+	// ImGui
+	/*static float gTx[2];
+	static float gRotate2Z;
+	static float scale;
+	static bool renderDepth;
+	glm::mat4 identity;*/
+
 
 	// Main window and renderer object
 	Renderer mainRenderer;
@@ -60,7 +71,6 @@ private:
 	ShaderHandler shaderHandler;
 
 	// Simple triangle for testing
-	CreatePrimitive trianglePrimitive;
-	CreatePrimitive trianglePrimitive2;
+
 };
 

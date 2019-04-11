@@ -9,6 +9,7 @@ private:
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
 
+
 public:
 	CreatePrimitive();
 	~CreatePrimitive();
