@@ -45,6 +45,11 @@ void Renderer::prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive>
 	}
 }
 
+/*
+=============================================================
+Pre pass render needed to generate depth map for shadows.
+=============================================================
+*/
 void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
 {
 	// set the color TO BE used (this does not clear the screen right away)
@@ -179,11 +184,3 @@ void Renderer::passTextureData(GLuint TextureUnit, GLuint texID)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texID);
 }
-
-/*
-=============================================================
-Pre pass render needed to generate depth map for shadows.
-=============================================================
-*/
-void Renderer::prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
-{

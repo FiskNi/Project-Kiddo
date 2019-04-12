@@ -14,6 +14,16 @@ layout(location = 5) uniform vec3 colourFromImGui;
 layout(location = 15) uniform vec3 lightPos;
 layout(location = 16) uniform vec3 camPos;
 
+//Depth map for shadow mapping to sample 
+uniform sampler2D shadowMap;
+in vec4 shadow_coord;
+
+float shadowCalc(vec4 shadow_coord, vec3 normal, vec3 light_pos);
+vec4 calcDiffuse(vec3 light_pos, vec3 light_color, vec3 normal);
+
+uniform sampler2D diffuseTex;
+
+
 void main () {
 	vec4 texSample = texture(diffuseTex, vec2(textureCoord.s, 1- textureCoord.t));
 	vec3 hardNorm = normalize(vec3(1.0f,0.0f,0.0f));
@@ -87,11 +97,4 @@ vec4 calcDiffuse(vec3 light_pos, vec3 light_color, vec3 normal){
 	vec4 final = vec4(diffuse, 1.0 );
 	return final;
 }
-//Depth map for shadow mapping to sample 
-uniform sampler2D shadowMap;
-in vec4 shadow_coord;
 
-float shadowCalc(vec4 shadow_coord, vec3 normal, vec3 light_pos);
-vec4 calcDiffuse(vec3 light_pos, vec3 light_color, vec3 normal);
-
-uniform sampler2D diffuseTex;

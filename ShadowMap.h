@@ -26,4 +26,5 @@ public:
 	unsigned int getShadowID() const;
 	glm::mat4 getShadowMatrix() const;
 
+	void setTextureSize(unsigned int);
 };
