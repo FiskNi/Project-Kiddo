@@ -28,82 +28,154 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	std::vector<TriangleVertex> vertices;
 	TriangleVertex tests;
 	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		vertices.push_back(tests);
 
 	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+		vertices.push_back(tests);
 
 	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 
 	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices.push_back(tests);
 
 	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, -0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+		vertices.push_back(tests);
 
 	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, 0.5f, 0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		vertices.push_back(tests);
 	tests.position = glm::vec3(-0.5f, 0.5f, -0.5f);
-	vertices.push_back(tests);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		vertices.push_back(tests);
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -191,6 +263,16 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	);
 }
 
+void CreatePrimitive::setTextureID(GLuint texID)
+{
+	this->diffuseID = texID;
+}
+
+GLuint CreatePrimitive::getTextureID() const
+{
+	return this->diffuseID;
+}
+
 GLuint CreatePrimitive::getVertexAttribute() const
 {
 	return this->gVertexAttribute;
@@ -211,27 +293,20 @@ void CreatePrimitive::MovePrimitive(GLFWwindow *window, float deltaTime)
 	float moveSpeed = 5.5f*deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x + moveSpeed, worldPosition.y, worldPosition.z);
+		this->worldPosition = glm::vec3(this->worldPosition.x + moveSpeed,
+			this->worldPosition.y, this->worldPosition.z);
 
-	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x - moveSpeed, worldPosition.y, worldPosition.z);
-
-
-	}
+		this->worldPosition = glm::vec3(this->worldPosition.x - moveSpeed,
+			this->worldPosition.y, this->worldPosition.z);
+	
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x, worldPosition.y, worldPosition.z + moveSpeed);
+		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
+			this->worldPosition.z + moveSpeed);
 
-
-	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x, worldPosition.y, worldPosition.z - moveSpeed);
-
-	}
+		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
+			this->worldPosition.z - moveSpeed);
 }
 
 void CreatePrimitive::setPosition()
