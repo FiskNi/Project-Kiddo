@@ -30,11 +30,8 @@ void GameEngine::Run()
 	// Create primitive
 	CreatePrimitive trianglePrimitive;
 	CreatePrimitive trianglePrimitive2;
+	CreatePrimitive groundPlane;
 	std::vector<CreatePrimitive> objects;
-
-	CreatePrimitive trianglePrimitive3;
-	//CreatePrimitive trianglePrimitive4;
-	std::vector<CreatePrimitive> objectsSM;
 
 	Material cubeMat;
 
@@ -44,18 +41,17 @@ void GameEngine::Run()
 
 	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
 	gShaderSM.CreateShaders("VertexShaderSM.glsl", "FragmentSM.glsl");
-	shaderHandler.CreateFSShaders(&gShaderProgramFS);
-	trianglePrimitive.CreateTriangleData(basicShader.getShader(), -0.5f);
-	trianglePrimitive2.CreateTriangleData(basicShader.getShader(), 0.3f);
+	fsqShader.CreateFSShaders();
+	fsqShader.CreateFullScreenQuad();
+
+	trianglePrimitive.CreateTriangleData();
+	trianglePrimitive2.CreateTriangleData();
 	trianglePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/mudTexture.jpg"));
+
+	groundPlane.CreatePlaneData();
 	
 	objects.push_back(trianglePrimitive);
 	objects.push_back(trianglePrimitive2);
-
-	trianglePrimitive3.CreateTriangleData(gShaderSM.getShader(), -0.5f);
-	//trianglePrimitive4.CreateTriangleData(gShaderSM.getShader(), 0.3f);
-	objectsSM.push_back(trianglePrimitive);
-	//objectsSM.push_back(trianglePrimitive2);
 
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -63,11 +59,9 @@ void GameEngine::Run()
 		gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());
 	}
 
-	CreateFullScreenQuad();
-
 	Camera newCam;
 	Light newLight;
-	if (CreateFrameBuffer() != 0)
+	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
 
 	//Creates the frame buffer for shadow mapping
@@ -87,14 +81,14 @@ void GameEngine::Run()
 		//PrePass render for Shadow mapping 
 		shadowMap.bindForWriting();
 
-		mainRenderer.prePassRender(gShaderSM.getShader(), objectsSM, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
+		mainRenderer.prePassRender(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
 
 		//resets the viewport
 		mainRenderer.SetViewport();
 		//--------
 
 		// First render pass
-		firstPassRenderTemp(basicShader.getShader(), trianglePrimitive.getVertexAttribute());
+		mainRenderer.firstPassRenderTemp(fsqShader, objects, gClearColour);
 
 		// Load imGui content	
 		float deltaTime = ImGui::GetIO().DeltaTime;
@@ -146,10 +140,11 @@ void GameEngine::Run()
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
+		mainRenderer.SetViewport();
 		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
 
 		// Render a second pass (temporary)
-		secondPassRenderTemp(shadowMap);
+		mainRenderer.secondPassRenderTemp(fsqShader);
 
 		// Prepares matrices for usage with imGui
 		glm::mat4 translate = glm::translate(identity, glm::vec3(gTx[0], gTx[1], 0.0f));
@@ -174,120 +169,12 @@ void GameEngine::Run()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glDeleteFramebuffers(1, &gFbo);
-	glDeleteTextures(2, gFboTextureAttachments);
+
 	glDeleteVertexArrays(1, &gVertexAttributeFS);
 	glDeleteBuffers(1, &gVertexBufferFS);
 	glfwTerminate();
 }
 
-void GameEngine::firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttribute)
-{
-
-	// first pass
-	// render all geometry to a framebuffer object
-	glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
-	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], gClearColour[3]);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glUseProgram(gShaderProgram);
-	glBindVertexArray(gVertexAttribute);
-	glEnable(GL_DEPTH_TEST);
-}
-
-void GameEngine::secondPassRenderTemp(ShadowMap SM)
-{
-	// first pass is done!
-	// now render a second pass
-	// bind default framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(gShaderProgramFS);
-	glBindVertexArray(gVertexAttributeFS);
-	glDisable(GL_DEPTH_TEST);
-	// bind texture drawn in the first pass!
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
-}
-
-int GameEngine::CreateFrameBuffer() {
-	int err = 0;
-	// =================== COLOUR BUFFER =======================================
-	// add "Attachments" to the framebuffer (textures to write to/read from)
-	glGenTextures(2, gFboTextureAttachments);
-	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
-	// define storage for texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	// define sampler settings
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// attach texture to framebuffer object
-
-	// ===================== DEPTH BUFFER ====================================
-	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WIDTH, HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glGenFramebuffers(1, &gFbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gFboTextureAttachments[0], 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gFboTextureAttachments[1], 0);
-
-	// check if framebuffer is complete (usable):
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
-		err = 0;
-	else
-		err = -1;
-
-	// bind default framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	return err;
-}
-
-void GameEngine::CreateFullScreenQuad()
-{
-	struct Pos2UV {
-		float x, y;
-		float u, v;
-	};
-	Pos2UV myQuad[6] = {
-		-1,-1, 0, 0,	// TOP		LEFT
-		-1,+1, 0, 1,	// BOTTOM	LEFT
-		+1,+1, 1, 1,	// BOTTOM	RIGHT
-		-1,-1, 0, 0,	// TOP		LEFT
-		+1,+1, 1, 1,	// BOTTOM	RIGHT
-		+1,-1, 1, 0,	// TOP		RIGHT
-	};
-
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttributeFS);
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttributeFS);
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferFS);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferFS);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, sizeof(myQuad), myQuad, GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Pos2UV), BUFFER_OFFSET(0));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Pos2UV), BUFFER_OFFSET(sizeof(float) * 2));
-};
 
 //static void GameEngine::keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 //{

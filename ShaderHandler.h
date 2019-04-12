@@ -8,8 +8,9 @@ public:
 	~ShaderHandler();
 
 	void CreateShaders(const char* vertexShader, const char* fragmentShader);
-	void CreateShaders(GLuint* gShaderProgram, const char* vertexShader,const char* geometryShader, const char* fragmentShader);
-	void CreateFSShaders(GLuint *gShaderProgram);
+	void CreateFSShaders();
+
+	void CreateFullScreenQuad();
 
 	void createVertexBuffer(std::vector<vertexPolygon> vertices);
 

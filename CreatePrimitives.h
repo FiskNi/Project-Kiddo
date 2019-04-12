@@ -4,8 +4,6 @@
 class CreatePrimitive
 {
 private:
-	GLuint gVertexBuffer;
-	GLuint gVertexAttribute;
 	GLuint diffuseID;
 	GLuint normalID;
 	glm::vec3 worldPosition;
@@ -17,7 +15,8 @@ public:
 	CreatePrimitive();
 	~CreatePrimitive();
 
-	void CreateTriangleData(GLuint shaderID, float test);
+	void CreateTriangleData();
+	void CreatePlaneData();
 	
 	void setTextureID(GLuint texID);
 

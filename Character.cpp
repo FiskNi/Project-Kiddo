@@ -3,7 +3,6 @@
 Character::Character(GLuint shaderProgram)
 {
 	float temp = 0;
-	characterModel.CreateTriangleData(shaderProgram, temp);
 }
 
 
@@ -29,9 +28,4 @@ void Character::moveCharacter(GLFWwindow* window, float dTime)
 		position = glm::vec3(position.x + movementChange, position.y, position.z);
 
 	//characterModel.setPostition(position);
-}
-
-CreatePrimitive Character::getMesh()
-{
-	return characterModel;
 }

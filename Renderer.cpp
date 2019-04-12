@@ -10,7 +10,8 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-
+	glDeleteFramebuffers(1, &gFbo);
+	glDeleteTextures(2, gFboTextureAttachments);
 }
 
 GLFWwindow* Renderer::getWindow()
@@ -18,7 +19,39 @@ GLFWwindow* Renderer::getWindow()
 	return gWindow;
 }
 
-void Renderer::prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
+void Renderer::firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<CreatePrimitive> objects, float gClearColour[])
+{
+
+	// first pass
+	// render all geometry to a framebuffer object
+	glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], gClearColour[3]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(gShaderProgram.getShader());
+	glBindVertexArray(gShaderProgram.getVertexAttributes());
+	glEnable(GL_DEPTH_TEST);
+}
+
+void Renderer::secondPassRenderTemp(ShaderHandler gShaderProgram)
+{
+	// first pass is done!
+	// now render a second pass
+	// bind default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(gShaderProgram.getShader());
+	glBindVertexArray(gShaderProgram.getVertexAttributes());
+	glDisable(GL_DEPTH_TEST);
+	// bind texture drawn in the first pass!
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+}
+
+void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	//glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -26,15 +59,15 @@ void Renderer::prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive>
 	//glClear(GL_COLOR_BUFFER_BIT);
 
 	// tell opengl we want to use the gShaderProgram
-	glUseProgram(gShaderProgram);
+	glUseProgram(gShaderProgram.getShader());
 
 	// tell opengl we are going to use the VAO we described earlier
 	for (int i = 0; i < objects.size(); i++)
 	{
-		SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram);
-		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram);
+		SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glBindVertexArray(objects[i].getVertexAttribute());
+		glBindVertexArray(gShaderProgram.getVertexAttributes());
 
 		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 

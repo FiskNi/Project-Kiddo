@@ -2,8 +2,6 @@
 
 CreatePrimitive::CreatePrimitive()
 {
-	this->gVertexBuffer = 0;
-	this->gVertexAttribute = 0;
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->worldRotation = 0.0f;
 }
@@ -12,7 +10,7 @@ CreatePrimitive::~CreatePrimitive()
 
 }
 
-void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
+void CreatePrimitive::CreateTriangleData()
 {
 
 	// 36 hardcoded vertices representing a cube
@@ -172,6 +170,38 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 
 }
 
+void CreatePrimitive::CreatePlaneData()
+{
+	vertexPolygon tests;
+	tests.position = glm::vec3(-3.0f, 0.0f, -3.0f);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	tests.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(3.0f, 0.0f, -3.0f);
+	tests.uv = glm::vec2(1.0f, 1.0f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(3.0f, 0.0f, 03.0f);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	vertices.push_back(tests);
+
+
+	tests.position = glm::vec3(0.5f, 0.0f, 3.0f);
+	tests.uv = glm::vec2(1.0f, 0.0f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(3.0f, 0.0f, 3.0f);
+	tests.uv = glm::vec2(0.0f, 0.0f);
+	vertices.push_back(tests);
+
+	tests.position = glm::vec3(3.0f, 0.0f, 3.0f);
+	tests.uv = glm::vec2(0.0f, 1.0f);
+	vertices.push_back(tests);
+
+
+}
+
 void CreatePrimitive::setTextureID(GLuint texID)
 {
 	this->diffuseID = texID;
@@ -180,11 +210,6 @@ void CreatePrimitive::setTextureID(GLuint texID)
 GLuint CreatePrimitive::getTextureID() const
 {
 	return this->diffuseID;
-}
-
-GLuint CreatePrimitive::getVertexAttribute() const
-{
-	return this->gVertexAttribute;
 }
 
 glm::vec3 CreatePrimitive::getWorldPosition() const

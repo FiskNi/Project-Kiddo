@@ -1,12 +1,14 @@
 #pragma once
 #include "Headers.h"
 #include "Renderer.h"
-#include "ShaderHandler.h"
+#include "ShadowMap.h"
 #include "CreatePrimitives.h"
+#include "ShaderHandler.h"
 #include "Camera.h"
 #include "Character.h"
 #include "Light.h"
 #include "Material.h"
+
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
@@ -17,12 +19,6 @@ public:
 	~GameEngine();
 
 	void Run();
-
-	void firstPassRenderTemp(GLuint gShaderProgram, GLuint gVertexAttribute);
-	void secondPassRenderTemp(ShadowMap SM);
-
-	int CreateFrameBuffer();
-	void CreateFullScreenQuad();
 
 	//static void keyboard(GLFWwindow * window, int key, int scancode, int action, int mods);
 
@@ -50,9 +46,6 @@ private:
 	glm::mat4 gRotate2D;
 	// macro that returns "char*" with offset "i"
 	// BUFFER_OFFSET(5) transforms in "(char*)nullptr+(5)"
-
-	unsigned int gFbo;
-	unsigned int gFboTextureAttachments[2]; // first for colour, second for depth
 
 	// ImGui
 	/*static float gTx[2];
