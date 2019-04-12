@@ -2,7 +2,7 @@
 layout(location = 0) in vec3 vertex_position;
 
 uniform mat4 SHADOW_MAT; //Projection and view
-uniform mat4 MODEL_MAT;
+layout (location = 14) uniform mat4 MODEL_MAT;
 
 void main() {
 

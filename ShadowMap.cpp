@@ -52,8 +52,8 @@ int ShadowMap::CreateFrameBufferSM()
 //Creates the shadow matrix from the lights position, and what shader program needs the info 
 void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 {
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20); //An orthographic matrix 
-	glm::mat4 depthViewMatrix = glm::lookAt(lightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //View from the light position towards origo 
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-3, 3, -3, 3, -1, 10); //An orthographic matrix
+	glm::mat4 depthViewMatrix = glm::lookAt(lightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //View from the light position towards origo
 	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
 
 	glm::mat4 shadowBias = glm::mat4(0.5, 0.0, 0.0, 0.0,
@@ -68,6 +68,8 @@ void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 		OutputDebugStringA("Error, cannot find 'shadow_id' attribute in Vertex shader SM\n");
 		return;
 	}
+
+	glUniformMatrix4fv(shadow_id, 1, GL_FALSE, glm::value_ptr(shadow_matrix));
 }
 
 //Bind fbo before pre pass render, to generate depth map for shadow mapping 
