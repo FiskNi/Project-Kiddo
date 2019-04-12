@@ -15,7 +15,13 @@ ShadowMap::~ShadowMap()
 {
 }
 
-//Create framebuffer with one depth attachment. 
+/*
+=============================================================
+ Creates the frame buffer with one depth attachment to hold 
+ the depth texture, that will be sampled from to create the 
+ shadows.
+=============================================================
+*/
 int ShadowMap::CreateFrameBufferSM()
 {
 	int err = 0;
@@ -49,7 +55,12 @@ int ShadowMap::CreateFrameBufferSM()
 	return err;
 }
 
-//Creates the shadow matrix from the lights position, and what shader program needs the info 
+/*
+=============================================================
+ Creates the shadow matrix, using the lights position. Add
+ the shader program that needs the SHADOW_MAT sent to.
+=============================================================
+*/
 void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 {
 	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-3, 3, -3, 3, -1, 10); //An orthographic matrix
@@ -72,17 +83,28 @@ void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 	glUniformMatrix4fv(shadow_id, 1, GL_FALSE, glm::value_ptr(shadow_matrix));
 }
 
-//Bind fbo before pre pass render, to generate depth map for shadow mapping 
+/*
+=============================================================
+This binds and prepares the frame buffer, called before 
+rendering the pre-pass.
+=============================================================
+*/
 void ShadowMap::bindForWriting()
 {
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT); //Set the viewport to the same resolution as the framebuffer to be able to render shadows correctly 
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFbo); //PF 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //PF 
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT); //Set the viewport to the same resolution as the frame buffer to be able to render shadows correctly 
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFbo);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 }
 
-// Use during the render loop, sends the texture to specific shader program. 
+/*
+=============================================================
+Used to activate and bind the depth texture generated. 
+Called during the render loop of objects.
+Sends the information of texture to specified shader program.
+=============================================================
+*/
 void ShadowMap::bindForReading(GLenum textureUnit, GLuint shaderProg)
 {
 	glActiveTexture(textureUnit); //PF 
@@ -91,17 +113,34 @@ void ShadowMap::bindForReading(GLenum textureUnit, GLuint shaderProg)
 	glUniform1i(glGetUniformLocation(shaderProg, "shadowMap"), 2); //PF 
 }
 
+/*
+=============================================================
+ Get the depth map attachment at [0]. 
+=============================================================
+*/
 unsigned int ShadowMap::getDepthMapAttachment() const
 {
-	return depthMapAttachments[0];
+	return this->depthMapAttachments[0];
 }
 
 unsigned int ShadowMap::getShadowID() const
 {
-	return shadow_id;
+	return this->shadow_id;
 }
 
 glm::mat4 ShadowMap::getShadowMatrix() const
 {
-	return shadow_matrix;
+	return this->shadow_matrix;
+}
+
+/*
+=============================================================
+Set the size of the depth map for shadows,
+default at 2048 x 2048.
+=============================================================
+*/
+void ShadowMap::setTextureSize(unsigned int size)
+{
+	this->SHADOW_HEIGHT = size;
+	this->SHADOW_WIDTH = size;
 }
