@@ -37,6 +37,8 @@ void Renderer::prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive>
 		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram);
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glBindVertexArray(objects[i].getVertexAttribute());
+
+		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
 		// so for one triangle we need 3 vertices!
@@ -68,6 +70,8 @@ void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> object
 		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram);
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glBindVertexArray(objects[i].getVertexAttribute());
+
+		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
 		// so for one triangle we need 3 vertices!
@@ -169,4 +173,10 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint s
 	glm::mat4 ID_MAT = glm::mat4(1.0f);
 	MODEL_MAT = glm::translate(ID_MAT, translation);
 	MODEL_MAT = glm::rotate(MODEL_MAT, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+void Renderer::passTextureData(GLuint TextureUnit, GLuint texID)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texID);
 }

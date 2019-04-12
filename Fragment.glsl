@@ -3,6 +3,7 @@
 in vec3 color;
 in vec3 fragPos;
 layout(location=3) in float myAttrOut;
+in vec2 textureCoord;
 
 // this is the final pixel colour
 out vec4 fragment_color;
@@ -13,8 +14,10 @@ layout(location = 5) uniform vec3 colourFromImGui;
 layout(location = 15) uniform vec3 lightPos;
 layout(location = 16) uniform vec3 camPos;
 
-void main () {
+uniform sampler2D diffuseTex;
 
+void main () {
+	vec4 texSample = texture(diffuseTex, vec2(textureCoord.s, 1- textureCoord.t));
 	vec3 hardNorm = normalize(vec3(1.0f,0.0f,0.0f));
 
 	vec3 dirOfLight = normalize(lightPos-fragPos);

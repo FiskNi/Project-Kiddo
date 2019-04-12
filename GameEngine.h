@@ -5,6 +5,7 @@
 #include "CreatePrimitives.h"
 #include "Camera.h"
 #include "Light.h"
+#include "Material.h"
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 

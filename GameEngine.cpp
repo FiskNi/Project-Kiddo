@@ -36,15 +36,21 @@ void GameEngine::Run()
 	//CreatePrimitive trianglePrimitive4;
 	std::vector<CreatePrimitive> objectsSM;
 
+	Material cubeMat;
+
 	// Create main camera
 	Camera mainCamera;
 	mainCamera.setWinSize((float)WIDTH, (float)HEIGHT);
+
+	
 
 	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
 	gShaderSM.CreateShaders("VertexShaderSM.glsl", "FragmentSM.glsl");
 	shaderHandler.CreateFSShaders(&gShaderProgramFS);
 	trianglePrimitive.CreateTriangleData(basicShader.getShader(), -0.5f);
 	trianglePrimitive2.CreateTriangleData(basicShader.getShader(), 0.3f);
+	trianglePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/mudTexture.jpg"));
+	
 	objects.push_back(trianglePrimitive);
 	objects.push_back(trianglePrimitive2);
 
