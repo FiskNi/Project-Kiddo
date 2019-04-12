@@ -206,7 +206,7 @@ void GameEngine::secondPassRenderTemp(ShadowMap SM)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
 	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_2D, SM.getDepthMapAttachment());
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
 }
 
 int GameEngine::CreateFrameBuffer() {

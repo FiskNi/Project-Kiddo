@@ -95,10 +95,10 @@
     <None Include="VertexShaderFS.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="FragmenSM.glsl">
+    <None Include="VertexShaderSM.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="VertexShaderSM.glsl">
+    <None Include="FragmentSM.glsl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

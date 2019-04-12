@@ -239,5 +239,5 @@ void CreatePrimitive::MovePrimitive(GLFWwindow *window, float deltaTime)
 
 void CreatePrimitive::setPosition()
 {
-	this->worldPosition = glm::vec3(2.0f, 4.0f, -1.0f);
+	worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 }
