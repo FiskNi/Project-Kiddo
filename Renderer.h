@@ -2,6 +2,7 @@
 #include "Headers.h"
 #include "CreatePrimitives.h"
 #include "Camera.h"
+#include "ShadowMap.h"
 
 class Renderer
 {
@@ -11,7 +12,8 @@ public:
 
 	GLFWwindow *getWindow();
 
-	void Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc);
+	void prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();
