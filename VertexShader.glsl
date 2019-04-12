@@ -7,6 +7,7 @@ layout(location = 4) in vec3 vertex_bitangent;
 
 
 out vec3 color;
+out vec4 shadow_coord;
 
 // uniform offset
 layout(location=10) uniform float offset;
@@ -16,6 +17,9 @@ layout(location=11) uniform mat4 rotateZ;
 layout(location = 12) uniform mat4 view;
 layout(location = 13) uniform mat4 proj;
 layout(location = 14) uniform mat4 model;
+
+uniform mat4 SHADOW_MAT;
+
 
 out vec3 fragPos;
 
@@ -29,4 +33,6 @@ void main() {
  	vec4 newVertex = rotateZ * vec4(vertex_position, 1.0f);
 // 	gl_Position = vec4(vec3(newVertex.x + offset, newVertex.yz), 1.0);
 	gl_Position = proj*view*model*vec4(vertex_position, 1.0f);
+
+	shadow_coord = SHADOW_MAT * (model * vec4(vertex_position, 1.0)); 
 }
