@@ -181,6 +181,8 @@ void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
 	// this activates the first and second attributes of this VAO
 	// think of "attributes" as inputs to the Vertex Shader
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
 	glGenBuffers(1, &gVertexBuffer);

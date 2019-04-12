@@ -58,7 +58,10 @@ void GameEngine::Run()
 	//objectsSM.push_back(trianglePrimitive2);
 
 	for (int i = 0; i < objects.size(); i++)
+	{
 		basicShader.createVertexBuffer(objects[i].getvertexPolygons());
+		gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());
+	}
 
 	CreateFullScreenQuad();
 
@@ -143,7 +146,7 @@ void GameEngine::Run()
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
 		// Render vertexbuffer at gVertexAttribute in gShaderProgram
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
 
 		// Render a second pass (temporary)
 		secondPassRenderTemp(shadowMap);
