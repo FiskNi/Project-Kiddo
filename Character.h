@@ -1,6 +1,7 @@
 #pragma once
 #include "Headers.h"
 #include "CreatePrimitives.h"
+
 class Character
 {
 private:

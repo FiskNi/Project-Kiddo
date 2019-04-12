@@ -3,6 +3,7 @@
 #include "CreatePrimitives.h"
 #include "Camera.h"
 #include "ShadowMap.h"
+#include "ShaderHandler.h"
 
 class Renderer
 {
@@ -13,7 +14,7 @@ public:
 	GLFWwindow *getWindow();
 
 	void prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
-	void Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void Render(ShaderHandler gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc);
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();
@@ -21,8 +22,6 @@ public:
 	void passTextureData(GLuint texUnit, GLuint texID);
 
 private:
-
-	
 
 	GLFWwindow *gWindow;
 
@@ -33,8 +32,5 @@ private:
 	glm::mat4 VIEW_MAT;
 	glm::mat4 PROJ_MAT;
 
-	/*float gClearColour[3];
-	float gUniformColour[3];
-	GLint gUniformColourLoc;*/
 };
 

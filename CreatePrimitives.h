@@ -1,8 +1,6 @@
 #pragma once
 #include "Headers.h"
 
-#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
-
 class CreatePrimitive
 {
 private:
@@ -13,7 +11,7 @@ private:
 	glm::vec3 worldPosition;
 	float worldRotation;
 
-	glm::vec3 pos;
+	std::vector<vertexPolygon> vertices;
 
 public:
 	CreatePrimitive();
@@ -30,5 +28,6 @@ public:
 
 	void MovePrimitive(GLFWwindow *window, float deltaTime);
 	void setPosition();
+	std::vector<vertexPolygon> getvertexPolygons();
 };
 

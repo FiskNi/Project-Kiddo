@@ -29,5 +29,15 @@
 
 #define WIDTH 1280
 #define HEIGHT 720
+#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 using namespace std;
+
+struct vertexPolygon
+{
+	glm::vec3 position;
+	glm::vec2 uv;
+	glm::vec3 normals;
+	glm::vec3 tangent;
+	glm::vec3 biTangent;
+};
