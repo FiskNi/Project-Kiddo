@@ -8,6 +8,8 @@ class CreatePrimitive
 private:
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
+	GLuint diffuseID;
+	GLuint normalID;
 	glm::vec3 worldPosition;
 	float worldRotation;
 
@@ -19,7 +21,9 @@ public:
 
 	void CreateTriangleData(GLuint shaderID, float test);
 	
+	void setTextureID(GLuint texID);
 
+	GLuint getTextureID() const;
 	GLuint getVertexAttribute() const;
 	glm::vec3 getWorldPosition() const;
 	float getWorldRotation() const;

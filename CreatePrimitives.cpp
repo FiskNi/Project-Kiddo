@@ -263,6 +263,16 @@ void CreatePrimitive::CreateTriangleData(GLuint shaderID, float test)
 	);
 }
 
+void CreatePrimitive::setTextureID(GLuint texID)
+{
+	this->diffuseID = texID;
+}
+
+GLuint CreatePrimitive::getTextureID() const
+{
+	return this->diffuseID;
+}
+
 GLuint CreatePrimitive::getVertexAttribute() const
 {
 	return this->gVertexAttribute;
@@ -283,27 +293,20 @@ void CreatePrimitive::MovePrimitive(GLFWwindow *window, float deltaTime)
 	float moveSpeed = 5.5f*deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x + moveSpeed, worldPosition.y, worldPosition.z);
+		this->worldPosition = glm::vec3(this->worldPosition.x + moveSpeed,
+			this->worldPosition.y, this->worldPosition.z);
 
-	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x - moveSpeed, worldPosition.y, worldPosition.z);
-
-
-	}
+		this->worldPosition = glm::vec3(this->worldPosition.x - moveSpeed,
+			this->worldPosition.y, this->worldPosition.z);
+	
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x, worldPosition.y, worldPosition.z + moveSpeed);
+		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
+			this->worldPosition.z + moveSpeed);
 
-
-	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		this->worldPosition = glm::vec3(worldPosition.x, worldPosition.y, worldPosition.z - moveSpeed);
-
-	}
+		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
+			this->worldPosition.z - moveSpeed);
 }
 
 void CreatePrimitive::setPosition()

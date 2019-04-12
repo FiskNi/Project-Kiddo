@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Character.h"
 #include "Light.h"
+#include "Material.h"
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
