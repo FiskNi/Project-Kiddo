@@ -45,6 +45,11 @@ void Renderer::prePassRender(GLuint gShaderProgram, std::vector<CreatePrimitive>
 	}
 }
 
+/*
+=============================================================
+Pre pass render needed to generate depth map for shadows.
+=============================================================
+*/
 void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
 {
 	// set the color TO BE used (this does not clear the screen right away)
@@ -57,6 +62,7 @@ void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> object
 
 	glUniform3fv(gUniformColourLoc, 1, &gUniformColour[0]);
 
+	SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram);
 
 	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
@@ -74,7 +80,7 @@ void Renderer::Render(GLuint gShaderProgram, std::vector<CreatePrimitive> object
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
 		// so for one triangle we need 3 vertices!
 
-		//SM.bindForReading(GL_TEXTURE2, gShaderProgram); ADD "shadowMap" in main shader.
+		SM.bindForReading(GL_TEXTURE2, gShaderProgram); //ADD "shadowMap" in main shader.
 
 		glDrawArrays(GL_TRIANGLES, 0, 100);
 	}
