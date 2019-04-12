@@ -19,8 +19,10 @@ layout(location = 13) uniform mat4 proj;
 layout(location = 14) uniform mat4 model;
 
 out vec3 fragPos;
+out vec3 normal;
 
 void main() {
+	normal= vertex_normal;
 	//color = vertex_color;
 	// gl_Position = newVertex;//vec4(vec3(newVertex.x + offset, newVertex.yz), 1.0);
 	// gl_Position = vec4(vertex_position, 1.0);

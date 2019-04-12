@@ -4,6 +4,7 @@ in vec3 color;
 in vec3 fragPos;
 layout(location=3) in float myAttrOut;
 in vec2 textureCoord;
+in vec3 normal;
 
 // this is the final pixel colour
 out vec4 fragment_color;
@@ -18,8 +19,8 @@ uniform sampler2D diffuseTex;
 
 void main () {
 	vec4 texSample = texture(diffuseTex, vec2(textureCoord.s, 1- textureCoord.t));
-	vec3 hardNorm = normalize(vec3(1.0f,0.0f,0.0f));
-
+	//vec3 hardNorm = normalize(vec3(1.0f,0.0f,0.0f));
+	vec3 hardNorm = normalize(normal);
 	vec3 dirOfLight = normalize(lightPos-fragPos);
 
 	float ambient = 0.2;
@@ -32,7 +33,7 @@ void main () {
 	vec3 viewDir = normalize(camPos-fragPos);
 	vec3 refDir = reflect(-dirOfLight, hardNorm);
 
-	float specVal = pow(max(dot(viewDir,refDir),0.0),32);
+	float specVal = pow(max(dot(viewDir,refDir),0.0),64);
 	vec3 specular = specStr * specVal * vec3(0,0,1);//Replace hardcoded vec3 with lightColour later.
 
 	vec3 newCol = (ambient+diffuse+specular)*vec3(1.0,0.0,0.0);
