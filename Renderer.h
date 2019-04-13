@@ -1,6 +1,6 @@
 #pragma once
 #include "Headers.h"
-#include "CreatePrimitives.h"
+#include "Primitive.h"
 #include "Camera.h"
 #include "ShadowMap.h"
 #include "ShaderHandler.h"
@@ -13,12 +13,12 @@ public:
 
 	GLFWwindow *getWindow();
 
-	void firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<CreatePrimitive> objects, float gClearColour[]);
+	void firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<Primitive> objects, float gClearColour[]);
 	void secondPassRenderTemp(ShaderHandler gShaderProgram);
 
-	void prePassRender(ShaderHandler gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
 
-	void Render(ShaderHandler gShaderProgram, std::vector<CreatePrimitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
@@ -31,7 +31,8 @@ private:
 	GLFWwindow *gWindow;
 
 	unsigned int gFbo;
-	unsigned int gFboTextureAttachments[2]; // first for colour, second for depth
+	// Color and depth Render-to-texture for the fullscreen quad
+	unsigned int gFboTextureAttachments[2];
 
 	glm::mat4 MODEL_MAT;
 	glm::mat4 VIEW_MAT;

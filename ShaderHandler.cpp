@@ -5,7 +5,13 @@ ShaderHandler::ShaderHandler()
 	gVertexBuffer = 0;
 	gVertexAttribute = 0;
 
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
 
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttribute);
+
+	glBufferData(GL_ARRAY_BUFFER, NULL, NULL, GL_STATIC_DRAW);
 }
 
 
@@ -213,8 +219,6 @@ void ShaderHandler::CreateFullScreenQuad()
 
 void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
 {
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
 	// bind is like "enabling" the object to use it
 	glBindVertexArray(gVertexAttribute);
 	// this activates the first and second attributes of this VAO
@@ -222,15 +226,16 @@ void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
 
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
 
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
+	//glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(vertexPolygon), vertices.data());
 
 	// query which "slot" corresponds to the input vertex_position in the Vertex Shader 
 	// if this returns -1, it means there is a problem, and the program will likely crash.

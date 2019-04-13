@@ -1,7 +1,7 @@
 #pragma once
 #include "Headers.h"
 
-class CreatePrimitive
+class Primitive
 {
 private:
 	GLuint diffuseID;
@@ -12,10 +12,10 @@ private:
 	std::vector<vertexPolygon> vertices;
 
 public:
-	CreatePrimitive();
-	~CreatePrimitive();
+	Primitive();
+	~Primitive();
 
-	void CreateTriangleData();
+	void CreateCubeData();
 	void CreatePlaneData();
 	
 	void setTextureID(GLuint texID);

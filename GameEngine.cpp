@@ -10,9 +10,13 @@ GameEngine::~GameEngine()
 
 void GameEngine::Run()
 {
-	//glfwSetKeyCallback(mainRenderer.getWindow(), keyboard);
+	// Keyboard callback reference, should be changed when if keyboard callbacks are added
+	// glfwSetKeyCallback(mainRenderer.getWindow(), keyboard);
+
+	// If this becomes true the program will have failed in someway or been manually shut down
 	bool shutdown = false;
 
+	// ImGui initialization, should be moved to keep ImGui systems together
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -20,51 +24,17 @@ void GameEngine::Run()
 	ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
 
-	// Create Shaders
-	ShaderHandler basicShader;
-	ShaderHandler fsqShader;
-	ShaderHandler gShaderSM;
-
-	ShadowMap shadowMap;
-
-	// Create primitive
-	CreatePrimitive trianglePrimitive;
-	CreatePrimitive trianglePrimitive2;
-	CreatePrimitive groundPlane;
-	std::vector<CreatePrimitive> objects;
-
-	Material cubeMat;
-
-	// Create main camera
-	Camera mainCamera;
-	mainCamera.setWinSize((float)WIDTH, (float)HEIGHT);
-
-	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
-	gShaderSM.CreateShaders("VertexShaderSM.glsl", "FragmentSM.glsl");
-	fsqShader.CreateFSShaders();
-	fsqShader.CreateFullScreenQuad();
-
-	trianglePrimitive.CreateTriangleData();
-	trianglePrimitive2.CreateTriangleData();
-	trianglePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/mudTexture.jpg"));
-
-	groundPlane.CreatePlaneData();
-	
-	objects.push_back(trianglePrimitive);
-	objects.push_back(trianglePrimitive2);
-
-	for (int i = 0; i < objects.size(); i++)
-	{
-		basicShader.createVertexBuffer(objects[i].getvertexPolygons());
-		gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());
-	}
+	// Load and initialize game content
+	LoadContent();
 
 	Camera newCam;
 	Light newLight;
+
+	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
 
-	//Creates the frame buffer for shadow mapping
+	// Creates the frame buffer for shadow mapping
 	if (shadowMap.CreateFrameBufferSM() != 0)
 		shutdown = true;
 
@@ -124,18 +94,18 @@ void GameEngine::Run()
 		glUniformMatrix4fv(11, 1, GL_TRUE, &gRotate2D[0][0]);
 		//glm::value_ptr(gRotate2D));
 
+		// Updates camera position (movement)
 		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
+
+		// **** Hardcoded, needs to be moved or changed
 		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
 		objects[1].setPosition();
 
-		newCam.setWinSize((float)WIDTH,(float)HEIGHT);
-
-		
+		// **** Needs to be moved to the renderer!!
 		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
 		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
 		glm::mat4 model = glm::mat4(1.0f);
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
-
 		glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
@@ -146,13 +116,13 @@ void GameEngine::Run()
 		// Render a second pass (temporary)
 		mainRenderer.secondPassRenderTemp(fsqShader);
 
-		// Prepares matrices for usage with imGui
+		// Prepares matrices for usage with imGui, needs to be moved with ImGui stuff
 		glm::mat4 translate = glm::translate(identity, glm::vec3(gTx[0], gTx[1], 0.0f));
 		glm::mat4 rotation = glm::rotate(identity, gRotate2Z, glm::vec3(0.0f, 0.0f, 1.0f));
 		glm::mat4 scaleMat = glm::scale(identity, glm::vec3(scale, scale, scale));
 		glm::mat4 transform = translate * rotation * scaleMat;
-
 		glUniformMatrix4fv(5, 1, GL_TRUE, &transform[0][0]);
+
 		// Draw fullscreen quad
 		glUniform1i(3, renderDepth);  // 0 == false
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -168,11 +138,64 @@ void GameEngine::Run()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+	
 
-
+	// *******************************
+	// MEMORY NEEDS TO BE LOOKED OVER! - No memory leaks!
+	// *******************************
 	glDeleteVertexArrays(1, &gVertexAttributeFS);
 	glDeleteBuffers(1, &gVertexBufferFS);
 	glfwTerminate();
+}
+
+void GameEngine::LoadContent()
+{
+	// Load shaders
+	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
+	gShaderSM.CreateShaders("VertexShaderSM.glsl", "FragmentSM.glsl");
+
+	// Load fullscreen quad vertices
+	// Right now the fullscreen quad is coded into the shader handler.
+	// Could be moved and better organized
+	fsqShader.CreateFSShaders();
+	fsqShader.CreateFullScreenQuad();
+
+	// Initianlize 1 cube primitive and duplicate it by pushing it back into a vector (objects)
+	cubePrimitive.CreateCubeData();
+	cubePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/mudTexture.jpg"));
+	objects.push_back(cubePrimitive);
+	objects.push_back(cubePrimitive);
+
+	for (int i = 0; i < objects.size(); i++)
+	{
+		basicShader.createVertexBuffer(objects[i].getvertexPolygons());
+		gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());
+	}
+
+	// ********** //
+	// Render queue work. Need to figure out a method for rendering multiple objects dynamically and non-messy
+	// ********** //
+
+
+	//groundPlane.CreatePlaneData();
+	//objects.push_back(groundPlane);
+
+	/*std::vector<vertexPolygon> renderObjectQueue = objects[0].getvertexPolygons();
+	for (int i = 1; i < objects.size(); i++)
+	{
+		renderObjectQueue.reserve(renderObjectQueue.size() + objects[i].getvertexPolygons().size()); 
+		renderObjectQueue.insert(renderObjectQueue.end(), objects[i].getvertexPolygons().begin(), objects[i].getvertexPolygons().end());
+		
+	}
+	basicShader.createVertexBuffer(objects[i].getvertexPolygons());
+	gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());*/
+
+	// ********** //
+	// Render queue work. Need to figure out a method for rendering multiple objects dynamically and non-messy
+	// ********** //
+
+	
+
 }
 
 

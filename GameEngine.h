@@ -2,15 +2,12 @@
 #include "Headers.h"
 #include "Renderer.h"
 #include "ShadowMap.h"
-#include "CreatePrimitives.h"
+#include "Primitive.h"
 #include "ShaderHandler.h"
 #include "Camera.h"
 #include "Character.h"
 #include "Light.h"
 #include "Material.h"
-
-
-#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 class GameEngine
 {
@@ -19,6 +16,8 @@ public:
 	~GameEngine();
 
 	void Run();
+
+	void LoadContent();
 
 	//static void keyboard(GLFWwindow * window, int key, int scancode, int action, int mods);
 
@@ -47,22 +46,30 @@ private:
 	// macro that returns "char*" with offset "i"
 	// BUFFER_OFFSET(5) transforms in "(char*)nullptr+(5)"
 
-	// ImGui
-	/*static float gTx[2];
-	static float gRotate2Z;
-	static float scale;
-	static bool renderDepth;
-	glm::mat4 identity;*/
-
-
+	//*** Game content ***//
 	// Main window and renderer object
 	Renderer mainRenderer;
 
-	// Shader handles, handles all the shaders
-	ShaderHandler shaderHandler;
+	// Shaders
+	ShaderHandler basicShader;
+	ShaderHandler fsqShader;
+	ShaderHandler gShaderSM;
+	
+	// Shadowmap
+	ShadowMap shadowMap;
 
-	// Simple triangle for testing
+	// Primitive mesh objects
+	Primitive cubePrimitive;
+	Primitive groundPlane;
 
+	// Object list for the render queue
+	std::vector<Primitive> objects;
+	std::vector<vertexPolygon> renderObjectQueue;
+	// Materials
+	Material cubeMat;
+
+	// Main camera
+	Camera mainCamera;
 
 
 };
