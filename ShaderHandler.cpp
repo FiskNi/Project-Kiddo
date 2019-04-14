@@ -2,16 +2,9 @@
 
 ShaderHandler::ShaderHandler()
 {
+	// To be deleted
 	gVertexBuffer = 0;
 	gVertexAttribute = 0;
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
-
-	glBufferData(GL_ARRAY_BUFFER, NULL, NULL, GL_STATIC_DRAW);
 }
 
 
@@ -19,7 +12,11 @@ ShaderHandler::~ShaderHandler()
 {
 }
 
-void ShaderHandler::CreateShaders(const char* vertexShader, const char* fragmentShader)
+//=============================================================
+//	Loads the shader content from a file into a shader program
+//	Could be moved into the contructor instead
+//=============================================================
+void ShaderHandler::CreateShader(const char* vertexShader, const char* fragmentShader)
 {
 	// local buffer to store error strings when compiling.
 	char buff[1024];
@@ -100,6 +97,10 @@ void ShaderHandler::CreateShaders(const char* vertexShader, const char* fragment
 
 }
 
+//=============================================================
+//	Loads a fullscreen quad shader into a shader program
+//	The entire fsq concept could be moved into its own class
+//=============================================================
 void ShaderHandler::CreateFSShaders()
 {
 	// local buffer to store error strings when compiling.
@@ -178,6 +179,10 @@ void ShaderHandler::CreateFSShaders()
 	glDeleteShader(fs);
 }
 
+//=============================================================
+//	Creates a fullscreen quad data for the fsq shader
+//	The entire fsq concept could be moved into its own class
+//=============================================================
 void ShaderHandler::CreateFullScreenQuad()
 {
 	struct Pos2UV {
@@ -217,10 +222,19 @@ void ShaderHandler::CreateFullScreenQuad()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Pos2UV), BUFFER_OFFSET(sizeof(float) * 2));
 };
 
+
+// *******
+// Deprecated | The VBO is now created and tied to a VAO at the place vertices are specified
+// To be deleted
+// *******
 void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
 {
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttribute);
+
 	// bind is like "enabling" the object to use it
 	glBindVertexArray(gVertexAttribute);
+
 	// this activates the first and second attributes of this VAO
 	// think of "attributes" as inputs to the Vertex Shader
 	glEnableVertexAttribArray(0);
@@ -229,13 +243,15 @@ void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
 	glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
 
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
+
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
+
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
-
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(vertexPolygon), vertices.data());
 
 	// query which "slot" corresponds to the input vertex_position in the Vertex Shader 
 	// if this returns -1, it means there is a problem, and the program will likely crash.

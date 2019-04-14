@@ -11,6 +11,9 @@ private:
 
 	std::vector<vertexPolygon> vertices;
 
+	GLuint gVertexBuffer;
+	GLuint gVertexAttribute;
+
 public:
 	Primitive();
 	~Primitive();
@@ -28,5 +31,6 @@ public:
 	void MovePrimitive(GLFWwindow *window, float deltaTime);
 	void setPosition();
 	std::vector<vertexPolygon> getvertexPolygons();
+	unsigned int getPolygonCount() const;
 };
 

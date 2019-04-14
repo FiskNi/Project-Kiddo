@@ -8,6 +8,9 @@ GameEngine::~GameEngine()
 {
 }
 
+//=============================================================
+//	Main engine loop
+//=============================================================
 void GameEngine::Run()
 {
 	// Keyboard callback reference, should be changed when if keyboard callbacks are added
@@ -50,16 +53,15 @@ void GameEngine::Run()
 		//---------
 		//PrePass render for Shadow mapping 
 		shadowMap.bindForWriting();
-
 		mainRenderer.prePassRender(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
-
-		//resets the viewport
-		mainRenderer.SetViewport();
+		mainRenderer.SetViewport();	//resets the viewport
 		//--------
 
 		// First render pass
 		mainRenderer.firstPassRenderTemp(fsqShader, objects, gClearColour);
 
+
+		// ---- Below is ImGui content that should be looked over and organized better	
 		// Load imGui content	
 		float deltaTime = ImGui::GetIO().DeltaTime;
 		// move along X
@@ -72,8 +74,8 @@ void GameEngine::Run()
 		ImGui::NewFrame();
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
-		ImGui::ColorEdit3("clear color", gClearColour); // Edit 3 floats representing a color
+		ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);       // Edit 1 float using a slider from 0.0f to 1.0f    
+		ImGui::ColorEdit3("clear color", gClearColour);			// Edit 3 floats representing a color
 		ImGui::ColorEdit3("triangle color", gUniformColour);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::SliderAngle("RotateZ", &gRotateZ);
@@ -93,6 +95,8 @@ void GameEngine::Run()
 		gRotate2D = glm::rotate(identity, gRotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(11, 1, GL_TRUE, &gRotate2D[0][0]);
 		//glm::value_ptr(gRotate2D));
+		// ---- Above is ImGui content that should be looked over and organized better	
+
 
 		// Updates camera position (movement)
 		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
@@ -101,7 +105,7 @@ void GameEngine::Run()
 		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
 		objects[1].setPosition();
 
-		// **** Needs to be moved to the renderer!!
+		// **** Needs to be moved to the renderer
 		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
 		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
 		glm::mat4 model = glm::mat4(1.0f);
@@ -109,11 +113,13 @@ void GameEngine::Run()
 		glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
-		// Render vertexbuffer at gVertexAttribute in gShaderProgram
+
+		// ---- Main render call --- ///
+		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
 		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
 
-		// Render a second pass (temporary)
+		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader);
 
 		// Prepares matrices for usage with imGui, needs to be moved with ImGui stuff
@@ -148,11 +154,14 @@ void GameEngine::Run()
 	glfwTerminate();
 }
 
+//=============================================================
+//	Load engine content here
+//=============================================================
 void GameEngine::LoadContent()
 {
 	// Load shaders
-	basicShader.CreateShaders("VertexShader.glsl", "Fragment.glsl");
-	gShaderSM.CreateShaders("VertexShaderSM.glsl", "FragmentSM.glsl");
+	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
+	gShaderSM.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
 
 	// Load fullscreen quad vertices
 	// Right now the fullscreen quad is coded into the shader handler.
@@ -160,45 +169,51 @@ void GameEngine::LoadContent()
 	fsqShader.CreateFSShaders();
 	fsqShader.CreateFullScreenQuad();
 
-	// Initianlize 1 cube primitive and duplicate it by pushing it back into a vector (objects)
+	// Initialize 1 cube primitive and duplicate it by pushing it back into a vector
+	// "objects" is currently what can be seen as the renderqueue
 	cubePrimitive.CreateCubeData();
 	cubePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/mudTexture.jpg"));
 	objects.push_back(cubePrimitive);
 	objects.push_back(cubePrimitive);
+	
+	// Initialize plane (ground)
+	groundPlane.CreatePlaneData();
+	objects.push_back(groundPlane);
 
-	for (int i = 0; i < objects.size(); i++)
+	// ^^^^ Additional render objects should be placed above ^^^^ //
+
+
+
+
+
+	// -------------------- Old and will be deleted----------------------------  
+	//********** //
+	// Render queue work. Testing buffer createion
+	//********** //
+	/*for (int i = 0; i < objects.size(); i++)
 	{
 		basicShader.createVertexBuffer(objects[i].getvertexPolygons());
 		gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());
 	}
 
-	// ********** //
-	// Render queue work. Need to figure out a method for rendering multiple objects dynamically and non-messy
-	// ********** //
-
-
-	//groundPlane.CreatePlaneData();
-	//objects.push_back(groundPlane);
-
-	/*std::vector<vertexPolygon> renderObjectQueue = objects[0].getvertexPolygons();
+	std::vector<vertexPolygon> renderObjectQueue = objects[0].getvertexPolygons();
 	for (int i = 1; i < objects.size(); i++)
 	{
-		renderObjectQueue.reserve(renderObjectQueue.size() + objects[i].getvertexPolygons().size()); 
-		renderObjectQueue.insert(renderObjectQueue.end(), objects[i].getvertexPolygons().begin(), objects[i].getvertexPolygons().end());
-		
-	}
-	basicShader.createVertexBuffer(objects[i].getvertexPolygons());
-	gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());*/
+		std::vector<vertexPolygon> temp = objects[i].getvertexPolygons();
+		renderObjectQueue.insert(renderObjectQueue.end(), temp.begin(), temp.end());
 
-	// ********** //
-	// Render queue work. Need to figure out a method for rendering multiple objects dynamically and non-messy
-	// ********** //
+	}
+	basicShader.createVertexBuffer(renderObjectQueue);
+	gShaderSM.createVertexBuffer(renderObjectQueue);*/
+
 
 	
 
 }
 
 
+// **** Temporary keyboard callback reference **** ///
+// 
 //static void GameEngine::keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 //{
 //	/*

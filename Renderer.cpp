@@ -19,6 +19,9 @@ GLFWwindow* Renderer::getWindow()
 	return gWindow;
 }
 
+//=============================================================
+//	From template - Needs explanation
+//=============================================================
 void Renderer::firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<Primitive> objects, float gClearColour[])
 {
 
@@ -33,6 +36,9 @@ void Renderer::firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<Pri
 	glEnable(GL_DEPTH_TEST);
 }
 
+//=============================================================
+//	From template - Needs explanation
+//=============================================================
 void Renderer::secondPassRenderTemp(ShaderHandler gShaderProgram)
 {
 	// first pass is done!
@@ -51,6 +57,10 @@ void Renderer::secondPassRenderTemp(ShaderHandler gShaderProgram)
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
 }
 
+
+//=============================================================
+//	Pre pass render needed to generate depth map for shadows.
+//=============================================================
 void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
 {
 	// set the color TO BE used (this does not clear the screen right away)
@@ -67,7 +77,7 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 		SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
 		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glBindVertexArray(gShaderProgram.getVertexAttributes());
+		glBindVertexArray(objects[i].getVertexAttribute());
 
 		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
@@ -78,11 +88,9 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 	}
 }
 
-/*
-=============================================================
-Pre pass render needed to generate depth map for shadows.
-=============================================================
-*/
+//=============================================================
+//	Main render pass
+//=============================================================
 void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
 {
 	// set the color TO BE used (this does not clear the screen right away)
@@ -93,35 +101,46 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
 
+	// ImGui uniform
 	glUniform3fv(gUniformColourLoc, 1, &gUniformColour[0]);
 
+	// Shadowmap ViewProjection matrix
 	SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
 
+	// Camera uniforms
 	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
 	
-
-	// tell opengl we are going to use the VAO we described earlier
+	// Main render queue
+	// Currently the render swaps buffer for every object which could become slow further on
+	// If possible the rendercalls could be improved
+	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		
+		// Updates the world matrix for object positioning and orientation
 		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		//glBindVertexArray(objects[i].getVertexAttribute());
-		glBindVertexArray(gShaderProgram.getVertexAttributes());
 
+		// Binds the VAO of an object to be renderer. Could become slow further on.
+		glBindVertexArray(objects[i].getVertexAttribute());
+
+		// Bind an objects texture for the shader
 		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
-		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
-		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
-		// so for one triangle we need 3 vertices!
 
+		// Shadowmap
 		//SM.bindForReading(GL_TEXTURE2, gShaderProgram); //ADD "shadowMap" in main shader.
 
-		glDrawArrays(GL_TRIANGLES, 0, 100);
+		// Draw call
+		// As the buffer is swapped for each object the drawcall currently always starts at index 0
+		// This is what could be improved with one large buffer and then advance the start index for each object
+		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
 	}
 	
 }
 
+//=============================================================
+//	From template - Needs explanation
+//=============================================================
 int Renderer::CreateFrameBuffer() {
 	int err = 0;
 	// =================== COLOUR BUFFER =======================================
@@ -161,6 +180,10 @@ int Renderer::CreateFrameBuffer() {
 	return err;
 }
 
+//=============================================================
+//	Initialized the opengl window
+//	Could be a window class instead
+//=============================================================
 void Renderer::initWindow(unsigned int w, unsigned int h)
 {
 	glfwInit();
@@ -201,12 +224,17 @@ void Renderer::initWindow(unsigned int w, unsigned int h)
 	return;
 }
 
+//=============================================================
+//	Sets the main viewport, usually used after swapping shaders
+//=============================================================
 void Renderer::SetViewport()
 {
-	// usually (not necessarily) this matches with the window size
 	glViewport(0, 0, WIDTH, HEIGHT);
 }
 
+//=============================================================
+//	Updates the model matrix for an object
+//=============================================================
 void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint shaderProg)
 {
 	glm::mat4 ID_MAT = glm::mat4(1.0f);
