@@ -149,7 +149,9 @@ void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 	// Updates camera position (movement)
 	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
 
-	objects[entityIndex] = cubeEntity.getMeshData();
+	// Could be turned into a for-loop
+	objects[entityIndex[0]] = cubeEntity0.getMeshData();
+	objects[entityIndex[1]] = cubeEntity1.getMeshData();
 
 	// **** Hardcoded, needs to be moved or changed
 	objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
@@ -190,13 +192,15 @@ void GameEngine::LoadContent()
 	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/mudTexture.jpg"));
 	objects.push_back(groundPlane);
 
+	// Entity creations
+	objects.push_back(cubeEntity0.getMeshData());
+	entityIndex[0] = objects.size() - 1;
 
-	objects.push_back(cubeEntity.getMeshData());
-	entityIndex = objects.size() - 1;
+	glm::vec3 newPos = glm::vec3(-4.0f, 0.0f, -3.0f);
+	cubeEntity1.setPosition(newPos);
+	objects.push_back(cubeEntity1.getMeshData());
+	entityIndex[1] = objects.size() - 1;
 	// ^^^^ Additional render objects should be placed above ^^^^ //
-
-
-
 
 
 	// -------------------- Old and will be deleted----------------------------  
@@ -218,10 +222,6 @@ void GameEngine::LoadContent()
 	}
 	basicShader.createVertexBuffer(renderObjectQueue);
 	gShaderSM.createVertexBuffer(renderObjectQueue);*/
-
-
-	
-
 }
 
 
