@@ -100,10 +100,17 @@ void GameEngine::Run()
 		// Main updates to loaded data
 		updateContent(deltaTime, newCam, newLight);
 
+		// Updates camera position (movement)
+		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
+
+		// **** Hardcoded, needs to be moved or changed
+		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
+		objects[1].setPosition();
+
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, newLight);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader);

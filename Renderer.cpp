@@ -91,7 +91,7 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
+void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light aLight)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -110,6 +110,12 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 	// Camera uniforms
 	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
+
+	glm::mat4 model = glm::mat4(1.0f);
+	glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
+
+	glUniform3fv(15, 1, glm::value_ptr(aLight.getLightPos()));
+	glUniform3fv(16, 1, glm::value_ptr(camera.camPos));
 	
 	// Main render queue
 	// Currently the render swaps buffer for every object which could become slow further on
