@@ -2,6 +2,7 @@
 
 GameEngine::GameEngine()
 {
+
 }
 
 GameEngine::~GameEngine()
@@ -178,21 +179,24 @@ void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
 
 	// Could be turned into a for-loop
-	objects[entityIndex[0]] = cubeEntity0.getMeshData();
-
-	// Very basic collision check with movement limiter
-	glm::vec3 oldPos = cubeEntity0.getPosition();
-	glm::vec3 newPos = cubeEntity0.Move(mainRenderer.getWindow(), deltaTime);
-	cubeEntity0.setPosition(newPos);
-	if (cubeEntity0.CheckCollision(cubeEntity1))
+	for (int i = 0; i < Entities.size(); i++)
 	{
-		cubeEntity0.setPosition(oldPos);
+		objects[entityIndex[i]] = Entities[i].getMeshData();
 	}
 
-	objects[entityIndex[1]] = cubeEntity1.getMeshData();
+	// Very basic collision check with movement limiter
+	glm::vec3 oldPos = playerCharacter.getPosition();
+	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
+	playerCharacter.setPosition(newPos);
 
-	// **** Hardcoded, needs to be moved or changed
-	objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
+	for (int i = 0; i < Entities.size(); i++)
+	{
+		if (playerCharacter.CheckCollision(Entities[i]))
+		{
+			playerCharacter.setPosition(oldPos);
+		}
+	}
+	objects[playerIndex] = playerCharacter.getMeshData();
 
 	// **** Needs to be moved to the renderer
 	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
@@ -231,13 +235,29 @@ void GameEngine::LoadContent()
 	objects.push_back(groundPlane);
 
 	// Entity creations
-	objects.push_back(cubeEntity0.getMeshData());
-	entityIndex[0] = objects.size() - 1;
+	Entity cubeEntity;
+	glm::vec3 startPos;
+	
+	startPos = glm::vec3(-4.0f, 0.0f, -3.0f);
+	cubeEntity.setPosition(startPos);
+	Entities.push_back(cubeEntity);
 
-	glm::vec3 newPos = glm::vec3(-4.0f, 0.0f, -3.0f);
-	cubeEntity1.setPosition(newPos);
-	objects.push_back(cubeEntity1.getMeshData());
-	entityIndex[1] = objects.size() - 1;
+	startPos = glm::vec3(-4.0f, 0.0f, 3.0f);
+	cubeEntity.setPosition(startPos);
+	Entities.push_back(cubeEntity);
+
+	startPos = glm::vec3(-2.0f, 0.0f, 3.0f);
+	cubeEntity.setPosition(startPos);
+	Entities.push_back(cubeEntity);
+
+	for (int i = 0; i < Entities.size(); i++)
+	{
+		objects.push_back(Entities[i].getMeshData());
+		entityIndex[i] = objects.size() - 1;
+	}
+
+	objects.push_back(playerCharacter.getMeshData());
+	playerIndex = objects.size() - 1;
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 }
 

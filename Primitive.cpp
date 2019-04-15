@@ -369,31 +369,6 @@ float Primitive::getWorldRotation() const
 	return this->worldRotation;
 }
 
-//=============================================================
-//	Moves this object based on keyboard input
-//	Could be adapted into a keyboard callback
-//=============================================================
-void Primitive::MovePrimitive(GLFWwindow *window, float deltaTime)
-{
-	float moveSpeed = 5.5f * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x + moveSpeed,
-			this->worldPosition.y, this->worldPosition.z);
-
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x - moveSpeed,
-			this->worldPosition.y, this->worldPosition.z);
-	
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
-			this->worldPosition.z + moveSpeed);
-
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
-			this->worldPosition.z - moveSpeed);
-}
-
 void Primitive::setPosition(glm::vec3 newPos)
 {
 	worldPosition = newPos;
