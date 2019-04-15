@@ -140,6 +140,9 @@ void GameEngine::Run()
 	glfwTerminate();
 }
 
+//=============================================================
+//	Updates engine content here
+//=============================================================
 void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 {
 
