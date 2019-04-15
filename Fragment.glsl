@@ -38,12 +38,23 @@ struct PointLight
 	vec3 specular;
 };
 
+struct DirectionalLight
+{
+	vec3 pos;
+	vec3 dir;
+
+	vec3 col;
+	vec3 specular;
+};
+
 #define NR_P_LIGHTS 6
 uniform PointLight pointLights[NR_P_LIGHTS];
+uniform DirectionalLight dirLight;
 
 //float ambient = 0.2;
 
 vec3 CalculatePointLight(PointLight light, vec3 pixelPos, vec3 aNormal, vec3 viewDir);
+vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 
 void main () {
 	vec4 texSample = texture(diffuseTex, vec2(textureCoord.s, 1- textureCoord.t));
@@ -52,7 +63,7 @@ void main () {
 	
 	vec3 viewDirection = normalize(camPos -fragPos);
 
-	vec3 totLightCalc;
+	vec3 totLightCalc = CalculateDirLight(dirLight,norm, viewDirection);
 
 	for(int i=0;i<NR_P_LIGHTS;i++)
 	{
@@ -167,5 +178,23 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 	}
 
 	return (ambient+diffuse+specular)*pLight.power;
+}
+
+vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
+{
+	vec3 lightDirection = normalize(-light.dir);
+
+	//Diffuse factor calculation.
+	float diffuseFactor = max(dot(viewDir,aNormal),0.0);
+	//Specular factor calculation.
+	vec3 refDir = reflect(-lightDirection,aNormal);
+	float specularFactor = pow(max(dot(viewDir,refDir),0.0), 64); //Replace 64 with material shininess once we have one.
+	//Combine it all
+
+	float ambient = 0.2;
+	vec3 diffuse = light.col * diffuseFactor;
+	vec3 specular = light.specular *specularFactor;
+
+	return (ambient + diffuse + specular);
 }
 

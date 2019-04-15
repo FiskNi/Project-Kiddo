@@ -92,7 +92,7 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[])
+void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aDirLight)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -117,7 +117,8 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 
 	glUniform3fv(16, 1, glm::value_ptr(camera.camPos));
 
-	//Add for-loop Here Later.
+	aDirLight.sendToShader(gShaderProgram);
+	//Sending all the lights to shader.
 	for (int i = 0; i < nr_P_LIGHTS; i++)
 	{
 		lightArr[i].sendToShader(gShaderProgram, i);

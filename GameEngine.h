@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Material.h"
 #include "Entity.h"
+#include "DirLight.h"
 
 class GameEngine
 {
