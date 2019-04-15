@@ -57,7 +57,21 @@ void GameEngine::Run()
 
 	// Should be moved to class privates
 	Camera newCam;
+	Light lightArr[nr_P_LIGHTS];
 	Light newLight;
+	Light twoLight;
+	Light threeLight;
+
+	twoLight.setLightPos(glm::vec3(4, 1, 0));
+	threeLight.setLightPos(glm::vec3(-4, 1, 0));
+
+	newLight.setPower(0.5);
+	twoLight.setPower(0.5);
+	threeLight.setPower(0.5);
+
+	lightArr[0] = newLight;
+	lightArr[1] = twoLight;
+	lightArr[2] = threeLight;
 
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
@@ -133,7 +147,7 @@ void GameEngine::Run()
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, newLight);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lightArr);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader);
@@ -231,6 +245,7 @@ void GameEngine::LoadContent()
 	
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
+	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/mudTexture.jpg"));
 	objects.push_back(groundPlane);
 

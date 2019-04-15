@@ -79,7 +79,8 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glBindVertexArray(objects[i].getVertexAttribute());
 
-		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
+		passTextureData(GL_TEXTURE0, objects[i].getTextureID(), gShaderProgram.getShader(),
+			"diffuseTex", 0);
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
 		// so for one triangle we need 3 vertices!
@@ -91,7 +92,7 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light aLight)
+void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[])
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -114,8 +115,13 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 	glm::mat4 model = glm::mat4(1.0f);
 	glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
 
-	glUniform3fv(15, 1, glm::value_ptr(aLight.getLightPos()));
 	glUniform3fv(16, 1, glm::value_ptr(camera.camPos));
+
+	//Add for-loop Here Later.
+	for (int i = 0; i < nr_P_LIGHTS; i++)
+	{
+		lightArr[i].sendToShader(gShaderProgram, i);
+	}
 	
 	// Main render queue
 	// Currently the render swaps buffer for every object which could become slow further on
@@ -131,10 +137,13 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 		glBindVertexArray(objects[i].getVertexAttribute());
 
 		// Bind an objects texture for the shader
-		glBindTexture(GL_TEXTURE_2D, objects[i].getTextureID());
+		passTextureData(GL_TEXTURE0, objects[i].getTextureID(), gShaderProgram.getShader(),
+			"diffuseTex", 0);
 
 		// Shadowmap
-		SM.bindForReading(GL_TEXTURE2, gShaderProgram.getShader()); //ADD "shadowMap" in main shader.
+		//SM.bindForReading(GL_TEXTURE2, gShaderProgram.getShader()); //ADD "shadowMap" in main shader.
+		passTextureData(GL_TEXTURE2, SM.getDepthMapAttachment(), gShaderProgram.getShader(),
+			"shadowMap", 2);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
@@ -248,8 +257,18 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint s
 	MODEL_MAT = glm::rotate(MODEL_MAT, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void Renderer::passTextureData(GLuint TextureUnit, GLuint texID)
+
+/*
+=============================================================
+Used to activate and bind the generated texture.
+Called during the render loop of objects.
+Sends the information of texture to specified shader program.
+=============================================================
+*/
+void Renderer::passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg,
+	GLchar* uniformName, int loc)
 {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(TextureUnit);
 	glBindTexture(GL_TEXTURE_2D, texID);
+	glUniform1i(glGetUniformLocation(shaderProg, uniformName), loc);
 }

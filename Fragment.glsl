@@ -12,7 +12,6 @@ out vec4 fragment_color;
 // this is a uniform value, the very same value for ALL pixel shader executions
 layout(location = 5) uniform vec3 colourFromImGui;
 
-layout(location = 15) uniform vec3 lightPos;
 layout(location = 16) uniform vec3 camPos;
 
 //Depth map for shadow mapping to sample 
@@ -24,28 +23,46 @@ vec4 calcDiffuse(vec3 light_pos, vec3 light_color, vec3 normal);
 
 uniform sampler2D diffuseTex;
 
+//~~ LightCalc variables and structs.
+struct PointLight
+{
+	vec3 pos;
+
+	float constant;
+	float linear;
+	float quadratic;
+	float range;
+	float power;
+
+	vec3 diffuse;
+	vec3 specular;
+};
+
+#define NR_P_LIGHTS 6
+uniform PointLight pointLights[NR_P_LIGHTS];
+
+//float ambient = 0.2;
+
+vec3 CalculatePointLight(PointLight light, vec3 pixelPos, vec3 aNormal, vec3 viewDir);
 
 void main () {
 	vec4 texSample = texture(diffuseTex, vec2(textureCoord.s, 1- textureCoord.t));
-	//vec3 hardNorm = normalize(vec3(1.0f,0.0f,0.0f));
-	vec3 hardNorm = normalize(normal);
-	vec3 dirOfLight = normalize(lightPos-fragPos);
+	
+	vec3 norm = normalize(normal);
+	
+	vec3 viewDirection = normalize(camPos -fragPos);
 
-	float ambient = 0.2;
-	//Diffuse calculation
-	float diffuse = max(dot(hardNorm,dirOfLight),0.0);
+	vec3 totLightCalc;
 
-	//specular calculation
-	float specStr = 0.5;
+	for(int i=0;i<NR_P_LIGHTS;i++)
+	{
+		totLightCalc += CalculatePointLight(pointLights[i],fragPos,norm,viewDirection);
+	}
 
-	vec3 viewDir = normalize(camPos-fragPos);
-	vec3 refDir = reflect(-dirOfLight, hardNorm);
-
-	float specVal = pow(max(dot(viewDir,refDir),0.0),64);
-	vec3 specular = specStr * specVal * vec3(0,0,1);//Replace hardcoded vec3 with lightColour later.
+	//vec3 newCol = totLightCalc*texSample;
 
 	float shadow = shadowCalc(shadow_coord, normal, vec3(4.0, 6.0, 2.0));
-	vec3 newCol = (ambient+diffuse+specular+(1.0 - shadow))*texSample;
+	vec3 newCol = (totLightCalc+( - shadow))*texSample;
 
 	fragment_color = vec4 (newCol, 1.0);
 
@@ -98,5 +115,57 @@ vec4 calcDiffuse(vec3 light_pos, vec3 light_color, vec3 normal){
 	vec3 diffuse = diffuseFactor * light_color;
 	vec4 final = vec4(diffuse, 1.0 );
 	return final;
+}
+
+/*
+=============================================================
+Function for all the light calculations for a point light.
+
+First we calculate the direction from the light to the current point.
+Then the distance. We then check if that distance is less than the pointlight's range.
+If it is less no calculations are made and we return diffuse specular and ambient empty.
+If not we calculate diffuse, specular and attenuation and then add it all together.
+
+TODO: When we add the material class its shininess, diffuse and specular should be added.
+
+=============================================================
+*/
+vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 viewDir)
+{
+	vec3 pointToLight = normalize(pLight.pos - pixelPos);
+	//~~ There's no need to do ANY calculations if we're out of range.
+	float dist = length(pLight.pos - pixelPos);
+
+	vec3 diffuse = vec3(0,0,0);
+	vec3 specular = vec3(0,0,0);
+	float ambient = 0;
+
+	if(dist<pLight.range)
+	{
+		//Calculate diffuse factor.
+		float diffuseFactor = dot(pointToLight,aNormal);
+		diffuseFactor = clamp(diffuseFactor , 0 , 1);//Ensure value stays within defined range.
+		//Calculate specular factor.
+		vec3 refDir = reflect(-pointToLight,aNormal);
+		float specularFactor = pow(max(dot(viewDir,refDir),0.0), 64); //Replace 64 with material shininess once we have one.
+
+		//Attenuation calculations.
+		float attenuation = 1.0 / (pLight.constant + pLight.linear *dist +pLight.quadratic *(dist*dist));
+
+		//Combine it all.
+		//Add material diffuse and specular once we have a material set up.
+
+		//vec3 ambient = pLight.ambient; //* vec3(texture(material.diffuse, textureCoord));
+		diffuse = pLight.diffuse *diffuseFactor; //*vec3(texture(material.diffuse, textureCoord));
+		specular = pLight.specular * specularFactor; //vec3(texture(material.specular,textureCoord));
+
+		ambient = 0.2;
+
+		ambient *= attenuation;
+		diffuse *= attenuation;
+		specular *= attenuation;
+	}
+
+	return (ambient+diffuse+specular)*pLight.power;
 }
 
