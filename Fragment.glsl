@@ -59,11 +59,10 @@ void main () {
 		totLightCalc += CalculatePointLight(pointLights[i],fragPos,norm,viewDirection);
 	}
 
-	vec3 newCol = totLightCalc*texSample;
-
+	//vec3 newCol = totLightCalc*texSample;
 
 	float shadow = shadowCalc(shadow_coord, normal, vec3(4.0, 6.0, 2.0));
-	vec3 newCol = (ambient+diffuse+specular+(1.0 - shadow))*texSample;
+	vec3 newCol = (totLightCalc+( - shadow))*texSample;
 
 	fragment_color = vec4 (newCol, 1.0);
 
