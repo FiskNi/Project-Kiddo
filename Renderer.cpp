@@ -134,7 +134,7 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 		glBindTexture(GL_TEXTURE_2D, objects[i].getTextureID());
 
 		// Shadowmap
-		//SM.bindForReading(GL_TEXTURE2, gShaderProgram); //ADD "shadowMap" in main shader.
+		SM.bindForReading(GL_TEXTURE2, gShaderProgram.getShader()); //ADD "shadowMap" in main shader.
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0

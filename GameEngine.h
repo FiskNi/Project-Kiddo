@@ -78,8 +78,6 @@ private:
 	// Entity
 	Entity cubeEntity0;
 	Entity cubeEntity1;
-	int entityIndex[];
-
-
+	int entityIndex[256];
 };
 
