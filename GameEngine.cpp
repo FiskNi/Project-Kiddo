@@ -8,13 +8,37 @@ GameEngine::~GameEngine()
 {
 }
 
+static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	cout << key << endl;
+
+	if (key == GLFW_KEY_SPACE)
+	{
+		switch (action)
+		{
+		case GLFW_PRESS:
+			cout << "Space key is pressed" << endl;
+		break;
+		case GLFW_REPEAT:
+			cout << "Space is held down" << endl;
+			break;
+		case GLFW_RELEASE:
+			cout << "Space is released" << endl;
+			break;
+		default:
+			break;
+		}
+	}
+	
+}
+
 //=============================================================
 //	Main engine loop
 //=============================================================
 void GameEngine::Run()
 {
 	// Keyboard callback reference, should be changed when if keyboard callbacks are added
-	// glfwSetKeyCallback(mainRenderer.getWindow(), keyboard);
+	glfwSetKeyCallback(mainRenderer.getWindow(), keyboard);
 
 	// If this becomes true the program will have failed in someway or been manually shut down
 	bool shutdown = false;
