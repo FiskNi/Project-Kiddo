@@ -75,6 +75,11 @@ void GameEngine::Run()
 		{
 			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
 		}
+		// Deltatime via ImGui
+		float deltaTime = ImGui::GetIO().DeltaTime;
+
+		// Main updates to loaded data
+		updateContent(deltaTime, newCam, newLight);
 
 		//---------
 		//PrePass render for Shadow mapping 
@@ -86,10 +91,9 @@ void GameEngine::Run()
 		// First render pass
 		mainRenderer.firstPassRenderTemp(fsqShader, objects, gClearColour);
 
-
 		// ---- Below is ImGui content that should be looked over and organized better	
 		// Load imGui content	
-		float deltaTime = ImGui::GetIO().DeltaTime;
+		//deltaTime = ImGui::GetIO().DeltaTime;
 		// move along X
 		gIncrement += 1.0f * deltaTime;
 		gOffsetX = sin(gIncrement);
@@ -123,8 +127,7 @@ void GameEngine::Run()
 		//glm::value_ptr(gRotate2D));
 		// ---- Above is ImGui content that should be looked over and organized better	
 
-		// Main updates to loaded data
-		updateContent(deltaTime, newCam, newLight);
+
 
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
