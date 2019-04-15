@@ -67,6 +67,7 @@ private:
 	std::vector<vertexPolygon> renderObjectQueue;
 	// Materials
 	Material cubeMat;
+	Material planeMat;
 
 	// Main camera
 	Camera mainCamera;

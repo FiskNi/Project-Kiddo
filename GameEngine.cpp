@@ -113,7 +113,6 @@ void GameEngine::Run()
 		glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
 		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
 
-
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
@@ -172,12 +171,13 @@ void GameEngine::LoadContent()
 	// Initialize 1 cube primitive and duplicate it by pushing it back into a vector
 	// "objects" is currently what can be seen as the renderqueue
 	cubePrimitive.CreateCubeData();
-	cubePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/mudTexture.jpg"));
+	cubePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/boxTexture.png"));
 	objects.push_back(cubePrimitive);
 	objects.push_back(cubePrimitive);
 	
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
+	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/mudTexture.jpg"));
 	objects.push_back(groundPlane);
 
 	// ^^^^ Additional render objects should be placed above ^^^^ //

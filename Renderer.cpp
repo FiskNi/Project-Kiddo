@@ -125,7 +125,7 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 		glBindVertexArray(objects[i].getVertexAttribute());
 
 		// Bind an objects texture for the shader
-		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
+		glBindTexture(GL_TEXTURE_2D, objects[0].getTextureID());
 
 		// Shadowmap
 		//SM.bindForReading(GL_TEXTURE2, gShaderProgram); //ADD "shadowMap" in main shader.
