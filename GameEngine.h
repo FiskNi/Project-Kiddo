@@ -76,9 +76,8 @@ private:
 	Camera mainCamera;
 
 	// Entity
-	Entity cubeEntity;
-	int entityIndex;
-
-
+	Entity cubeEntity0;
+	Entity cubeEntity1;
+	int entityIndex[256];
 };
 

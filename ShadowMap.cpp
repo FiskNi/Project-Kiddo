@@ -97,22 +97,6 @@ void ShadowMap::bindForWriting()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 }
-
-/*
-=============================================================
-Used to activate and bind the depth texture generated. 
-Called during the render loop of objects.
-Sends the information of texture to specified shader program.
-=============================================================
-*/
-void ShadowMap::bindForReading(GLenum textureUnit, GLuint shaderProg)
-{
-	glActiveTexture(textureUnit); //PF 
-	glBindTexture(GL_TEXTURE_2D, depthMapAttachments[0]); //PF 
-
-	glUniform1i(glGetUniformLocation(shaderProg, "shadowMap"), 2); //PF 
-}
-
 /*
 =============================================================
  Get the depth map attachment at [0]. 

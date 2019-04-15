@@ -79,7 +79,8 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glBindVertexArray(objects[i].getVertexAttribute());
 
-		passTextureData(GL_TEXTURE0, objects[i].getTextureID());
+		passTextureData(GL_TEXTURE0, objects[i].getTextureID(), gShaderProgram.getShader(),
+			"diffuseTex", 0);
 		// ask OpenGL to draw 3 vertices starting from index 0 in the vertex array 
 		// currently bound (VAO), with current in-use shader. Use TOPOLOGY GL_TRIANGLES,
 		// so for one triangle we need 3 vertices!
@@ -136,10 +137,13 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 		glBindVertexArray(objects[i].getVertexAttribute());
 
 		// Bind an objects texture for the shader
-		glBindTexture(GL_TEXTURE_2D, objects[0].getTextureID());
+		passTextureData(GL_TEXTURE0, objects[i].getTextureID(), gShaderProgram.getShader(),
+			"diffuseTex", 0);
 
 		// Shadowmap
-		//SM.bindForReading(GL_TEXTURE2, gShaderProgram); //ADD "shadowMap" in main shader.
+		//SM.bindForReading(GL_TEXTURE2, gShaderProgram.getShader()); //ADD "shadowMap" in main shader.
+		passTextureData(GL_TEXTURE2, SM.getDepthMapAttachment(), gShaderProgram.getShader(),
+			"shadowMap", 2);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
@@ -253,8 +257,18 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint s
 	MODEL_MAT = glm::rotate(MODEL_MAT, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void Renderer::passTextureData(GLuint TextureUnit, GLuint texID)
+
+/*
+=============================================================
+Used to activate and bind the generated texture.
+Called during the render loop of objects.
+Sends the information of texture to specified shader program.
+=============================================================
+*/
+void Renderer::passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg,
+	GLchar* uniformName, int loc)
 {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(TextureUnit);
 	glBindTexture(GL_TEXTURE_2D, texID);
+	glUniform1i(glGetUniformLocation(shaderProg, uniformName), loc);
 }
