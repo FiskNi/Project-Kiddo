@@ -43,6 +43,7 @@ void GameEngine::Run()
 		shutdown = true;
 
 	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
+
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
