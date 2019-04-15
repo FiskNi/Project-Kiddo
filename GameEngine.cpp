@@ -208,6 +208,9 @@ void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 		if (playerCharacter.CheckCollision(Entities[i]))
 		{
 			playerCharacter.setPosition(oldPos);
+
+			newPos = Entities[i].getPosition() - newPos;
+			Entities[i].setPosition(Entities[i].getPosition() + newPos);
 		}
 	}
 	objects[playerIndex] = playerCharacter.getMeshData();

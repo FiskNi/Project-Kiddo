@@ -75,6 +75,9 @@ private:
 	// Main camera
 	Camera mainCamera;
 
+	// Lights
+	std::vector<Light> lights;
+
 	// Entity
 	std::vector<Entity> Entities;
 	int entityIndex[256];

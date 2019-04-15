@@ -248,28 +248,28 @@ void Primitive::CreatePlaneData()
 {
 	// 6 hardcoded vertices representing a plane
 	vertexPolygon planeVertex;
-	planeVertex.position = glm::vec3(-3.0f, 0.0f, -3.0f);
+	planeVertex.position = glm::vec3(-20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 1.0f);
 	planeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(3.0f, 0.0f, -3.0f);
+	planeVertex.position = glm::vec3(20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(1.0f, 1.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(3.0f, 0.0f, 3.0f);
+	planeVertex.position = glm::vec3(20.0f, 0.0f, 20.0f);
 	planeVertex.uv = glm::vec2(1.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(3.0f, 0.0f, 3.0f);
+	planeVertex.position = glm::vec3(20.0f, 0.0f, 20.0f);
 	planeVertex.uv = glm::vec2(1.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(-3.0f, 0.0f, 3.0f);
+	planeVertex.position = glm::vec3(-20.0f, 0.0f, 20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(-3.0f, 0.0f, -3.0f);
+	planeVertex.position = glm::vec3(-20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 1.0f);
 		vertices.push_back(planeVertex);
 
