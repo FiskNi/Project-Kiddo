@@ -44,7 +44,7 @@ void main () {
 	float specVal = pow(max(dot(viewDir,refDir),0.0),64);
 	vec3 specular = specStr * specVal * vec3(0,0,1);//Replace hardcoded vec3 with lightColour later.
 
-	vec3 newCol = (ambient+diffuse+specular)*vec3(1.0,0.0,0.0);
+	vec3 newCol = (ambient+diffuse+specular)*texSample;
 
 	fragment_color = vec4 (newCol, 1.0);
 

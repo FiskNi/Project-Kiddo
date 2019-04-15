@@ -8,6 +8,7 @@
 #include "Character.h"
 #include "Light.h"
 #include "Material.h"
+#include "Entity.h"
 
 class GameEngine
 {
@@ -16,6 +17,8 @@ public:
 	~GameEngine();
 
 	void Run();
+
+	void updateContent(float deltaTime, Camera &newCam, Light &newLight);
 
 	void LoadContent();
 
@@ -67,9 +70,14 @@ private:
 	std::vector<vertexPolygon> renderObjectQueue;
 	// Materials
 	Material cubeMat;
+	Material planeMat;
 
 	// Main camera
 	Camera mainCamera;
+
+	// Entity
+	Entity cubeEntity;
+	int entityIndex;
 
 
 };

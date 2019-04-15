@@ -359,7 +359,7 @@ GLuint Primitive::getVertexAttribute() const
 	return gVertexAttribute;
 }
 
-glm::vec3 Primitive::getWorldPosition() const
+glm::vec3 Primitive::getPosition() const
 {
 	return this->worldPosition;
 }
@@ -375,7 +375,7 @@ float Primitive::getWorldRotation() const
 //=============================================================
 void Primitive::MovePrimitive(GLFWwindow *window, float deltaTime)
 {
-	float moveSpeed = 5.5f*deltaTime;
+	float moveSpeed = 5.5f * deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		this->worldPosition = glm::vec3(this->worldPosition.x + moveSpeed,
@@ -394,9 +394,9 @@ void Primitive::MovePrimitive(GLFWwindow *window, float deltaTime)
 			this->worldPosition.z - moveSpeed);
 }
 
-void Primitive::setPosition()
+void Primitive::setPosition(glm::vec3 newPos)
 {
-	worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	worldPosition = newPos;
 }
 
 std::vector<vertexPolygon> Primitive::getvertexPolygons()
