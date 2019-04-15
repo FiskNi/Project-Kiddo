@@ -30,6 +30,7 @@ void GameEngine::Run()
 	// Load and initialize game content
 	LoadContent();
 
+	// Should be moved to class privates
 	Camera newCam;
 	Light newLight;
 
@@ -100,13 +101,6 @@ void GameEngine::Run()
 		// Main updates to loaded data
 		updateContent(deltaTime, newCam, newLight);
 
-		// Updates camera position (movement)
-		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
-
-		// **** Hardcoded, needs to be moved or changed
-		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
-		objects[1].setPosition();
-
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
@@ -158,10 +152,12 @@ void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 
 	// Could be turned into a for-loop
 	objects[entityIndex[0]] = cubeEntity0.getMeshData();
+	cubeEntity0.Move(mainRenderer.getWindow(), deltaTime);
 	objects[entityIndex[1]] = cubeEntity1.getMeshData();
 
 	// **** Hardcoded, needs to be moved or changed
 	objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
+
 
 	// **** Needs to be moved to the renderer
 	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));

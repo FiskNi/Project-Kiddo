@@ -71,3 +71,36 @@ void Entity::CheckCollision(glm::vec3 position, glm::vec3 size)
 
 }
 
+//=============================================================
+//	Moves this object based on keyboard input
+//	Could be adapted into a keyboard callback
+//=============================================================
+void  Entity::Move(GLFWwindow *window, float deltaTime)
+{
+	float moveSpeed = 5.5f * deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
+		entityMesh.setPosition(glm::vec3(
+			this->entityMesh.getPosition().x + moveSpeed,
+			this->entityMesh.getPosition().y,
+			this->entityMesh.getPosition().z));
+
+	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
+		entityMesh.setPosition(glm::vec3(
+			this->entityMesh.getPosition().x - moveSpeed,
+			this->entityMesh.getPosition().y,
+			this->entityMesh.getPosition().z));
+
+	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
+		entityMesh.setPosition(glm::vec3(
+			this->entityMesh.getPosition().x,
+			this->entityMesh.getPosition().y,
+			this->entityMesh.getPosition().z + moveSpeed));
+
+	if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
+		entityMesh.setPosition(glm::vec3(
+			this->entityMesh.getPosition().x,
+			this->entityMesh.getPosition().y,
+			this->entityMesh.getPosition().z - moveSpeed));
+}
+

@@ -6,7 +6,6 @@ class Entity
 {
 private:
 	Primitive entityMesh;
-
 	glm::vec3 boundingBoxSize;
 
 public:
@@ -18,5 +17,6 @@ public:
 
 	void setPosition(glm::vec3 newPos);
 	void CheckCollision(glm::vec3 position, glm::vec3 size);
+	void Move(GLFWwindow *window, float deltaTime);
 };
 
