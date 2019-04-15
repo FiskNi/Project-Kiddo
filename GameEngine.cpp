@@ -97,21 +97,8 @@ void GameEngine::Run()
 		//glm::value_ptr(gRotate2D));
 		// ---- Above is ImGui content that should be looked over and organized better	
 
-
-		// Updates camera position (movement)
-		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
-
-		// **** Hardcoded, needs to be moved or changed
-		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
-		objects[1].setPosition();
-
-		// **** Needs to be moved to the renderer
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
-		glm::mat4 model = glm::mat4(1.0f);
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
-		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
+		// Main updates to loaded data
+		updateContent(deltaTime, newCam, newLight);
 
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
@@ -153,6 +140,26 @@ void GameEngine::Run()
 	glfwTerminate();
 }
 
+void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
+{
+
+	// Updates camera position (movement)
+	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
+
+	objects[entityIndex] = cubeEntity.getMeshData();
+
+	// **** Hardcoded, needs to be moved or changed
+	objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
+
+	// **** Needs to be moved to the renderer
+	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
+	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
+	glm::mat4 model = glm::mat4(1.0f);
+	glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
+	glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
+	glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
+}
+
 //=============================================================
 //	Load engine content here
 //=============================================================
@@ -180,6 +187,9 @@ void GameEngine::LoadContent()
 	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/mudTexture.jpg"));
 	objects.push_back(groundPlane);
 
+
+	objects.push_back(cubeEntity.getMeshData());
+	entityIndex = objects.size() - 1;
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 
 

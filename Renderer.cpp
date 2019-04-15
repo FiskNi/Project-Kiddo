@@ -75,7 +75,7 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 	for (int i = 0; i < objects.size(); i++)
 	{
 		SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
-		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].getPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glBindVertexArray(objects[i].getVertexAttribute());
 
@@ -118,7 +118,7 @@ void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objec
 	for (int i = 0; i < objects.size(); i++)
 	{
 		// Updates the world matrix for object positioning and orientation
-		CreateModelMatrix(objects[i].getWorldPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].getPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
