@@ -31,6 +31,8 @@
 #define HEIGHT 720
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
+#define nr_P_LIGHTS 6
+
 using namespace std;
 
 struct vertexPolygon

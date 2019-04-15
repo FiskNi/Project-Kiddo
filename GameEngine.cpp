@@ -31,7 +31,21 @@ void GameEngine::Run()
 	LoadContent();
 
 	Camera newCam;
+	Light lightArr[nr_P_LIGHTS];
 	Light newLight;
+	Light twoLight;
+	Light threeLight;
+
+	twoLight.setLightPos(glm::vec3(4, 1, 0));
+	threeLight.setLightPos(glm::vec3(-4, 1, 0));
+
+	newLight.setPower(0.5);
+	twoLight.setPower(0.5);
+	threeLight.setPower(0.5);
+
+	lightArr[0] = newLight;
+	lightArr[1] = twoLight;
+	lightArr[2] = threeLight;
 
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
@@ -104,13 +118,13 @@ void GameEngine::Run()
 		mainCamera.FPSCamControls(mainRenderer.getWindow(),deltaTime);
 
 		// **** Hardcoded, needs to be moved or changed
-		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
-		objects[1].setPosition();
+		//objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
+		//objects[1].setPosition();
 
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, newLight);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lightArr);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader);
