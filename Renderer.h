@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "ShadowMap.h"
 #include "ShaderHandler.h"
+#include "Light.h"
 
 class Renderer
 {
@@ -18,7 +19,7 @@ public:
 
 	void prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
 
-	void Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light aLight);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
