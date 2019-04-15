@@ -28,7 +28,6 @@ public:
 	glm::vec3 getPosition() const;
 	float getWorldRotation() const;
 
-	void MovePrimitive(GLFWwindow *window, float deltaTime);
 	void setPosition(glm::vec3 newPos);
 	std::vector<vertexPolygon> getvertexPolygons();
 	unsigned int getPolygonCount() const;

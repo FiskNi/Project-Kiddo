@@ -248,28 +248,28 @@ void Primitive::CreatePlaneData()
 {
 	// 6 hardcoded vertices representing a plane
 	vertexPolygon planeVertex;
-	planeVertex.position = glm::vec3(-3.0f, 0.0f, -3.0f);
+	planeVertex.position = glm::vec3(-20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 1.0f);
 	planeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(3.0f, 0.0f, -3.0f);
+	planeVertex.position = glm::vec3(20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(1.0f, 1.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(3.0f, 0.0f, 3.0f);
+	planeVertex.position = glm::vec3(20.0f, 0.0f, 20.0f);
 	planeVertex.uv = glm::vec2(1.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(3.0f, 0.0f, 3.0f);
+	planeVertex.position = glm::vec3(20.0f, 0.0f, 20.0f);
 	planeVertex.uv = glm::vec2(1.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(-3.0f, 0.0f, 3.0f);
+	planeVertex.position = glm::vec3(-20.0f, 0.0f, 20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 0.0f);
 		vertices.push_back(planeVertex);
 
-	planeVertex.position = glm::vec3(-3.0f, 0.0f, -3.0f);
+	planeVertex.position = glm::vec3(-20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 1.0f);
 		vertices.push_back(planeVertex);
 
@@ -367,31 +367,6 @@ glm::vec3 Primitive::getPosition() const
 float Primitive::getWorldRotation() const
 {
 	return this->worldRotation;
-}
-
-//=============================================================
-//	Moves this object based on keyboard input
-//	Could be adapted into a keyboard callback
-//=============================================================
-void Primitive::MovePrimitive(GLFWwindow *window, float deltaTime)
-{
-	float moveSpeed = 5.5f * deltaTime;
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x + moveSpeed,
-			this->worldPosition.y, this->worldPosition.z);
-
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x - moveSpeed,
-			this->worldPosition.y, this->worldPosition.z);
-	
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
-			this->worldPosition.z + moveSpeed);
-
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		this->worldPosition = glm::vec3(this->worldPosition.x, this->worldPosition.y,
-			this->worldPosition.z - moveSpeed);
 }
 
 void Primitive::setPosition(glm::vec3 newPos)

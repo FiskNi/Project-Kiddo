@@ -76,9 +76,15 @@ private:
 	// Main camera
 	Camera mainCamera;
 
+	// Lights
+	std::vector<Light> lights;
+
 	// Entity
-	Entity cubeEntity0;
-	Entity cubeEntity1;
+	std::vector<Entity> Entities;
 	int entityIndex[256];
+
+	// Character
+	Character playerCharacter;
+	int playerIndex;
 };
 
