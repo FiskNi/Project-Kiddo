@@ -46,7 +46,14 @@ void Camera::FPSCamControls(GLFWwindow * window, float deltaTime)
 		this->camPos += camSpeed * this->face;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		this->camPos -= camSpeed * this->face;
-
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		this->camPos += camSpeed * this->camUp;
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+		this->camPos -= camSpeed * this->camUp;
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		this->camPos += camSpeed * this->camYaw;
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		this->camPos -= camSpeed * this->camYaw;
 	// Add camera pitch/yaw here
 }
 
