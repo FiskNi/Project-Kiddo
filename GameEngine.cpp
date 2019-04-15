@@ -55,7 +55,7 @@ void GameEngine::Run()
 		//---------
 		//PrePass render for Shadow mapping 
 		shadowMap.bindForWriting();
-		mainRenderer.prePassRender(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
+		mainRenderer.prePassRender(gShaderSM, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
 		mainRenderer.SetViewport();	//resets the viewport
 		//--------
 
@@ -153,8 +153,16 @@ void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 
 	// Could be turned into a for-loop
 	objects[entityIndex[0]] = cubeEntity0.getMeshData();
+	glm::vec3 oldPos = cubeEntity0.getPosition();
 	cubeEntity0.Move(mainRenderer.getWindow(), deltaTime);
+	if (cubeEntity0.CheckCollision(cubeEntity1))
+	{
+
+	}
+	
+
 	objects[entityIndex[1]] = cubeEntity1.getMeshData();
+
 
 	// **** Hardcoded, needs to be moved or changed
 	objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
