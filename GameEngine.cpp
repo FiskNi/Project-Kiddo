@@ -224,6 +224,7 @@ void GameEngine::LoadContent()
 	
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
+	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/mudTexture.jpg"));
 	objects.push_back(groundPlane);
 
