@@ -105,19 +105,10 @@ void GameEngine::Run()
 		objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
 		objects[1].setPosition();
 
-		// **** Needs to be moved to the renderer
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
-		glm::mat4 model = glm::mat4(1.0f);
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
-		glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
-
-
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, newLight);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader);
