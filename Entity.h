@@ -20,6 +20,6 @@ public:
 
 	void setPosition(glm::vec3 newPos);
 	bool CheckCollision(Entity collidingCube);
-	void Move(GLFWwindow *window, float deltaTime);
+	glm::vec3 Move(GLFWwindow *window, float deltaTime);
 };
 

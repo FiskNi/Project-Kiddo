@@ -147,26 +147,25 @@ void GameEngine::Run()
 //=============================================================
 void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 {
-
 	// Updates camera position (movement)
 	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
 
 	// Could be turned into a for-loop
 	objects[entityIndex[0]] = cubeEntity0.getMeshData();
+
+	// Very basic collision check with movement limiter
 	glm::vec3 oldPos = cubeEntity0.getPosition();
-	cubeEntity0.Move(mainRenderer.getWindow(), deltaTime);
+	glm::vec3 newPos = cubeEntity0.Move(mainRenderer.getWindow(), deltaTime);
+	cubeEntity0.setPosition(newPos);
 	if (cubeEntity0.CheckCollision(cubeEntity1))
 	{
-
+		cubeEntity0.setPosition(oldPos);
 	}
-	
 
 	objects[entityIndex[1]] = cubeEntity1.getMeshData();
 
-
 	// **** Hardcoded, needs to be moved or changed
 	objects[0].MovePrimitive(mainRenderer.getWindow(), deltaTime);
-
 
 	// **** Needs to be moved to the renderer
 	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
@@ -213,27 +212,6 @@ void GameEngine::LoadContent()
 	objects.push_back(cubeEntity1.getMeshData());
 	entityIndex[1] = objects.size() - 1;
 	// ^^^^ Additional render objects should be placed above ^^^^ //
-
-
-	// -------------------- Old and will be deleted----------------------------  
-	//********** //
-	// Render queue work. Testing buffer createion
-	//********** //
-	/*for (int i = 0; i < objects.size(); i++)
-	{
-		basicShader.createVertexBuffer(objects[i].getvertexPolygons());
-		gShaderSM.createVertexBuffer(objects[i].getvertexPolygons());
-	}
-
-	std::vector<vertexPolygon> renderObjectQueue = objects[0].getvertexPolygons();
-	for (int i = 1; i < objects.size(); i++)
-	{
-		std::vector<vertexPolygon> temp = objects[i].getvertexPolygons();
-		renderObjectQueue.insert(renderObjectQueue.end(), temp.begin(), temp.end());
-
-	}
-	basicShader.createVertexBuffer(renderObjectQueue);
-	gShaderSM.createVertexBuffer(renderObjectQueue);*/
 }
 
 
