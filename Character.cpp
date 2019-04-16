@@ -71,41 +71,45 @@ bool Character::CheckCollision(Entity collidingCube)
 
 }
 
-
 //=============================================================
 //	Moves this object based on keyboard input
 //	Could be adapted into a keyboard callback
 //=============================================================
 glm::vec3 Character::Move(GLFWwindow* window, float dTime)
 {
-	float moveSpeed = 5.5f * dTime;
+	float moveSpeed = 5.5f * dTime,
+		moveX = 0.0f,
+		moveY = 0.0f,
+		moveZ = 0.0f;
+
 	glm::vec3 newPos = playerMesh.getPosition();
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		newPos = glm::vec3(
-			this->playerMesh.getPosition().x + moveSpeed,
-			this->playerMesh.getPosition().y,
-			this->playerMesh.getPosition().z);
+		moveX = moveSpeed;
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		newPos = glm::vec3(
-			this->playerMesh.getPosition().x - moveSpeed,
-			this->playerMesh.getPosition().y,
-			this->playerMesh.getPosition().z);
+		moveX = -moveSpeed;
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		newPos = glm::vec3(
-			this->playerMesh.getPosition().x,
-			this->playerMesh.getPosition().y,
-			this->playerMesh.getPosition().z + moveSpeed);
+		moveZ = moveSpeed;
 
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		newPos = glm::vec3(
-			this->playerMesh.getPosition().x,
-			this->playerMesh.getPosition().y,
-			this->playerMesh.getPosition().z - moveSpeed);
+		moveZ = -moveSpeed;
 
+	return calcMovement(moveX, moveY, moveZ);
+}
 
-
-	return newPos;
+//=============================================================
+//	A private function that will only be used by the move()
+//	function. Takes in amt to be moved and calculates in every
+//  direction. 
+//=============================================================
+glm::vec3 Character::calcMovement(float moveX, float moveY, float moveZ)
+{
+	glm::vec3 calculatedPos = glm::vec3(
+		this->playerMesh.getPosition().x + moveX,
+		this->playerMesh.getPosition().y + moveY,
+		this->playerMesh.getPosition().z + moveZ
+	);
+	return calculatedPos;
 }
