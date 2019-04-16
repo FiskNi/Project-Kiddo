@@ -18,7 +18,7 @@ public:
 	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[]);
 	void secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM);
 
-	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, DirLight aDirLight);
 
 	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aLight);
 

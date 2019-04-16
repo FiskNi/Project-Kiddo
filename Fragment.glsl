@@ -51,22 +51,45 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 
 void main () {
 	vec4 diffuse = texture(diffuseTex, vec2(textureCoord.s, 1 - textureCoord.t));
+
 	vec3 norm = normalize(normal);
 	vec3 viewDirection = normalize(camPos - fragPos);
 
+	//float shadow = shadowCalc(shadow_coord, normal, dirLight.pos);
 	vec3 ambientLight = diffuse.xyz * vec3(0.1f, 0.1f, 0.1f);
-	vec3 directionalLight = diffuse.xyz * CalculateDirLight(dirLight, norm, viewDirection);
+	vec3 directionalLight = vec3(0.0f);
+
+	vec3 projLightCoords = shadow_coord.xyz / shadow_coord.w;
+	projLightCoords = projLightCoords * 0.5 + 0.5;
+	float shadowMapDepth = texture(shadowMap, projLightCoords.xy).r;
+	float lightDepthValue = projLightCoords.z;
+	float bias = 0.001f;
+	//bias = max(0.05 * (1.0 - dot(normal, dirLight.dir)), 0.005);
+	lightDepthValue -= bias;
+
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(shadowMap, projLightCoords.xy + vec2(x, y) * texelSize).r; 
+            directionalLight += diffuse.xyz * vec3(lightDepthValue < pcfDepth ? 0.3f : 0.0f);        
+        }    
+    }
+	directionalLight /= 9;
+
+	if (projLightCoords.z > 1.0f)
+	{
+		directionalLight = diffuse.xyz * CalculateDirLight(dirLight, norm, viewDirection);
+	}
+
 	vec3 pointLight = vec3(0.0f);
 	for(int i = 0; i < NR_P_LIGHTS; i++)
 	{
 		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fragPos, norm, viewDirection);
 	}
 
-	float shadow = shadowCalc(shadow_coord, normal, vec3(4.0, 6.0, 2.0));
-	//vec3 newCol = (totLightCalc + (1 - shadow)) * texSample;
-
-	vec4 finalColor = vec4(max(ambientLight + directionalLight + pointLight - shadow, 0.0f), 1.0f);
-
+	vec4 finalColor = vec4(max(ambientLight + directionalLight + pointLight, 0.0f), 1.0f);
 	fragment_color = finalColor;
 }
 
@@ -76,6 +99,7 @@ Sample from the depth map for shadows.
 =============================================================
 */
 float shadowCalc(vec4 shadow_coord, vec3 normal, vec3 light_pos){
+	
 	vec3 proj_coord = shadow_coord.xyz / shadow_coord.w;
 	proj_coord = proj_coord * 0.5 + 0.5;
 	float closetsDepth = texture(shadowMap, proj_coord.xy).r;
@@ -83,6 +107,7 @@ float shadowCalc(vec4 shadow_coord, vec3 normal, vec3 light_pos){
 	vec3 lightDir = normalize(light_pos - fragPos.xyz);
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
 	float shadow = 0.0;
+
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -1; x <= 1; ++x)
     {
@@ -153,19 +178,20 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 
 vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
 {
-	vec3 lightDirection = normalize(-light.dir);
+	light.dir = normalize(light.dir);
+	vec3 lightDirection = normalize(light.dir - fragPos);
 
 	//Diffuse factor calculation.
-	float diffuseFactor = max(dot(viewDir, aNormal), 0.0);
+	float diffuseFactor = max(dot(light.dir, aNormal), 0.0);
 
 	//Specular factor calculation.
-	vec3 refDir = reflect(-lightDirection, aNormal);
-	float specularFactor = max(dot(viewDir, refDir), 0.0); //Replace 64 with material shininess once we have one.
+	//vec3 refDir = reflect(-lightDirection, aNormal);
+	//float specularFactor = max(dot(viewDir, refDir), 0.0); //Replace 64 with material shininess once we have one.
 	//Combine it all
 
-	vec3 diffuse = max(light.col * diffuseFactor, 0.0f);
-	float specular = pow(specularFactor, 64);
+	float diffuse = max(diffuseFactor, 0.0f);
+	//float specular = pow(specularFactor, 64);
 
-	return diffuse + specular;
+	return diffuse; //+ specular;
 }
 

@@ -35,7 +35,7 @@ void main() {
 	textureCoord = vec2(vertex_uv.x, vertex_uv.y);
  	vec4 newVertex = rotateZ * vec4(vertex_position, 1.0f);
 // 	gl_Position = vec4(vec3(newVertex.x + offset, newVertex.yz), 1.0);
-	gl_Position = proj*view*model*vec4(vertex_position, 1.0f);
+	gl_Position = proj * view * model * vec4(vertex_position, 1.0f);
 
 	shadow_coord = SHADOW_MAT * (model * vec4(vertex_position, 1.0)); 
 }

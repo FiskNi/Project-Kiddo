@@ -4,8 +4,8 @@
 
 ShadowMap::ShadowMap()
 {
-	SHADOW_WIDTH = 2048;
-	SHADOW_HEIGHT = 2048;
+	SHADOW_WIDTH = 4096;
+	SHADOW_HEIGHT = 4096;
 
 	shadow_id = -1;
 }
@@ -61,8 +61,8 @@ int ShadowMap::CreateFrameBufferSM()
 */
 void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 {
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, 0.1, 10); //An orthographic matrix
-	glm::mat4 depthViewMatrix = glm::lookAt(lightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); //View from the light position towards origo
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 20.0f); //An orthographic matrix
+	glm::mat4 depthViewMatrix = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //View from the light position towards origo
 	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
 
 	glm::mat4 shadowBias = glm::mat4(
@@ -73,6 +73,7 @@ void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 
 
 	shadow_matrix = depthMVP * shadowBias;
+	shadow_matrix = depthMVP;
 	shadow_id = glGetUniformLocation(shaderProg, "SHADOW_MAT");
 	if (shadow_id == -1) {
 		OutputDebugStringA("Error, cannot find 'shadow_id' attribute in Vertex shader SM\n");

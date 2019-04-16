@@ -100,7 +100,7 @@ void GameEngine::Run()
 		//---------
 		//PrePass render for Shadow mapping 
 		shadowMap.bindForWriting();
-		mainRenderer.prePassRender(gShaderSM, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap);
+		mainRenderer.prePassRender(gShaderSM, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, aDirLight);
 		mainRenderer.SetViewport();	//resets the viewport
 		//--------
 
@@ -244,13 +244,11 @@ void GameEngine::LoadContent()
 	// "objects" is currently what can be seen as the renderqueue
 	cubePrimitive.CreateCubeData();
 	cubePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/boxTexture.png"));
-	objects.push_back(cubePrimitive);
-	objects.push_back(cubePrimitive);
-	
+
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/mudTexture.jpg"));
+	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/boxTexture.png"));
 	objects.push_back(groundPlane);
 
 	// Entity creations
