@@ -20,7 +20,7 @@ public:
 
 	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, DirLight aDirLight);
 
-	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aLight);
+	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aLight);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);

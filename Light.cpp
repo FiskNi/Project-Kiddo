@@ -3,15 +3,15 @@
 
 Light::Light()
 {
-	this->lightPos = glm::vec3(0.0f, 1.0, -1.0f);
-	this->diffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+	this->lightPos = glm::vec3(0.0f, 2.0, 0.0f);
+	this->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	this->specular = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	this->constant = 0.5f;//Put to 1 for spooky light.
-	this->linear = 0.09;
-	this->quadratic = 0.032;
-	this->range = 3;
-	this->power = 0;
+	this->constant = 1.0f;
+	this->linear = 0.35f;
+	this->quadratic = 0.44f;
+	this->range = 15.0f;
+	this->power = 10.0f;
 }
 
 Light::~Light()

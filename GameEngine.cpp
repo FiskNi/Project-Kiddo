@@ -55,25 +55,6 @@ void GameEngine::Run()
 	// Load and initialize game content
 	LoadContent();
 
-	// Should be moved to class privates
-	DirLight aDirLight;
-	Camera newCam;
-	Light lightArr[nr_P_LIGHTS];
-	Light newLight;
-	Light twoLight;
-	Light threeLight;
-
-	twoLight.setLightPos(glm::vec3(4, 1, 0));
-	threeLight.setLightPos(glm::vec3(-4, 1, 0));
-
-	newLight.setPower(1.0);
-	twoLight.setPower(1.0);
-	threeLight.setPower(1.0);
-
-	lightArr[0] = newLight;
-	lightArr[1] = twoLight;
-	lightArr[2] = threeLight;
-
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
@@ -95,7 +76,7 @@ void GameEngine::Run()
 		float deltaTime = ImGui::GetIO().DeltaTime;
 
 		// Main updates to loaded data
-		updateContent(deltaTime, newCam, newLight);
+		updateContent(deltaTime);
 
 		//---------
 		//PrePass render for Shadow mapping 
@@ -148,7 +129,7 @@ void GameEngine::Run()
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lightArr, aDirLight);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lights, aDirLight);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader, shadowMap);
@@ -188,15 +169,15 @@ void GameEngine::Run()
 //=============================================================
 //	Updates engine content here
 //=============================================================
-void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
+void GameEngine::updateContent(float deltaTime)
 {
 	// Updates camera position (movement)
 	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
 
 	// Could be turned into a for-loop
-	for (int i = 0; i < Entities.size(); i++)
+	for (int i = 0; i < entities.size(); i++)
 	{
-		objects[entityIndex[i]] = Entities[i].getMeshData();
+		objects[entityIndex[i]] = entities[i].getMeshData();
 	}
 
 	// Very basic collision check with movement limiter
@@ -204,25 +185,25 @@ void GameEngine::updateContent(float deltaTime, Camera &newCam, Light &newLight)
 	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
 	playerCharacter.setPosition(newPos);
 
-	for (int i = 0; i < Entities.size(); i++)
+	for (int i = 0; i < entities.size(); i++)
 	{
-		if (playerCharacter.CheckCollision(Entities[i]))
+		if (playerCharacter.CheckCollision(entities[i]))
 		{
 			playerCharacter.setPosition(oldPos);
 
-			newPos = Entities[i].getPosition() - newPos;
-			Entities[i].setPosition(Entities[i].getPosition() + newPos);
+			newPos = entities[i].getPosition() - newPos;
+			entities[i].setPosition(entities[i].getPosition() + newPos);
 		}
 	}
 	objects[playerIndex] = playerCharacter.getMeshData();
 
 	// **** Needs to be moved to the renderer
-	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(newCam.GetViewMatrix()));
-	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(newCam.GetProjectionMatrix()));
+	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(mainCamera.GetViewMatrix()));
+	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(mainCamera.GetProjectionMatrix()));
 	glm::mat4 model = glm::mat4(1.0f);
 	glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
-	glUniform3fv(15, 1, glm::value_ptr(newLight.getLightPos()));
-	glUniform3fv(16, 1, glm::value_ptr(newCam.camPos));
+	glUniform3fv(15, 1, glm::value_ptr(lights[0].getLightPos()));
+	glUniform3fv(16, 1, glm::value_ptr(mainCamera.camPos));
 }
 
 //=============================================================
@@ -233,6 +214,20 @@ void GameEngine::LoadContent()
 	// Load shaders
 	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
 	gShaderSM.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
+
+	// Load lights
+	Light light;
+	light.setLightPos(glm::vec3(1.0f, 1.0f, -2.0f));
+	light.setDiffuse(glm::vec3(1.0f, 0.3f, 0.5f));
+	light.setSpecular(glm::vec3(1.0f, 0.3f, 0.5f));
+	lights.push_back(light);
+
+	light.setLightPos(glm::vec3(5.0f, 1.0f, -2.0f));
+	lights.push_back(light);
+
+	light.setLightPos(glm::vec3(-3.0f, 1.0f, -2.0f));
+	lights.push_back(light);
+
 
 	// Load fullscreen quad vertices
 	// Right now the fullscreen quad is coded into the shader handler.
@@ -257,24 +252,25 @@ void GameEngine::LoadContent()
 	
 	startPos = glm::vec3(-4.0f, 0.0f, -3.0f);
 	cubeEntity.setPosition(startPos);
-	Entities.push_back(cubeEntity);
+	entities.push_back(cubeEntity);
 
 	startPos = glm::vec3(-4.0f, 0.0f, 3.0f);
 	cubeEntity.setPosition(startPos);
-	Entities.push_back(cubeEntity);
+	entities.push_back(cubeEntity);
 
 	startPos = glm::vec3(-2.0f, 0.0f, 3.0f);
 	cubeEntity.setPosition(startPos);
-	Entities.push_back(cubeEntity);
+	entities.push_back(cubeEntity);
 
-	for (int i = 0; i < Entities.size(); i++)
+	for (int i = 0; i < entities.size(); i++)
 	{
-		objects.push_back(Entities[i].getMeshData());
+		objects.push_back(entities[i].getMeshData());
 		entityIndex[i] = objects.size() - 1;
 	}
 
 	objects.push_back(playerCharacter.getMeshData());
 	playerIndex = objects.size() - 1;
+
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 }
 

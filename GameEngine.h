@@ -19,7 +19,7 @@ public:
 
 	void Run();
 
-	void updateContent(float deltaTime, Camera &newCam, Light &newLight);
+	void updateContent(float deltaTime);
 
 	void LoadContent();
 
@@ -78,9 +78,10 @@ private:
 
 	// Lights
 	std::vector<Light> lights;
+	DirLight aDirLight;
 
 	// Entity
-	std::vector<Entity> Entities;
+	std::vector<Entity> entities;
 	int entityIndex[256];
 
 	// Character

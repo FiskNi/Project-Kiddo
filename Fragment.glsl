@@ -73,7 +73,7 @@ void main () {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, projLightCoords.xy + vec2(x, y) * texelSize).r; 
-            directionalLight += diffuse.xyz * vec3(lightDepthValue < pcfDepth ? 0.3f : 0.0f);        
+            directionalLight += diffuse.xyz * vec3(lightDepthValue < pcfDepth ? 0.1f : 0.0f);        
         }    
     }
 	directionalLight /= 9;
@@ -145,7 +145,7 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 	float dist = length(pLight.pos - pixelPos);
 
 	vec3 diffuse = vec3(0.0f);
-	float specular = 0.0f;
+	vec3 specular = vec3(0.0f);
 
 	//~~ There's no need to do ANY calculations if we're out of range.
 	if(dist < pLight.range)
@@ -156,7 +156,7 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 
 		//Calculate specular factor.
 		vec3 refDir = normalize(reflect(-pointToLight, aNormal));
-		float specularFactor = max(dot(viewDir, refDir),0.0);
+		float specularFactor = pow(max(dot(viewDir, refDir),0.0), 64);
 
 		//Attenuation calculations.
 		float attenuation = 1.0 / (pLight.constant + pLight.linear * dist + pLight.quadratic * (dist * dist));
@@ -165,7 +165,7 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 		//Add material diffuse and specular once we have a material set up.
 
 		diffuse = max(pLight.diffuse * diffuseFactor, 0.0f); //*vec3(texture(material.diffuse, textureCoord));
-		specular = pow(specularFactor, 64); //Replace 64 with material shininess once we have one.
+		specular = max(pLight.specular * specularFactor, 0.0f); //Replace 64 with material shininess once we have one.
 											//vec3(texture(material.specular,textureCoord));
 
 		diffuse *= attenuation;
@@ -185,13 +185,13 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
 	float diffuseFactor = max(dot(light.dir, aNormal), 0.0);
 
 	//Specular factor calculation.
-	//vec3 refDir = reflect(-lightDirection, aNormal);
-	//float specularFactor = max(dot(viewDir, refDir), 0.0); //Replace 64 with material shininess once we have one.
+	vec3 refDir = reflect(-lightDirection, aNormal);
+	float specularFactor = max(dot(viewDir, refDir), 0.0); //Replace 64 with material shininess once we have one.
 	//Combine it all
 
 	float diffuse = max(diffuseFactor, 0.0f);
-	//float specular = pow(specularFactor, 64);
+	float specular = pow(specularFactor, 64);
 
-	return diffuse; //+ specular;
+	return diffuse + specular;
 }
 
