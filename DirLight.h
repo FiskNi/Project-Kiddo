@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Headers.h"
-#include "ShaderHandler.h"
+#include "Shader.h"
 
 class DirLight
 {
@@ -24,5 +24,5 @@ public:
 	void setLightCol(glm::vec3 lightCol);
 	void setSpecular(glm::vec3 spec);
 
-	void sendToShader(ShaderHandler shader);
+	void sendToShader(Shader shader);
 };

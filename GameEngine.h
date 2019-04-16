@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "ShadowMap.h"
 #include "Primitive.h"
-#include "ShaderHandler.h"
+#include "Shader.h"
 #include "Camera.h"
 #include "Character.h"
 #include "Light.h"
@@ -55,9 +55,9 @@ private:
 	Renderer mainRenderer;
 
 	// Shaders
-	ShaderHandler basicShader;
-	ShaderHandler fsqShader;
-	ShaderHandler gShaderSM;
+	Shader basicShader;
+	Shader fsqShader;
+	Shader gShaderSM;
 	
 	// Shadowmap
 	ShadowMap shadowMap;

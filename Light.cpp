@@ -55,7 +55,7 @@ void Light::setPower(float power)
 	this->power = power;
 }
 
-void Light::sendToShader(ShaderHandler shader, int index)
+void Light::sendToShader(Shader shader, int index)
 {
 	glUseProgram(shader.getShader());
 

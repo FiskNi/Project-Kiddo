@@ -3,7 +3,7 @@
 #include "Primitive.h"
 #include "Camera.h"
 #include "ShadowMap.h"
-#include "ShaderHandler.h"
+#include "Shader.h"
 #include "Light.h"
 #include "DirLight.h"
 
@@ -15,12 +15,12 @@ public:
 
 	GLFWwindow *getWindow();
 
-	void firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<Primitive> objects, float gClearColour[]);
-	void secondPassRenderTemp(ShaderHandler gShaderProgram);
+	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[]);
+	void secondPassRenderTemp(Shader gShaderProgram);
 
-	void prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
+	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
 
-	void Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aLight);
+	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aLight);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);

@@ -1,6 +1,6 @@
 #pragma once
 #include "Headers.h"
-#include "ShaderHandler.h"
+#include "Shader.h"
 
 class Light
 {
@@ -34,7 +34,7 @@ public:
 
 	//Use this function to send the specific pointLight to the specific shader.
 	//Putting it at "index" location in pointLight uniform.
-	void sendToShader(ShaderHandler shader, int index);
+	void sendToShader(Shader shader, int index);
 
 };
 

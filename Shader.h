@@ -1,11 +1,11 @@
 #pragma once
 #include "Headers.h"
 
-class ShaderHandler
+class Shader
 {
 public:
-	ShaderHandler();
-	~ShaderHandler();
+	Shader();
+	~Shader();
 
 	void CreateShader(const char* vertexShader, const char* fragmentShader);
 	void CreateFSShaders();

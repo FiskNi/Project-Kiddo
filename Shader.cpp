@@ -1,6 +1,6 @@
-#include "ShaderHandler.h"
+#include "Shader.h"
 
-ShaderHandler::ShaderHandler()
+Shader::Shader()
 {
 	// To be deleted
 	gVertexBuffer = 0;
@@ -8,7 +8,7 @@ ShaderHandler::ShaderHandler()
 }
 
 
-ShaderHandler::~ShaderHandler()
+Shader::~Shader()
 {
 }
 
@@ -16,7 +16,7 @@ ShaderHandler::~ShaderHandler()
 //	Loads the shader content from a file into a shader program
 //	Could be moved into the contructor instead
 //=============================================================
-void ShaderHandler::CreateShader(const char* vertexShader, const char* fragmentShader)
+void Shader::CreateShader(const char* vertexShader, const char* fragmentShader)
 {
 	// local buffer to store error strings when compiling.
 	char buff[1024];
@@ -101,7 +101,7 @@ void ShaderHandler::CreateShader(const char* vertexShader, const char* fragmentS
 //	Loads a fullscreen quad shader into a shader program
 //	The entire fsq concept could be moved into its own class
 //=============================================================
-void ShaderHandler::CreateFSShaders()
+void Shader::CreateFSShaders()
 {
 	// local buffer to store error strings when compiling.
 	char buff[1024];
@@ -183,7 +183,7 @@ void ShaderHandler::CreateFSShaders()
 //	Creates a fullscreen quad data for the fsq shader
 //	The entire fsq concept could be moved into its own class
 //=============================================================
-void ShaderHandler::CreateFullScreenQuad()
+void Shader::CreateFullScreenQuad()
 {
 	struct Pos2UV {
 		float x, y;
@@ -227,7 +227,7 @@ void ShaderHandler::CreateFullScreenQuad()
 // Deprecated | The VBO is now created and tied to a VAO at the place vertices are specified
 // To be deleted
 // *******
-void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
+void Shader::createVertexBuffer(std::vector<vertexPolygon> vertices)
 {
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -322,12 +322,12 @@ void ShaderHandler::createVertexBuffer(std::vector<vertexPolygon> vertices)
 	);
 }
 
-GLuint ShaderHandler::getVertexAttributes()
+GLuint Shader::getVertexAttributes()
 {
 	return gVertexAttribute;
 }
 
-GLuint ShaderHandler::getShader()
+GLuint Shader::getShader()
 {
 	return gShaderProgram;
 }

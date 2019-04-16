@@ -43,7 +43,7 @@ void DirLight::setSpecular(glm::vec3 spec)
 	this->specular = spec;
 }
 
-void DirLight::sendToShader(ShaderHandler shader)
+void DirLight::sendToShader(Shader shader)
 {
 	string name = "dirLight.pos";
 	glUniform3fv(glGetUniformLocation(shader.getShader(), name.c_str()), 1, glm::value_ptr(this->lightPos));

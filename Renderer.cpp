@@ -22,7 +22,7 @@ GLFWwindow* Renderer::getWindow()
 //=============================================================
 //	From template - Needs explanation
 //=============================================================
-void Renderer::firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<Primitive> objects, float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[])
 {
 
 	// first pass
@@ -39,7 +39,7 @@ void Renderer::firstPassRenderTemp(ShaderHandler gShaderProgram, std::vector<Pri
 //=============================================================
 //	From template - Needs explanation
 //=============================================================
-void Renderer::secondPassRenderTemp(ShaderHandler gShaderProgram)
+void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 {
 	// first pass is done!
 	// now render a second pass
@@ -61,7 +61,7 @@ void Renderer::secondPassRenderTemp(ShaderHandler gShaderProgram)
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
+void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	//glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -92,7 +92,7 @@ void Renderer::prePassRender(ShaderHandler gShaderProgram, std::vector<Primitive
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(ShaderHandler gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aDirLight)
+void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, Light lightArr[], DirLight aDirLight)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
