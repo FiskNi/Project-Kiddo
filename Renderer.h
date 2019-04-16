@@ -16,7 +16,7 @@ public:
 	GLFWwindow *getWindow();
 
 	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[]);
-	void secondPassRenderTemp(Shader gShaderProgram);
+	void secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM);
 
 	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM);
 

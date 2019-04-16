@@ -105,5 +105,7 @@ glm::vec3 Character::Move(GLFWwindow* window, float dTime)
 			this->playerMesh.getPosition().y,
 			this->playerMesh.getPosition().z - moveSpeed);
 
+
+
 	return newPos;
 }

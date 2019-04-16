@@ -39,7 +39,7 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive>
 //=============================================================
 //	From template - Needs explanation
 //=============================================================
-void Renderer::secondPassRenderTemp(Shader gShaderProgram)
+void Renderer::secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM)
 {
 	// first pass is done!
 	// now render a second pass
@@ -55,6 +55,8 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	glBindTexture(GL_TEXTURE_2D, SM.getDepthMapAttachment());
+
 }
 
 

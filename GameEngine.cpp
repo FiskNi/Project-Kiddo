@@ -151,7 +151,7 @@ void GameEngine::Run()
 		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lightArr, aDirLight);
 
 		// Render a second pass for the fullscreen quad
-		mainRenderer.secondPassRenderTemp(fsqShader);
+		mainRenderer.secondPassRenderTemp(fsqShader, shadowMap);
 
 		// Prepares matrices for usage with imGui, needs to be moved with ImGui stuff
 		glm::mat4 translate = glm::translate(identity, glm::vec3(gTx[0], gTx[1], 0.0f));
