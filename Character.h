@@ -24,5 +24,7 @@ public:
 	bool CheckCollision(Entity collidingCube);
 	glm::vec3 Move(GLFWwindow *window, float deltaTime);
 
+private:
+	glm::vec3 calcMovement(float, float, float);
 };
 
