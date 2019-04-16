@@ -2,7 +2,6 @@
 // these values are interpolated at the rasteriser
 in vec3 color;
 in vec3 fragPos;
-layout(location=3) in float myAttrOut;
 in vec2 textureCoord;
 in vec3 normal;
 in vec4 shadow_coord;
@@ -12,7 +11,6 @@ out vec4 fragment_color;
 
 // this is a uniform value, the very same value for ALL pixel shader executions
 layout(location = 5) uniform vec3 colourFromImGui;
-
 layout(location = 16) uniform vec3 camPos;
 
 // Texture inputs 
@@ -141,7 +139,6 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 		//Combine it all.
 		//Add material diffuse and specular once we have a material set up.
 
-		//vec3 ambient = pLight.ambient; //* vec3(texture(material.diffuse, textureCoord));
 		diffuse = max(pLight.diffuse * diffuseFactor, 0.0f); //*vec3(texture(material.diffuse, textureCoord));
 		specular = pow(specularFactor, 64); //Replace 64 with material shininess once we have one.
 											//vec3(texture(material.specular,textureCoord));
