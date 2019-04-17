@@ -178,25 +178,50 @@ void GameEngine::updateContent(float deltaTime)
 	// Save old position for backwards movement on collision
 	glm::vec3 oldPos = playerCharacter.getPosition();
 
-	// Move to a potential new position
+	// Check a potential new position
 	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
-	playerCharacter.setPosition(newPos);
+	// Calulcate push direction vector and set the speed of a box getting pushed
+	//glm::vec3 pushDir = newPos - oldPos;
+	//pushDir = glm::normalize(pushDir);
+	// Push speed
+	//pushDir *= 0.05f;
 
 	// Check new positions collision
-	for (int i = 0; i < entities.size(); i++)
+	
+	bool collision = false;
+	for (int i = 0; i < entities.size(); ++i)
 	{
 		if (playerCharacter.CheckCollision(entities[i]))
 		{
-			// Calulcate push direction vector and set the speed of a box getting pushed
-			glm::vec3 pushDir = playerCharacter.getPosition() - oldPos;
+			collision = true;
+			// Reset player position (new position is inside a collision this the character has to be moved back again)
+			glm::vec3 pushDir = entities[i].getPosition() - playerCharacter.getPosition();
 			pushDir = glm::normalize(pushDir);
 			pushDir *= 0.05f;
-
-			// Reset player position (new position is inside a collision this the character has to be moved back again)
-			playerCharacter.setPosition(oldPos);
-
-			// Push the box
 			entities[i].setPosition(entities[i].getPosition() + pushDir);
+		}
+	}
+	if (!collision)
+	{
+		playerCharacter.setPosition(newPos);
+		collision = false;
+	}
+
+
+	// Only works with one additional colliding box
+	// Could possibly be done with recursion to check subsequent collisions
+	// Could be made better with proper physic calculations
+	for (int i = 0; i < entities.size(); ++i)
+	{
+		for (int j = 0; j < entities.size(); ++j)
+		{
+			if (i != j && entities[i].CheckCollision(entities[j]))
+			{
+				glm::vec3 pushDir = entities[j].getPosition() - entities[i].getPosition();
+				pushDir = glm::normalize(pushDir);
+				pushDir *= 0.05f;
+				entities[j].setPosition(entities[j].getPosition() + pushDir);
+			}
 		}
 	}
 
@@ -231,7 +256,7 @@ void GameEngine::LoadContent()
 	materials.push_back(cubeMat);
 
 	Material playerMat(2);
-	playerMat.createAlbedo("Resources/Textures/boxTexture.png");
+	playerMat.createAlbedo("Resources/Textures/61644995_p0.jpg");
 	materials.push_back(playerMat);
 
 	// Initialize lights
