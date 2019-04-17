@@ -3,10 +3,13 @@
 class Material
 {
 private:
+	GLuint texture;
 public:
 	Material();
 	~Material();
 
-	GLuint createTexture(std::string path);
+	void createTexture(std::string path);
+
+	GLuint getTexture() const;
 };
 

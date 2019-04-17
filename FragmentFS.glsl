@@ -1,12 +1,12 @@
 #version 440
-layout(location=2) in vec2 uvCoord;
+in vec2 uvCoord;
 
-layout(binding=0) uniform sampler2D colourSampler; // texture 0
-layout(binding=1) uniform sampler2D depthSampler;  // texture 1
+layout(binding = 0) uniform sampler2D colourSampler; // texture 0
+layout(binding = 1) uniform sampler2D depthSampler;  // texture 1
 
 out vec4 fragment_color;
 
-layout(location=3) uniform bool sampleDepth;
+layout(location = 3) uniform bool sampleDepth;
 
 void main () {
 

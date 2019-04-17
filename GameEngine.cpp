@@ -125,7 +125,6 @@ void GameEngine::Run()
 		// ---- Above is ImGui content that should be looked over and organized better	
 
 
-
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
@@ -172,38 +171,44 @@ void GameEngine::Run()
 void GameEngine::updateContent(float deltaTime)
 {
 	// Updates camera position (movement)
-	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
+	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime)
+		;
+	// Very basic collision check with movement limiter
 
-	// Could be turned into a for-loop
+	// Save old position for backwards movement on collision
+	glm::vec3 oldPos = playerCharacter.getPosition();
+
+	// Move to a potential new position
+	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
+	playerCharacter.setPosition(newPos);
+
+	// Check new positions collision
+	for (int i = 0; i < entities.size(); i++)
+	{
+		if (playerCharacter.CheckCollision(entities[i]))
+		{
+			// Calulcate push direction vector and set the speed of a box getting pushed
+			glm::vec3 pushDir = playerCharacter.getPosition() - oldPos;
+			pushDir = glm::normalize(pushDir);
+			pushDir *= 0.05f;
+
+			// Reset player position (new position is inside a collision this the character has to be moved back again)
+			playerCharacter.setPosition(oldPos);
+
+			// Push the box
+			entities[i].setPosition(entities[i].getPosition() + pushDir);
+		}
+	}
+
+
+	// Update entity mesh in the renderer
 	for (int i = 0; i < entities.size(); i++)
 	{
 		objects[entityIndex[i]] = entities[i].getMeshData();
 	}
 
-	// Very basic collision check with movement limiter
-	glm::vec3 oldPos = playerCharacter.getPosition();
-	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
-	playerCharacter.setPosition(newPos);
-
-	for (int i = 0; i < entities.size(); i++)
-	{
-		if (playerCharacter.CheckCollision(entities[i]))
-		{
-			playerCharacter.setPosition(oldPos);
-
-			newPos = entities[i].getPosition() - newPos;
-			entities[i].setPosition(entities[i].getPosition() + newPos);
-		}
-	}
+	// Update playermesh in the renderer
 	objects[playerIndex] = playerCharacter.getMeshData();
-
-	// **** Needs to be moved to the renderer
-	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(mainCamera.GetViewMatrix()));
-	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(mainCamera.GetProjectionMatrix()));
-	glm::mat4 model = glm::mat4(1.0f);
-	glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
-	glUniform3fv(15, 1, glm::value_ptr(lights[0].getLightPos()));
-	glUniform3fv(16, 1, glm::value_ptr(mainCamera.camPos));
 }
 
 //=============================================================
@@ -215,51 +220,65 @@ void GameEngine::LoadContent()
 	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
 	gShaderSM.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
 
-	// Load lights
+	// Initialize textures
+	planeMat.createTexture("Resources/Textures/brickwall.jpg");
+	cubeMat.createTexture("Resources/Textures/boxTexture.png");
+
+	// Initialize lights
 	Light light;
-	light.setLightPos(glm::vec3(1.0f, 1.0f, -2.0f));
 	light.setDiffuse(glm::vec3(1.0f, 0.3f, 0.5f));
 	light.setSpecular(glm::vec3(1.0f, 0.3f, 0.5f));
+
+	light.setLightPos(glm::vec3(3.0f, 1.0f, -3.0f));
 	lights.push_back(light);
 
-	light.setLightPos(glm::vec3(5.0f, 1.0f, -2.0f));
+	light.setLightPos(glm::vec3(3.0f, 1.0f, 2.0f));
 	lights.push_back(light);
 
-	light.setLightPos(glm::vec3(-3.0f, 1.0f, -2.0f));
+	light.setLightPos(glm::vec3(3.0f, 1.0f, 7.0f));
 	lights.push_back(light);
 
+	light.setLightPos(glm::vec3(-3.0f, 1.0f, -3.0f));
+	lights.push_back(light);
 
-	// Load fullscreen quad vertices
+	light.setLightPos(glm::vec3(-3.0f, 1.0f, 2.0f));
+	lights.push_back(light);
+
+	light.setLightPos(glm::vec3(-3.0f, 1.0f, 7.0f));
+	lights.push_back(light);
+
+	// Initialize fullscreen quad vertices
 	// Right now the fullscreen quad is coded into the shader handler.
 	// Could be moved and better organized
 	fsqShader.CreateFSShaders();
 	fsqShader.CreateFullScreenQuad();
 
-	// Initialize 1 cube primitive and duplicate it by pushing it back into a vector
-	// "objects" is currently what can be seen as the renderqueue
-	cubePrimitive.CreateCubeData();
-	cubePrimitive.setTextureID(cubeMat.createTexture("Resources/Textures/boxTexture.png"));
-
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-	groundPlane.setTextureID(planeMat.createTexture("Resources/Textures/boxTexture.png"));
+	groundPlane.setTextureID(planeMat.getTexture());
 	objects.push_back(groundPlane);
 
-	// Entity creations
+	// Initialize Entities
 	Entity cubeEntity;
-	glm::vec3 startPos;
-	
-	startPos = glm::vec3(-4.0f, 0.0f, -3.0f);
-	cubeEntity.setPosition(startPos);
+	cubeEntity.setTextureID(cubeMat.getTexture());
+
+	cubeEntity.setPosition(glm::vec3(3.0f, 0.0f, -3.0f));
 	entities.push_back(cubeEntity);
 
-	startPos = glm::vec3(-4.0f, 0.0f, 3.0f);
-	cubeEntity.setPosition(startPos);
+	cubeEntity.setPosition(glm::vec3(3.0f, 0.0f, 2.0f));
 	entities.push_back(cubeEntity);
 
-	startPos = glm::vec3(-2.0f, 0.0f, 3.0f);
-	cubeEntity.setPosition(startPos);
+	cubeEntity.setPosition(glm::vec3(3.0f, 0.0f, 7.0f));
+	entities.push_back(cubeEntity);
+
+	cubeEntity.setPosition(glm::vec3(-3.0f, 0.0f, -3.0f));
+	entities.push_back(cubeEntity);
+
+	cubeEntity.setPosition(glm::vec3(-3.0f, 0.0f, 2.0f));
+	entities.push_back(cubeEntity);
+
+	cubeEntity.setPosition(glm::vec3(-3.0f, 0.0f, 7.0f));
 	entities.push_back(cubeEntity);
 
 	for (int i = 0; i < entities.size(); i++)
@@ -273,20 +292,3 @@ void GameEngine::LoadContent()
 
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 }
-
-
-// **** Temporary keyboard callback reference **** ///
-// 
-//static void GameEngine::keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
-//{
-//	/*
-//	if (key == GLFW_KEY_W)
-//		keys[0] = (action == GLFW_PRESS || action == GLFW_REPEAT);
-//	if (key == GLFW_KEY_A)
-//		keys[1] = (action == GLFW_PRESS || action == GLFW_REPEAT);
-//	if (key == GLFW_KEY_S)
-//		keys[2] = (action == GLFW_PRESS || action == GLFW_REPEAT);
-//	if (key == GLFW_KEY_D)
-//		keys[3] = (action == GLFW_PRESS || action == GLFW_REPEAT);
-//	*/
-//}

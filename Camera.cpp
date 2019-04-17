@@ -15,12 +15,16 @@ void Camera::reCalcCamVecs()
 	
 }
 
-Camera::Camera() : face(glm::vec3(0, 0, -1)), mSpeed(3.5f), sensitivity(0.15f)//, zoom(40.0f)
+Camera::Camera()
 {
-	this->camPos = glm::vec3(0, 4, -10);
+	this->camPos = glm::vec3(0, 7, -7);
 	this->worldUp = glm::vec3(0, 1, 0);
 	this->camYaw = 90.0f;
-	this->camPitch = 0.0f;
+	this->camPitch = -40.0f;
+
+	this->face = glm::vec3(0, 0, 1);
+	this->mSpeed = 3.5f;
+	this->sensitivity = 0.15f;
 
 	this->width = WIDTH;
 	this->height = HEIGHT;
@@ -50,11 +54,16 @@ void Camera::FPSCamControls(GLFWwindow * window, float deltaTime)
 		this->camPos += camSpeed * this->camUp;
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
 		this->camPos -= camSpeed * this->camUp;
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		this->camPos += camSpeed * this->camYaw;
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		this->camPos -= camSpeed * this->camYaw;
-	// Add camera pitch/yaw here
+	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
+		this->camPitch += camSpeed * 10;
+	if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
+		this->camPitch -= camSpeed * 10;
+	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
+		this->camYaw += camSpeed * 10;
+	if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
+		this->camYaw -= camSpeed * 10;
+
+	reCalcCamVecs();
 }
 
 glm::mat4 Camera::GetViewMatrix()

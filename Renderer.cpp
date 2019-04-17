@@ -133,9 +133,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 		// Bind an objects texture for the shader
 		passTextureData(GL_TEXTURE0, objects[i].getTextureID(), gShaderProgram.getShader(),
 			"diffuseTex", 0);
-
 		// Shadowmap
-		//SM.bindForReading(GL_TEXTURE2, gShaderProgram.getShader()); //ADD "shadowMap" in main shader.
 		passTextureData(GL_TEXTURE2, SM.getDepthMapAttachment(), gShaderProgram.getShader(),
 			"shadowMap", 2);
 

@@ -4,7 +4,7 @@ Character::Character()
 {
 	playerMesh.CreateCubeData();
 
-	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
+	glm::vec3 startPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	setPosition(startPos);
 	boundingBoxSize = glm::vec3(0.5f, 0.5f, 0.5f);
 }

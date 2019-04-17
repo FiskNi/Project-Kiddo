@@ -14,11 +14,13 @@ public:
 	Entity();
 	~Entity();
 
+	bool CheckCollision(Entity collidingCube);
+
+	void setTextureID(GLuint texID);
+	void setPosition(glm::vec3 newPos);
+
 	Primitive getMeshData() const;
 	glm::vec3 getPosition() const;
 	glm::vec3 getSize() const;
-
-	void setPosition(glm::vec3 newPos);
-	bool CheckCollision(Entity collidingCube);
 };
 

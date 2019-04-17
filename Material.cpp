@@ -4,6 +4,7 @@
 
 Material::Material()
 {
+	texture = 0;
 }
 
 
@@ -11,9 +12,9 @@ Material::~Material()
 {
 }
 
-GLuint Material::createTexture(std::string path)
+void Material::createTexture(std::string path)
 {
-	GLuint texture = 0;
+
 	//Generate Texture, 1:st argument is amt of textures second is where to store them
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -39,5 +40,9 @@ GLuint Material::createTexture(std::string path)
 	else
 		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
 	stbi_image_free(data);
-	return texture; 
+}
+
+GLuint Material::getTexture() const
+{
+	return texture;
 }

@@ -45,7 +45,6 @@ struct DirectionalLight
 uniform PointLight pointLights[NR_P_LIGHTS];
 uniform DirectionalLight dirLight;
 
-float shadowCalc(vec4 shadow_coord, vec3 normal, vec3 light_pos);
 vec3 CalculatePointLight(PointLight light, vec3 pixelPos, vec3 aNormal, vec3 viewDir);
 vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 
@@ -53,9 +52,9 @@ void main () {
 	vec4 diffuse = texture(diffuseTex, vec2(textureCoord.s, 1 - textureCoord.t));
 
 	vec3 norm = normalize(normal);
+
 	vec3 viewDirection = normalize(camPos - fragPos);
 
-	//float shadow = shadowCalc(shadow_coord, normal, dirLight.pos);
 	vec3 ambientLight = diffuse.xyz * vec3(0.1f, 0.1f, 0.1f);
 	vec3 directionalLight = vec3(0.0f);
 
@@ -64,7 +63,6 @@ void main () {
 	float shadowMapDepth = texture(shadowMap, projLightCoords.xy).r;
 	float lightDepthValue = projLightCoords.z;
 	float bias = 0.001f;
-	//bias = max(0.05 * (1.0 - dot(normal, dirLight.dir)), 0.005);
 	lightDepthValue -= bias;
 
 	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
@@ -73,7 +71,7 @@ void main () {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, projLightCoords.xy + vec2(x, y) * texelSize).r; 
-            directionalLight += diffuse.xyz * vec3(lightDepthValue < pcfDepth ? 0.1f : 0.0f);        
+			directionalLight += diffuse.xyz * CalculateDirLight(dirLight, norm, viewDirection) * (lightDepthValue < pcfDepth ? 1.0f : 0.0f);
         }    
     }
 	directionalLight /= 9;
@@ -84,47 +82,15 @@ void main () {
 	}
 
 	vec3 pointLight = vec3(0.0f);
-	for(int i = 0; i < NR_P_LIGHTS; i++)
+	for(int i = 0; i < 6; ++i)
 	{
 		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fragPos, norm, viewDirection);
 	}
 
-	vec4 finalColor = vec4(max(ambientLight + directionalLight + pointLight, 0.0f), 1.0f);
+
+	vec4 finalColor = clamp(vec4(ambientLight + directionalLight + pointLight, 1.0f), 0.0f,  1.0f);
 	fragment_color = finalColor;
 }
-
-/*
-=============================================================
-Sample from the depth map for shadows. 
-=============================================================
-*/
-float shadowCalc(vec4 shadow_coord, vec3 normal, vec3 light_pos){
-	
-	vec3 proj_coord = shadow_coord.xyz / shadow_coord.w;
-	proj_coord = proj_coord * 0.5 + 0.5;
-	float closetsDepth = texture(shadowMap, proj_coord.xy).r;
-	float currentDepth = proj_coord.z;
-	vec3 lightDir = normalize(light_pos - fragPos.xyz);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-	float shadow = 0.0;
-
-    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(shadowMap, proj_coord.xy + vec2(x, y) * texelSize).r; 
-            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-        }    
-    }
-    shadow /= 9.0;
-
-	if(proj_coord.z > 1.0)
-		shadow = 0.0;
-
-	return shadow;
-}
-
 
 /*
 =============================================================
@@ -148,15 +114,14 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 	vec3 specular = vec3(0.0f);
 
 	//~~ There's no need to do ANY calculations if we're out of range.
-	if(dist < pLight.range)
+	if (dist < pLight.range)
 	{
 		//Calculate diffuse factor.
-		float diffuseFactor = dot(pointToLight, aNormal);
-		diffuseFactor = clamp(diffuseFactor, 0.0f, 1.0f);//Ensure value stays within defined range.
+		float diffuseFactor = max(dot(pointToLight, aNormal), 0.0f);
 
 		//Calculate specular factor.
 		vec3 refDir = normalize(reflect(-pointToLight, aNormal));
-		float specularFactor = pow(max(dot(viewDir, refDir),0.0), 64);
+		float specularFactor = pow(max(dot(viewDir, refDir), 0.0), 64); //Replace 64 with material shininess once we have one.
 
 		//Attenuation calculations.
 		float attenuation = 1.0 / (pLight.constant + pLight.linear * dist + pLight.quadratic * (dist * dist));
@@ -164,9 +129,8 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 		//Combine it all.
 		//Add material diffuse and specular once we have a material set up.
 
-		diffuse = max(pLight.diffuse * diffuseFactor, 0.0f); //*vec3(texture(material.diffuse, textureCoord));
-		specular = max(pLight.specular * specularFactor, 0.0f); //Replace 64 with material shininess once we have one.
-											//vec3(texture(material.specular,textureCoord));
+		diffuse = pLight.diffuse * diffuseFactor; 
+		specular = pLight.specular * specularFactor;
 
 		diffuse *= attenuation;
 		specular *= attenuation;
@@ -185,13 +149,13 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
 	float diffuseFactor = max(dot(light.dir, aNormal), 0.0);
 
 	//Specular factor calculation.
-	vec3 refDir = reflect(-lightDirection, aNormal);
-	float specularFactor = max(dot(viewDir, refDir), 0.0); //Replace 64 with material shininess once we have one.
+	// vec3 pointToLight = normalize(light.pos - fragPos);
+	// vec3 refDir = reflect(-pointToLight, aNormal);
+	// float specularFactor = pow(max(dot(viewDir, refDir), 0.0), 64); //Replace 64 with material shininess once we have one.
 	//Combine it all
 
-	float diffuse = max(diffuseFactor, 0.0f);
-	float specular = pow(specularFactor, 64);
+	float diffuse = diffuseFactor;
 
-	return diffuse + specular;
+	return diffuse;
 }
 

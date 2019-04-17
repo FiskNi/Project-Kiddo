@@ -10,29 +10,9 @@ Entity::Entity()
 	boundingBoxSize = glm::vec3(0.5f, 0.5f, 0.5f);
 }
 
-
 Entity::~Entity()
 {
-}
 
-Primitive Entity::getMeshData() const
-{
-	return entityMesh;
-}
-
-glm::vec3 Entity::getPosition() const
-{
-	return entityMesh.getPosition();
-}
-
-glm::vec3 Entity::getSize() const
-{
-	return boundingBoxSize;
-}
-
-void Entity::setPosition(glm::vec3 newPos)
-{
-	entityMesh.setPosition(newPos);
 }
 
 bool Entity::CheckCollision(Entity collidingCube)
@@ -69,6 +49,29 @@ bool Entity::CheckCollision(Entity collidingCube)
 	}
 
 	return false;
-
 }
 
+void Entity::setTextureID(GLuint texID)
+{
+	entityMesh.setTextureID(texID);
+}
+
+void Entity::setPosition(glm::vec3 newPos)
+{
+	entityMesh.setPosition(newPos);
+}
+
+Primitive Entity::getMeshData() const
+{
+	return entityMesh;
+}
+
+glm::vec3 Entity::getPosition() const
+{
+	return entityMesh.getPosition();
+}
+
+glm::vec3 Entity::getSize() const
+{
+	return boundingBoxSize;
+}
