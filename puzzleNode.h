@@ -3,8 +3,6 @@
 class puzzleNode :
 	public Entity
 {
-private:
-	unsigned int nodeID;
 public:
 	puzzleNode();
 	~puzzleNode();

@@ -20,6 +20,8 @@ public:
 	void setMaterialID(unsigned int materialID);
 	void setPosition(glm::vec3 newPos);
 
+	void setCustomBBox(glm::vec3);
+
 	Primitive getMeshData() const;
 	glm::vec3 getPosition() const;
 	glm::vec3 getSize() const;
