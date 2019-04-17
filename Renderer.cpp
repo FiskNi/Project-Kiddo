@@ -85,7 +85,7 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight)
+void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight, std::vector<Material> materials)
 {
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -131,11 +131,20 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 		glBindVertexArray(objects[i].getVertexAttribute());
 
 		// Bind an objects texture for the shader
-		passTextureData(GL_TEXTURE0, objects[i].getTextureID(), gShaderProgram.getShader(),
+		passTextureData(GL_TEXTURE0, 
+			materials[objects[i].getMaterialID()].getAlbedo(),
+			gShaderProgram.getShader(),
 			"diffuseTex", 0);
+		// Bind an objects texture for the shader
+		passTextureData(GL_TEXTURE1,
+			materials[objects[i].getMaterialID()].getNormal(),
+			gShaderProgram.getShader(),
+			"normalTex", 1);
 		// Shadowmap
 		passTextureData(GL_TEXTURE2, SM.getDepthMapAttachment(), gShaderProgram.getShader(),
 			"shadowMap", 2);
+
+
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0

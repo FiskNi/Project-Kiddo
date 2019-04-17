@@ -3,13 +3,19 @@
 class Material
 {
 private:
-	GLuint texture;
+	unsigned int materialID;
+	GLuint albedo;
+	GLuint normal;
+
 public:
-	Material();
+	Material(unsigned int id);
 	~Material();
 
-	void createTexture(std::string path);
+	void createAlbedo(std::string path);
+	void createNormal(std::string path);
 
-	GLuint getTexture() const;
+	unsigned int getMaterialID() const;
+	GLuint getAlbedo() const;
+	GLuint getNormal() const;
 };
 

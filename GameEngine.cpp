@@ -128,7 +128,7 @@ void GameEngine::Run()
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lights, aDirLight);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lights, aDirLight, materials);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader, shadowMap);
@@ -224,9 +224,18 @@ void GameEngine::LoadContent()
 	gShaderSM.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
 
 	// Initialize textures
-	planeMat.createTexture("Resources/Textures/brickwall.jpg");
-	cubeMat.createTexture("Resources/Textures/boxTexture.png");
-	nodeMat.createTexture("Resources/Textures/puzzleNode.png");
+	Material planeMat(0);
+	planeMat.createAlbedo("Resources/Textures/brickwall.jpg");
+	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
+	materials.push_back(planeMat);
+
+	Material cubeMat(1);
+	cubeMat.createAlbedo("Resources/Textures/boxTexture.png");
+	materials.push_back(cubeMat);
+
+	Material playerMat(2);
+	playerMat.createAlbedo("Resources/Textures/boxTexture.png");
+	materials.push_back(playerMat);
 
 	// Initialize lights
 	Light light;
@@ -260,12 +269,12 @@ void GameEngine::LoadContent()
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-	groundPlane.setTextureID(planeMat.getTexture());
+	groundPlane.setMaterial(materials[0].getMaterialID());
 	objects.push_back(groundPlane);
 
 	// Initialize Entities
 	Entity cubeEntity;
-	cubeEntity.setTextureID(cubeMat.getTexture());
+	cubeEntity.setMaterialID(materials[1].getMaterialID());
 
 	cubeEntity.setPosition(glm::vec3(3.0f, 0.0f, -3.0f));
 	entities.push_back(cubeEntity);
@@ -297,8 +306,7 @@ void GameEngine::LoadContent()
 		entityIndex[i] = objects.size() - 1;
 	}
 
-
-
+	playerCharacter.setMaterialID(2);
 	objects.push_back(playerCharacter.getMeshData());
 	playerIndex = objects.size() - 1;
 

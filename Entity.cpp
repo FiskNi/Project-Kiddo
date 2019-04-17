@@ -51,9 +51,9 @@ bool Entity::CheckCollision(Entity collidingCube)
 	return false;
 }
 
-void Entity::setTextureID(GLuint texID)
+void Entity::setMaterialID(unsigned int id)
 {
-	entityMesh.setTextureID(texID);
+	entityMesh.setMaterial(id);
 }
 
 void Entity::setPosition(glm::vec3 newPos)

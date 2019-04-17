@@ -1,10 +1,15 @@
 #version 440
 // these values are interpolated at the rasteriser
-in vec3 color;
-in vec3 fragPos;
-in vec2 textureCoord;
-in vec3 normal;
-in vec4 shadow_coord;
+in VS_OUT{
+	vec3 position;
+	vec2 uv;
+	vec3 normal;
+	vec3 tangent;
+	vec3 bitangent;
+
+	vec4 shadow_coord;
+} fsInput;
+
 
 // this is the final pixel colour
 out vec4 fragment_color;
@@ -16,6 +21,7 @@ layout(location = 16) uniform vec3 camPos;
 // Texture inputs 
 uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
+uniform sampler2D normalTex;
 
 //~~ LightCalc variables and structs.
 struct PointLight
@@ -49,16 +55,24 @@ vec3 CalculatePointLight(PointLight light, vec3 pixelPos, vec3 aNormal, vec3 vie
 vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 
 void main () {
-	vec4 diffuse = texture(diffuseTex, vec2(textureCoord.s, 1 - textureCoord.t));
+	vec4 diffuse = texture(diffuseTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
 
-	vec3 norm = normalize(normal);
+	vec3 normal = normalize(fsInput.normal);
 
-	vec3 viewDirection = normalize(camPos - fragPos);
+
+	vec4 normalMap =  texture(normalTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
+	//input.Tangent = normalize(fsInput.tangent - dot(input.Tangent, input.Normal) * input.Normal);
+	//float3 biTangent = cross(input.Normal, input.Tangent);
+	//float3x3 texSpace = float3x3(input.Tangent, biTangent, input.Normal);
+	//input.Normal = normalize(mul(normalMap, texSpace));
+
+
+	vec3 viewDirection = normalize(camPos - fsInput.position);
 
 	vec3 ambientLight = diffuse.xyz * vec3(0.1f, 0.1f, 0.1f);
 	vec3 directionalLight = vec3(0.0f);
 
-	vec3 projLightCoords = shadow_coord.xyz / shadow_coord.w;
+	vec3 projLightCoords = fsInput.shadow_coord.xyz / fsInput.shadow_coord.w;
 	projLightCoords = projLightCoords * 0.5 + 0.5;
 	float shadowMapDepth = texture(shadowMap, projLightCoords.xy).r;
 	float lightDepthValue = projLightCoords.z;
@@ -71,20 +85,20 @@ void main () {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, projLightCoords.xy + vec2(x, y) * texelSize).r; 
-			directionalLight += diffuse.xyz * CalculateDirLight(dirLight, norm, viewDirection) * (lightDepthValue < pcfDepth ? 1.0f : 0.0f);
+			directionalLight += diffuse.xyz * CalculateDirLight(dirLight, normal, viewDirection) * (lightDepthValue < pcfDepth ? 1.0f : 0.0f);
         }    
     }
 	directionalLight /= 9;
 
 	if (projLightCoords.z > 1.0f)
 	{
-		directionalLight = diffuse.xyz * CalculateDirLight(dirLight, norm, viewDirection);
+		directionalLight = diffuse.xyz * CalculateDirLight(dirLight, normal, viewDirection);
 	}
 
 	vec3 pointLight = vec3(0.0f);
 	for(int i = 0; i < 6; ++i)
 	{
-		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fragPos, norm, viewDirection);
+		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
 	}
 
 
@@ -143,7 +157,7 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
 {
 	light.dir = normalize(light.dir);
-	vec3 lightDirection = normalize(light.dir - fragPos);
+	vec3 lightDirection = normalize(light.dir - fsInput.position);
 
 	//Diffuse factor calculation.
 	float diffuseFactor = max(dot(light.dir, aNormal), 0.0);

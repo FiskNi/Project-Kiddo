@@ -12,6 +12,8 @@ private:
 	glm::vec3 position;
 	float rotation;
 
+	unsigned int materialID;
+
 public:
 	Character();
 	~Character();
@@ -20,6 +22,7 @@ public:
 	glm::vec3 getPosition() const;
 	glm::vec3 getSize() const;
 
+	void setMaterialID(unsigned int id);
 	void setPosition(glm::vec3 newPos);
 	bool CheckCollision(Entity collidingCube);
 	glm::vec3 Move(GLFWwindow *window, float deltaTime);
