@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "Entity.h"
 #include "DirLight.h"
+#include "puzzleNode.h"
 
 class GameEngine
 {
@@ -72,6 +73,7 @@ private:
 	// Materials
 	Material cubeMat;
 	Material planeMat;
+	Material nodeMat;
 
 	// Main camera
 	Camera mainCamera;
@@ -83,6 +85,9 @@ private:
 	// Entity
 	std::vector<Entity> entities;
 	int entityIndex[256];
+
+	std::vector<puzzleNode> nodes;
+	int nodeIndex[20];
 
 	// Character
 	Character playerCharacter;

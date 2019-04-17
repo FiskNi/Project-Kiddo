@@ -207,6 +207,9 @@ void GameEngine::updateContent(float deltaTime)
 		objects[entityIndex[i]] = entities[i].getMeshData();
 	}
 
+	for (int i = 0; i < nodes.size(); i++)
+		objects[nodeIndex[i]] = nodes[i].getMeshData();
+
 	// Update playermesh in the renderer
 	objects[playerIndex] = playerCharacter.getMeshData();
 }
@@ -223,6 +226,7 @@ void GameEngine::LoadContent()
 	// Initialize textures
 	planeMat.createTexture("Resources/Textures/brickwall.jpg");
 	cubeMat.createTexture("Resources/Textures/boxTexture.png");
+	nodeMat.createTexture("Resources/Textures/puzzleNode.png");
 
 	// Initialize lights
 	Light light;
@@ -281,14 +285,27 @@ void GameEngine::LoadContent()
 	cubeEntity.setPosition(glm::vec3(-3.0f, 0.0f, 7.0f));
 	entities.push_back(cubeEntity);
 
+	puzzleNode winNode;
+	winNode.setTextureID(nodeMat.getTexture());
+
+	winNode.setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+	nodes.push_back(winNode);
+
 	for (int i = 0; i < entities.size(); i++)
 	{
 		objects.push_back(entities[i].getMeshData());
 		entityIndex[i] = objects.size() - 1;
 	}
 
+
+
 	objects.push_back(playerCharacter.getMeshData());
 	playerIndex = objects.size() - 1;
 
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		objects.push_back(nodes[i].getMeshData());
+		nodeIndex[i] = objects.size() - 1;
+	}
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 }
