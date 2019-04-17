@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Light.h"
 #include "DirLight.h"
+#include "Material.h"
 
 class Renderer
 {
@@ -20,7 +21,7 @@ public:
 
 	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, DirLight aDirLight);
 
-	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aLight);
+	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aLight, std::vector<Material> materials);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);

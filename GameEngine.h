@@ -70,8 +70,7 @@ private:
 	std::vector<Primitive> objects;
 	std::vector<vertexPolygon> renderObjectQueue;
 	// Materials
-	Material cubeMat;
-	Material planeMat;
+	std::vector<Material> materials;
 
 	// Main camera
 	Camera mainCamera;

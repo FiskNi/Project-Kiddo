@@ -29,6 +29,11 @@ glm::vec3 Character::getSize() const
 	return boundingBoxSize;
 }
 
+void Character::setMaterialID(unsigned int id)
+{
+	playerMesh.setMaterial(id);
+}
+
 void Character::setPosition(glm::vec3 newPos)
 {
 	playerMesh.setPosition(newPos);

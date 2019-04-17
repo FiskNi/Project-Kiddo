@@ -239,6 +239,8 @@ void Primitive::CreateCubeData()
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
+
+	CalculateTangents();
 }
 
 //=============================================================
@@ -342,16 +344,77 @@ void Primitive::CreatePlaneData()
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
+
+	CalculateTangents();
 }
 
-void Primitive::setTextureID(GLuint texID)
+void Primitive::CalculateTangents()
 {
-	this->diffuseID = texID;
+	// Normal and tangent Calculation
+	std::vector<glm::vec3> tNormal;
+	std::vector<glm::vec3> tTangent;
+
+	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 tangent = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 biTangent = glm::vec3(0.0f, 0.0f, 0.0f);
+	float U1, V1, U2, V2 = 0.0f;
+
+	float vertexVectorX, vertexVectorY, vertexVectorZ = 0.0f;
+	glm::vec3 triangleEdge1 = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 triangleEdge2 = glm::vec3(0.0f, 0.0f, 0.0f);
+
+
+	for (int i = 0; i < vertices.size(); i += 3)
+	{
+		vertexVectorX = vertices[(i * 3)].position.x - vertices[i + 2].position.x;
+		vertexVectorY = vertices[(i * 3)].position.y - vertices[i + 2].position.y;
+		vertexVectorZ = vertices[(i * 3)].position.z - vertices[i + 2].position.z;
+		triangleEdge1 = glm::vec3(vertexVectorX, vertexVectorY, vertexVectorZ);
+
+
+		vertexVectorX = vertices[i + 2].position.x - vertices[i + 1].position.x;
+		vertexVectorY = vertices[i + 2].position.y - vertices[i + 1].position.y;
+		vertexVectorZ = vertices[i + 2].position.z - vertices[i + 1].position.z;
+		triangleEdge2 = glm::vec3(vertexVectorX, vertexVectorY, vertexVectorZ);
+
+		// Gets the edges of the triangle and calculates the normal
+		normal = glm::cross(triangleEdge1, triangleEdge2);
+		normal = normalize(normal);
+
+		// Get the UV coordinates to calculate a tangent aligned with the UV (using UV and vertex vectors)
+		U1 = vertices[i].uv.x - vertices[i + 2].uv.x;
+		V1 = vertices[i].uv.y - vertices[i + 2].uv.y;
+
+		U2 = vertices[i + 2].uv.x - vertices[i + 1].uv.x;
+		V2 = vertices[i + 2].uv.y - vertices[i + 1].uv.y;
+
+		tangent.x = (U1 * triangleEdge1.x - V2 * triangleEdge2.x) * (1.0f / (U1 * V2 - U2 * V1));
+		tangent.y = (U1 * triangleEdge1.y - V2 * triangleEdge2.y) * (1.0f / (U1 * V2 - U2 * V1));
+		tangent.z = (U1 * triangleEdge1.z - V2 * triangleEdge2.z) * (1.0f / (U1 * V2 - U2 * V1));
+
+		tangent = glm::normalize(tangent);
+
+		vertices[i].tangent = tangent;
+		vertices[i + 1].tangent = tangent;
+		vertices[i + 2].tangent = tangent;
+
+		biTangent = glm::cross(vertices[i].normals, tangent);
+		vertices[i].bitangent = biTangent;
+		vertices[i + 1].bitangent = biTangent;
+		vertices[i + 2].bitangent = biTangent;
+
+	}
+
 }
 
-GLuint Primitive::getTextureID() const
+void Primitive::setMaterial(unsigned int id)
 {
-	return this->diffuseID;
+	this->materialID = id;
+}
+
+unsigned int Primitive::getMaterialID() const
+{
+	return this->materialID;
 }
 
 GLuint Primitive::getVertexAttribute() const

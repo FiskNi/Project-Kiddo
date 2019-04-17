@@ -4,15 +4,14 @@
 class Primitive
 {
 private:
-	GLuint diffuseID;
-	GLuint normalID;
 	glm::vec3 worldPosition;
 	float worldRotation;
 
 	std::vector<vertexPolygon> vertices;
-
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
+
+	GLuint materialID;
 
 public:
 	Primitive();
@@ -20,10 +19,12 @@ public:
 
 	void CreateCubeData();
 	void CreatePlaneData();
-	
-	void setTextureID(GLuint texID);
 
-	GLuint getTextureID() const;
+	void CalculateTangents();
+	
+	void setMaterial(GLuint texID);
+
+	unsigned int getMaterialID() const;
 	GLuint getVertexAttribute() const;
 	glm::vec3 getPosition() const;
 	float getWorldRotation() const;

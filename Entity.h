@@ -8,6 +8,7 @@ private:
 	Primitive entityMesh;
 	glm::vec3 boundingBoxSize;
 
+	unsigned int materialID;
 	bool collision;
 
 public:
@@ -16,7 +17,7 @@ public:
 
 	bool CheckCollision(Entity collidingCube);
 
-	void setTextureID(GLuint texID);
+	void setMaterialID(unsigned int materialID);
 	void setPosition(glm::vec3 newPos);
 
 	Primitive getMeshData() const;
