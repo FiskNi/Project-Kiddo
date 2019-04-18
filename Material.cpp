@@ -7,6 +7,7 @@ Material::Material(unsigned int id)
 	materialID = id;
 	albedo = 0;
 	normal = 0;
+	hasNormalmap = 0;
 }
 
 
@@ -68,10 +69,14 @@ void Material::createNormal(std::string path)
 		//Function arguments:  | Target | Mipmap | Image format | Width | Height | Legacy, need to be 0 | Format | Data type | Image data |
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widht, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		hasNormalmap = true;
 	}
 	else
 		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
 	stbi_image_free(data);
+
+
 }
 
 unsigned int Material::getMaterialID() const
@@ -87,6 +92,11 @@ GLuint Material::getAlbedo() const
 GLuint Material::getNormal() const
 {
 	return normal;
+}
+
+bool Material::hasNormal() const
+{
+	return hasNormalmap;
 }
 
 

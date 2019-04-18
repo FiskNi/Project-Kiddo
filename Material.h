@@ -7,6 +7,8 @@ private:
 	GLuint albedo;
 	GLuint normal;
 
+	bool hasNormalmap;
+
 public:
 	Material(unsigned int id);
 	~Material();
@@ -17,5 +19,6 @@ public:
 	unsigned int getMaterialID() const;
 	GLuint getAlbedo() const;
 	GLuint getNormal() const;
+	bool hasNormal() const;
 };
 

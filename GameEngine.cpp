@@ -313,7 +313,7 @@ void GameEngine::LoadContent()
 
 	// Initialize Entities
 	Entity cubeEntity;
-	cubeEntity.setMaterialID(materials[1].getMaterialID());
+	cubeEntity.setMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.setPosition(glm::vec3(3.0f, 0.0f, -3.0f));
 	entities.push_back(cubeEntity);

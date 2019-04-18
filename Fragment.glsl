@@ -1,5 +1,5 @@
 #version 440
-// these values are interpolated at the rasteriser
+// Vertexshader outputs
 in VS_OUT{
 	vec3 position;
 	vec2 uv;
@@ -10,20 +10,7 @@ in VS_OUT{
 	vec4 shadow_coord;
 } fsInput;
 
-
-// this is the final pixel colour
-out vec4 fragment_color;
-
-// this is a uniform value, the very same value for ALL pixel shader executions
-layout(location = 5) uniform vec3 colourFromImGui;
-layout(location = 16) uniform vec3 camPos;
-
-// Texture inputs 
-uniform sampler2D shadowMap;
-uniform sampler2D diffuseTex;
-uniform sampler2D normalTex;
-
-//~~ LightCalc variables and structs.
+// Light structs.
 struct PointLight
 {
 	vec3 pos;
@@ -37,7 +24,6 @@ struct PointLight
 	vec3 diffuse;
 	vec3 specular;
 };
-
 struct DirectionalLight
 {
 	vec3 pos;
@@ -46,6 +32,20 @@ struct DirectionalLight
 	vec3 col;
 	vec3 specular;
 };
+
+// this is the final pixel colour
+out vec4 fragment_color;
+
+// this is a uniform value, the very same value for ALL pixel shader executions
+layout(location = 5) uniform vec3 colourFromImGui;
+layout(location = 16) uniform vec3 camPos;
+layout(location = 17) uniform bool hasNormalmap;
+
+// Texture inputs 
+uniform sampler2D shadowMap;
+uniform sampler2D diffuseTex;
+uniform sampler2D normalTex;
+
 
 #define NR_P_LIGHTS 6
 uniform PointLight pointLights[NR_P_LIGHTS];
@@ -56,16 +56,16 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 
 void main () {
 	vec4 diffuse = texture(diffuseTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
-
 	vec3 normal = normalize(fsInput.normal);
 
-
-	vec4 normalMap =  texture(normalTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
-	//input.Tangent = normalize(fsInput.tangent - dot(input.Tangent, input.Normal) * input.Normal);
-	//float3 biTangent = cross(input.Normal, input.Tangent);
-	//float3x3 texSpace = float3x3(input.Tangent, biTangent, input.Normal);
-	//input.Normal = normalize(mul(normalMap, texSpace));
-
+	if (hasNormalmap)
+	{
+		vec3 tangent = normalize(fsInput.tangent - dot(fsInput.tangent, fsInput.normal) * fsInput.normal);
+		vec3 biTangent = cross(fsInput.normal, tangent);
+		vec3 normalMap =  texture(normalTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t)).xyz;
+		mat3 texSpace = mat3(tangent, biTangent, normal);
+		normal = normalize(vec3(texSpace * normalMap));
+	}
 
 	vec3 viewDirection = normalize(camPos - fsInput.position);
 

@@ -126,6 +126,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 		// Updates the world matrix for object positioning and orientation
 		CreateModelMatrix(objects[i].getPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glUniform1ui(17, materials[objects[i].getMaterialID()].hasNormal());
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 		glBindVertexArray(objects[i].getVertexAttribute());
