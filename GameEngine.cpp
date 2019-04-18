@@ -267,7 +267,7 @@ void GameEngine::LoadContent()
 	materials.push_back(cubeMat);
 
 	Material playerMat(2);
-	playerMat.createAlbedo("Resources/Textures/61644995_p0.jpg");
+	playerMat.createAlbedo("Resources/Textures/broken.png");
 	materials.push_back(playerMat);
 
 	Material nodeMat(3);
