@@ -6,5 +6,7 @@ class puzzleNode :
 public:
 	puzzleNode();
 	~puzzleNode();
+
+	bool checkInside(Entity collidingCube);
 };
 
