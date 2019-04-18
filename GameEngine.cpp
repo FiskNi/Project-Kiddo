@@ -189,14 +189,15 @@ void GameEngine::updateContent(float deltaTime)
 	// Check new positions collision
 	
 	bool collision = false;
+	int dominatingBox = -1;
 	for (int i = 0; i < entities.size(); ++i)
 	{
 		if (playerCharacter.CheckCollision(entities[i]))
 		{
 			collision = true;
 			// Reset player position (new position is inside a collision this the character has to be moved back again)
-			glm::vec3 pushDir = entities[i].getPosition() - playerCharacter.getPosition();
-			if (abs(pushDir.x) > abs(pushDir.z))
+			glm::vec3 pushDir = entities[i].getPosition() - newPos;
+			if (abs(pushDir.x) >= abs(pushDir.z))
 				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 			else
 				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
@@ -204,26 +205,21 @@ void GameEngine::updateContent(float deltaTime)
 			pushDir = glm::normalize(pushDir);
 			pushDir *= 0.15f;
 			entities[i].setPosition(entities[i].getPosition() + pushDir);
+			dominatingBox = i;
 		}
 	}
-	if (!collision)
-	{
-		playerCharacter.setPosition(newPos);
-		collision = false;
-	}
 
 
-	// Only works with one additional colliding box
 	// Could possibly be done with recursion to check subsequent collisions
 	// Could be made better with proper physic calculations
 	for (int i = 0; i < entities.size(); ++i)
 	{
 		for (int j = 0; j < entities.size(); ++j)
 		{
-			if (i != j && entities[i].CheckCollision(entities[j]))
+			if (i != j && entities[i].CheckCollision(entities[j]) && j != dominatingBox)
 			{
 				glm::vec3 pushDir = entities[j].getPosition() - entities[i].getPosition();
-				if (abs(pushDir.x) > abs(pushDir.z))
+				if (abs(pushDir.x) >= abs(pushDir.z))
 					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 				else
 					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
@@ -232,6 +228,12 @@ void GameEngine::updateContent(float deltaTime)
 				entities[j].setPosition(entities[j].getPosition() + pushDir);
 			}
 		}
+	}
+
+	if (!collision)
+	{
+		playerCharacter.setPosition(newPos);
+		collision = false;
 	}
 
 	for (int i = 0; i < nodes.size(); i++)
