@@ -171,23 +171,15 @@ void GameEngine::Run()
 void GameEngine::updateContent(float deltaTime)
 {
 	// Updates camera position (movement)
-	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime)
-		;
-	// Very basic collision check with movement limiter
+	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
 
 	// Save old position for backwards movement on collision
 	glm::vec3 oldPos = playerCharacter.getPosition();
 
 	// Check a potential new position
 	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
-	// Calulcate push direction vector and set the speed of a box getting pushed
-	//glm::vec3 pushDir = newPos - oldPos;
-	//pushDir = glm::normalize(pushDir);
-	// Push speed
-	//pushDir *= 0.05f;
 
-	// Check new positions collision
-	
+	// Check new positions collision	
 	bool collision = false;
 	int dominatingBox = -1;
 	for (int i = 0; i < entities.size(); ++i)
@@ -208,7 +200,6 @@ void GameEngine::updateContent(float deltaTime)
 			dominatingBox = i;
 		}
 	}
-
 
 	// Could possibly be done with recursion to check subsequent collisions
 	// Could be made better with proper physic calculations
