@@ -197,7 +197,7 @@ void GameEngine::updateContent(float deltaTime)
 			// Reset player position (new position is inside a collision this the character has to be moved back again)
 			glm::vec3 pushDir = entities[i].getPosition() - playerCharacter.getPosition();
 			pushDir = glm::normalize(pushDir);
-			pushDir *= 0.05f;
+			pushDir *= 0.15f;
 			entities[i].setPosition(entities[i].getPosition() + pushDir);
 		}
 	}
@@ -219,7 +219,7 @@ void GameEngine::updateContent(float deltaTime)
 			{
 				glm::vec3 pushDir = entities[j].getPosition() - entities[i].getPosition();
 				pushDir = glm::normalize(pushDir);
-				pushDir *= 0.05f;
+				pushDir *= 0.15f;
 				entities[j].setPosition(entities[j].getPosition() + pushDir);
 			}
 		}
