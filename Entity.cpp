@@ -61,6 +61,11 @@ void Entity::setPosition(glm::vec3 newPos)
 	entityMesh.setPosition(newPos);
 }
 
+void Entity::setCustomBBox(glm::vec3 BBoxDimensions)
+{
+	this->boundingBoxSize = BBoxDimensions;
+}
+
 Primitive Entity::getMeshData() const
 {
 	return entityMesh;

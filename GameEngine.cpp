@@ -225,12 +225,23 @@ void GameEngine::updateContent(float deltaTime)
 		}
 	}
 
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		if (nodes[0].CheckCollision(entities[i]))
+		{
+			cout << "Solved" << endl;  
+		}
+	}
+
 
 	// Update entity mesh in the renderer
 	for (int i = 0; i < entities.size(); i++)
 	{
 		objects[entityIndex[i]] = entities[i].getMeshData();
 	}
+
+	for (int i = 0; i < nodes.size(); i++)
+		objects[nodeIndex[i]] = nodes[i].getMeshData();
 
 	// Update playermesh in the renderer
 	objects[playerIndex] = playerCharacter.getMeshData();
@@ -258,6 +269,10 @@ void GameEngine::LoadContent()
 	Material playerMat(2);
 	playerMat.createAlbedo("Resources/Textures/61644995_p0.jpg");
 	materials.push_back(playerMat);
+
+	Material nodeMat(3);
+	nodeMat.createAlbedo("Resources/Textures/broken.png");
+	materials.push_back(nodeMat);
 
 	// Initialize lights
 	Light light;
@@ -316,6 +331,12 @@ void GameEngine::LoadContent()
 	cubeEntity.setPosition(glm::vec3(-3.0f, 0.0f, 7.0f));
 	entities.push_back(cubeEntity);
 
+	puzzleNode winNode;
+	winNode.setMaterialID(materials[3].getMaterialID());
+
+	winNode.setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+	nodes.push_back(winNode);
+
 	for (int i = 0; i < entities.size(); i++)
 	{
 		objects.push_back(entities[i].getMeshData());
@@ -326,5 +347,10 @@ void GameEngine::LoadContent()
 	objects.push_back(playerCharacter.getMeshData());
 	playerIndex = objects.size() - 1;
 
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		objects.push_back(nodes[i].getMeshData());
+		nodeIndex[i] = objects.size() - 1;
+	}
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 }
