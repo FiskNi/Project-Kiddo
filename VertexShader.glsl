@@ -5,16 +5,11 @@ layout(location = 2) in vec3 vertex_normal;
 layout(location = 3) in vec3 vertex_tangent;
 layout(location = 4) in vec3 vertex_bitangent;
 
-// uniform offset
-layout(location=10) uniform float offset;
+layout(location = 5) uniform mat4 view;
+layout(location = 6) uniform mat4 proj;
+layout(location = 7) uniform mat4 model;
 
-layout(location=11) uniform mat4 rotateZ;
-
-layout(location = 12) uniform mat4 view;
-layout(location = 13) uniform mat4 proj;
-layout(location = 14) uniform mat4 model;
-
-uniform mat4 SHADOW_MAT;
+layout(location = 8) uniform mat4 SHADOW_MAT;
 
 out VS_OUT{
 	vec3 position;

@@ -74,13 +74,6 @@ void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 
 	shadow_matrix = depthMVP * shadowBias;
 	shadow_matrix = depthMVP;
-	shadow_id = glGetUniformLocation(shaderProg, "SHADOW_MAT");
-	if (shadow_id == -1) {
-		OutputDebugStringA("Error, cannot find 'shadow_id' attribute in Vertex shader SM\n");
-		return;
-	}
-
-	glUniformMatrix4fv(shadow_id, 1, GL_FALSE, glm::value_ptr(shadow_matrix));
 }
 
 /*

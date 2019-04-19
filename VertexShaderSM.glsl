@@ -1,8 +1,9 @@
 #version 440
 layout(location = 0) in vec3 vertex_position;
 
-uniform mat4 SHADOW_MAT; //Projection and view
-layout (location = 14) uniform mat4 MODEL_MAT;
+layout (location = 1) uniform mat4 MODEL_MAT;
+layout (location = 2) uniform mat4 SHADOW_MAT; //Projection and view
+
 
 void main() {
 

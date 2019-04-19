@@ -22,12 +22,12 @@ public:
 
 	void CalculateTangents();
 	
-	void setMaterial(GLuint texID);
+	void setMaterial(unsigned int texID);
 
 	unsigned int getMaterialID() const;
 	GLuint getVertexAttribute() const;
 	glm::vec3 getPosition() const;
-	float getWorldRotation() const;
+	float getRotation() const;
 
 	void setPosition(glm::vec3 newPos);
 	std::vector<vertexPolygon> getvertexPolygons();

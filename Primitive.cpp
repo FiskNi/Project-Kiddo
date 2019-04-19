@@ -427,7 +427,7 @@ glm::vec3 Primitive::getPosition() const
 	return this->worldPosition;
 }
 
-float Primitive::getWorldRotation() const
+float Primitive::getRotation() const
 {
 	return this->worldRotation;
 }

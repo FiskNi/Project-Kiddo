@@ -29,7 +29,7 @@ struct DirectionalLight
 	vec3 pos;
 	vec3 dir;
 
-	vec3 col;
+	vec3 diffuse;
 	vec3 specular;
 };
 
@@ -37,9 +37,8 @@ struct DirectionalLight
 out vec4 fragment_color;
 
 // this is a uniform value, the very same value for ALL pixel shader executions
-layout(location = 5) uniform vec3 colourFromImGui;
-layout(location = 16) uniform vec3 camPos;
-layout(location = 17) uniform bool hasNormalmap;
+layout(location = 9) uniform vec3 camPos;
+layout(location = 10) uniform bool hasNormalmap;
 
 // Texture inputs 
 uniform sampler2D shadowMap;
@@ -168,7 +167,7 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
 	// float specularFactor = pow(max(dot(viewDir, refDir), 0.0), 64); //Replace 64 with material shininess once we have one.
 	//Combine it all
 
-	float diffuse = diffuseFactor;
+	vec3 diffuse = light.diffuse * diffuseFactor;
 
 	return diffuse;
 }

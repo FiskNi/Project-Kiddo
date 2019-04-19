@@ -65,6 +65,9 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM)
 //=============================================================
 void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, DirLight aDirLight)
 {
+	// Position in shader
+	int model_matrix = 1;
+	int shadow_matrix = 2;
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
@@ -72,11 +75,14 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 	// tell opengl we are going to use the VAO we described earlier
 	for (int i = 0; i < objects.size(); i++)
 	{
-		SM.CreateShadowMatrixData(aDirLight.getLightPos(), gShaderProgram.getShader());
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glBindVertexArray(objects[i].getVertexAttribute());
+		SM.CreateShadowMatrixData(aDirLight.getPos(), gShaderProgram.getShader());
 
+		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+
+		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(SM.getShadowMatrix()));
+
+		glBindVertexArray(objects[i].getVertexAttribute());
 
 		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
 	}
@@ -85,8 +91,16 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight, std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight, std::vector<Material> materials)
 {
+	// Position in shader
+	int view_matrix = 5;
+	int projection_matrix = 6;
+	int model_matrix = 7;
+	int shadow_matrix = 8;
+	int cam_pos = 9;
+	int has_normal = 10;
+
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
@@ -95,20 +109,14 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
 
-	// ImGui uniform
-	glUniform3fv(gUniformColourLoc, 1, &gUniformColour[0]);
-
 	// Shadowmap ViewProjection matrix
 	SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
 
-	// Camera uniforms
-	glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
-	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
-
-	glm::mat4 model = glm::mat4(1.0f);
-	glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(model));
-
-	glUniform3fv(16, 1, glm::value_ptr(camera.camPos));
+	// Per shader uniforms
+	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
+	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(SM.getShadowMatrix()));
+	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.camPos));
 
 	aDirLight.sendToShader(gShaderProgram);
 	//Sending all the lights to shader.
@@ -123,10 +131,10 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		// Updates the world matrix for object positioning and orientation
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getWorldRotation(), gShaderProgram.getShader());
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniform1ui(17, materials[objects[i].getMaterialID()].hasNormal());
+		// Per object uniforms
+		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 		glBindVertexArray(objects[i].getVertexAttribute());
@@ -144,8 +152,6 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 		// Shadowmap
 		passTextureData(GL_TEXTURE2, SM.getDepthMapAttachment(), gShaderProgram.getShader(),
 			"shadowMap", 2);
-
-
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0

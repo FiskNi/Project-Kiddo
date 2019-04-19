@@ -8,7 +8,7 @@ class DirLight
 private:
 	glm::vec3 lightPos;
 	glm::vec3 direction;
-	glm::vec3 lightCol;
+	glm::vec3 diffuse;
 	glm::vec3 specular;
 
 public:
@@ -16,12 +16,12 @@ public:
 	DirLight();
 	~DirLight();
 
-	glm::vec3 getLightPos();
-	glm::vec3 getDirection();
+	glm::vec3 getPos() const;
+	glm::vec3 getDirection() const;
 
-	void setLightPos(glm::vec3 lightPos);
+	void setPos(glm::vec3 lightPos);
 	void setDirection(glm::vec3 direction);
-	void setLightCol(glm::vec3 lightCol);
+	void setDiffuse(glm::vec3 lightCol);
 	void setSpecular(glm::vec3 spec);
 
 	void sendToShader(Shader shader);

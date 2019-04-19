@@ -93,8 +93,6 @@ void GameEngine::Run()
 		//deltaTime = ImGui::GetIO().DeltaTime;
 		// move along X
 		gIncrement += 1.0f * deltaTime;
-		gOffsetX = sin(gIncrement);
-		glUniform1f(10, gOffsetX);
 		// prepare IMGUI output
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -103,9 +101,7 @@ void GameEngine::Run()
 		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 		ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);       // Edit 1 float using a slider from 0.0f to 1.0f    
 		ImGui::ColorEdit3("clear color", gClearColour);			// Edit 3 floats representing a color
-		ImGui::ColorEdit3("triangle color", gUniformColour);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::SliderAngle("RotateZ", &gRotateZ);
 		static float gRotate2Z = 0;
 		ImGui::SliderAngle("RotateFrame", &gRotate2Z);
 		static float gTx[2]{ 0, 0 };
@@ -120,7 +116,6 @@ void GameEngine::Run()
 		glm::mat4 identity = glm::mat4(1.0f);
 		//gRotate2D = identity;
 		gRotate2D = glm::rotate(identity, gRotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
-		glUniformMatrix4fv(11, 1, GL_TRUE, &gRotate2D[0][0]);
 		//glm::value_ptr(gRotate2D));
 		// ---- Above is ImGui content that should be looked over and organized better	
 
@@ -128,7 +123,7 @@ void GameEngine::Run()
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, lights, aDirLight, materials);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColourLoc, shadowMap, lights, aDirLight, materials);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader, shadowMap);
