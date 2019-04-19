@@ -40,16 +40,12 @@ private:
 	float gFloat = 0;
 
 	float gClearColour[3]{};
-	float gUniformColour[3]{};
-	GLint gUniformColourLoc = -1;
 
 	float gOffsetX = 0.0f;
 	float gIncrement = 0.0f;
 	float gRotateZ = 0.0f;
 
 	glm::mat4 gRotate2D;
-	// macro that returns "char*" with offset "i"
-	// BUFFER_OFFSET(5) transforms in "(char*)nullptr+(5)"
 
 	//*** Game content ***//
 	// Main window and renderer object
@@ -63,14 +59,10 @@ private:
 	// Shadowmap
 	ShadowMap shadowMap;
 
-	// Primitive mesh objects
-	Primitive cubePrimitive;
-	Primitive groundPlane;
-
 	// Object list for the render queue
 	std::vector<Primitive> objects;
-	std::vector<vertexPolygon> renderObjectQueue;
-	// Materials
+
+	// Materials are stored in a vector
 	std::vector<Material> materials;
 
 	// Main camera

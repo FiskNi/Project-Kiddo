@@ -24,7 +24,6 @@ GLFWwindow* Renderer::getWindow()
 //=============================================================
 void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[])
 {
-
 	// first pass
 	// render all geometry to a framebuffer object
 	glBindFramebuffer(GL_FRAMEBUFFER, gFbo);
@@ -56,14 +55,13 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM)
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
 	glBindTexture(GL_TEXTURE_2D, SM.getDepthMapAttachment());
-
 }
 
 
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, DirLight aDirLight)
+void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, DirLight aDirLight)
 {
 	// Position in shader
 	int model_matrix = 1;
@@ -79,7 +77,6 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 
 		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-
 		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(SM.getShadowMatrix()));
 
 		glBindVertexArray(objects[i].getVertexAttribute());
@@ -91,7 +88,7 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight, std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight, std::vector<Material> materials)
 {
 	// Position in shader
 	int view_matrix = 5;

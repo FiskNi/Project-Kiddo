@@ -63,8 +63,6 @@ void GameEngine::Run()
 	if (shadowMap.CreateFrameBufferSM() != 0)
 		shutdown = true;
 
-	gUniformColourLoc = glGetUniformLocation(basicShader.getShader(), "colourFromImGui");
-
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
@@ -81,7 +79,7 @@ void GameEngine::Run()
 		//---------
 		//PrePass render for Shadow mapping 
 		shadowMap.bindForWriting();
-		mainRenderer.prePassRender(gShaderSM, objects, mainCamera, gClearColour, gUniformColour, gUniformColourLoc, shadowMap, aDirLight);
+		mainRenderer.prePassRender(gShaderSM, objects, mainCamera, gClearColour, shadowMap, aDirLight);
 		mainRenderer.SetViewport();	//resets the viewport
 		//--------
 
@@ -97,11 +95,11 @@ void GameEngine::Run()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Debug window");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 		ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);       // Edit 1 float using a slider from 0.0f to 1.0f    
-		ImGui::ColorEdit3("clear color", gClearColour);			// Edit 3 floats representing a color
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::ColorEdit3("Clear color", gClearColour);			// Edit 3 floats representing a color
 		static float gRotate2Z = 0;
 		ImGui::SliderAngle("RotateFrame", &gRotate2Z);
 		static float gTx[2]{ 0, 0 };
@@ -123,7 +121,7 @@ void GameEngine::Run()
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
 		mainRenderer.SetViewport();
-		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, gUniformColourLoc, shadowMap, lights, aDirLight, materials);
+		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, shadowMap, lights, aDirLight, materials);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader, shadowMap);
@@ -150,7 +148,6 @@ void GameEngine::Run()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-	
 
 	// *******************************
 	// MEMORY NEEDS TO BE LOOKED OVER! - No memory leaks!
@@ -301,6 +298,7 @@ void GameEngine::LoadContent()
 	fsqShader.CreateFullScreenQuad();
 
 	// Initialize plane (ground)
+	Primitive groundPlane;
 	groundPlane.CreatePlaneData();
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	groundPlane.setMaterial(materials[0].getMaterialID());

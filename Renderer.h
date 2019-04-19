@@ -18,21 +18,22 @@ public:
 
 	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[]);
 	void secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM);
+	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, DirLight aDirLight);
 
-	void prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], float gUniformColour[3], GLint gUniformColourLoc, ShadowMap SM, DirLight aDirLight);
-
-	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], GLint gUniformColourLoc, ShadowMap SM, std::vector<Light> lightArr, DirLight aLight, std::vector<Material> materials);
+	void Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, std::vector<Light> lightArr, DirLight aLight, std::vector<Material> materials);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();
 	void CreateModelMatrix(glm::vec3 translation, float rotation, GLuint shaderProg);
-	void passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg,
-		GLchar* uniformName, int index);
+	void passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg, GLchar* uniformName, int index);
 
 private:
-
+	// Window //*****// There should be a window class instead
 	GLFWwindow *gWindow;
+
+	// Shadowmap
+	ShadowMap shadowMap;
 
 	unsigned int gFbo;
 	// Color and depth Render-to-texture for the fullscreen quad
