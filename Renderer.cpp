@@ -64,7 +64,11 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], std::vector<DirectionalLight> dirLightArr)
+void Renderer::prePassRender(Shader gShaderProgram, 
+	std::vector<Primitive> objects, 
+	Camera camera, 
+	float gClearColour[3], 
+	std::vector<DirectionalLight> dirLightArr)
 {
 	// Position in shader
 	int model_matrix = 1;
@@ -94,7 +98,12 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], std::vector<Light> lightArr, std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, 
+	std::vector<Primitive> objects, 
+	Camera camera, float gClearColour[3], 
+	std::vector<Light> lightArr, 
+	std::vector<DirectionalLight> dirLightArr, 
+	std::vector<Material> materials)
 {
 	// Position in shader
 	int view_matrix = 5;
@@ -142,18 +151,25 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 		glBindVertexArray(objects[i].getVertexAttribute());
 
-		// Bind an objects texture for the shader
+		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0, 
 			materials[objects[i].getMaterialID()].getAlbedo(),
 			gShaderProgram.getShader(),
 			"diffuseTex", 0);
-		// Bind an objects texture for the shader
-		passTextureData(GL_TEXTURE1,
-			materials[objects[i].getMaterialID()].getNormal(),
+
+		// Binds the normal texture from a material
+		if (materials[objects[i].getMaterialID()].hasNormal())
+		{
+			passTextureData(GL_TEXTURE1,
+				materials[objects[i].getMaterialID()].getNormal(),
+				gShaderProgram.getShader(),
+				"normalTex", 1);
+		}
+
+		// Binds the shadowmap (handles by the renderer)
+		passTextureData(GL_TEXTURE2, 
+			shadowMap.getDepthMapAttachment(), 
 			gShaderProgram.getShader(),
-			"normalTex", 1);
-		// Shadowmap
-		passTextureData(GL_TEXTURE2, shadowMap.getDepthMapAttachment(), gShaderProgram.getShader(),
 			"shadowMap", 2);
 
 		// Draw call

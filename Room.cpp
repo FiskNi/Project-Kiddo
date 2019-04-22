@@ -13,9 +13,11 @@ Room::Room(std::vector<Material> materials)
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	groundPlane.setMaterial(materials[0].getMaterialID());
 
-	// Initialize camera
+	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
+	// Compile all the mesh data in the room for the renderer
+	// This will first get picked up by the owning scene
 	CompileMeshData();
 }
 
@@ -48,11 +50,22 @@ Camera* Room::GetCamera()
 	return roomCamera;
 }
 
+//=============================================================
+//	Room update
+//	Move a specific entity belonging to the room
+//=============================================================
 void Room::MoveEntity(unsigned int i, glm::vec3 newPos)
 {
 	entities[i].setPosition(newPos);
+
+	glm::vec3 newLightPos = glm::vec3(newPos.x, 1.0f, newPos.z);
+	pointLights[i].setLightPos(newLightPos);
 }
 
+//=============================================================
+//	Render update
+//	Compiles mesh data for the renderer
+//=============================================================
 void Room::CompileMeshData()
 {
 	meshes.clear();
@@ -70,10 +83,12 @@ void Room::CompileMeshData()
 
 }
 
+//=============================================================
+//	Light initialization
+//	Loads and positions all the lights in the scene
+//=============================================================
 void Room::LoadLights()
 {
-	// Initialize lights
-	// Could be stored in a light handler class instead
 	Light light;
 	light.setDiffuse(glm::vec3(1.0f, 0.3f, 0.5f));
 	light.setSpecular(glm::vec3(1.0f, 0.3f, 0.5f));
@@ -100,9 +115,12 @@ void Room::LoadLights()
 	dirLights.push_back(light2);
 }
 
+//=============================================================
+//	Entity initialization
+//	Loads and positions all the entities in the scene
+//=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
-	// Initialize Entities
 	Entity cubeEntity;
 	cubeEntity.setMaterialID(materials[0].getMaterialID());
 
@@ -126,6 +144,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 	
 }
 
+//=============================================================
+//	Puzzle node initialization
+//	Loads and positions all the puzzle nodes in the scene
+//=============================================================
 void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;

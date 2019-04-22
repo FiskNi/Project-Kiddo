@@ -10,7 +10,7 @@ Light::Light()
 	this->constant = 1.0f;
 	this->linear = 0.35f;
 	this->quadratic = 0.44f;
-	this->range = 11.0f;
+	this->range = 15.0f;
 	this->power = 10.0f;
 }
 

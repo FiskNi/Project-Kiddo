@@ -10,7 +10,6 @@ DirectionalLight::DirectionalLight()
 
 DirectionalLight::~DirectionalLight()
 {
-
 }
 
 glm::vec3 DirectionalLight::getPos() const

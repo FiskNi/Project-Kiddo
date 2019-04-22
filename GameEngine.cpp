@@ -30,7 +30,6 @@ static void keyboard(GLFWwindow* window, int key, int scancode, int action, int 
 			break;
 		}
 	}
-	
 }
 
 //=============================================================

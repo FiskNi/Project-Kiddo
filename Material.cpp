@@ -1,11 +1,11 @@
 #include "Material.h"
-
+// Check header for implementation details
 
 
 Material::Material(char* name, unsigned int id)
 {
 	this->name = name;
-	materialID = id;
+	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;
 	hasNormalmap = 0;

@@ -9,8 +9,10 @@ Scene::Scene()
 	LoadMaterials();
 	LoadCharacter();
 
+	// Initializes startingroom. Existing materials is needed for all the entities.
 	startingRoom = new Room(materials);
 
+	// Compiles all the meshdata of the scene for the renderer
 	CompileMeshData();
 }
 
@@ -43,9 +45,14 @@ std::vector<Primitive> Scene::GetMeshData() const
 	return meshes;
 }
 
+Camera Scene::GetCamera() const
+{
+	return *(startingRoom->GetCamera());
+}
+
 void Scene::LoadShaders()
 {
-	// Load shaders
+	// Loads shaders from file
 	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
 	shaders.push_back(basicShader);
 
@@ -91,17 +98,19 @@ void Scene::LoadCharacter()
 
 void Scene::CompileMeshData()
 {
+	// Fills the "meshes" vector with all the mesh data (primitive)
 	startingRoom->CompileMeshData();
 	meshes.clear();
 	meshes = startingRoom->GetMeshData();
 	meshes.push_back(playerCharacter.getMeshData());
 }
 
-Camera Scene::GetCamera() const
-{
-	return *(startingRoom->GetCamera());
-}
-
+//=============================================================
+//	Scene updates
+//	Everything that updates in a scene happens here. 
+//	This can includes collisions, camera movement,
+//	character movement, world timers, world actions, etc.
+//=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
 	startingRoom->GetCamera()->FPSCamControls(renderWindow, deltaTime);
@@ -125,6 +134,12 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	CompileMeshData();
 }
 
+//=============================================================
+//	Scene updates
+//	Checks collision from the player to each box in the scene
+//	Currently it only handles the entites in the starting room
+//	This will be changed as more rooms are added
+//=============================================================
 void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox)
 {
 	for (int i = 0; i < startingRoom->GetEntities().size(); ++i)
@@ -149,6 +164,12 @@ void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominati
 	}
 }
 
+//=============================================================
+//	Scene updates
+//	Checks collision from the a box to each other box in the scene
+//	Currently it only handles the entites in the starting room
+//	This will be changed as more rooms are added
+//=============================================================
 void Scene::BoxBoxCollision(int dominatingBox)
 {
 	// Could possibly be done with recursion to check subsequent collisions
