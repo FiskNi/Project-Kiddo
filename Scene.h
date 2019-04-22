@@ -19,6 +19,7 @@ private:
 	void CompileMeshData();
 
 	void BoxBoxCollision(int dominatingBox);
+	void BoxNodeCollision();
 	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox);
 
 	// Shaders

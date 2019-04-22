@@ -122,8 +122,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	glm::vec3 newPos = playerCharacter.Move(renderWindow, deltaTime);
 
 	int dominatingBox = -1;
+
+	// Collision functions
 	PlayerBoxCollision(collision, newPos, dominatingBox);
 	BoxBoxCollision(dominatingBox);
+	BoxNodeCollision();
 
 	if (!collision)
 	{
@@ -189,6 +192,23 @@ void Scene::BoxBoxCollision(int dominatingBox)
 				pushDir *= 0.15f;
 				startingRoom->MoveEntity(j, startingRoom->GetEntities()[j].getPosition() + pushDir);
 			}
+		}
+	}
+}
+
+//=============================================================
+//	Scene updates
+//	Checks collision from a node to each other box in the scene
+//	Currently it only handles the entites in the starting room
+//	This will be changed as more rooms are added
+//=============================================================
+void Scene::BoxNodeCollision()
+{
+	for (int i = 0; i < startingRoom->GetEntities().size(); i++)
+	{
+		if (startingRoom->GetNodes()[0].CheckCollision(startingRoom->GetEntities()[i]))
+		{
+			cout << "Solved" << endl;
 		}
 	}
 }

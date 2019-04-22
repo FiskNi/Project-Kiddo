@@ -41,7 +41,8 @@ public:
 
 	std::vector<Light> GetPointLights() const;
 	std::vector<DirectionalLight> GetDirectionalLights() const;
-	std::vector<Entity> GetEntities();
+	std::vector<Entity> GetEntities() const;
+	std::vector<puzzleNode> GetNodes() const;
 	std::vector<Primitive> GetMeshData() const;
 	Camera* GetCamera();
 

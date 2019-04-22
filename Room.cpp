@@ -35,9 +35,14 @@ std::vector<DirectionalLight> Room::GetDirectionalLights() const
 	return dirLights;
 }
 
-std::vector<Entity> Room::GetEntities()
+std::vector<Entity> Room::GetEntities() const
 {
 	return entities;
+}
+
+std::vector<puzzleNode> Room::GetNodes() const
+{
+	return nodes;
 }
 
 std::vector<Primitive> Room::GetMeshData() const
