@@ -61,7 +61,7 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM)
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, DirLight aDirLight)
+void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, DirectionalLight aDirLight)
 {
 	// Position in shader
 	int model_matrix = 1;
@@ -88,7 +88,7 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, std::vector<Light> lightArr, DirLight aDirLight, std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, std::vector<Light> lightArr, DirectionalLight aDirLight, std::vector<Material> materials)
 {
 	// Position in shader
 	int view_matrix = 5;
@@ -189,9 +189,7 @@ int Renderer::CreateFrameBuffer() {
 
 	// check if framebuffer is complete (usable):
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
-	{
 		err = 0;
-	}
 	else
 		err = -1;
 
@@ -212,7 +210,7 @@ void Renderer::initWindow(unsigned int w, unsigned int h)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	gWindow = glfwCreateWindow(w, h, "basic GLFW window", NULL, NULL);
+	gWindow = glfwCreateWindow(w, h, "Project Kiddo", NULL, NULL);
 	if (!gWindow) {
 		fprintf(stderr, "error creating window\n");
 		exit(-1);
@@ -232,8 +230,10 @@ void Renderer::initWindow(unsigned int w, unsigned int h)
 	}
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
-	fprintf(stderr, "Renderer: %s\n", renderer);
-	fprintf(stderr, "OpenGL version %s\n", version);
+	//fprintf(stderr, "Renderer: %s\n", renderer);
+	//fprintf(stderr, "OpenGL version %s\n", version);
+	cout << "Renderer: " << renderer << endl;
+	cout << "OpenGL version: " << version << endl;
 
 	// start up time
 	// timerStart = glfwGetTime();

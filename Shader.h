@@ -3,6 +3,13 @@
 
 class Shader
 {
+private:
+	GLuint gShaderProgram;
+
+	// To be deleted
+	GLuint gVertexBuffer;
+	GLuint gVertexAttribute;
+
 public:
 	Shader();
 	~Shader();
@@ -17,14 +24,6 @@ public:
 
 	GLuint getVertexAttributes();
 	GLuint getShader();
-
-
-private:
-	GLuint gShaderProgram;
-
-	// To be deleted
-	GLuint gVertexBuffer;
-	GLuint gVertexAttribute;
 
 };
 

@@ -3,6 +3,7 @@
 class Material
 {
 private:
+	char* name;
 	unsigned int materialID;
 	GLuint albedo;
 	GLuint normal;
@@ -10,7 +11,7 @@ private:
 	bool hasNormalmap;
 
 public:
-	Material(unsigned int id);
+	Material(char* name, unsigned int id);
 	~Material();
 
 	void createAlbedo(std::string path);

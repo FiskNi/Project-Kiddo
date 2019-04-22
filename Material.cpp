@@ -2,8 +2,9 @@
 
 
 
-Material::Material(unsigned int id)
+Material::Material(char* name, unsigned int id)
 {
+	this->name = name;
 	materialID = id;
 	albedo = 0;
 	normal = 0;

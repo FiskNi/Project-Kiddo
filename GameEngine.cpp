@@ -44,13 +44,9 @@ void GameEngine::Run()
 	// If this becomes true the program will have failed in someway or been manually shut down
 	bool shutdown = false;
 
-	// ImGui initialization, should be moved to keep ImGui systems together
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui_ImplGlfw_InitForOpenGL(mainRenderer.getWindow(), true);
-	ImGui_ImplOpenGL3_Init("#version 130");
-	ImGui::StyleColorsDark();
+	// Load ImGui
+	static bool renderDepth = false;
+	ImGuiInit();
 
 	// Load and initialize game content
 	LoadContent();
@@ -70,68 +66,34 @@ void GameEngine::Run()
 		{
 			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
 		}
+
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
 
 		// Main updates to loaded data
+		// Will be moved to the scene updates
 		updateContent(deltaTime);
 
 		//---------
 		//PrePass render for Shadow mapping 
 		shadowMap.bindForWriting();
-		mainRenderer.prePassRender(gShaderSM, objects, mainCamera, gClearColour, shadowMap, aDirLight);
+		mainRenderer.prePassRender(shadowmapShader, objects, mainCamera, gClearColour, shadowMap, aDirLight);
 		mainRenderer.SetViewport();	//resets the viewport
 		//--------
 
 		// First render pass
 		mainRenderer.firstPassRenderTemp(fsqShader, objects, gClearColour);
 
-		// ---- Below is ImGui content that should be looked over and organized better	
-		// Load imGui content	
-		//deltaTime = ImGui::GetIO().DeltaTime;
-		// move along X
-		gIncrement += 1.0f * deltaTime;
-		// prepare IMGUI output
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		ImGui::Begin("Debug window");                          // Create a window called "Hello, world!" and append into it.
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);       // Edit 1 float using a slider from 0.0f to 1.0f    
-		ImGui::ColorEdit3("Clear color", gClearColour);			// Edit 3 floats representing a color
-		static float gRotate2Z = 0;
-		ImGui::SliderAngle("RotateFrame", &gRotate2Z);
-		static float gTx[2]{ 0, 0 };
-		ImGui::DragFloat2("Translate", gTx, 0.1f, -0.5f, 0.5f);
-		static float scale = 1.0f;
-		ImGui::SliderFloat("Scale", &scale, 0.0f, 1.0f);
-		static bool renderDepth = false;
-		ImGui::Checkbox("Show DepthMap", &renderDepth);
-		ImGui::End();
-
-		//ImGuis uniform buffer for rotating all vertices in the VertexShader
-		glm::mat4 identity = glm::mat4(1.0f);
-		//gRotate2D = identity;
-		gRotate2D = glm::rotate(identity, gRotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
-		//glm::value_ptr(gRotate2D));
-		// ---- Above is ImGui content that should be looked over and organized better	
-
+		// Update ImGui content
+		UpdateImGui(renderDepth);
 
 		// ---- Main render call --- ///
 		// Currently takes in additional ImGui content that should be looked over
-		mainRenderer.SetViewport();
 		mainRenderer.Render(basicShader, objects, mainCamera, gClearColour, shadowMap, lights, aDirLight, materials);
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(fsqShader, shadowMap);
-
-		// Prepares matrices for usage with imGui, needs to be moved with ImGui stuff
-		glm::mat4 translate = glm::translate(identity, glm::vec3(gTx[0], gTx[1], 0.0f));
-		glm::mat4 rotation = glm::rotate(identity, gRotate2Z, glm::vec3(0.0f, 0.0f, 1.0f));
-		glm::mat4 scaleMat = glm::scale(identity, glm::vec3(scale, scale, scale));
-		glm::mat4 transform = translate * rotation * scaleMat;
-		glUniformMatrix4fv(5, 1, GL_TRUE, &transform[0][0]);
+	
 
 		// Draw fullscreen quad
 		glUniform1i(3, renderDepth);  // 0 == false
@@ -157,6 +119,39 @@ void GameEngine::Run()
 	glfwTerminate();
 }
 
+void GameEngine::ImGuiInit()
+{
+	// ImGui initialization, should be moved to keep ImGui systems together
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui_ImplGlfw_InitForOpenGL(mainRenderer.getWindow(), true);
+	ImGui_ImplOpenGL3_Init("#version 130");
+	ImGui::StyleColorsDark();
+}
+
+void GameEngine::UpdateImGui(bool &renderDepth)
+{
+	// Modifiable variables, currently they do nothing
+	static float gRotate2Z = 0;
+	static float gTx[2]{ 0, 0 };
+	static float scale = 1.0f;
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::Begin("Debug window");								// Create a window called "Hello, world!" and append into it.
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::Text("This is some useful text.");					// Display some text (you can use a format strings too)
+	ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);			// Edit 1 float using a slider from 0.0f to 1.0f    
+	ImGui::ColorEdit3("Clear color", gClearColour);				// Edit 3 floats representing a color
+	ImGui::SliderAngle("RotateFrame", &gRotate2Z);
+	ImGui::DragFloat2("Translate", gTx, 0.1f, -0.5f, 0.5f);
+	ImGui::SliderFloat("Scale", &scale, 0.0f, 1.0f);
+	ImGui::Checkbox("Show DepthMap", &renderDepth);
+	ImGui::End();
+}
+
 //=============================================================
 //	Updates engine content here
 //=============================================================
@@ -164,9 +159,6 @@ void GameEngine::updateContent(float deltaTime)
 {
 	// Updates camera position (movement)
 	mainCamera.FPSCamControls(mainRenderer.getWindow(), deltaTime);
-
-	// Save old position for backwards movement on collision
-	glm::vec3 oldPos = playerCharacter.getPosition();
 
 	// Check a potential new position
 	glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
@@ -227,18 +219,18 @@ void GameEngine::updateContent(float deltaTime)
 		}
 	}
 
+	// Update all render mesh data
+	objects.clear();
 
-	// Update entity mesh in the renderer
+	objects.push_back(groundPlane);
 	for (int i = 0; i < entities.size(); i++)
-	{
-		objects[entityIndex[i]] = entities[i].getMeshData();
-	}
+		objects.push_back(entities[i].getMeshData());
 
 	for (int i = 0; i < nodes.size(); i++)
-		objects[nodeIndex[i]] = nodes[i].getMeshData();
+		objects.push_back(nodes[i].getMeshData());
 
 	// Update playermesh in the renderer
-	objects[playerIndex] = playerCharacter.getMeshData();
+	objects.push_back(playerCharacter.getMeshData());
 }
 
 //=============================================================
@@ -248,23 +240,23 @@ void GameEngine::LoadContent()
 {
 	// Load shaders
 	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
-	gShaderSM.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
+	shadowmapShader.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
 
 	// Initialize textures
-	Material planeMat(0);
+	Material planeMat("Plane Material", 0);
 	planeMat.createAlbedo("Resources/Textures/brickwall.jpg");
 	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
 	materials.push_back(planeMat);
 
-	Material cubeMat(1);
+	Material cubeMat("Plane Cube Material", 1);
 	cubeMat.createAlbedo("Resources/Textures/boxTexture.png");
 	materials.push_back(cubeMat);
 
-	Material playerMat(2);
+	Material playerMat("Player Material", 2);
 	playerMat.createAlbedo("Resources/Textures/broken.png");
 	materials.push_back(playerMat);
 
-	Material nodeMat(3);
+	Material nodeMat("Node Material", 3);
 	nodeMat.createAlbedo("Resources/Textures/broken.png");
 	materials.push_back(nodeMat);
 
@@ -298,7 +290,6 @@ void GameEngine::LoadContent()
 	fsqShader.CreateFullScreenQuad();
 
 	// Initialize plane (ground)
-	Primitive groundPlane;
 	groundPlane.CreatePlaneData();
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	groundPlane.setMaterial(materials[0].getMaterialID());
@@ -335,17 +326,14 @@ void GameEngine::LoadContent()
 	for (int i = 0; i < entities.size(); i++)
 	{
 		objects.push_back(entities[i].getMeshData());
-		entityIndex[i] = objects.size() - 1;
 	}
 
 	playerCharacter.setMaterialID(2);
 	objects.push_back(playerCharacter.getMeshData());
-	playerIndex = objects.size() - 1;
 
 	for (int i = 0; i < nodes.size(); i++)
 	{
 		objects.push_back(nodes[i].getMeshData());
-		nodeIndex[i] = objects.size() - 1;
 	}
 	// ^^^^ Additional render objects should be placed above ^^^^ //
 }

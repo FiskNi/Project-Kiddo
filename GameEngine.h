@@ -9,23 +9,12 @@
 #include "Light.h"
 #include "Material.h"
 #include "Entity.h"
-#include "DirLight.h"
+#include "DirectionalLight.h"
 #include "puzzleNode.h"
+#include "Scene.h"
 
 class GameEngine
 {
-public:
-	GameEngine();
-	~GameEngine();
-
-	void Run();
-
-	void updateContent(float deltaTime);
-
-	void LoadContent();
-
-	//static void keyboard(GLFWwindow * window, int key, int scancode, int action, int mods);
-
 private:
 	// OpenGL uses unsigned integers to keep track of
 	// created resources (shaders, vertices, textures, etc)
@@ -38,12 +27,8 @@ private:
 	GLuint gShaderProgramFS = 0;
 
 	float gFloat = 0;
-
 	float gClearColour[3]{};
 
-	float gOffsetX = 0.0f;
-	float gIncrement = 0.0f;
-	float gRotateZ = 0.0f;
 
 	glm::mat4 gRotate2D;
 
@@ -54,8 +39,8 @@ private:
 	// Shaders
 	Shader basicShader;
 	Shader fsqShader;
-	Shader gShaderSM;
-	
+	Shader shadowmapShader;
+
 	// Shadowmap
 	ShadowMap shadowMap;
 
@@ -70,17 +55,31 @@ private:
 
 	// Lights
 	std::vector<Light> lights;
-	DirLight aDirLight;
+	DirectionalLight aDirLight;
 
 	// Entity
 	std::vector<Entity> entities;
-	int entityIndex[256];
+
+	// Ground plane
+	Primitive groundPlane;
 
 	std::vector<puzzleNode> nodes;
-	int nodeIndex[20];
 
 	// Character
 	Character playerCharacter;
-	int playerIndex;
+
+	// Main scene
+	Scene mainScene;
+
+public:
+	GameEngine();
+	~GameEngine();
+
+	void Run();
+	void ImGuiInit();
+	void UpdateImGui(bool &renderDepth);
+
+	void updateContent(float deltaTime);
+	void LoadContent();
 };
 

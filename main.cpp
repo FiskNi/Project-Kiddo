@@ -2,6 +2,7 @@
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	// Debug console
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
 	freopen("CON", "w", stdout); //Redirects the string stream to the debug console
@@ -10,6 +11,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// The Game
 	GameEngine gProjectKiddo;
 	gProjectKiddo.Run();
+
 	return 0;
 }
 
