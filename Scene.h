@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "Room.h"
 #include "Character.h"
+#include "Camera.h"
 
 
 class Scene
@@ -18,7 +19,7 @@ private:
 	void CompileMeshData();
 
 	void BoxBoxCollision(int dominatingBox);
-	void PlayerBoxCollision(bool &collision, glm::vec3 &newPos, int &dominatingBox);
+	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox);
 
 	// Shaders
 	std::vector<Shader> shaders;
@@ -27,13 +28,13 @@ private:
 	Shader shadowmapShader;
 
 	// Object list for the render queue
-	std::vector<Primitive> objects;
+	std::vector<Primitive> meshes;
 
 	// Materials are stored in a vector
 	std::vector<Material> materials;
 
 	// Rooms
-	Room startingRoom;
+	Room* startingRoom;
 
 	// Character
 	Character playerCharacter;
@@ -42,10 +43,14 @@ public:
 	Scene();
 	~Scene();
 
+	std::vector<Light> GetPointLights() const;
+	std::vector<DirectionalLight> GetDirectionalLights() const;
 	std::vector<Material> GetMaterials() const;
-	std::vector<Shader> GetShaders() const;
+	Shader GetShader(unsigned int i) const;
+	std::vector<Primitive> GetMeshData() const;
+	Camera GetCamera() const;
 
-	void Update();
+	void Update(GLFWwindow* renderWindow, float deltaTime);
 
 
 };

@@ -2,19 +2,21 @@
 
 
 
-Room::Room()
+Room::Room(std::vector<Material> materials)
 {
 	LoadLights();
-	LoadEntities();
-
+	LoadEntities(materials);
+	LoadPuzzleNode(materials);
 
 	// Initialize plane (ground)
 	groundPlane.CreatePlaneData();
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
+	groundPlane.setMaterial(materials[0].getMaterialID());
 
-	// ** Need method to get variables from class above
-	//groundPlane.setMaterial(materials[0].getMaterialID());
-	//objects.push_back(groundPlane);
+	// Initialize camera
+	roomCamera = new Camera;
+
+	CompileMeshData();
 }
 
 Room::~Room()
@@ -31,14 +33,9 @@ std::vector<DirectionalLight> Room::GetDirectionalLights() const
 	return dirLights;
 }
 
-std::vector<Entity> Room::GetEntities() const
+std::vector<Entity> Room::GetEntities()
 {
 	return entities;
-}
-
-unsigned int Room::GetEntitiesSize() const
-{
-	return entities.size();
 }
 
 std::vector<Primitive> Room::GetMeshData() const
@@ -46,23 +43,35 @@ std::vector<Primitive> Room::GetMeshData() const
 	return meshes;
 }
 
-Camera Room::GetCamera()
+Camera* Room::GetCamera()
 {
 	return roomCamera;
+}
+
+void Room::MoveEntity(unsigned int i, glm::vec3 newPos)
+{
+	entities[i].setPosition(newPos);
 }
 
 void Room::CompileMeshData()
 {
 	meshes.clear();
+	meshes.push_back(groundPlane);
+
 	for (int i = 0; i < entities.size(); i++)
 	{
 		meshes.push_back(entities[i].getMeshData());
 	}
+
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		meshes.push_back(nodes[i].getMeshData());
+	}
+
 }
 
 void Room::LoadLights()
 {
-
 	// Initialize lights
 	// Could be stored in a light handler class instead
 	Light light;
@@ -91,13 +100,11 @@ void Room::LoadLights()
 	dirLights.push_back(light2);
 }
 
-void Room::LoadEntities()
+void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Initialize Entities
 	Entity cubeEntity;
-
-	// ** Need method to get variables from class above
-	//cubeEntity.setMaterialID(materials[0].getMaterialID());
+	cubeEntity.setMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.setPosition(glm::vec3(3.0f, 0.0f, -3.0f));
 	entities.push_back(cubeEntity);
@@ -117,5 +124,13 @@ void Room::LoadEntities()
 	cubeEntity.setPosition(glm::vec3(-3.0f, 0.0f, 7.0f));
 	entities.push_back(cubeEntity);
 	
+}
+
+void Room::LoadPuzzleNode(std::vector<Material> materials)
+{
+	puzzleNode winNode;
+	winNode.setMaterialID(materials[3].getMaterialID());
+	winNode.setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+	nodes.push_back(winNode);
 }
 

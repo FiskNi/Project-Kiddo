@@ -5,6 +5,9 @@
 Renderer::Renderer()
 {
 	initWindow(WIDTH, HEIGHT);
+
+	// Creates the frame buffer for shadow mapping
+	shadowMap.CreateFrameBufferSM();
 }
 
 
@@ -38,7 +41,7 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive>
 //=============================================================
 //	From template - Needs explanation
 //=============================================================
-void Renderer::secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM)
+void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 {
 	// first pass is done!
 	// now render a second pass
@@ -54,18 +57,21 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram, ShadowMap SM)
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
-	glBindTexture(GL_TEXTURE_2D, SM.getDepthMapAttachment());
+	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
 }
 
 
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, DirectionalLight aDirLight)
+void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], std::vector<DirectionalLight> dirLightArr)
 {
 	// Position in shader
 	int model_matrix = 1;
 	int shadow_matrix = 2;
+
+	//PrePass render for Shadow mapping 
+	shadowMap.bindForWriting();
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
@@ -73,11 +79,11 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 	// tell opengl we are going to use the VAO we described earlier
 	for (int i = 0; i < objects.size(); i++)
 	{
-		SM.CreateShadowMatrixData(aDirLight.getPos(), gShaderProgram.getShader());
+		shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
 
 		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(SM.getShadowMatrix()));
+		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
 		glBindVertexArray(objects[i].getVertexAttribute());
 
@@ -88,7 +94,7 @@ void Renderer::prePassRender(Shader gShaderProgram, std::vector<Primitive> objec
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], ShadowMap SM, std::vector<Light> lightArr, DirectionalLight aDirLight, std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Camera camera, float gClearColour[3], std::vector<Light> lightArr, std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
 {
 	// Position in shader
 	int view_matrix = 5;
@@ -107,15 +113,15 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 	glUseProgram(gShaderProgram.getShader());
 
 	// Shadowmap ViewProjection matrix
-	SM.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
+	shadowMap.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
 
 	// Per shader uniforms
 	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
-	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(SM.getShadowMatrix()));
+	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.camPos));
 
-	aDirLight.sendToShader(gShaderProgram);
+	dirLightArr[0].sendToShader(gShaderProgram);
 	//Sending all the lights to shader.
 	for (int i = 0; i < nr_P_LIGHTS; i++)
 	{
@@ -147,7 +153,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Primitive> objects, Cam
 			gShaderProgram.getShader(),
 			"normalTex", 1);
 		// Shadowmap
-		passTextureData(GL_TEXTURE2, SM.getDepthMapAttachment(), gShaderProgram.getShader(),
+		passTextureData(GL_TEXTURE2, shadowMap.getDepthMapAttachment(), gShaderProgram.getShader(),
 			"shadowMap", 2);
 
 		// Draw call

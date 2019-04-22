@@ -6,14 +6,15 @@
 #include "puzzleNode.h"
 #include "Primitive.h"
 #include "Camera.h"
+#include "Material.h"
+#include "puzzleNode.h"
 
 class Room
 {
 private:
 	void LoadLights();
-	void LoadEntities();
-
-
+	void LoadEntities(std::vector<Material> materials);
+	void LoadPuzzleNode(std::vector<Material> materials);
 
 	// Object list for the render queue
 	std::vector<Primitive> meshes;
@@ -24,26 +25,30 @@ private:
 
 	// Entity
 	std::vector<Entity> entities;
+
+	// PuzzleNode
+	std::vector<puzzleNode> nodes;
 	
 	// Temporary primitive
 	Primitive groundPlane;
 
 	// Camera
-	Camera roomCamera;
+	Camera* roomCamera;
 
 public:
-	Room();
+	Room(std::vector<Material> materials);
 	~Room();
 
 	std::vector<Light> GetPointLights() const;
 	std::vector<DirectionalLight> GetDirectionalLights() const;
-	std::vector<Entity> GetEntities() const;
-	unsigned int GetEntitiesSize() const;
+	std::vector<Entity> GetEntities();
 	std::vector<Primitive> GetMeshData() const;
-	Camera GetCamera();
+	Camera* GetCamera();
+
+	void MoveEntity(unsigned int i, glm::vec3 newPos);
 
 	void CompileMeshData();
-	void Update();
+
 
 };
 

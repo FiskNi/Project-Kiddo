@@ -7,16 +7,25 @@ Scene::Scene()
 	// Loads content | *Each function could return a bool incase of failure
 	LoadShaders();
 	LoadMaterials();
+	LoadCharacter();
 
-	// Initialize fullscreen quad vertices
-	// Right now the fullscreen quad is coded into the shader handler.
-	// Could be moved and better organized
-	fsqShader.CreateFSShaders();
-	fsqShader.CreateFullScreenQuad();
+	startingRoom = new Room(materials);
+
+	CompileMeshData();
 }
 
 Scene::~Scene()
 {
+	delete startingRoom;
+}
+
+std::vector<Light> Scene::GetPointLights() const
+{
+	return startingRoom->GetPointLights();
+}
+std::vector<DirectionalLight> Scene::GetDirectionalLights() const
+{
+	return startingRoom->GetDirectionalLights();
 }
 
 std::vector<Material> Scene::GetMaterials() const
@@ -24,16 +33,31 @@ std::vector<Material> Scene::GetMaterials() const
 	return materials;
 }
 
-std::vector<Shader> Scene::GetShaders() const
+Shader Scene::GetShader(unsigned int i) const
 {
-	return shaders;
+	return shaders[i];
+}
+
+std::vector<Primitive> Scene::GetMeshData() const
+{
+	return meshes;
 }
 
 void Scene::LoadShaders()
 {
 	// Load shaders
 	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
+	shaders.push_back(basicShader);
+
 	shadowmapShader.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
+	shaders.push_back(shadowmapShader);
+
+	// Initialize fullscreen quad vertices
+	// Right now the fullscreen quad is coded into the shader handler.
+	// Could be moved and better organized
+	fsqShader.CreateFSShaders();
+	fsqShader.CreateFullScreenQuad();
+	shaders.push_back(fsqShader);
 }
 
 void Scene::LoadMaterials()
@@ -67,25 +91,26 @@ void Scene::LoadCharacter()
 
 void Scene::CompileMeshData()
 {
-	objects.clear();
-	objects = startingRoom.GetMeshData();
+	startingRoom->CompileMeshData();
+	meshes.clear();
+	meshes = startingRoom->GetMeshData();
+	meshes.push_back(playerCharacter.getMeshData());
 }
 
-void Scene::Update()
+Camera Scene::GetCamera() const
 {
+	return *(startingRoom->GetCamera());
+}
 
-	// ** Need method to get variables from class above
-	//startingRoom.GetCamera().FPSCamControls(mainRenderer.getWindow(), deltaTime);
+void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
+{
+	startingRoom->GetCamera()->FPSCamControls(renderWindow, deltaTime);
 
 	// Character Handling
+	bool collision = false;
 
 	// Check a potential new position
-	// ** Need method to get variables from class above
-	//glm::vec3 newPos = playerCharacter.Move(mainRenderer.getWindow(), deltaTime);
-	glm::vec3 newPos = glm::vec3(0.0f);
-
-	// Check new positions collision of character
-	bool collision = false;
+	glm::vec3 newPos = playerCharacter.Move(renderWindow, deltaTime);
 
 	int dominatingBox = -1;
 	PlayerBoxCollision(collision, newPos, dominatingBox);
@@ -100,38 +125,15 @@ void Scene::Update()
 	CompileMeshData();
 }
 
-void Scene::BoxBoxCollision(int dominatingBox)
+void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox)
 {
-	// Could possibly be done with recursion to check subsequent collisions
-	// Could be made better with proper physic calculations
-	for (int i = 0; i < startingRoom.GetEntities().size(); ++i)
+	for (int i = 0; i < startingRoom->GetEntities().size(); ++i)
 	{
-		for (int j = 0; j < startingRoom.GetEntities().size(); ++j)
-		{
-			if (i != j && startingRoom.GetEntities()[i].CheckCollision(startingRoom.GetEntities()[j]) && j != dominatingBox)
-			{
-				glm::vec3 pushDir = startingRoom.GetEntities()[j].getPosition() - startingRoom.GetEntities()[i].getPosition();
-				if (abs(pushDir.x) >= abs(pushDir.z))
-					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-				else
-					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-				pushDir = glm::normalize(pushDir);
-				pushDir *= 0.15f;
-				startingRoom.GetEntities()[j].setPosition(startingRoom.GetEntities()[j].getPosition() + pushDir);
-			}
-		}
-	}
-}
-
-void Scene::PlayerBoxCollision(bool &collision, glm::vec3 &newPos, int &dominatingBox)
-{
-	for (int i = 0; i < startingRoom.GetEntities().size(); ++i)
-	{
-		if (playerCharacter.CheckCollision(startingRoom.GetEntities()[i]))
+		if (playerCharacter.CheckCollision(startingRoom->GetEntities()[i]))
 		{
 			collision = true;
 			// Reset player position (new position is inside a collision this the character has to be moved back again)
-			glm::vec3 pushDir = startingRoom.GetEntities()[i].getPosition() - newPos;
+			glm::vec3 pushDir = startingRoom->GetEntities()[i].getPosition() - newPos;
 			if (abs(pushDir.x) >= abs(pushDir.z))
 				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 			else
@@ -139,10 +141,36 @@ void Scene::PlayerBoxCollision(bool &collision, glm::vec3 &newPos, int &dominati
 
 			pushDir = glm::normalize(pushDir);
 			pushDir *= 0.15f;
-			startingRoom.GetEntities()[i].setPosition(startingRoom.GetEntities()[i].getPosition() + pushDir);
+
+			startingRoom->MoveEntity(i, startingRoom->GetEntities()[i].getPosition() + pushDir);
+
 			dominatingBox = i;
 		}
 	}
 }
+
+void Scene::BoxBoxCollision(int dominatingBox)
+{
+	// Could possibly be done with recursion to check subsequent collisions
+	// Could be made better with proper physic calculations
+	for (int i = 0; i < startingRoom->GetEntities().size(); ++i)
+	{
+		for (int j = 0; j < startingRoom->GetEntities().size(); ++j)
+		{
+			if (i != j && startingRoom->GetEntities()[i].CheckCollision(startingRoom->GetEntities()[j]) && j != dominatingBox)
+			{
+				glm::vec3 pushDir = startingRoom->GetEntities()[j].getPosition() - startingRoom->GetEntities()[i].getPosition();
+				if (abs(pushDir.x) >= abs(pushDir.z))
+					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+				else
+					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+				pushDir = glm::normalize(pushDir);
+				pushDir *= 0.15f;
+				startingRoom->MoveEntity(j, startingRoom->GetEntities()[j].getPosition() + pushDir);
+			}
+		}
+	}
+}
+
 
 

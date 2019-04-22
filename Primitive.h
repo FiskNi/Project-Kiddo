@@ -11,7 +11,7 @@ private:
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
 
-	GLuint materialID;
+	unsigned int materialID;
 
 public:
 	Primitive();

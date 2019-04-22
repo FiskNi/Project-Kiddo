@@ -8,7 +8,6 @@ private:
 	Primitive entityMesh;
 	glm::vec3 boundingBoxSize;
 
-	unsigned int materialID;
 	bool collision;
 
 public:

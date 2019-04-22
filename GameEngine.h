@@ -36,38 +36,6 @@ private:
 	// Main window and renderer object
 	Renderer mainRenderer;
 
-	// Shaders
-	Shader basicShader;
-	Shader fsqShader;
-	Shader shadowmapShader;
-
-	// Shadowmap
-	ShadowMap shadowMap;
-
-	// Object list for the render queue
-	std::vector<Primitive> objects;
-
-	// Materials are stored in a vector
-	std::vector<Material> materials;
-
-	// Main camera
-	Camera mainCamera;
-
-	// Lights
-	std::vector<Light> lights;
-	DirectionalLight aDirLight;
-
-	// Entity
-	std::vector<Entity> entities;
-
-	// Ground plane
-	Primitive groundPlane;
-
-	std::vector<puzzleNode> nodes;
-
-	// Character
-	Character playerCharacter;
-
 	// Main scene
 	Scene mainScene;
 
@@ -78,8 +46,5 @@ public:
 	void Run();
 	void ImGuiInit();
 	void UpdateImGui(bool &renderDepth);
-
-	void updateContent(float deltaTime);
-	void LoadContent();
 };
 
