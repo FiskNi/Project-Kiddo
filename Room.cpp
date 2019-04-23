@@ -8,6 +8,11 @@ Room::Room(std::vector<Material> materials)
 	LoadEntities(materials);
 	LoadPuzzleNode(materials);
 
+
+	testMesh.ImportMesh();
+	testMesh.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+	testMesh.setMaterial(materials[0].getMaterialID());
+
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
@@ -62,6 +67,8 @@ Camera* Room::GetCamera()
 void Room::CompileMeshData()
 {
 	meshes.clear();
+
+	meshes.push_back(testMesh);
 
 	for (int i = 0; i < rigids.size(); i++)
 	{

@@ -49,6 +49,8 @@ private:
 	// PuzzleNode
 	std::vector<puzzleNode> nodes;
 
+	Primitive testMesh;
+
 	// Camera
 	Camera* roomCamera;
 
