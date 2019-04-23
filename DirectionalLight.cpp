@@ -6,6 +6,10 @@ DirectionalLight::DirectionalLight()
 	this->direction = glm::vec3(4.0, 6.0, 2.0);
 	this->diffuse = glm::vec3(1.0f, 0.82f, 0.6f);
 	this->specular = glm::vec3(0.5f, 0.5f, 0.5f);
+
+	// Light strength
+	float str = 0.3f;
+	diffuse *= str;
 }
 
 DirectionalLight::~DirectionalLight()

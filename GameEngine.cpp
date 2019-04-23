@@ -11,7 +11,7 @@ GameEngine::~GameEngine()
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	cout << key << endl;
+	//cout << key << endl;
 
 	if (key == GLFW_KEY_SPACE)
 	{

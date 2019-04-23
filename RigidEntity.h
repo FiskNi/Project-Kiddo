@@ -1,6 +1,11 @@
 #pragma once
 #include "Entity.h"
 
+//============================================================================
+//	- Rigids
+//	Moveable entities like boxes 
+//============================================================================
+
 class RigidEntity : public Entity
 {
 private:

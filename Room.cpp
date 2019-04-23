@@ -8,9 +8,9 @@ Room::Room(std::vector<Material> materials)
 	LoadEntities(materials);
 	LoadPuzzleNode(materials);
 
-
+	// Temporary loading of mesh
 	testMesh.ImportMesh();
-	testMesh.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
 	testMesh.setMaterial(materials[0].getMaterialID());
 
 	// Initialize camera (Default constructor)
@@ -153,6 +153,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	
 	StaticEntity planeEntity(0);
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
+	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	statics.push_back(planeEntity);
 
 }

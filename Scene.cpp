@@ -297,23 +297,20 @@ void Scene::RigidGroundCollision(float deltaTime)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
-		for (int j = 0; j < startingRoom->GetStatics().size(); ++j)
+		if (startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetStatics()[0]))
 		{
-			if (startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetStatics()[j]))
-			{
-				startingRoom->GetRigids()[i].setGrounded(true);
-				startingRoom->GetRigids()[i].setSpeed(0.0f);
-			}
-			else
-			{
-				startingRoom->GetRigids()[i].setGrounded(false);
-				if (startingRoom->GetRigids()[i].GetPosition().y < startingRoom->GetStatics()[j].GetBottom())
-				{
-					startingRoom->GetRigids()[i].SetPosition(glm::vec3(startingRoom->GetRigids()[i].GetPosition().x,
-																	   startingRoom->GetRigids()[i].GetPosition().y + 0.001f * deltaTime,
-																	   startingRoom->GetRigids()[i].GetPosition().z));
-				}
-			}
+			startingRoom->GetRigids()[i].setGrounded(true);
+			startingRoom->GetRigids()[i].setSpeed(0.0f);
+
+			float groundLock = startingRoom->GetStatics()[0].GetPosition().y;
+
+			float offset = groundLock - startingRoom->GetRigids()[i].GetBottom();
+
+			startingRoom->GetRigids()[i].OffsetPosition(0.0f, offset, 0.0f);
+		}
+		else
+		{
+			startingRoom->GetRigids()[i].setGrounded(false);
 		}
 	}
 }
@@ -340,11 +337,7 @@ void Scene::ApplyGravity(float deltaTime)
 
 			startingRoom->GetRigids()[i].SetPosition(glm::vec3(ePosX, ePosY, ePosZ));
 		}
-
 	}
-
-	cout << startingRoom->GetRigids()[0].getSpeed() << endl;
-
 }
 
 

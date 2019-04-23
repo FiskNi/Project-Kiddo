@@ -3,19 +3,26 @@
 
 Entity::Entity(unsigned int i)
 {
-	speed = 0.0f;
-	collision = false;
-
+	// This is where the mesh data is created
+	// Currently it creates either a primitive plane or cube
+	// This will be changed for a imported mesh
 	if (i == 0)
 		entityMesh.CreatePlaneData();
 	else
 		entityMesh.CreateCubeData();
 
+	// Starting position
+	// Should be input with the constuctor and possibly required
 	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
 	SetPosition(startPos);
+
+	// For position calculations and vector math
 	savedPosition = GetPosition();
 
+	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
+
+	// Entity ID for collision checks
 	this->entityID = 2;
 }
 
@@ -55,7 +62,7 @@ bool Entity::CheckCollision(Entity collidingCube)
 	};
 
 	AABB thisBoundingBox;
-	thisBoundingBox.position = GetPosition();
+	thisBoundingBox.position = GetPosition() + boundingBoxCenter;
 	thisBoundingBox.size = boundingBoxSize;
 
 	AABB collidingBoundingBox;
@@ -90,6 +97,19 @@ void Entity::SetMaterialID(unsigned int id)
 void Entity::SetPosition(glm::vec3 newPos)
 {
 	entityMesh.setPosition(newPos);
+}
+
+void Entity::OffsetPosition(float x, float y, float z)
+{
+	glm::vec3 offset = glm::vec3(0.0f);
+	if (x > 0.01f)
+		offset.x = x;
+	if (y > 0.01f)
+		offset.y = y;
+	if (z > 0.01f)
+		offset.z = z;
+
+	SetPosition(GetPosition() + offset);
 }
 
 void Entity::SaveCurrentPosition(glm::vec3 pos)
@@ -128,6 +148,11 @@ glm::vec3 Entity::GetSavedPosition() const
 	return savedPosition;
 }
 
+glm::vec3 Entity::GetBoundingBoxCenter() const
+{
+	return boundingBoxCenter;
+}
+
 glm::vec3 Entity::GetBoundingBoxSize() const
 {
 	return boundingBoxSize;
@@ -136,25 +161,6 @@ glm::vec3 Entity::GetBoundingBoxSize() const
 float Entity::GetBottom() const
 {
 	return GetPosition().y - boundingBoxSize.y;
-}
-
-glm::vec3 Entity::entMove(GLFWwindow * window, float dTime)
-{
-	float moveSpeed = 5.5f * dTime,
-		moveX = 0.0f,
-		moveY = 0.0f,
-		moveZ = 0.0f;
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		moveX = moveSpeed;
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		moveX = -moveSpeed;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		moveZ = moveSpeed;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		moveZ =- moveSpeed;
-
-	return calcMovement(moveX, moveY, moveZ, entityMesh);
 }
 
 //=============================================================

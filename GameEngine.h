@@ -16,21 +16,19 @@
 class GameEngine
 {
 private:
-	// OpenGL uses unsigned integers to keep track of
-	// created resources (shaders, vertices, textures, etc)
-	// For simplicity, we make them global here, but it is
-	// safe to put them in a class and pass around...
-
-	// full screen quad stuff
+	// Full screen quad stuff
+	// Might be moved later
 	GLuint gVertexBufferFS = 0;
 	GLuint gVertexAttributeFS = 0;
 	GLuint gShaderProgramFS = 0;
 
+	// ImGui debug content
+	// Reference for creating custom debug UI
 	float gFloat = 0;
 	float gClearColour[3]{};
 	glm::mat4 gRotate2D;
 
-	//*** Game content ***//
+
 	// Main window and renderer object
 	Renderer mainRenderer;
 

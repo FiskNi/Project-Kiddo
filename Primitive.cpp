@@ -7,9 +7,6 @@ Primitive::Primitive()
 
 	gVertexBuffer = 0;
 	gVertexAttribute = 0;
-
-	// Currently a vector, needs to be changed to a pointer when mesh loading works
-	vertices.reserve(36);
 }
 Primitive::~Primitive()
 {
@@ -21,13 +18,15 @@ Primitive::~Primitive()
 //=============================================================
 void Primitive::CreateCubeData()
 {
-	vertices.reserve(36);
 	// 36 hardcoded vertices representing a cube
 
 	vertexPolygon cubeVertex;
 	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
 	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	//cubeVertex.tangent = glm::vec3(0.0f);
+	//cubeVertex.bitangent = glm::vec3(0.0f);
+
 		vertices.push_back(cubeVertex);
 	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
@@ -174,6 +173,8 @@ void Primitive::CreateCubeData()
 	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
 	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
 		vertices.push_back(cubeVertex);
+
+	CalculateTangents();
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -244,8 +245,6 @@ void Primitive::CreateCubeData()
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
-
-	CalculateTangents();
 }
 
 //=============================================================
@@ -253,12 +252,13 @@ void Primitive::CreateCubeData()
 //=============================================================
 void Primitive::CreatePlaneData()
 {
-	vertices.reserve(6);
 	// 6 hardcoded vertices representing a plane
 	vertexPolygon planeVertex;
 	planeVertex.position = glm::vec3(-20.0f, 0.0f, -20.0f);
 	planeVertex.uv = glm::vec2(0.0f, 5.0f);
 	planeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	//planeVertex.tangent = glm::vec3(0.0f);
+	//planeVertex.bitangent = glm::vec3(0.0f);
 		vertices.push_back(planeVertex);
 
 	planeVertex.position = glm::vec3(20.0f, 0.0f, -20.0f);
@@ -281,6 +281,8 @@ void Primitive::CreatePlaneData()
 	planeVertex.uv = glm::vec2(0.0f, 5.0f);
 		vertices.push_back(planeVertex);
 
+	CalculateTangents();
+
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
 
@@ -350,8 +352,6 @@ void Primitive::CreatePlaneData()
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
-
-	CalculateTangents();
 }
 
 void Primitive::ImportMesh()
@@ -428,9 +428,9 @@ void Primitive::CalculateTangents()
 
 	for (int i = 0; i < vertices.size(); i += 3)
 	{
-		vertexVectorX = vertices[(i * 3)].position.x - vertices[i + 2].position.x;
-		vertexVectorY = vertices[(i * 3)].position.y - vertices[i + 2].position.y;
-		vertexVectorZ = vertices[(i * 3)].position.z - vertices[i + 2].position.z;
+		vertexVectorX = vertices[(i)].position.x - vertices[i + 2].position.x;
+		vertexVectorY = vertices[(i)].position.y - vertices[i + 2].position.y;
+		vertexVectorZ = vertices[(i)].position.z - vertices[i + 2].position.z;
 		triangleEdge1 = glm::vec3(vertexVectorX, vertexVectorY, vertexVectorZ);
 
 

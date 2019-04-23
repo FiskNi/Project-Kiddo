@@ -1,6 +1,14 @@
 #pragma once
 #include "Headers.h"
 
+//============================================================================
+//	- Primitive
+//	Handles pure mesh data (vertices and currently material)
+//	This is where everything the renderer needs for the shader inputs and nothing else.
+//		*Will be renamed to "Mesh" as this will do the main mesh handling.
+//		Primitives will be a fallback on meshloading failure
+//============================================================================
+
 class Primitive
 {
 private:
