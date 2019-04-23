@@ -13,6 +13,10 @@ Room::Room(std::vector<Material> materials)
 	groundPlane.setPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	groundPlane.setMaterial(materials[0].getMaterialID());
 
+	testMesh.ImportMesh();
+	testMesh.setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+	testMesh.setMaterial(materials[0].getMaterialID());
+
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
@@ -75,6 +79,7 @@ void Room::CompileMeshData()
 {
 	meshes.clear();
 	meshes.push_back(groundPlane);
+	meshes.push_back(testMesh);
 
 	for (int i = 0; i < entities.size(); i++)
 	{

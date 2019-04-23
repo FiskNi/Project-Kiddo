@@ -11,6 +11,8 @@ private:
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
 
+	vertex * importVerts;
+
 	unsigned int materialID;
 
 public:
@@ -19,6 +21,8 @@ public:
 
 	void CreateCubeData();
 	void CreatePlaneData();
+
+	void ImportMesh();
 
 	void CalculateTangents();
 	

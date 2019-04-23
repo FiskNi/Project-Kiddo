@@ -348,6 +348,64 @@ void Primitive::CreatePlaneData()
 	CalculateTangents();
 }
 
+void Primitive::ImportMesh()
+{
+	Loader test("nakedCube.bin");
+
+	vertexPolygon dummyVertex;
+
+	this->importVerts = test.getVerticies(0);
+
+	for (int i = 0; i < test.getNrOfVerticies(0); i++)
+	{
+		this->vertices.push_back(dummyVertex);
+	}
+
+	glGenVertexArrays(1, &this->gVertexAttribute);
+
+	glBindVertexArray(this->gVertexAttribute);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
+
+	glBufferData(GL_ARRAY_BUFFER, test.getNrOfVerticies(0) * sizeof(vertex), test.getVerticies(0), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(
+		0,				// location in shader
+		3,						// how many elements of type (see next argument)
+		GL_FLOAT,				// type of each element
+		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(vertex), // distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertex),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertex),
+		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+}
+
 void Primitive::CalculateTangents()
 {
 	// Normal and tangent Calculation

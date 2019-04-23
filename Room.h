@@ -47,6 +47,8 @@ private:
 	// Temporary primitive
 	Primitive groundPlane;
 
+	Primitive testMesh;
+
 	// Camera
 	Camera* roomCamera;
 
