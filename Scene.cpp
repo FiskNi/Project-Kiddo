@@ -130,7 +130,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	if (playerCharacter.CheckInBound(startingRoom->GetEntities()[meshIndex])) 
 	{
-		if (glfwGetKey(renderWindow, GLFW_KEY_X) == GLFW_PRESS)
+		if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			startingRoom->MoveEntity(meshIndex, startingRoom->GetEntities()[meshIndex].entMove(renderWindow, deltaTime));
 	}
 	

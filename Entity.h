@@ -44,5 +44,3 @@ public:
 	glm::vec3 entMove(GLFWwindow* window, float dTime);
 	glm::vec3 calcMovement(float moveX, float moveY, float moveZ, Primitive mesh);
 };
-
-}
