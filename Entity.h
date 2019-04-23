@@ -10,6 +10,8 @@ private:
 	glm::vec3 boundingBoxCenter;
 	glm::vec3 boundingBoxSize;
 
+	//ID, playerID = 1, Movable box = 2.
+	unsigned int entityID; 
 	glm::vec3 savedPosition;
 
 	float speed;
@@ -28,6 +30,11 @@ public:
 	void SaveCurrentPosition(glm::vec3 pos);
 	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
+	void setIndex(int index);
+
+	void setCustomBBox(glm::vec3);
+
+	unsigned int getEntityID() const;
 
 	Primitive GetMeshData() const;
 	glm::vec3 GetPosition() const;
@@ -36,4 +43,11 @@ public:
 
 	float GetBottom() const;
 
+
+	float getSpeed() const;
+	int getIndex() const;
+
+
+	glm::vec3 entMove(GLFWwindow* window, float dTime);
+	glm::vec3 calcMovement(float moveX, float moveY, float moveZ, Primitive mesh);
 };

@@ -43,6 +43,7 @@ private:
 	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox);
 	void BoxBoxCollision(int dominatingBox);
 	void BoxNodeCollision();
+	unsigned int inBoundCheck(bool& collision);
 	void RigidStaticCollision();
 	void RigidGroundCollision();
 	void ApplyGravity(float deltaTime);
