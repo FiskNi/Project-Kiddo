@@ -1,12 +1,18 @@
 #include "Entity.h"
 
 
-Entity::Entity()
+Entity::Entity(unsigned int i)
 {
-	entityMesh.CreateCubeData();
+	speed = 0.0f;
+
+	if (i == 0)
+		entityMesh.CreatePlaneData();
+	else
+		entityMesh.CreateCubeData();
 
 	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
-	setPosition(startPos);
+	SetPosition(startPos);
+	savedPosition = GetPosition();
 
 	InitBoundingBox();
 }
@@ -47,12 +53,12 @@ bool Entity::CheckCollision(Entity collidingCube)
 	};
 
 	AABB thisBoundingBox;
-	thisBoundingBox.position = getPosition();
+	thisBoundingBox.position = GetPosition();
 	thisBoundingBox.size = boundingBoxSize;
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.getPosition();
-	collidingBoundingBox.size = collidingCube.getSize();
+	collidingBoundingBox.position = collidingCube.GetPosition();
+	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
 	glm::vec3 box1p2 = thisBoundingBox.position - thisBoundingBox.size;
@@ -74,14 +80,24 @@ bool Entity::CheckCollision(Entity collidingCube)
 	return false;
 }
 
-void Entity::setMaterialID(unsigned int id)
+void Entity::SetMaterialID(unsigned int id)
 {
 	entityMesh.setMaterial(id);
 }
 
-void Entity::setPosition(glm::vec3 newPos)
+void Entity::SetPosition(glm::vec3 newPos)
 {
 	entityMesh.setPosition(newPos);
+}
+
+void Entity::SaveCurrentPosition(glm::vec3 pos)
+{
+	savedPosition = pos;
+}
+
+void Entity::RestoreSavedPosition()
+{
+	SetPosition(savedPosition);
 }
 
 void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
@@ -90,22 +106,27 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 	this->boundingBoxCenter = BBoxCenter;
 }
 
-Primitive Entity::getMeshData() const
+Primitive Entity::GetMeshData() const
 {
 	return entityMesh;
 }
 
-glm::vec3 Entity::getPosition() const
+glm::vec3 Entity::GetPosition() const
 {
 	return entityMesh.getPosition();
 }
 
-glm::vec3 Entity::getSize() const
+glm::vec3 Entity::GetSavedPosition() const
+{
+	return savedPosition;
+}
+
+glm::vec3 Entity::GetBoundingBoxSize() const
 {
 	return boundingBoxSize;
 }
 
-float Entity::getSpeed() const
+float Entity::GetBottom() const
 {
-	return 0.0f;
+	return GetPosition().y - boundingBoxSize.y;
 }

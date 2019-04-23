@@ -10,26 +10,30 @@ private:
 	glm::vec3 boundingBoxCenter;
 	glm::vec3 boundingBoxSize;
 
-	float speed;
+	glm::vec3 savedPosition;
 
+	float speed;
 	bool collision;
 
 public:
-	Entity();
+	Entity(unsigned int i);
 	~Entity();
 
 	void InitBoundingBox();
 
 	bool CheckCollision(Entity collidingCube);
 
-	void setMaterialID(unsigned int materialID);
-	void setPosition(glm::vec3 newPos);
-	void setSpeed(float speed);
+	void SetMaterialID(unsigned int materialID);
+	void SetPosition(glm::vec3 newPos);
+	void SaveCurrentPosition(glm::vec3 pos);
+	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
-	Primitive getMeshData() const;
-	glm::vec3 getPosition() const;
-	glm::vec3 getSize() const;
-	float getSpeed() const;
+	Primitive GetMeshData() const;
+	glm::vec3 GetPosition() const;
+	glm::vec3 GetSavedPosition() const;
+	glm::vec3 GetBoundingBoxSize() const;
 
-}
+	float GetBottom() const;
+
+};

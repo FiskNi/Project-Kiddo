@@ -2,9 +2,9 @@
 
 
 
-puzzleNode::puzzleNode()
+puzzleNode::puzzleNode() : Entity(1)
 {
-	SetBoundingBox(getPosition(), glm::vec3(0.7f, 0.7f, 0.7f));
+	SetBoundingBox(GetPosition(), glm::vec3(0.7f, 0.7f, 0.7f));
 }
 
 
@@ -21,12 +21,12 @@ bool puzzleNode::checkInside(Entity collidingCube)
 	};
 
 	AABB thisBoundingBox;
-	thisBoundingBox.position = getPosition();
-	thisBoundingBox.size = getSize();
+	thisBoundingBox.position = GetPosition();
+	thisBoundingBox.size = GetBoundingBoxSize();
 
 	AABB otherBoundingBox;
-	otherBoundingBox.position = collidingCube.getPosition();
-	otherBoundingBox.size = collidingCube.getSize();
+	otherBoundingBox.position = collidingCube.GetPosition();
+	otherBoundingBox.size = collidingCube.GetBoundingBoxSize();
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
 	glm::vec3 box1p2 = thisBoundingBox.position - thisBoundingBox.size;

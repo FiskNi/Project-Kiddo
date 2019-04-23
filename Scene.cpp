@@ -119,6 +119,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	// Character Handling
 	bool collision = false;
 
+	ApplyGravity(deltaTime);
+
 	// Check a potential new position
 	glm::vec3 newPos = playerCharacter.Move(renderWindow, deltaTime);
 
@@ -128,6 +130,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	PlayerBoxCollision(collision, newPos, dominatingBox);
 	BoxBoxCollision(dominatingBox);
 	BoxNodeCollision();
+	RigidStaticCollision();
+	RigidGroundCollision();
 
 	if (!collision)
 	{
@@ -136,6 +140,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 
 	CompileMeshData();
+
 }
 
 //=============================================================
@@ -146,24 +151,32 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 //=============================================================
 void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox)
 {
-	for (int i = 0; i < startingRoom->GetEntities().size(); ++i)
+	for (int i = 0; i < startingRoom->GetRigids().size(); ++i)
 	{
-		if (playerCharacter.CheckCollision(startingRoom->GetEntities()[i]))
+		if (playerCharacter.CheckCollision(startingRoom->GetRigids()[i]))
 		{
 			collision = true;
-			// Reset player position (new position is inside a collision this the character has to be moved back again)
-			glm::vec3 pushDir = startingRoom->GetEntities()[i].getPosition() - newPos;
-			if (abs(pushDir.x) >= abs(pushDir.z))
-				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-			else
-				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 
-			pushDir = glm::normalize(pushDir);
-			pushDir *= 0.15f;
+			if (!startingRoom->GetRigids()[i].isColliding())
+			{
+				// Reset player position (new position is inside a collision this the character has to be moved back again)
+				glm::vec3 pushDir = startingRoom->GetRigids()[i].GetPosition() - newPos;
+				if (abs(pushDir.x) >= abs(pushDir.z))
+					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+				else
+					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 
-			startingRoom->MoveEntity(i, startingRoom->GetEntities()[i].getPosition() + pushDir);
+				pushDir = glm::normalize(pushDir);
+				pushDir *= 0.15f;
 
-			dominatingBox = i;
+				startingRoom->GetRigids()[i].SetPosition(startingRoom->GetRigids()[i].GetPosition() + pushDir);
+
+				// Move lights with the entites (temporary)
+				glm::vec3 newLightPos = glm::vec3(startingRoom->GetRigids()[i].GetPosition().x, 1.0f, startingRoom->GetRigids()[i].GetPosition().z);
+				startingRoom->GetPointLights()[i].setLightPos(newLightPos);
+
+				dominatingBox = i;
+			}
 		}
 	}
 }
@@ -178,20 +191,23 @@ void Scene::BoxBoxCollision(int dominatingBox)
 {
 	// Could possibly be done with recursion to check subsequent collisions
 	// Could be made better with proper physic calculations
-	for (int i = 0; i < startingRoom->GetEntities().size(); ++i)
+	for (int i = 0; i < startingRoom->GetRigids().size(); ++i)
 	{
-		for (int j = 0; j < startingRoom->GetEntities().size(); ++j)
+		for (int j = 0; j < startingRoom->GetRigids().size(); ++j)
 		{
-			if (i != j && startingRoom->GetEntities()[i].CheckCollision(startingRoom->GetEntities()[j]) && j != dominatingBox)
+			if (i != j && startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetRigids()[j]) && j != dominatingBox)
 			{
-				glm::vec3 pushDir = startingRoom->GetEntities()[j].getPosition() - startingRoom->GetEntities()[i].getPosition();
-				if (abs(pushDir.x) >= abs(pushDir.z))
-					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-				else
-					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-				pushDir = glm::normalize(pushDir);
-				pushDir *= 0.15f;
-				startingRoom->MoveEntity(j, startingRoom->GetEntities()[j].getPosition() + pushDir);
+				if (!startingRoom->GetRigids()[j].isColliding())
+				{
+					glm::vec3 pushDir = startingRoom->GetRigids()[j].GetPosition() - startingRoom->GetRigids()[i].GetPosition();
+					if (abs(pushDir.x) >= abs(pushDir.z))
+						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+					else
+						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+					pushDir = glm::normalize(pushDir);
+					pushDir *= 0.15f;
+					startingRoom->GetRigids()[j].SetPosition(startingRoom->GetRigids()[j].GetPosition() + pushDir);
+				}
 			}
 		}
 	}
@@ -205,34 +221,88 @@ void Scene::BoxBoxCollision(int dominatingBox)
 //=============================================================
 void Scene::BoxNodeCollision()
 {
-	for (int i = 0; i < startingRoom->GetEntities().size(); i++)
+	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
-		if (startingRoom->GetNodes()[0].CheckCollision(startingRoom->GetEntities()[i]))
+		if (startingRoom->GetNodes()[0].CheckCollision(startingRoom->GetRigids()[i]))
 		{
-			cout << "Solved" << endl;
+			for (int j = 0; j < startingRoom->GetRigids().size(); ++j)
+			{
+				cout << "Solved" << endl;
+			}
+		}
+	}
+}
+
+void Scene::RigidStaticCollision()
+{
+	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+	{
+		for (int j = 0; j < startingRoom->GetStatics().size(); ++j)
+		{
+			if (startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetStatics()[j]))
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+	}
+}
+
+
+void Scene::RigidGroundCollision()
+{
+	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+	{
+		for (int j = 0; j < startingRoom->GetStatics().size(); ++j)
+		{
+			if (startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetStatics()[j]))
+			{
+				startingRoom->GetRigids()[i].setGrounded(true);
+				startingRoom->GetRigids()[i].setSpeed(0.0f);
+			}
+			else
+			{
+				startingRoom->GetRigids()[i].setGrounded(false);
+				if (startingRoom->GetRigids()[i].GetPosition().y < startingRoom->GetStatics()[j].GetBottom())
+				{
+					startingRoom->GetRigids()[i].SetPosition(glm::vec3(startingRoom->GetRigids()[i].GetPosition().x,
+																	   startingRoom->GetRigids()[i].GetPosition().y + 0.001f,
+																	   startingRoom->GetRigids()[i].GetPosition().z));
+				}
+			}
 		}
 	}
 }
 
 void Scene::ApplyGravity(float deltaTime)
 {
-	float gravityConst = 9.82f;
+	float gravityConst = 0.8f;
 	float acceleration = 0.0f;
 
-	for (int i = 0; i < startingRoom->GetEntities().size(); i++)
-	{
-		float ePosX = startingRoom->GetEntities()[i].getPosition().x;
-		float ePosY = startingRoom->GetEntities()[i].getPosition().y;
-		float ePosZ = startingRoom->GetEntities()[i].getPosition().z;
+	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+	{	
+		if (!startingRoom->GetRigids()[i].isGrounded())
+		{
+			float ePosX = startingRoom->GetRigids()[i].GetPosition().x;
+			float ePosY = startingRoom->GetRigids()[i].GetPosition().y;
+			float ePosZ = startingRoom->GetRigids()[i].GetPosition().z;
 
+			float speed = startingRoom->GetRigids()[i].getSpeed();
 
+			speed += gravityConst * deltaTime;
+
+			startingRoom->GetRigids()[i].setSpeed(speed);
+			ePosY -= speed;
+
+			startingRoom->GetRigids()[i].SetPosition(glm::vec3(ePosX, ePosY, ePosZ));
+		}
 
 	}
-	acceleration += gravityConst;
 
-	
-
-	startingRoom->MoveEntity(0, startingRoom->GetEntities()[0].getPosition());
+	cout << startingRoom->GetRigids()[0].getSpeed() << endl;
 
 }
 

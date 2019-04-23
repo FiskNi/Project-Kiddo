@@ -52,8 +52,8 @@ bool Character::CheckCollision(Entity collidingCube)
 	thisBoundingBox.size = boundingBoxSize;
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.getPosition();
-	collidingBoundingBox.size = collidingCube.getSize();
+	collidingBoundingBox.position = collidingCube.GetPosition();
+	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
 	glm::vec3 box1p2 = thisBoundingBox.position - thisBoundingBox.size;
