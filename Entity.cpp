@@ -104,3 +104,8 @@ glm::vec3 Entity::getSize() const
 {
 	return boundingBoxSize;
 }
+
+float Entity::getSpeed() const
+{
+	return 0.0f;
+}

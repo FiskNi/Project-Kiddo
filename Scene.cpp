@@ -214,5 +214,27 @@ void Scene::BoxNodeCollision()
 	}
 }
 
+void Scene::ApplyGravity(float deltaTime)
+{
+	float gravityConst = 9.82f;
+	float acceleration = 0.0f;
+
+	for (int i = 0; i < startingRoom->GetEntities().size(); i++)
+	{
+		float ePosX = startingRoom->GetEntities()[i].getPosition().x;
+		float ePosY = startingRoom->GetEntities()[i].getPosition().y;
+		float ePosZ = startingRoom->GetEntities()[i].getPosition().z;
+
+
+
+	}
+	acceleration += gravityConst;
+
+	
+
+	startingRoom->MoveEntity(0, startingRoom->GetEntities()[0].getPosition());
+
+}
+
 
 

@@ -40,9 +40,11 @@ private:
 
 	void CompileMeshData();
 
+	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox);
 	void BoxBoxCollision(int dominatingBox);
 	void BoxNodeCollision();
-	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox);
+	void ApplyGravity(float deltaTime);
+	
 
 	// Shaders
 	std::vector<Shader> shaders;

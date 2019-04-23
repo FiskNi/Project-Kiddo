@@ -42,17 +42,17 @@ void Camera::FPSCamControls(GLFWwindow * window, float deltaTime)
 {
 	float camSpeed = this->mSpeed*deltaTime;
 
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		this->camPos -= camSpeed * this->camRight;
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		this->camPos += camSpeed * this->camRight;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		this->camPos += camSpeed * this->face;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		this->camPos -= camSpeed * this->face;
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
 		this->camPos += camSpeed * this->camUp;
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
 		this->camPos -= camSpeed * this->camUp;
 	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
 		this->camPitch += camSpeed * 10;
