@@ -7,6 +7,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 	speed = 0.0f;
 	collision = false;
 	grounded = false;
+	held = false;
 }
 
 
@@ -29,6 +30,11 @@ void RigidEntity::setGrounded(bool grounded)
 	this->grounded = grounded;
 }
 
+void RigidEntity::setHeld(bool holding)
+{
+	held = holding;
+}
+
 float RigidEntity::getSpeed() const
 {
 	return speed;
@@ -42,4 +48,9 @@ bool RigidEntity::isColliding() const
 bool RigidEntity::isGrounded() const
 {
 	return grounded;
+}
+
+bool RigidEntity::isHeld() const
+{
+	return held;
 }

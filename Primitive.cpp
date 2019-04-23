@@ -7,6 +7,9 @@ Primitive::Primitive()
 
 	gVertexBuffer = 0;
 	gVertexAttribute = 0;
+
+	// Currently a vector, needs to be changed to a pointer when mesh loading works
+	vertices.reserve(36);
 }
 Primitive::~Primitive()
 {
@@ -18,7 +21,9 @@ Primitive::~Primitive()
 //=============================================================
 void Primitive::CreateCubeData()
 {
+	vertices.reserve(36);
 	// 36 hardcoded vertices representing a cube
+
 	vertexPolygon cubeVertex;
 	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
@@ -248,6 +253,7 @@ void Primitive::CreateCubeData()
 //=============================================================
 void Primitive::CreatePlaneData()
 {
+	vertices.reserve(6);
 	// 6 hardcoded vertices representing a plane
 	vertexPolygon planeVertex;
 	planeVertex.position = glm::vec3(-20.0f, 0.0f, -20.0f);
@@ -351,8 +357,6 @@ void Primitive::CreatePlaneData()
 void Primitive::CalculateTangents()
 {
 	// Normal and tangent Calculation
-	std::vector<glm::vec3> tNormal;
-	std::vector<glm::vec3> tTangent;
 
 	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 tangent = glm::vec3(0.0f, 0.0f, 0.0f);

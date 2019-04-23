@@ -4,6 +4,7 @@
 Entity::Entity(unsigned int i)
 {
 	speed = 0.0f;
+	collision = false;
 
 	if (i == 0)
 		entityMesh.CreatePlaneData();
@@ -112,7 +113,7 @@ unsigned int Entity::getEntityID() const
 	return this->entityID;
 }
 
-Primitive Entity::getMeshData() const
+Primitive Entity::GetMeshData() const
 {
 	return entityMesh;
 }
@@ -137,9 +138,6 @@ float Entity::GetBottom() const
 	return GetPosition().y - boundingBoxSize.y;
 }
 
-
-
-
 glm::vec3 Entity::entMove(GLFWwindow * window, float dTime)
 {
 	float moveSpeed = 5.5f * dTime,
@@ -147,15 +145,13 @@ glm::vec3 Entity::entMove(GLFWwindow * window, float dTime)
 		moveY = 0.0f,
 		moveZ = 0.0f;
 
-	glm::vec3 newPos = entityMesh.getPosition();
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		moveX = moveSpeed;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		moveX = -moveSpeed;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		moveZ = moveSpeed;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		moveZ =- moveSpeed;
 
 	return calcMovement(moveX, moveY, moveZ, entityMesh);

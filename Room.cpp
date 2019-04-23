@@ -119,6 +119,11 @@ void Room::LoadLights()
 void Room::LoadEntities(std::vector<Material> materials)
 {
 	RigidEntity cubeEntity(1);
+
+	rigids.reserve(6);
+
+
+
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));

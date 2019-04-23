@@ -123,24 +123,44 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	// Check a potential new position
 	glm::vec3 newPos = playerCharacter.Move(renderWindow, deltaTime);
-	
-
+		
 	int dominatingBox = -1;
 	int meshIndex = inBoundCheck(collision);
 	// Collision functions
 	
-
-	if (playerCharacter.CheckInBound(startingRoom->GetEntities()[meshIndex])) 
+	if (playerCharacter.CheckInBound(startingRoom->GetRigids()[meshIndex])) 
 	{
 		if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
-			startingRoom->MoveEntity(meshIndex, startingRoom->GetEntities()[meshIndex].entMove(renderWindow, deltaTime));
+		{
+			// Currently drags the box into the center of the character.
+			// Can be improved by only draging the box to one side of the hitbox
+			// use glm::length
+			startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
+
+			glm::vec3 pushDir = startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
+
+			if (abs(pushDir.x) >= abs(pushDir.z))
+				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+			else
+				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+
+			pushDir = glm::normalize(pushDir);
+			pushDir *= 10.0f * deltaTime;
+
+			startingRoom->GetRigids()[meshIndex].SetPosition(startingRoom->GetRigids()[meshIndex].GetPosition() - pushDir);
+			startingRoom->GetRigids()[meshIndex].setHeld(true);
+		}
+		else
+		{
+			startingRoom->GetRigids()[meshIndex].setHeld(false);
+		}
 	}
 	
-	PlayerBoxCollision(collision, newPos, dominatingBox);
-	BoxBoxCollision(dominatingBox);
+	PlayerBoxCollision(collision, newPos, dominatingBox, meshIndex, deltaTime);
+	BoxBoxCollision(dominatingBox, deltaTime);
 	BoxNodeCollision();
-	RigidStaticCollision();
-	RigidGroundCollision();
+	RigidStaticCollision(deltaTime);
+	RigidGroundCollision(deltaTime);
 
 	if (!collision)
 	{
@@ -149,7 +169,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 
 	CompileMeshData();
-
 }
 
 //=============================================================
@@ -158,11 +177,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 //	Currently it only handles the entites in the starting room
 //	This will be changed as more rooms are added
 //=============================================================
-void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox)
+void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox, int meshIndex, float deltaTime)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); ++i)
 	{
-		if (playerCharacter.CheckCollision(startingRoom->GetRigids()[i]))
+		if (!startingRoom->GetRigids()[i].isHeld() && playerCharacter.CheckCollision(startingRoom->GetRigids()[i]))
 		{
 			collision = true;
 
@@ -170,19 +189,16 @@ void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominati
 			{
 				// Reset player position (new position is inside a collision this the character has to be moved back again)
 				glm::vec3 pushDir = startingRoom->GetRigids()[i].GetPosition() - newPos;
+
 				if (abs(pushDir.x) >= abs(pushDir.z))
 					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 				else
 					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 
 				pushDir = glm::normalize(pushDir);
-				pushDir *= 0.15f;
+				pushDir *= 10.0f * deltaTime;
 
 				startingRoom->GetRigids()[i].SetPosition(startingRoom->GetRigids()[i].GetPosition() + pushDir);
-
-				// Move lights with the entites (temporary)
-				glm::vec3 newLightPos = glm::vec3(startingRoom->GetRigids()[i].GetPosition().x, 1.0f, startingRoom->GetRigids()[i].GetPosition().z);
-				startingRoom->GetPointLights()[i].setLightPos(newLightPos);
 
 				dominatingBox = i;
 			}
@@ -193,12 +209,13 @@ void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominati
 
 unsigned int Scene::inBoundCheck(bool& collision)
 {
-	for (int i = 0; i < startingRoom->GetEntities().size(); i++)
-		if (playerCharacter.CheckInBound(startingRoom->GetEntities()[i]))
-			if (startingRoom->GetEntities()[i].getEntityID() == 2)
+	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[i]))
+			if (startingRoom->GetRigids()[i].getEntityID() == 2)
 				return i;
 			else
 				return -1;
+	return -1;
 }
 
 //=============================================================
@@ -207,7 +224,7 @@ unsigned int Scene::inBoundCheck(bool& collision)
 //	Currently it only handles the entites in the starting room
 //	This will be changed as more rooms are added
 //=============================================================
-void Scene::BoxBoxCollision(int dominatingBox)
+void Scene::BoxBoxCollision(int dominatingBox, float deltaTime)
 {
 	// Could possibly be done with recursion to check subsequent collisions
 	// Could be made better with proper physic calculations
@@ -225,7 +242,7 @@ void Scene::BoxBoxCollision(int dominatingBox)
 					else
 						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 					pushDir = glm::normalize(pushDir);
-					pushDir *= 0.15f;
+					pushDir *= 10.0f * deltaTime;
 					startingRoom->GetRigids()[j].SetPosition(startingRoom->GetRigids()[j].GetPosition() + pushDir);
 				}
 			}
@@ -253,7 +270,7 @@ void Scene::BoxNodeCollision()
 	}
 }
 
-void Scene::RigidStaticCollision()
+void Scene::RigidStaticCollision(float deltaTime)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
@@ -272,7 +289,7 @@ void Scene::RigidStaticCollision()
 }
 
 
-void Scene::RigidGroundCollision()
+void Scene::RigidGroundCollision(float deltaTime)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
@@ -289,7 +306,7 @@ void Scene::RigidGroundCollision()
 				if (startingRoom->GetRigids()[i].GetPosition().y < startingRoom->GetStatics()[j].GetBottom())
 				{
 					startingRoom->GetRigids()[i].SetPosition(glm::vec3(startingRoom->GetRigids()[i].GetPosition().x,
-																	   startingRoom->GetRigids()[i].GetPosition().y + 0.001f,
+																	   startingRoom->GetRigids()[i].GetPosition().y + 0.001f * deltaTime,
 																	   startingRoom->GetRigids()[i].GetPosition().z));
 				}
 			}

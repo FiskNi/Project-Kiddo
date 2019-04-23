@@ -1,6 +1,6 @@
 #include "Character.h"
 
-Character::Character()
+Character::Character() : Entity(1)
 {
 	playerMesh.CreateCubeData();
 
@@ -86,8 +86,8 @@ bool Character::CheckInBound(Entity collidingCube)
 	};
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.getPosition();
-	collidingBoundingBox.size = collidingCube.getSize();
+	collidingBoundingBox.position = collidingCube.GetPosition();
+	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
 
 	//=============================================================
 	//	inBoundBox will only be used to check if there is any 
