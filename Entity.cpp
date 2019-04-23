@@ -8,6 +8,7 @@ Entity::Entity()
 	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
 	setPosition(startPos);
 	boundingBoxSize = glm::vec3(0.5f, 0.5f, 0.5f);
+	this->entityID = 2;
 }
 
 Entity::~Entity()
@@ -66,6 +67,11 @@ void Entity::setCustomBBox(glm::vec3 BBoxDimensions)
 	this->boundingBoxSize = BBoxDimensions;
 }
 
+unsigned int Entity::getEntityID() const
+{
+	return this->entityID;
+}
+
 Primitive Entity::getMeshData() const
 {
 	return entityMesh;
@@ -79,4 +85,42 @@ glm::vec3 Entity::getPosition() const
 glm::vec3 Entity::getSize() const
 {
 	return boundingBoxSize;
+}
+
+
+
+glm::vec3 Entity::entMove(GLFWwindow * window, float dTime)
+{
+	float moveSpeed = 5.5f * dTime,
+		moveX = 0.0f,
+		moveY = 0.0f,
+		moveZ = 0.0f;
+
+	glm::vec3 newPos = entityMesh.getPosition();
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		moveX = moveSpeed;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		moveX = -moveSpeed;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		moveZ = moveSpeed;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		moveZ =- moveSpeed;
+
+	return calcMovement(moveX, moveY, moveZ, entityMesh);
+}
+
+//=============================================================
+//	A function that will be used by the player and boxes that 
+//	the player wants to grab and move
+//=============================================================
+glm::vec3 Entity::calcMovement(float moveX, float moveY, float moveZ, Primitive mesh)
+{
+	glm::vec3 calcultatedPos = glm::vec3(
+		mesh.getPosition().x + moveX,
+		mesh.getPosition().y + moveY,
+		mesh.getPosition().z + moveZ
+	);
+
+	return calcultatedPos;
 }

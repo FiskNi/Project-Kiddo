@@ -120,10 +120,19 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	// Check a potential new position
 	glm::vec3 newPos = playerCharacter.Move(renderWindow, deltaTime);
+	
 
 	int dominatingBox = -1;
-
+	int meshIndex = inBoundCheck(collision);
 	// Collision functions
+	
+
+	if (playerCharacter.CheckInBound(startingRoom->GetEntities()[meshIndex])) 
+	{
+		if (glfwGetKey(renderWindow, GLFW_KEY_X) == GLFW_PRESS)
+			startingRoom->MoveEntity(meshIndex, startingRoom->GetEntities()[meshIndex].entMove(renderWindow, deltaTime));
+	}
+	
 	PlayerBoxCollision(collision, newPos, dominatingBox);
 	BoxBoxCollision(dominatingBox);
 	BoxNodeCollision();
@@ -161,10 +170,22 @@ void Scene::PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominati
 			pushDir *= 0.15f;
 
 			startingRoom->MoveEntity(i, startingRoom->GetEntities()[i].getPosition() + pushDir);
+			
 
 			dominatingBox = i;
 		}
 	}
+}
+
+
+unsigned int Scene::inBoundCheck(bool& collision)
+{
+	for (int i = 0; i < startingRoom->GetEntities().size(); i++)
+		if (playerCharacter.CheckInBound(startingRoom->GetEntities()[i]))
+			if (startingRoom->GetEntities()[i].getEntityID() == 2)
+				return i;
+			else
+				return -1;
 }
 
 //=============================================================

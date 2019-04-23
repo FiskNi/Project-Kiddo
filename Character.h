@@ -4,6 +4,7 @@
 #include "Entity.h"
 
 class Character
+	: public Entity
 {
 private:
 
@@ -11,6 +12,9 @@ private:
 	glm::vec3 boundingBoxSize;
 	glm::vec3 position;
 	float rotation;
+
+	//ID, playerID = 1, Movable box = 2.
+	unsigned int entityID;
 
 	unsigned int materialID;
 
@@ -25,9 +29,6 @@ public:
 	void setMaterialID(unsigned int id);
 	void setPosition(glm::vec3 newPos);
 	bool CheckCollision(Entity collidingCube);
+	bool CheckInBound(Entity collidingCube);
 	glm::vec3 Move(GLFWwindow *window, float deltaTime);
-
-private:
-	glm::vec3 calcMovement(float, float, float);
 };
-

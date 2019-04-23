@@ -21,6 +21,7 @@ private:
 	void BoxBoxCollision(int dominatingBox);
 	void BoxNodeCollision();
 	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox);
+	unsigned int inBoundCheck(bool& collision);
 
 	// Shaders
 	std::vector<Shader> shaders;
