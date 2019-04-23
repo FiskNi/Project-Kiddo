@@ -7,13 +7,36 @@ Entity::Entity()
 
 	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
 	setPosition(startPos);
-	boundingBoxSize = glm::vec3(0.5f, 0.5f, 0.5f);
+
+	InitBoundingBox();
 	this->entityID = 2;
 }
 
 Entity::~Entity()
 {
 
+}
+
+void Entity::InitBoundingBox()
+{
+	glm::vec3 min = entityMesh.getvertexPolygons()[0].position;
+	glm::vec3 max = entityMesh.getvertexPolygons()[0].position;
+
+	for (int i = 1; i < entityMesh.getvertexPolygons().size(); i++)
+	{
+		min.x = fminf(entityMesh.getvertexPolygons()[i].position.x, min.x);
+		min.y = fminf(entityMesh.getvertexPolygons()[i].position.y, min.y);
+		min.z = fminf(entityMesh.getvertexPolygons()[i].position.z, min.z);
+
+		max.x = fmaxf(entityMesh.getvertexPolygons()[i].position.x, max.x);
+		max.y = fmaxf(entityMesh.getvertexPolygons()[i].position.y, max.y);
+		max.z = fmaxf(entityMesh.getvertexPolygons()[i].position.z, max.z);
+	}
+
+	glm::vec3 center = glm::vec3((min + max) * 0.5f);
+	glm::vec3 halfSize = glm::vec3((max - min) * 0.5f);
+
+	SetBoundingBox(center, halfSize);
 }
 
 bool Entity::CheckCollision(Entity collidingCube)
@@ -62,9 +85,10 @@ void Entity::setPosition(glm::vec3 newPos)
 	entityMesh.setPosition(newPos);
 }
 
-void Entity::setCustomBBox(glm::vec3 BBoxDimensions)
+void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 {
-	this->boundingBoxSize = BBoxDimensions;
+	this->boundingBoxSize = BBoxHalfSize;
+	this->boundingBoxCenter = BBoxCenter;
 }
 
 unsigned int Entity::getEntityID() const
@@ -86,6 +110,12 @@ glm::vec3 Entity::getSize() const
 {
 	return boundingBoxSize;
 }
+
+float Entity::getSpeed() const
+{
+	return 0.0f;
+}
+
 
 
 
