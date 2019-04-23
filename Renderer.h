@@ -8,6 +8,25 @@
 #include "DirectionalLight.h"
 #include "Material.h"
 
+//============================================================================
+//	- Renderer
+//	The renderer picks up a vector list of elements for renderering from the GameEngine class.
+//	The GameEngine class transfers this list from the scene class, which in turns compiles its list
+//	from all the scene elements and the elements in each room.
+//	
+//	*Important: Right now the elemenets are handled as Primitives (later a mesh class) where each 
+//				Primitive has its own vertex attribute. This could be optimised by instead recieving
+//				only one vertex attribute and instead the vertexcount of each element. In other words
+//				all the elements could be compiled into one buffer before reaching the renderer.
+//
+//	- Usage:
+//	Any specific render techniques can be added and handled here.
+//	Swapping of uniforms and shader inputs are all handled here as expected.
+//	Currently the window is created and handled by the renderer, this could be extracted into it's own class.															
+//	
+//============================================================================
+
+
 class Renderer
 {
 private:

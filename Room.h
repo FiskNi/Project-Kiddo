@@ -9,6 +9,21 @@
 #include "Material.h"
 #include "puzzleNode.h"
 
+//============================================================================
+//	- Rooms
+//	A room will hold everything that doesn't get transfered between rooms.
+//	Examples are boxes, entities, mechancis, and so on that defines
+//	a winstate and the stages to get there for a room.
+//
+//	- Usage:
+//	The entire room mesh itself goes into a room class and can be seen as what defines a room.
+//	Add entites that makes up mechanics and pushable boxes into the same room class.
+//	Cameras also goes into the room class.
+//																
+//	For the room to render everything needs to be added into a primitive (later mesh) list.
+//	This makes it easy to render and de-render specific rooms and their content.
+//============================================================================
+
 class Room
 {
 private:
@@ -49,7 +64,5 @@ public:
 	void MoveEntity(unsigned int i, glm::vec3 newPos);
 
 	void CompileMeshData();
-
-
 };
 

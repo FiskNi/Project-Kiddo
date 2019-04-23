@@ -25,6 +25,7 @@ std::vector<Light> Scene::GetPointLights() const
 {
 	return startingRoom->GetPointLights();
 }
+
 std::vector<DirectionalLight> Scene::GetDirectionalLights() const
 {
 	return startingRoom->GetDirectionalLights();

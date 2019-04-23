@@ -28,8 +28,6 @@ private:
 
 	float gFloat = 0;
 	float gClearColour[3]{};
-
-
 	glm::mat4 gRotate2D;
 
 	//*** Game content ***//
