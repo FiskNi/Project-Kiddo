@@ -128,33 +128,37 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	int meshIndex = inBoundCheck(collision);
 	// Collision functions
 	
-	if (playerCharacter.CheckInBound(startingRoom->GetRigids()[meshIndex])) 
+	if (meshIndex >= 0)
 	{
-		if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[meshIndex]))
 		{
-			// Currently drags the box into the center of the character.
-			// Can be improved by only draging the box to one side of the hitbox
-			// use glm::length
-			startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
+			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+			{
+				// Currently drags the box into the center of the character.
+				// Can be improved by only draging the box to one side of the hitbox
+				// use glm::length
+				startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
 
-			glm::vec3 pushDir = startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
+				glm::vec3 pushDir = startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
 
-			if (abs(pushDir.x) >= abs(pushDir.z))
-				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+				if (abs(pushDir.x) >= abs(pushDir.z))
+					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+				else
+					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+
+				pushDir = glm::normalize(pushDir);
+				pushDir *= 10.0f * deltaTime;
+
+				startingRoom->GetRigids()[meshIndex].SetPosition(startingRoom->GetRigids()[meshIndex].GetPosition() - pushDir);
+				startingRoom->GetRigids()[meshIndex].setHeld(true);
+			}
 			else
-				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-
-			pushDir = glm::normalize(pushDir);
-			pushDir *= 10.0f * deltaTime;
-
-			startingRoom->GetRigids()[meshIndex].SetPosition(startingRoom->GetRigids()[meshIndex].GetPosition() - pushDir);
-			startingRoom->GetRigids()[meshIndex].setHeld(true);
-		}
-		else
-		{
-			startingRoom->GetRigids()[meshIndex].setHeld(false);
+			{
+				startingRoom->GetRigids()[meshIndex].setHeld(false);
+			}
 		}
 	}
+	
 	
 	PlayerBoxCollision(collision, newPos, dominatingBox, meshIndex, deltaTime);
 	BoxBoxCollision(dominatingBox, deltaTime);
