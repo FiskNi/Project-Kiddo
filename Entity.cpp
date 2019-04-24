@@ -99,19 +99,6 @@ void Entity::SetPosition(glm::vec3 newPos)
 	entityMesh.setPosition(newPos);
 }
 
-void Entity::OffsetPosition(float x, float y, float z)
-{
-	glm::vec3 offset = glm::vec3(0.0f);
-	if (x > 0.01f)
-		offset.x = x;
-	if (y > 0.01f)
-		offset.y = y;
-	if (z > 0.01f)
-		offset.z = z;
-
-	SetPosition(GetPosition() + offset);
-}
-
 void Entity::SaveCurrentPosition(glm::vec3 pos)
 {
 	savedPosition = pos;
@@ -148,9 +135,9 @@ glm::vec3 Entity::GetSavedPosition() const
 	return savedPosition;
 }
 
-glm::vec3 Entity::GetBoundingBoxCenter() const
+glm::vec3 Entity::GetPositionBB() const
 {
-	return boundingBoxCenter;
+	return GetPosition() + boundingBoxCenter;
 }
 
 glm::vec3 Entity::GetBoundingBoxSize() const
@@ -158,7 +145,7 @@ glm::vec3 Entity::GetBoundingBoxSize() const
 	return boundingBoxSize;
 }
 
-float Entity::GetBottom() const
+float Entity::GetHitboxBottom() const
 {
 	return GetPosition().y - boundingBoxSize.y;
 }

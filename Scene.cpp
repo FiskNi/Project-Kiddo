@@ -293,8 +293,8 @@ void Scene::RigidGroundCollision()
 
 			// Moves the entity back up if it's below the ground
 			// Could be improved by larger physics calculations
-			float groundY = startingRoom->GetStatics()[0].GetPosition().y;
-			float offset = groundY - startingRoom->GetRigids()[i].GetBottom();
+			float groundY = startingRoom->GetStatics()[0].GetPositionBB().y;
+			float offset = groundY - startingRoom->GetRigids()[i].GetHitboxBottom();
 			offset *= 20.0f;
 			startingRoom->GetRigids()[i].AddVelocityY(offset);
 		}
@@ -313,8 +313,8 @@ void Scene::RigidGroundCollision()
 
 		// Moves the entity back up if it's below the ground
 		// Could be improved by larger physics calculations
-		float groundY = startingRoom->GetStatics()[0].GetPosition().y;
-		float offset = groundY - playerCharacter.GetBottom();
+		float groundY = startingRoom->GetStatics()[0].GetPositionBB().y;
+		float offset = groundY - playerCharacter.GetHitboxBottom();
 		offset *= 20.0f;
 		playerCharacter.AddVelocityY(offset);
 	}

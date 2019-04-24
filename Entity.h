@@ -12,6 +12,9 @@
 //
 //	*Note, This class should be changed to a virtual class where only the derived classes are usable
 //
+//	Collision (Bounding Box):
+//	The boundingbox might need to be offset from the center of the mesh itself. When making calculations	
+//
 //	- Usage:
 //	Don't. Use the derived classes 'Static' or 'Rigid'. Static meshes are unmoveable objects that
 //	the player can collide with, examples are walls and ground. Rigids are moveable objects like													 		
@@ -46,7 +49,6 @@ public:
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
-	void OffsetPosition(float x, float y, float z);	// Use to push the entity towards the axis
 	void SaveCurrentPosition(glm::vec3 pos);
 	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
@@ -56,8 +58,8 @@ public:
 	Primitive GetMeshData() const;
 	glm::vec3 GetPosition() const;
 	glm::vec3 GetSavedPosition() const;
-	glm::vec3 GetBoundingBoxCenter() const;
+	glm::vec3 GetPositionBB() const;
 	glm::vec3 GetBoundingBoxSize() const;
 
-	float GetBottom() const;
+	float GetHitboxBottom() const;
 };
