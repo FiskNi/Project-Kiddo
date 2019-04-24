@@ -84,7 +84,6 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(nodes[i].GetMeshData());
 	}
-
 }
 
 //=============================================================
@@ -127,35 +126,30 @@ void Room::LoadEntities(std::vector<Material> materials)
 {
 	RigidEntity cubeEntity(1);
 
-	rigids.reserve(6);
-
-
-
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, 2.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, 7.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 10.0f, -3.0f));
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 10.0f, 2.0f));
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 10.0f, 7.0f));
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 	
 	StaticEntity planeEntity(0);
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	statics.push_back(planeEntity);
-
 }
 
 //=============================================================

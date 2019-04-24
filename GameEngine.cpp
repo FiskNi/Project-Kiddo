@@ -11,8 +11,6 @@ GameEngine::~GameEngine()
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	//cout << key << endl;
-
 	if (key == GLFW_KEY_SPACE)
 	{
 		switch (action)
@@ -39,6 +37,7 @@ void GameEngine::Run()
 {
 	// Keyboard callback reference, should be changed when if keyboard callbacks are added
 	glfwSetKeyCallback(mainRenderer.getWindow(), keyboard);
+	glfwSwapInterval(0);
 
 	// If this becomes true the program will have failed in someway or been manually shut down
 	bool shutdown = false;

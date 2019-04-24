@@ -40,13 +40,13 @@ private:
 
 	void CompileMeshData();
 
-	void PlayerBoxCollision(bool& collision, glm::vec3 &newPos, int& dominatingBox, int meshIndex, float deltaTime);
-	void BoxBoxCollision(int dominatingBox, float deltaTime);
+	void PlayerBoxCollision(glm::vec3 &newPos, int& dominatingBox, int meshIndex);
+	void BoxBoxCollision(int dominatingBox);
 	void BoxNodeCollision();
 	unsigned int inBoundCheck(bool& collision);
-	void RigidStaticCollision(float deltaTime);
-	void RigidGroundCollision(float deltaTime);
-	void ApplyGravity(float deltaTime);
+	void RigidStaticCollision();
+	void RigidGroundCollision();
+	void ApplyGravity();
 	
 
 	// Shaders

@@ -60,6 +60,4 @@ public:
 	glm::vec3 GetBoundingBoxSize() const;
 
 	float GetBottom() const;
-
-	glm::vec3 calcMovement(float moveX, float moveY, float moveZ, Primitive mesh);
 };

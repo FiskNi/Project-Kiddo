@@ -162,18 +162,3 @@ float Entity::GetBottom() const
 {
 	return GetPosition().y - boundingBoxSize.y;
 }
-
-//=============================================================
-//	A function that will be used by the player and boxes that 
-//	the player wants to grab and move
-//=============================================================
-glm::vec3 Entity::calcMovement(float moveX, float moveY, float moveZ, Primitive mesh)
-{
-	glm::vec3 calcultatedPos = glm::vec3(
-		mesh.getPosition().x + moveX,
-		mesh.getPosition().y + moveY,
-		mesh.getPosition().z + moveZ
-	);
-
-	return calcultatedPos;
-}
