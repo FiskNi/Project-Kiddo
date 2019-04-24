@@ -155,7 +155,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	statics.push_back(planeEntity);
-
 }
 
 //=============================================================

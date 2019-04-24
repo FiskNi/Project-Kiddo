@@ -31,4 +31,5 @@ public:
 	bool CheckCollision(Entity collidingCube);
 	bool CheckInBound(Entity collidingCube);
 	glm::vec3 Move(GLFWwindow *window, float deltaTime);
+	glm::vec3 moveTemp(GLFWwindow *window, float deltaTime);
 };

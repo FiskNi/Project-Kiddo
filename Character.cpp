@@ -134,7 +134,6 @@ glm::vec3 Character::Move(GLFWwindow* window, float dTime)
 		moveY = 0.0f,
 		moveZ = 0.0f;
 
-	glm::vec3 newPos = playerMesh.getPosition();
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		moveX = moveSpeed;
@@ -149,5 +148,29 @@ glm::vec3 Character::Move(GLFWwindow* window, float dTime)
 		moveZ = -moveSpeed;
 
 	return calcMovement(moveX, moveY, moveZ, playerMesh);
+}
+
+glm::vec3 Character::moveTemp(GLFWwindow * window, float dTime)
+{
+	float moveSpeed = 5.5f * dTime,
+		moveX = 0.0f,
+		moveY = 0.0f,
+		moveZ = 0.0f;
+
+	glm::vec3 newPos = playerMesh.getPosition();
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		moveX = moveSpeed;
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		moveX = -moveSpeed;
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		moveZ = moveSpeed;
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		moveZ = -moveSpeed;
+
+	return glm::vec3(moveX, moveY, moveZ);
 }
 

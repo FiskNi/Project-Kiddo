@@ -137,19 +137,19 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 				// Currently drags the box into the center of the character.
 				// Can be improved by only draging the box to one side of the hitbox
 				// use glm::length
-				startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
+				startingRoom->GetRigids()[meshIndex].GetPosition();
 
-				glm::vec3 pushDir = startingRoom->GetRigids()[meshIndex].GetPosition() - newPos;
+				glm::vec3 pushDir = playerCharacter.moveTemp(renderWindow, deltaTime);
 
-				if (abs(pushDir.x) >= abs(pushDir.z))
+				/*if (abs(pushDir.x) >= abs(pushDir.z))
 					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 				else
 					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 
 				pushDir = glm::normalize(pushDir);
 				pushDir *= 10.0f * deltaTime;
-
-				startingRoom->GetRigids()[meshIndex].SetPosition(startingRoom->GetRigids()[meshIndex].GetPosition() - pushDir);
+*/
+				startingRoom->GetRigids()[meshIndex].SetPosition(startingRoom->GetRigids()[meshIndex].GetPosition() + pushDir);
 				startingRoom->GetRigids()[meshIndex].setHeld(true);
 			}
 			else
