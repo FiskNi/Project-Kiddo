@@ -8,10 +8,6 @@ Room::Room(std::vector<Material> materials)
 	LoadEntities(materials);
 	LoadPuzzleNode(materials);
 
-	// Temporary loading of mesh
-	testMesh.ImportMesh();
-	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
-	testMesh.setMaterial(materials[0].getMaterialID());
 
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
@@ -68,7 +64,9 @@ void Room::CompileMeshData()
 {
 	meshes.clear();
 
-	meshes.push_back(testMesh);
+	meshes.push_back(this->importMeshes[0]);
+	meshes.push_back(this->importMeshes[1]);
+	meshes.push_back(this->importMeshes[2]);
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -125,6 +123,34 @@ void Room::LoadLights()
 void Room::LoadEntities(std::vector<Material> materials)
 {
 	RigidEntity cubeEntity(1);
+
+	Loader testLoader("hierCubesMat.bin");
+
+	Primitive testMesh;
+	Primitive test2;
+	Primitive test3;
+
+	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
+	testMesh.setMaterial(materials[0].getMaterialID());
+
+	test2.setPosition(glm::vec3(-12, 3.0, 10.0f));
+	test2.setMaterial(materials[0].getMaterialID());
+
+	test3.setPosition(glm::vec3(-18.0f, 3.0f, 10.0f));
+	test3.setMaterial(materials[0].getMaterialID());
+
+	this->importMeshes.push_back(testMesh);
+	this->importMeshes.push_back(test2);
+	this->importMeshes.push_back(test3);
+
+	for (int i = 0; i < testLoader.getNrOfMeshes(); i++)
+	{
+		this->importMeshes[i].ImportMesh(testLoader.getVerticies(i), testLoader.getNrOfVerticies(i));
+	}
+
+	rigids.reserve(6);
+
+
 
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
