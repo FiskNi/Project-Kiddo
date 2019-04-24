@@ -30,7 +30,7 @@ public:
 	void CreateCubeData();
 	void CreatePlaneData();
 
-	void ImportMesh();
+	void ImportMesh(vertex*verticies, int nrOfVerticies);
 
 	void CalculateTangents();
 	

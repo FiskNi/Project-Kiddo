@@ -49,7 +49,7 @@ private:
 	// PuzzleNode
 	std::vector<puzzleNode> nodes;
 
-	Primitive testMesh;
+	std::vector<Primitive> importMeshes;
 
 	// Camera
 	Camera* roomCamera;
