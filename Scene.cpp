@@ -116,17 +116,26 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
 	startingRoom->GetCamera()->FPSCamControls(renderWindow, deltaTime);
 
-	// Character Handling
-	bool collision = false;
-
-
-
-	// Check a potential new position
+	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 
 	int dominatingBox = -1;
-	int meshIndex = inBoundCheck(collision);
+	int meshIndex = inBoundCheck(playerCharacter.IsColliding());
 	
+	PlayerBoxCollision(dominatingBox, meshIndex);
+	BoxBoxCollision(dominatingBox);
+	BoxNodeCollision();
+	RigidStaticCollision();
+	RigidGroundCollision();
+	ApplyGravity();
+
+	// Update player movement
+	if (!playerCharacter.IsColliding())
+	{
+		playerCharacter.AddVelocity(playerMoveVector);
+	}
+	playerCharacter.SetColliding(false);
+
 	// Box holding
 	if (meshIndex >= 0)
 	{
@@ -134,55 +143,25 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		{
 			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			{
-				// Currently drags the box into the center of the character.
-				// Can be improved by only draging the box to one side of the hitbox
-				// use glm::length
-				startingRoom->GetRigids()[meshIndex].GetPosition();
-
-				glm::vec3 pushDir = playerCharacter.moveTemp(renderWindow, deltaTime);
-
-				/*if (abs(pushDir.x) >= abs(pushDir.z))
-					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-				else
-					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-
-				pushDir = glm::normalize(pushDir);
-				pushDir *= 10.0f * deltaTime;
-*/
-				startingRoom->GetRigids()[meshIndex].SetPosition(startingRoom->GetRigids()[meshIndex].GetPosition() + pushDir);
-				startingRoom->GetRigids()[meshIndex].setHeld(true);
+				startingRoom->GetRigids()[meshIndex].AddVelocity(playerMoveVector);
+				startingRoom->GetRigids()[meshIndex].SetHeld(true);
 			}
 			else
 			{
-				startingRoom->GetRigids()[meshIndex].setHeld(false);
+				startingRoom->GetRigids()[meshIndex].SetHeld(false);
 			}
 		}
 	}
-	
-	
-	PlayerBoxCollision(playerMoveVector, dominatingBox, meshIndex);
-	BoxBoxCollision(dominatingBox);
-	BoxNodeCollision();
-	RigidStaticCollision();
-	RigidGroundCollision();
-	ApplyGravity();
 
-	if (!playerCharacter.IsColliding())
-	{
-		playerCharacter.AddVelocity(playerMoveVector);
-		
-	}
+
+	// Update the scene (calculate basic physics)
 	playerCharacter.Update(deltaTime);
-
-	playerCharacter.SetColliding(false);
-
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
 		startingRoom->GetRigids()[i].Update(deltaTime);
 	}
 
-	cout << glm::length(playerCharacter.GetVelocity()) << endl;
-
+	// Compile render data for the renderer
 	CompileMeshData();
 }
 
@@ -192,7 +171,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 //	Currently it only handles the entites in the starting room
 //	This will be changed as more rooms are added
 //=============================================================
-void Scene::PlayerBoxCollision(glm::vec3 &newPos, int& dominatingBox, int meshIndex)
+void Scene::PlayerBoxCollision(int& dominatingBox, int meshIndex)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); ++i)
 	{
@@ -212,7 +191,7 @@ void Scene::PlayerBoxCollision(glm::vec3 &newPos, int& dominatingBox, int meshIn
 			pushDir *= 2.0f;
 
 			// Counteract player velocity
-			playerCharacter.AddVelocity(-pushDir * 0.5f);
+			//playerCharacter.AddVelocity(-pushDir * 0.5f);
 			// Add box velocity
 			startingRoom->GetRigids()[i].AddVelocity(pushDir);
 
@@ -224,7 +203,7 @@ void Scene::PlayerBoxCollision(glm::vec3 &newPos, int& dominatingBox, int meshIn
 }
 
 
-unsigned int Scene::inBoundCheck(bool& collision)
+unsigned int Scene::inBoundCheck(bool collision)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[i]))
