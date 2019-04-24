@@ -4,6 +4,7 @@ Character::Character() : RigidEntity(1)
 {
 	glm::vec3 startPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	SetPosition(startPos);
+	SetGrounded(true);
 
 	this->entityID = 1;
 }

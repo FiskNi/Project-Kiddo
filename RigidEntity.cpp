@@ -4,7 +4,7 @@
 
 RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 {
-	velocity = glm::vec3(0.0f);
+	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 	grounded = false;
 	held = false;
@@ -72,7 +72,10 @@ void RigidEntity::Update(float deltaTime)
 
 	// Constant global friction
 	const float friction = 0.8f;
-	velocity *= friction;
+	if (grounded)
+		velocity *= friction;
+
+
 
 	if (fabsf(velocity.x) < 0.001f) {
 		velocity.x = 0.0f;
@@ -83,9 +86,6 @@ void RigidEntity::Update(float deltaTime)
 	if (fabsf(velocity.z) < 0.001f) {
 		velocity.z = 0.0f;
 	}
-
-
-	//glm::clamp(velocity, 0.0f, 8.0f);
 
 	calculatedPosition += velocity * deltaTime;
 	SetPosition(calculatedPosition);

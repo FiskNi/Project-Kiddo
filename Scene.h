@@ -40,13 +40,13 @@ private:
 
 	void CompileMeshData();
 
-	void PlayerBoxCollision(int& dominatingBox, int meshIndex);
-	void BoxBoxCollision(int dominatingBox);
+	void PlayerBoxCollision(int meshIndex);
+	void BoxBoxCollision();
 	void BoxNodeCollision();
 	unsigned int inBoundCheck(bool collision);
 	void RigidStaticCollision();
 	void RigidGroundCollision();
-	void ApplyGravity();
+	void Gravity();
 	
 
 	// Shaders

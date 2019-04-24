@@ -119,15 +119,14 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 
-	int dominatingBox = -1;
 	int meshIndex = inBoundCheck(playerCharacter.IsColliding());
 	
-	PlayerBoxCollision(dominatingBox, meshIndex);
-	BoxBoxCollision(dominatingBox);
+	PlayerBoxCollision(meshIndex);
+	BoxBoxCollision();
 	BoxNodeCollision();
 	RigidStaticCollision();
 	RigidGroundCollision();
-	ApplyGravity();
+	Gravity();
 
 	// Update player movement
 	if (!playerCharacter.IsColliding())
@@ -171,7 +170,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 //	Currently it only handles the entites in the starting room
 //	This will be changed as more rooms are added
 //=============================================================
-void Scene::PlayerBoxCollision(int& dominatingBox, int meshIndex)
+void Scene::PlayerBoxCollision(int meshIndex)
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); ++i)
 	{
@@ -187,18 +186,11 @@ void Scene::PlayerBoxCollision(int& dominatingBox, int meshIndex)
 				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 			else
 				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-			//pushDir = glm::normalize(pushDir);
 			pushDir *= 2.0f;
 
-			// Counteract player velocity
-			//playerCharacter.AddVelocity(-pushDir * 0.5f);
 			// Add box velocity
 			startingRoom->GetRigids()[i].AddVelocity(pushDir);
-
-			// For pushing additional boxes
-			dominatingBox = i;
 		}
-			
 	}
 }
 
@@ -220,7 +212,7 @@ unsigned int Scene::inBoundCheck(bool collision)
 //	Currently it only handles the entites in the starting room
 //	This will be changed as more rooms are added
 //=============================================================
-void Scene::BoxBoxCollision(int dominatingBox)
+void Scene::BoxBoxCollision()
 {
 	// Could possibly be done with recursion to check subsequent collisions
 	// Could be made better with proper physic calculations
@@ -228,7 +220,7 @@ void Scene::BoxBoxCollision(int dominatingBox)
 	{
 		for (int j = 0; j < startingRoom->GetRigids().size(); ++j)
 		{
-			if (i != j && startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetRigids()[j]) && j != dominatingBox)
+			if (i != j && !startingRoom->GetRigids()[j].IsHeld() && startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetRigids()[j]))
 			{
 				if (!startingRoom->GetRigids()[j].IsColliding())
 				{
@@ -240,8 +232,7 @@ void Scene::BoxBoxCollision(int dominatingBox)
 						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 					else
 						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-					pushDir = glm::normalize(pushDir);
-					pushDir *= 1.0f;
+					pushDir *= 2.0f;
 
 					// Add box velocity
 					startingRoom->GetRigids()[j].AddVelocity(pushDir);
@@ -291,19 +282,20 @@ void Scene::RigidStaticCollision()
 
 void Scene::RigidGroundCollision()
 {
+	// Entity boxes
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
 		if (startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetStatics()[0]))
 		{
+			// Cancel downwards movement
 			startingRoom->GetRigids()[i].SetGrounded(true);
+			startingRoom->GetRigids()[i].SetVelocityY(0.0f);
 
-			startingRoom->GetRigids()[i].AddVelocityY(-startingRoom->GetRigids()[i].GetVelocityY());
-
-			float groundLock = startingRoom->GetStatics()[0].GetPosition().y;
-
-			float offset = groundLock - startingRoom->GetRigids()[i].GetBottom();
-			offset *= 10.0f;
-
+			// Moves the entity back up if it's below the ground
+			// Could be improved by larger physics calculations
+			float groundY = startingRoom->GetStatics()[0].GetPosition().y;
+			float offset = groundY - startingRoom->GetRigids()[i].GetBottom();
+			offset *= 20.0f;
 			startingRoom->GetRigids()[i].AddVelocityY(offset);
 		}
 		else
@@ -311,18 +303,46 @@ void Scene::RigidGroundCollision()
 			startingRoom->GetRigids()[i].SetGrounded(false);
 		}
 	}
+
+	// Player
+	if (playerCharacter.CheckCollision(startingRoom->GetStatics()[0]))
+	{
+		// Cancel downwards movement
+		playerCharacter.SetGrounded(true);
+		playerCharacter.SetVelocityY(0.0f);
+
+		// Moves the entity back up if it's below the ground
+		// Could be improved by larger physics calculations
+		float groundY = startingRoom->GetStatics()[0].GetPosition().y;
+		float offset = groundY - playerCharacter.GetBottom();
+		offset *= 20.0f;
+		playerCharacter.AddVelocityY(offset);
+	}
+	else
+	{
+		playerCharacter.SetGrounded(false);
+	}
+
 }
 
-void Scene::ApplyGravity()
+void Scene::Gravity()
 {
-	float gravityConst = -9.82f;
+	// Our downward acceleration
+	const float gravity = -0.283;
 
+	// Entity boxes
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{	
 		if (!startingRoom->GetRigids()[i].IsGrounded())
 		{
-			startingRoom->GetRigids()[i].AddVelocityY(gravityConst);
+			startingRoom->GetRigids()[i].AddVelocityY(gravity);
 		}
+	}
+
+	// Player
+	if (!playerCharacter.IsGrounded())
+	{
+		playerCharacter.AddVelocityY(gravity);
 	}
 }
 
