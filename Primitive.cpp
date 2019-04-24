@@ -7,6 +7,9 @@ Primitive::Primitive()
 
 	gVertexBuffer = 0;
 	gVertexAttribute = 0;
+	
+	vertex test;
+
 }
 Primitive::~Primitive()
 {
@@ -354,15 +357,12 @@ void Primitive::CreatePlaneData()
 	);
 }
 
-void Primitive::ImportMesh()
+void Primitive::ImportMesh(vertex*vertArr, int nrOfVerticies)
 {
-	Loader test("nakedCube.bin");
 
 	vertexPolygon dummyVertex;
 
-	this->importVerts = test.getVerticies(0);
-
-	for (int i = 0; i < test.getNrOfVerticies(0); i++)
+	for (int i = 0; i < nrOfVerticies; i++)
 	{
 		this->vertices.push_back(dummyVertex);
 	}
@@ -381,7 +381,7 @@ void Primitive::ImportMesh()
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 
-	glBufferData(GL_ARRAY_BUFFER, test.getNrOfVerticies(0) * sizeof(vertex), test.getVerticies(0), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, nrOfVerticies * sizeof(vertex), vertArr, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(
 		0,				// location in shader
