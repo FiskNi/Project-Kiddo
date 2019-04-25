@@ -9,6 +9,7 @@ Room::Room(std::vector<Material> materials)
 	LoadPuzzleNode(materials);
 
 
+
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
@@ -39,6 +40,11 @@ std::vector<RigidEntity>& Room::GetRigids()
 std::vector<StaticEntity>& Room::GetStatics()
 {
 	return statics;
+}
+
+std::vector<BoxHoldEntity>& Room::GetBoxHolds()
+{
+	return this->holdBoxes;
 }
 
 std::vector<puzzleNode> Room::GetNodes() const
@@ -81,6 +87,10 @@ void Room::CompileMeshData()
 	for (int i = 0; i < nodes.size(); i++)
 	{
 		meshes.push_back(nodes[i].GetMeshData());
+	}
+	for (int i = 0; i < holdBoxes.size(); i++) {
+		if(holdBoxes[i].holdingBox())
+			meshes.push_back(holdBoxes[i].GetMeshData());
 	}
 }
 
@@ -155,27 +165,42 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
+	cubeEntity.setStartPosition(glm::vec3(3.0f, 1.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 2.0f));
+	cubeEntity.setStartPosition(glm::vec3(3.0f, 1.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
+	cubeEntity.setStartPosition(glm::vec3(3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
+	cubeEntity.setStartPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
+	cubeEntity.setStartPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
+	cubeEntity.setStartPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 	
 	StaticEntity planeEntity(0);
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	statics.push_back(planeEntity);
+
+	BoxHoldEntity boxHold(1);
+	boxHold.SetMaterialID(materials[0].getMaterialID());
+	boxHold.SetPosition(glm::vec3(-11, -1, 0));
+	holdBoxes.push_back(boxHold);
+
+	boxHold.SetPosition(glm::vec3(-12, -1, 0));
+	holdBoxes.push_back(boxHold);
+
 }
 
 //=============================================================

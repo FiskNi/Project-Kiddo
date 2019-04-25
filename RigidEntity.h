@@ -9,6 +9,7 @@
 class RigidEntity : public Entity
 {
 private:
+	glm::vec3 startPos;
 	glm::vec3 velocity;
 	float acceleration;
 
@@ -34,10 +35,12 @@ public:
 	void SetVelocityZ(float z);
 
 	void Update(float deltaTime);
+	void resetPos();
 
 	void SetColliding(bool colliding);
 	void SetGrounded(bool grounded);
 	void SetHeld(bool holding);
+	void setStartPosition(glm::vec3 pos);
 
 	glm::vec3 GetVelocity() const { return velocity; }
 	float GetVelocityX() const { return velocity.x; }

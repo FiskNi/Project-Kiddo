@@ -162,6 +162,7 @@
     <None Include="VertexShaderSM.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxHoldEntity.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="DirectionalLight.h" />
