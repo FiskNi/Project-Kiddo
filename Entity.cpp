@@ -21,9 +21,6 @@ Entity::Entity(unsigned int i)
 
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
-
-	// Entity ID for collision checks
-	this->entityID = 2;
 }
 
 Entity::~Entity()
@@ -113,11 +110,6 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 {
 	this->boundingBoxSize = BBoxHalfSize;
 	this->boundingBoxCenter = BBoxCenter;
-}
-
-unsigned int Entity::getEntityID() const
-{
-	return this->entityID;
 }
 
 Primitive Entity::GetMeshData() const

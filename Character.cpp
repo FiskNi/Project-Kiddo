@@ -6,12 +6,23 @@ Character::Character() : RigidEntity(1)
 	SetPosition(startPos);
 	SetGrounded(true);
 
-	this->entityID = 1;
+	this->holdingObject = false;
+	this->entityID = -1;
 }
 
 Character::~Character()
 {
 
+}
+
+void Character::SetHoldingObject(bool holding)
+{
+	holdingObject = true;
+}
+
+void Character::SetEntityID(unsigned int id)
+{
+	this->entityID = id;
 }
 
 bool Character::CheckInBound(Entity collidingCube)
@@ -23,7 +34,7 @@ bool Character::CheckInBound(Entity collidingCube)
 	};
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.GetPosition();
+	collidingBoundingBox.position = collidingCube.GetPositionBB();
 	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
 
 	//=============================================================
@@ -31,7 +42,7 @@ bool Character::CheckInBound(Entity collidingCube)
 	//	object inside. If so, we can check for grab.
 	//=============================================================
 	AABB inBoundBox;
-	inBoundBox.position = GetPosition();
+	inBoundBox.position = GetPositionBB();
 
 	// This is how large the use area around the character is
 	const float bbOffset = 2.0f;

@@ -119,9 +119,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 
-	int meshIndex = inBoundCheck(playerCharacter.IsColliding());
-	
-	PlayerBoxCollision(meshIndex);
+	PlayerBoxCollision();
 	BoxBoxCollision();
 	BoxNodeCollision();
 	RigidStaticCollision();
@@ -136,22 +134,27 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	playerCharacter.SetColliding(false);
 
 	// Box holding
-	if (meshIndex >= 0)
+	if (!playerCharacter.IsHoldingObject())
+		playerCharacter.SetEntityID(inBoundCheck());
+	else
+		playerCharacter.SetEntityID(-1);
+
+	if (playerCharacter.GetEntityID() >= 0)
 	{
-		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[meshIndex]))
+		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[playerCharacter.GetEntityID()]))
 		{
 			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			{
-				startingRoom->GetRigids()[meshIndex].AddVelocity(playerMoveVector);
-				startingRoom->GetRigids()[meshIndex].SetHeld(true);
-			}
-			else
-			{
-				startingRoom->GetRigids()[meshIndex].SetHeld(false);
+				startingRoom->GetRigids()[playerCharacter.GetEntityID()].AddVelocity(playerMoveVector);
+				startingRoom->GetRigids()[playerCharacter.GetEntityID()].SetHeld(true);
+				playerCharacter.SetHoldingObject(true);
 			}
 		}
+		else
+		{
+			startingRoom->GetRigids()[playerCharacter.GetEntityID()].SetHeld(false);
+		}
 	}
-
 
 	// Update the scene (calculate basic physics)
 	playerCharacter.Update(deltaTime);
@@ -170,7 +173,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 //	Currently it only handles the entites in the starting room
 //	This will be changed as more rooms are added
 //=============================================================
-void Scene::PlayerBoxCollision(int meshIndex)
+void Scene::PlayerBoxCollision()
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); ++i)
 	{
@@ -195,14 +198,12 @@ void Scene::PlayerBoxCollision(int meshIndex)
 }
 
 
-unsigned int Scene::inBoundCheck(bool collision)
+unsigned int Scene::inBoundCheck()
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[i]))
-			if (startingRoom->GetRigids()[i].getEntityID() == 2)
 				return i;
-			else
-				return -1;
+
 	return -1;
 }
 

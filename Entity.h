@@ -35,8 +35,6 @@ private:
 	//	x, y, z, format in worldspace (axis aligned)
 	glm::vec3 boundingBoxSize;
 
-	//ID, playerID = 1, Movable box = 2.
-	unsigned int entityID; 
 	glm::vec3 savedPosition;
 
 public:
@@ -53,7 +51,6 @@ public:
 	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
-	unsigned int getEntityID() const;
 
 	Primitive GetMeshData() const;
 	glm::vec3 GetPosition() const;

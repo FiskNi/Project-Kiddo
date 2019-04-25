@@ -40,10 +40,10 @@ private:
 
 	void CompileMeshData();
 
-	void PlayerBoxCollision(int meshIndex);
+	void PlayerBoxCollision();
 	void BoxBoxCollision();
 	void BoxNodeCollision();
-	unsigned int inBoundCheck(bool collision);
+	unsigned int inBoundCheck();
 	void RigidStaticCollision();
 	void RigidGroundCollision();
 	void Gravity();
