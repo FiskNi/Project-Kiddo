@@ -28,6 +28,8 @@ struct vertex
 	float pos[3];
 	float uv[2];
 	float normal[3];
+	float tangent[3];
+	float biNormal[3];
 };
 
 struct mesh
@@ -57,6 +59,13 @@ struct material
 	float reflectivity;
 	//unsigned char albedoFile[256];
 	//unsigned char normalFile[256];
+};
+
+struct texture
+{
+	int MatIndex;
+	int texID;
+	unsigned char textureName;
 };
 
 struct lightSource

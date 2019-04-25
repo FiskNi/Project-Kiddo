@@ -81,17 +81,45 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		// Player movement speed
 		
 
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE){
+       		jumpSquat = true;
+			//RigidEntity::SetGrounded(false);
+			//moveY = moveSpeed;
+		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			moveX = moveSpeed;
+			if (jumpSquat && RigidEntity::IsGrounded()) {
+				moveX = moveSpeed / 5; 
+				moveY = moveSpeed + 0.5;
+			}
+			else if (RigidEntity::IsGrounded())
+				moveX = moveSpeed;
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			moveX = -moveSpeed;
+			if(jumpSquat && RigidEntity::IsGrounded()){
+				moveX = -moveSpeed / 4;
+				moveY = moveSpeed + 0.5;
+			}
+			else if(RigidEntity::IsGrounded())
+				moveX = -moveSpeed;
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			moveZ = moveSpeed;
+			if (jumpSquat && RigidEntity::IsGrounded()) {
+				moveZ = moveSpeed / 4;
+				moveY = moveSpeed + 0.5;
+			}
+			else if(RigidEntity::IsGrounded())
+				moveZ = moveSpeed;
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			moveZ = -moveSpeed;
+			if (jumpSquat && RigidEntity::IsGrounded()) {
+				moveZ = -moveSpeed / 4;
+				moveY = moveSpeed + 0.5;
+			}
+			else if(RigidEntity::IsGrounded())
+				moveZ = -moveSpeed;
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+			jumpSquat = false;
+
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
 		//moveDir = glm::normalize(moveDir);
