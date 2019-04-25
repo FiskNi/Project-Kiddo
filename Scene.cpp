@@ -46,11 +46,6 @@ std::vector<Mesh> Scene::GetMeshData() const
 	return meshes;
 }
 
-Mesh* Scene::GetMeshsData() const
-{
-	return meshess;
-}
-
 Camera Scene::GetCamera() const
 {
 	return *(startingRoom->GetCamera());
@@ -109,24 +104,6 @@ void Scene::CompileMeshData()
 	meshes.clear();
 	meshes = startingRoom->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
-
-
-	int meshCount = GetMeshData().size();
-	if (meshess != nullptr)
-	{
-		delete[] meshess;
-		meshess = new Mesh[meshCount];
-	}
-	else
-	{
-		meshess = new Mesh[meshCount];
-	}
-	for (int i = 0; i < meshCount; i++)
-	{
-		meshess[i] = meshes[i];
-	}
-
-
 }
 
 //=============================================================
@@ -157,11 +134,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	playerCharacter.SetColliding(false);
 
 	// Box holding
-	if (!playerCharacter.IsHoldingObject())
-		playerCharacter.SetEntityID(inBoundCheck());
-	else
-		playerCharacter.SetEntityID(-1);
-
 	if (playerCharacter.GetEntityID() >= 0)
 	{
 		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[playerCharacter.GetEntityID()]))
@@ -170,7 +142,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			{
 				startingRoom->GetRigids()[playerCharacter.GetEntityID()].AddVelocity(playerMoveVector);
 				startingRoom->GetRigids()[playerCharacter.GetEntityID()].SetHeld(true);
-				playerCharacter.SetHoldingObject(true);
 			}
 		}
 		else
@@ -178,6 +149,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			startingRoom->GetRigids()[playerCharacter.GetEntityID()].SetHeld(false);
 		}
 	}
+	playerCharacter.SetEntityID(inBoundCheck());
 
 	// Update the scene (calculate basic physics)
 	playerCharacter.Update(deltaTime);
@@ -221,11 +193,11 @@ void Scene::PlayerBoxCollision()
 }
 
 
-unsigned int Scene::inBoundCheck()
+int Scene::inBoundCheck()
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 		if (playerCharacter.CheckInBound(startingRoom->GetRigids()[i]))
-				return i;
+				return i; 
 
 	return -1;
 }

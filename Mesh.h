@@ -14,12 +14,9 @@ class Mesh
 private:
 	glm::vec3 worldPosition;
 	float worldRotation;
+
 	unsigned int nrOfVerticies;
-
 	std::vector<vertexPolygon> vertices;
-
-	GLuint gVertexBuffer;
-	GLuint gVertexAttribute;
 
 	unsigned int materialID;
 
@@ -37,12 +34,14 @@ public:
 	void setMaterial(unsigned int texID);
 
 	unsigned int getMaterialID() const;
-	GLuint getVertexAttribute() const;
 	glm::vec3 getPosition() const;
 	float getRotation() const;
 
 	void setPosition(glm::vec3 newPos);
 	std::vector<vertexPolygon> getvertexPolygons();
+
+	unsigned int GetVertexCount() const { return nrOfVerticies; }
+
 	int getPolygonCount() const;
 };
 

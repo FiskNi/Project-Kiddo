@@ -5,11 +5,7 @@ Mesh::Mesh(vertex* vertArr, unsigned int nrOfVerticies)
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->worldRotation = 0.0f;
 
-	gVertexBuffer = 0;
-	gVertexAttribute = 0;
-	
 	ImportMesh(vertArr, nrOfVerticies);
-
 }
 
 Mesh::Mesh()
@@ -17,14 +13,11 @@ Mesh::Mesh()
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->worldRotation = 0.0f;
 
-	gVertexBuffer = 0;
-	gVertexAttribute = 0;
 }
 
 Mesh::~Mesh()
 {
-	//glDeleteVertexArrays(1, &gVertexAttribute);
-	//glDeleteBuffers(1, &gVertexBuffer);
+
 }
 
 //=============================================================
@@ -33,14 +26,11 @@ Mesh::~Mesh()
 void Mesh::CreateCubeData()
 {
 	// 36 hardcoded vertices representing a cube
-
 	vertexPolygon cubeVertex;
+
 	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
 	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
-	//cubeVertex.tangent = glm::vec3(0.0f);
-	//cubeVertex.bitangent = glm::vec3(0.0f);
-
 		vertices.push_back(cubeVertex);
 	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
@@ -189,76 +179,6 @@ void Mesh::CreateCubeData()
 		vertices.push_back(cubeVertex);
 
 	CalculateTangents();
-
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttribute);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
 }
 
 //=============================================================
@@ -266,7 +186,7 @@ void Mesh::CreateCubeData()
 //=============================================================
 void Mesh::CreatePlaneData()
 {
-	// 6 hardcoded vertices representing a plane
+	//// 6 hardcoded vertices representing a plane
 	vertexPolygon planeVertex;
 	planeVertex.position = glm::vec3(-10.0f, 0.0f, -10.0f);
 	planeVertex.uv = glm::vec2(0.0f, 5.0f);
@@ -296,157 +216,31 @@ void Mesh::CreatePlaneData()
 		vertices.push_back(planeVertex);
 
 	CalculateTangents();
-
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttribute);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
 }
 
-void Mesh::ImportMesh(vertex* vertArr, int nrOfVerticies)
+void Mesh::ImportMesh(vertex* vertArr, int vertexCount)
 {
 
-	vertexPolygon dummyVertex;
-
-	for (int i = 0; i < nrOfVerticies; i++)
+	this->nrOfVerticies = vertexCount;
+	for (int i = 0; i < vertexCount; i++)
 	{
+		vertex vertexData = vertArr[i];
+		vertexPolygon newVertex;
+		newVertex.position = glm::vec3(vertexData.pos[0], vertexData.pos[1], vertexData.pos[2]);
+		newVertex.uv = glm::vec2(vertexData.uv[0], vertexData.uv[1]);
+		newVertex.normals = glm::vec3(vertexData.normal[0], vertexData.normal[1], vertexData.normal[2]);
+		newVertex.tangent = glm::vec3(vertexData.tangent[0], vertexData.tangent[1], vertexData.tangent[2]);
+		newVertex.bitangent = glm::vec3(vertexData.biNormal[0], vertexData.biNormal[1], vertexData.biNormal[2]);
 
-		this->vertices.push_back(dummyVertex);
+		vertices.reserve(vertexCount);
+		vertices.push_back(newVertex);
 	}
-
-	glGenVertexArrays(1, &this->gVertexAttribute);
-
-	glBindVertexArray(this->gVertexAttribute);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	glBufferData(GL_ARRAY_BUFFER, nrOfVerticies * sizeof(vertex), vertArr, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertex), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
 
 }
 
 void Mesh::CalculateTangents()
 {
-	// Normal and tangent Calculation
+	//// Normal and tangent Calculation
 
 	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 tangent = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -508,11 +302,6 @@ void Mesh::setMaterial(unsigned int id)
 unsigned int Mesh::getMaterialID() const
 {
 	return this->materialID;
-}
-
-GLuint Mesh::getVertexAttribute() const
-{
-	return gVertexAttribute;
 }
 
 glm::vec3 Mesh::getPosition() const

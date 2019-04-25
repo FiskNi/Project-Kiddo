@@ -15,6 +15,9 @@ Renderer::~Renderer()
 {
 	glDeleteFramebuffers(1, &gFbo);
 	glDeleteTextures(2, gFboTextureAttachments);
+	glDeleteVertexArrays(1, &gVertexAttribute);
+	glDeleteBuffers(1, &gVertexBuffer);
+
 }
 
 GLFWwindow* Renderer::getWindow()
@@ -79,8 +82,9 @@ void Renderer::prePassRender(Shader gShaderProgram,
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
-
+	glBindVertexArray(gVertexAttribute);
 	// tell opengl we are going to use the VAO we described earlier
+	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
@@ -89,98 +93,17 @@ void Renderer::prePassRender(Shader gShaderProgram,
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
-		glBindVertexArray(objects[i].getVertexAttribute());
 
-		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
+
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getPolygonCount());
+		startIndex += objects[i].getPolygonCount();
 	}
 }
 
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, 
-	std::vector<Mesh> objects, 
-	Camera camera, float gClearColour[3], 
-	std::vector<Light> lightArr, 
-	std::vector<DirectionalLight> dirLightArr, 
-	std::vector<Material> materials)
-{
-	// Position in shader
-	int view_matrix = 5;
-	int projection_matrix = 6;
-	int model_matrix = 7;
-	int shadow_matrix = 8;
-	int cam_pos = 9;
-	int has_normal = 10;
-
-	// set the color TO BE used (this does not clear the screen right away)
-	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
-	// use the color to clear the color buffer (clear the color buffer only)
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	// tell opengl we want to use the gShaderProgram
-	glUseProgram(gShaderProgram.getShader());
-
-	// Shadowmap ViewProjection matrix
-	shadowMap.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
-
-	// Per shader uniforms
-	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
-	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
-	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
-	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.camPos));
-
-	dirLightArr[0].sendToShader(gShaderProgram);
-	//Sending all the lights to shader.
-	for (int i = 0; i < nr_P_LIGHTS; i++)
-	{
-		lightArr[i].sendToShader(gShaderProgram, i);
-	}
-	
-	// Main render queue
-	// Currently the render swaps buffer for every object which could become slow further on
-	// If possible the rendercalls could be improved
-	unsigned int startIndex = 0;
-	for (int i = 0; i < objects.size(); i++)
-	{
-		// Per object uniforms
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
-		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
-
-		// Binds the VAO of an object to be renderer. Could become slow further on.
-		glBindVertexArray(objects[i].getVertexAttribute());
-
-		// Binds the albedo texture from a material
-		passTextureData(GL_TEXTURE0, 
-			materials[objects[i].getMaterialID()].getAlbedo(),
-			gShaderProgram.getShader(),
-			"diffuseTex", 0);
-
-		// Binds the normal texture from a material
-		if (materials[objects[i].getMaterialID()].hasNormal())
-		{
-			passTextureData(GL_TEXTURE1,
-				materials[objects[i].getMaterialID()].getNormal(),
-				gShaderProgram.getShader(),
-				"normalTex", 1);
-		}
-
-		// Binds the shadowmap (handles by the renderer)
-		passTextureData(GL_TEXTURE2, 
-			shadowMap.getDepthMapAttachment(), 
-			gShaderProgram.getShader(),
-			"shadowMap", 2);
-
-		// Draw call
-		// As the buffer is swapped for each object the drawcall currently always starts at index 0
-		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
-	}
-	
-}
-
-void Renderer::Render2(Shader gShaderProgram,
+void Renderer::Render(Shader gShaderProgram,
 	std::vector<Mesh> objects,
 	Camera camera, float gClearColour[3],
 	std::vector<Light> lightArr,
@@ -222,6 +145,9 @@ void Renderer::Render2(Shader gShaderProgram,
 	// Main render queue
 	// Currently the render swaps buffer for every object which could become slow further on
 	// If possible the rendercalls could be improved
+
+	glBindVertexArray(gVertexAttribute);
+
 	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -231,7 +157,6 @@ void Renderer::Render2(Shader gShaderProgram,
 		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
-		glBindVertexArray(objects[i].getVertexAttribute());
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
@@ -257,7 +182,9 @@ void Renderer::Render2(Shader gShaderProgram,
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getPolygonCount());
+
+		startIndex += objects[i].getPolygonCount();
 	}
 
 }
@@ -290,12 +217,12 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 
 	// tell OpenGL about layout in memory (input assembler information)
 	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
+		0,							// location in shader
+		3,							// how many elements of type (see next argument)
+		GL_FLOAT,					// type of each element
+		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(vertexPolygon),		// distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
 	);
 
 	glVertexAttribPointer(

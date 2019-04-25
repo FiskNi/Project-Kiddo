@@ -37,7 +37,6 @@ private:
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
-	Mesh* meshess;
 
 	// Lights are stored in a vector
 	std::vector<Light> pointLights;
@@ -66,8 +65,6 @@ public:
 	std::vector<StaticEntity>& GetStatics();
 	std::vector<puzzleNode> GetNodes() const;
 	std::vector<Mesh> GetMeshData() const;
-
-	Mesh* GetMeshsData() const;
 
 	Camera* GetCamera();
 

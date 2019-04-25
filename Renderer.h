@@ -65,13 +65,10 @@ public:
 
 	void Render(Shader gShaderProgram, 
 		std::vector<Mesh> objects, 
-		Camera camera, 
-		float gClearColour[3], 
+		Camera camera, float gClearColour[3], 
 		std::vector<Light> lightArr, 
 		std::vector<DirectionalLight> dirLightArr, 
 		std::vector<Material> materials);
-
-	void Render2(Shader gShaderProgram, std::vector<Mesh> objects, Camera camera, float gClearColour[3], std::vector<Light> lightArr, std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials);
 
 	void CompileVertexData(int vertexCount, vertexPolygon* vertices);
 

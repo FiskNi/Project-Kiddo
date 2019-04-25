@@ -11,7 +11,6 @@ Room::Room(std::vector<Material> materials)
 
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
-	meshess = nullptr;
 
 	// Compile all the mesh data in the room for the renderer
 	// This will first get picked up by the owning scene
@@ -53,11 +52,6 @@ std::vector<Mesh> Room::GetMeshData() const
 	return meshes;
 }
 
-Mesh* Room::GetMeshsData() const
-{
-	return meshess;
-}
-
 Camera* Room::GetCamera()
 {
 	return roomCamera;
@@ -88,22 +82,6 @@ void Room::CompileMeshData()
 	for (int i = 0; i < nodes.size(); i++)
 	{
 		meshes.push_back(nodes[i].GetMeshData());
-	}
-	
-
-	int meshCount = GetMeshData().size();
-	if (meshess != nullptr)
-	{
-		delete[] meshess;
-		meshess = new Mesh [meshCount];
-	}
-	else
-	{
-		meshess = new Mesh[meshCount];
-	}
-	for (int i = 0; i < meshCount; i++)
-	{
-		meshess[i] = meshes[i];
 	}
 }
 

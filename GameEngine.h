@@ -31,6 +31,10 @@ private:
 
 	// Main window and renderer object
 	Renderer mainRenderer;
+	vertexPolygon* mainSceneVertexData;
+
+	int vertexCount;
+	int meshCount;
 
 	// Main scene
 	Scene mainScene;

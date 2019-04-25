@@ -2,11 +2,36 @@
 
 GameEngine::GameEngine()
 {
+	// Load vertex data for the main scene
+	// Could be handled inside the scene or inside the renderer possibly
+	// Not optimal or dynamic but creates one large render buffer rather than
+	// relying on the mesh to have these
+	meshCount = mainScene.GetMeshData().size();
+	vertexCount = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		vertexCount += mainScene.GetMeshData()[i].getvertexPolygons().size();
+	}
+	// Allocated memory
+	mainSceneVertexData = new vertexPolygon[vertexCount];
 
+	int vertexIndex = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		int meshVtxCount = mainScene.GetMeshData()[i].getvertexPolygons().size();
+		for (int j = 0; j < meshVtxCount; j++)
+		{
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].getvertexPolygons()[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 }
 
 GameEngine::~GameEngine()
 {
+	if (mainSceneVertexData)
+		delete[] mainSceneVertexData;
 }
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -76,30 +101,13 @@ void GameEngine::Run()
 		UpdateImGui(renderDepth);
 
 		// ---- Main render call --- ///
-
-		/*int meshCount = mainScene.GetMeshData().size();
-		int vertexCount = 0;
-		for (int i = 0; i < meshCount; i++)
-		{
-			vertexCount += mainScene.GetMeshData()[i].getvertexPolygons().size();
-		}
-
-		vertexPolygon* test = nullptr;
-		test = new vertexPolygon [vertexCount];
-
-		for (int i = 0; i < meshCount; i++)
-		{
-			for (int j = 0; j < mainScene.GetMeshData()[i].getvertexPolygons().size(); j++)
-			{
-				test[j] = mainScene.GetMeshData()[i].getvertexPolygons()[j];
-			}
-		}
-		delete test;
-		*/
-		//mainRenderer.CompileVertexData(vertexCount, test);
-
-
-		mainRenderer.Render(mainScene.GetShader(0), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetPointLights(), mainScene.GetDirectionalLights(), mainScene.GetMaterials());
+		mainRenderer.Render(mainScene.GetShader(0), 
+			mainScene.GetMeshData(), 
+			mainScene.GetCamera(), 
+			gClearColour, 
+			mainScene.GetPointLights(), 
+			mainScene.GetDirectionalLights(), 
+			mainScene.GetMaterials());
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));

@@ -42,8 +42,6 @@ public:
 	Entity(vertex* vertArr, unsigned int nrOfVerticies);
 	~Entity();
 
-
-
 	void InitBoundingBox();
 
 	bool CheckCollision(Entity collidingCube);
@@ -54,8 +52,9 @@ public:
 	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
-
+	// Fixed return to be here
 	Mesh GetMeshData() const;
+
 	glm::vec3 GetPosition() const;
 	glm::vec3 GetSavedPosition() const;
 	glm::vec3 GetPositionBB() const;

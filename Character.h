@@ -8,7 +8,7 @@ class Character
 {
 private:
 	//ID, playerID = 1, Movable box = 2.
-	unsigned int entityID;
+	int entityID;
 	bool holdingObject;
 
 public:

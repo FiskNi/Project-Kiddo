@@ -43,7 +43,7 @@ private:
 	void PlayerBoxCollision();
 	void BoxBoxCollision();
 	void BoxNodeCollision();
-	unsigned int inBoundCheck();
+	int inBoundCheck();
 	void RigidStaticCollision();
 	void RigidGroundCollision();
 	void Gravity();
@@ -77,8 +77,6 @@ public:
 	std::vector<Material> GetMaterials() const;
 	Shader GetShader(unsigned int i) const;
 	std::vector<Mesh> GetMeshData() const;
-
-	Mesh* GetMeshsData() const;
 
 	Camera GetCamera() const;
 
