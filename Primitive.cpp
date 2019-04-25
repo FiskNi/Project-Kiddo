@@ -364,6 +364,12 @@ void Primitive::ImportMesh(vertex*vertArr, int nrOfVerticies)
 
 	for (int i = 0; i < nrOfVerticies; i++)
 	{
+		/*dummyVertex.position = glm::vec3(vertArr[i].pos[0], vertArr[i].pos[1], vertArr[i].pos[2]);
+		dummyVertex.uv = glm::vec2(vertArr[i].uv[0], vertArr[i].uv[1]);
+		dummyVertex.tangent = glm::vec3(vertArr[i].tangent[0], vertArr[i].tangent[1], vertArr[i].tangent[2]);
+		dummyVertex.bitangent = glm::vec3(vertArr[i].biNormal[0], vertArr[i].biNormal[1], vertArr[i].biNormal[2]);
+		dummyVertex.normals = glm::vec3(vertArr[i].normal[0], vertArr[i].normal[1], vertArr[i].normal[2]);*/
+
 		this->vertices.push_back(dummyVertex);
 	}
 
@@ -374,6 +380,8 @@ void Primitive::ImportMesh(vertex*vertArr, int nrOfVerticies)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
 
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
 	glGenBuffers(1, &gVertexBuffer);
@@ -408,6 +416,24 @@ void Primitive::ImportMesh(vertex*vertArr, int nrOfVerticies)
 		GL_FALSE,
 		sizeof(vertex),
 		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+	glVertexAttribPointer(
+		3,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertex),
+		BUFFER_OFFSET(sizeof(float) * 8)
+	);
+
+	glVertexAttribPointer(
+		4,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertex),
+		BUFFER_OFFSET(sizeof(float) * 11)
 	);
 
 }

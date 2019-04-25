@@ -124,7 +124,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 {
 	RigidEntity cubeEntity(1);
 
-	Loader testLoader("hierCubesMat.bin");
+	Loader testLoader("xTestBinary4.bin");
 
 	Primitive testMesh;
 	Primitive test2;
