@@ -124,7 +124,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 {
 	RigidEntity cubeEntity(1);
 
-	Loader testLoader("xTestBinary4.bin");
+	Loader testLoader("cubeCubeSphere.bin");
 
 	Primitive testMesh;
 	Primitive test2;
@@ -136,7 +136,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	test2.setPosition(glm::vec3(-12, 3.0, 10.0f));
 	test2.setMaterial(materials[0].getMaterialID());
 
-	test3.setPosition(glm::vec3(-18.0f, 3.0f, 10.0f));
+	test3.setPosition(glm::vec3(0.0f, 3.0f, 10.0f));
 	test3.setMaterial(materials[0].getMaterialID());
 
 	this->importMeshes.push_back(testMesh);
