@@ -25,7 +25,7 @@ GLFWwindow* Renderer::getWindow()
 //=============================================================
 //	From template - Needs explanation
 //=============================================================
-void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, float gClearColour[])
 {
 	// first pass
 	// render all geometry to a framebuffer object
@@ -65,7 +65,7 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
 void Renderer::prePassRender(Shader gShaderProgram, 
-	std::vector<Primitive> objects, 
+	std::vector<Mesh> objects, 
 	Camera camera, 
 	float gClearColour[3], 
 	std::vector<DirectionalLight> dirLightArr)
@@ -99,7 +99,7 @@ void Renderer::prePassRender(Shader gShaderProgram,
 //	Main render pass
 //=============================================================
 void Renderer::Render(Shader gShaderProgram, 
-	std::vector<Primitive> objects, 
+	std::vector<Mesh> objects, 
 	Camera camera, float gClearColour[3], 
 	std::vector<Light> lightArr, 
 	std::vector<DirectionalLight> dirLightArr, 
@@ -178,6 +178,161 @@ void Renderer::Render(Shader gShaderProgram,
 		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
 	}
 	
+}
+
+void Renderer::Render2(Shader gShaderProgram,
+	std::vector<Mesh> objects,
+	Camera camera, float gClearColour[3],
+	std::vector<Light> lightArr,
+	std::vector<DirectionalLight> dirLightArr,
+	std::vector<Material> materials)
+{
+	// Position in shader
+	int view_matrix = 5;
+	int projection_matrix = 6;
+	int model_matrix = 7;
+	int shadow_matrix = 8;
+	int cam_pos = 9;
+	int has_normal = 10;
+
+	// set the color TO BE used (this does not clear the screen right away)
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	// use the color to clear the color buffer (clear the color buffer only)
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// tell opengl we want to use the gShaderProgram
+	glUseProgram(gShaderProgram.getShader());
+
+	// Shadowmap ViewProjection matrix
+	shadowMap.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
+
+	// Per shader uniforms
+	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
+	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
+	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.camPos));
+
+	dirLightArr[0].sendToShader(gShaderProgram);
+	//Sending all the lights to shader.
+	for (int i = 0; i < nr_P_LIGHTS; i++)
+	{
+		lightArr[i].sendToShader(gShaderProgram, i);
+	}
+
+	// Main render queue
+	// Currently the render swaps buffer for every object which could become slow further on
+	// If possible the rendercalls could be improved
+	unsigned int startIndex = 0;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		// Per object uniforms
+		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
+
+		// Binds the VAO of an object to be renderer. Could become slow further on.
+		glBindVertexArray(objects[i].getVertexAttribute());
+
+		// Binds the albedo texture from a material
+		passTextureData(GL_TEXTURE0,
+			materials[objects[i].getMaterialID()].getAlbedo(),
+			gShaderProgram.getShader(),
+			"diffuseTex", 0);
+
+		// Binds the normal texture from a material
+		if (materials[objects[i].getMaterialID()].hasNormal())
+		{
+			passTextureData(GL_TEXTURE1,
+				materials[objects[i].getMaterialID()].getNormal(),
+				gShaderProgram.getShader(),
+				"normalTex", 1);
+		}
+
+		// Binds the shadowmap (handles by the renderer)
+		passTextureData(GL_TEXTURE2,
+			shadowMap.getDepthMapAttachment(),
+			gShaderProgram.getShader(),
+			"shadowMap", 2);
+
+		// Draw call
+		// As the buffer is swapped for each object the drawcall currently always starts at index 0
+		// This is what could be improved with one large buffer and then advance the start index for each object
+		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
+	}
+
+}
+
+void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
+{
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttribute);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttribute);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(vertexPolygon), vertices, GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,				// location in shader
+		3,						// how many elements of type (see next argument)
+		GL_FLOAT,				// type of each element
+		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+	glVertexAttribPointer(
+		3,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 8)
+	);
+
+	glVertexAttribPointer(
+		4,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 11)
+	);
 }
 
 //=============================================================

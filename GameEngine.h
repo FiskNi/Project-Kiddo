@@ -2,7 +2,7 @@
 #include "Headers.h"
 #include "Renderer.h"
 #include "ShadowMap.h"
-#include "Primitive.h"
+#include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Character.h"

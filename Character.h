@@ -1,6 +1,6 @@
 #pragma once
 #include "Headers.h"
-#include "Primitive.h"
+#include "Mesh.h"
 #include "RigidEntity.h"
 
 class Character

@@ -9,28 +9,28 @@
 //		Primitives will be a fallback on meshloading failure
 //============================================================================
 
-class Primitive
+class Mesh
 {
 private:
 	glm::vec3 worldPosition;
 	float worldRotation;
+	unsigned int nrOfVerticies;
 
 	std::vector<vertexPolygon> vertices;
+
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
-
-	vertex * importVerts;
 
 	unsigned int materialID;
 
 public:
-	Primitive();
-	~Primitive();
+	Mesh(vertex* vertArr, unsigned int nrOfVerticies);
+	Mesh();
+	~Mesh();
 
 	void CreateCubeData();
 	void CreatePlaneData();
-
-	void ImportMesh(vertex*verticies, int nrOfVerticies);
+	void ImportMesh(vertex* verticies, int nrOfVerticies);
 
 	void CalculateTangents();
 	
@@ -43,6 +43,6 @@ public:
 
 	void setPosition(glm::vec3 newPos);
 	std::vector<vertexPolygon> getvertexPolygons();
-	unsigned int getPolygonCount() const;
+	int getPolygonCount() const;
 };
 

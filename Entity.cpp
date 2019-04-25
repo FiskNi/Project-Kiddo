@@ -1,7 +1,7 @@
 #include "Entity.h"
 
 
-Entity::Entity(unsigned int i)
+Entity::Entity(unsigned int i) 
 {
 	// This is where the mesh data is created
 	// Currently it creates either a primitive plane or cube
@@ -11,6 +11,20 @@ Entity::Entity(unsigned int i)
 	else
 		entityMesh.CreateCubeData();
 
+	// Starting position
+	// Should be input with the constuctor and possibly required
+	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
+	SetPosition(startPos);
+
+	// For position calculations and vector math
+	savedPosition = GetPosition();
+
+	// Created a bounding box based on the entityMesh
+	InitBoundingBox();
+}
+
+Entity::Entity(vertex* vertArr, unsigned int nrOfVerticies) : entityMesh(vertArr, nrOfVerticies)
+{
 	// Starting position
 	// Should be input with the constuctor and possibly required
 	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
@@ -112,7 +126,7 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 	this->boundingBoxCenter = BBoxCenter;
 }
 
-Primitive Entity::GetMeshData() const
+Mesh Entity::GetMeshData() const
 {
 	return entityMesh;
 }

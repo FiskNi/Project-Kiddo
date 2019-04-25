@@ -11,6 +11,7 @@ Room::Room(std::vector<Material> materials)
 
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
+	meshess = nullptr;
 
 	// Compile all the mesh data in the room for the renderer
 	// This will first get picked up by the owning scene
@@ -19,6 +20,7 @@ Room::Room(std::vector<Material> materials)
 
 Room::~Room()
 {
+	delete roomCamera;
 }
 
 std::vector<Light>& Room::GetPointLights()
@@ -46,9 +48,14 @@ std::vector<puzzleNode> Room::GetNodes() const
 	return nodes;
 }
 
-std::vector<Primitive> Room::GetMeshData() const
+std::vector<Mesh> Room::GetMeshData() const
 {
 	return meshes;
+}
+
+Mesh* Room::GetMeshsData() const
+{
+	return meshess;
 }
 
 Camera* Room::GetCamera()
@@ -81,6 +88,22 @@ void Room::CompileMeshData()
 	for (int i = 0; i < nodes.size(); i++)
 	{
 		meshes.push_back(nodes[i].GetMeshData());
+	}
+	
+
+	int meshCount = GetMeshData().size();
+	if (meshess != nullptr)
+	{
+		delete[] meshess;
+		meshess = new Mesh [meshCount];
+	}
+	else
+	{
+		meshess = new Mesh[meshCount];
+	}
+	for (int i = 0; i < meshCount; i++)
+	{
+		meshess[i] = meshes[i];
 	}
 }
 
@@ -126,9 +149,9 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	Loader testLoader("xTestBinary4.bin");
 
-	Primitive testMesh;
-	Primitive test2;
-	Primitive test3;
+	Mesh testMesh;
+	Mesh test2;
+	Mesh test3;
 
 	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
 	testMesh.setMaterial(materials[0].getMaterialID());
@@ -147,10 +170,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	{
 		this->importMeshes[i].ImportMesh(testLoader.getVerticies(i), testLoader.getNrOfVerticies(i));
 	}
-
-	rigids.reserve(6);
-
-
 
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 

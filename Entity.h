@@ -1,6 +1,6 @@
 #pragma once
 #include "Headers.h"
-#include "Primitive.h"
+#include "Mesh.h"
 
 //============================================================================
 //	- Entities
@@ -27,7 +27,7 @@
 class Entity
 {
 private:
-	Primitive entityMesh;
+	Mesh entityMesh;
 
 	// The center is a vector to a location in the world
 	glm::vec3 boundingBoxCenter;
@@ -39,7 +39,10 @@ private:
 
 public:
 	Entity(unsigned int i);
+	Entity(vertex* vertArr, unsigned int nrOfVerticies);
 	~Entity();
+
+
 
 	void InitBoundingBox();
 
@@ -52,7 +55,7 @@ public:
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
 
-	Primitive GetMeshData() const;
+	Mesh GetMeshData() const;
 	glm::vec3 GetPosition() const;
 	glm::vec3 GetSavedPosition() const;
 	glm::vec3 GetPositionBB() const;

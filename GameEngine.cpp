@@ -53,7 +53,7 @@ void GameEngine::Run()
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE)) 
+		if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE))
 		{
 			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
 		}
@@ -76,6 +76,29 @@ void GameEngine::Run()
 		UpdateImGui(renderDepth);
 
 		// ---- Main render call --- ///
+
+		/*int meshCount = mainScene.GetMeshData().size();
+		int vertexCount = 0;
+		for (int i = 0; i < meshCount; i++)
+		{
+			vertexCount += mainScene.GetMeshData()[i].getvertexPolygons().size();
+		}
+
+		vertexPolygon* test = nullptr;
+		test = new vertexPolygon [vertexCount];
+
+		for (int i = 0; i < meshCount; i++)
+		{
+			for (int j = 0; j < mainScene.GetMeshData()[i].getvertexPolygons().size(); j++)
+			{
+				test[j] = mainScene.GetMeshData()[i].getvertexPolygons()[j];
+			}
+		}
+		delete test;
+		*/
+		//mainRenderer.CompileVertexData(vertexCount, test);
+
+
 		mainRenderer.Render(mainScene.GetShader(0), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetPointLights(), mainScene.GetDirectionalLights(), mainScene.GetMaterials());
 
 		// Render a second pass for the fullscreen quad

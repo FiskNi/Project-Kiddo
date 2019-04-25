@@ -8,7 +8,7 @@
 #include "StaticEntity.h"
 
 #include "puzzleNode.h"
-#include "Primitive.h"
+#include "Mesh.h"
 #include "Camera.h"
 #include "Material.h"
 #include "puzzleNode.h"
@@ -36,7 +36,8 @@ private:
 	void LoadPuzzleNode(std::vector<Material> materials);
 
 	// Object list for the render queue
-	std::vector<Primitive> meshes;
+	std::vector<Mesh> meshes;
+	Mesh* meshess;
 
 	// Lights are stored in a vector
 	std::vector<Light> pointLights;
@@ -49,7 +50,8 @@ private:
 	// PuzzleNode
 	std::vector<puzzleNode> nodes;
 
-	std::vector<Primitive> importMeshes;
+	std::vector<Mesh> importMeshes;
+
 
 	// Camera
 	Camera* roomCamera;
@@ -63,7 +65,10 @@ public:
 	std::vector<RigidEntity>& GetRigids();
 	std::vector<StaticEntity>& GetStatics();
 	std::vector<puzzleNode> GetNodes() const;
-	std::vector<Primitive> GetMeshData() const;
+	std::vector<Mesh> GetMeshData() const;
+
+	Mesh* GetMeshsData() const;
+
 	Camera* GetCamera();
 
 	void CompileMeshData();

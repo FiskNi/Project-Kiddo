@@ -41,9 +41,14 @@ Shader Scene::GetShader(unsigned int i) const
 	return shaders[i];
 }
 
-std::vector<Primitive> Scene::GetMeshData() const
+std::vector<Mesh> Scene::GetMeshData() const
 {
 	return meshes;
+}
+
+Mesh* Scene::GetMeshsData() const
+{
+	return meshess;
 }
 
 Camera Scene::GetCamera() const
@@ -104,6 +109,24 @@ void Scene::CompileMeshData()
 	meshes.clear();
 	meshes = startingRoom->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
+
+
+	int meshCount = GetMeshData().size();
+	if (meshess != nullptr)
+	{
+		delete[] meshess;
+		meshess = new Mesh[meshCount];
+	}
+	else
+	{
+		meshess = new Mesh[meshCount];
+	}
+	for (int i = 0; i < meshCount; i++)
+	{
+		meshess[i] = meshes[i];
+	}
+
+
 }
 
 //=============================================================
