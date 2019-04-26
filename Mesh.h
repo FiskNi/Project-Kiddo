@@ -15,6 +15,7 @@ private:
 	glm::vec3 worldPosition;
 	glm::vec3 worldRotation;
 
+
 	unsigned int nrOfVerticies;
 	std::vector<vertexPolygon> vertices;
 
@@ -42,9 +43,7 @@ public:
 
 	unsigned int getMaterialID() const;
 	glm::vec3 getPosition() const;
-	float getRotation() const;
-
-
+	glm::vec3 getRotation() const;
 
 	std::vector<vertexPolygon> getvertexPolygons();
 	unsigned int GetVertexCount() const { return nrOfVerticies; }

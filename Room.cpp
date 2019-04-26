@@ -78,7 +78,6 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(statics[i].GetMeshData());
 	}
-
 	for (int i = 0; i < nodes.size(); i++)
 	{
 		meshes.push_back(nodes[i].GetMeshData());
@@ -123,8 +122,7 @@ void Room::LoadLights()
 //=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
-	RigidEntity cubeEntity(1);
-
+	
 	Loader testLoader("xTestBinary4.bin");
 
 	Mesh testMesh;
@@ -148,6 +146,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 	{
 		this->importMeshes[i].ImportMesh(testLoader.getVerticies(i), testLoader.getNrOfVerticies(i));
 	}
+
+
+	RigidEntity cubeEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+
 
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 

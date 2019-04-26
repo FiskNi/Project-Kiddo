@@ -19,6 +19,9 @@
 // read docs: https://github.com/g-truc/glm/blob/master/manual.md#section1
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
+
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <gl/GL.h>
 
 #include "stb_image.h"

@@ -75,7 +75,7 @@ public:
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();
-	void CreateModelMatrix(glm::vec3 translation, float rotation, GLuint shaderProg);
+	void CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation , GLuint shaderProg);
 	void passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg, GLchar* uniformName, int index);
 
 };

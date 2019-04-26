@@ -110,6 +110,11 @@ void Entity::SetPosition(glm::vec3 newPos)
 	entityMesh.setPosition(newPos);
 }
 
+void Entity::SetRotation(float x, float y, float z)
+{
+	entityMesh.SetRotation(x, y, z);
+}
+
 void Entity::SaveCurrentPosition(glm::vec3 pos)
 {
 	savedPosition = pos;

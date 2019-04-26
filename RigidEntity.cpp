@@ -11,6 +11,15 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 }
 
 
+RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies) : Entity(vertArr, nrOfVerticies)
+{
+	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
+	collision = false;
+	grounded = false;
+	held = false;
+}
+
+
 RigidEntity::~RigidEntity()
 {
 }

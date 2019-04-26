@@ -87,22 +87,42 @@ glm::vec3 Character::Move(GLFWwindow* window)
 	float moveZ = 0.0f;
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
+
 	if (glm::length(GetVelocity()) < maxSpeed)
 	{
 		// Player movement speed
-		
-
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		{
 			moveX = moveSpeed;
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		{
 			moveX = -moveSpeed;
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{
 			moveZ = moveSpeed;
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		{
 			moveZ = -moveSpeed;
+		}
+
+		if (glm::length(GetVelocity()) > 0.5f)
+		{
+			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
+			
+			float rotation = acos(cosRotation);
+
+			if(GetVelocityX() > 0)
+				SetRotation(0.0f, rotation, 0.0f);
+			else
+				SetRotation(0.0f, -rotation, 0.0f);
+		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
 		//moveDir = glm::normalize(moveDir);

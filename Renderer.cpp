@@ -359,11 +359,20 @@ void Renderer::SetViewport()
 //=============================================================
 //	Updates the model matrix for an object
 //=============================================================
-void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint shaderProg)
+void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLuint shaderProg)
 {
-	glm::mat4 ID_MAT = glm::mat4(1.0f);
-	MODEL_MAT = glm::translate(ID_MAT, translation);
-	MODEL_MAT = glm::rotate(MODEL_MAT, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	MODEL_MAT = glm::mat4(1.0f);
+
+
+	glm::mat4 rotationMatrix = glm::rotate(MODEL_MAT, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
+
+	glm::quat test;
+
+	MODEL_MAT = translationMatrix * rotationMatrix;
+
+
 }
 
 

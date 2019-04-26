@@ -52,6 +52,9 @@ public:
 	void SetPosition(glm::vec3 newPos);
 
 	void SetRotation(float x, float y, float z);
+	void SetRotationX(float x);
+	void SetRotationY(float y);
+	void SetRotationZ(float z);
 
 	void SaveCurrentPosition(glm::vec3 pos);
 	void RestoreSavedPosition();
