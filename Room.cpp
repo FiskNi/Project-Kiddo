@@ -202,6 +202,7 @@ void Room::RigidStaticCollision()
 			}
 		}
 	}
+
 }
 
 void Room::RigidGroundCollision(Character* playerCharacter)
@@ -230,11 +231,15 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 
 	// Player
 	playerCharacter->SetGrounded(false);
+	float offset = 0;
 	for (int i = 0; i < rigids.size(); i++)
 	{
+		float ground = -100;
+
+
 		for (int j = 0; j < statics.size(); ++j)
 		{
-			if (playerCharacter->CheckCollision(statics[j]))
+			if (playerCharacter->CheckCollision(statics[j]) )
 			{
 				// Cancel downwards movement
 				playerCharacter->SetGrounded(true);
@@ -242,13 +247,29 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 
 				// Moves the entity back up if it's below the ground
 				// Could be improved by larger physics calculations
-				float groundY = statics[j].GetHitboxTop();
-				float offset = groundY - playerCharacter->GetHitboxBottom();
+				ground = fmaxf(statics[j].GetHitboxTop(), ground);
+				offset = abs(ground - playerCharacter->GetHitboxBottom());
 				offset *= 20.0f;
-				playerCharacter->AddVelocityY(offset);
+			}
+		}
+
+		for (int j = 0; j < bridges.size(); ++j)
+		{
+			if (playerCharacter->CheckCollision(bridges[j]))
+			{
+				// Cancel downwards movement
+				playerCharacter->SetGrounded(true);
+				playerCharacter->SetVelocityY(0.0f);
+
+				// Moves the entity back up if it's below the ground
+				// Could be improved by larger physics calculations
+				ground = fmaxf(bridges[j].GetHitboxTop(), ground);
+				offset = abs(ground - playerCharacter->GetHitboxBottom());
+				offset *= 20.0f;
 			}
 		}
 	}
+	playerCharacter->AddVelocityY(offset);
 
 }
 
@@ -375,10 +396,25 @@ void Room::LoadEntities(std::vector<Material> materials)
 	statics.push_back(planeEntity);
 
 	BridgeEntity bridge1(1);
-	bridge1.SetMaterialID(materials[2].getMaterialID());
-	bridge1.SetPosition(glm::vec3(11.0f, -1.0f, 0.0f));
-	bridge1.SetRestPosition(glm::vec3(11.0f, -1.0f, 0.0f));
 
+	bridge1.SetMaterialID(materials[2].getMaterialID());
+	bridge1.SetPosition(glm::vec3(11.0f, -0.5f, 0.0f));
+	bridge1.SetRestPosition(glm::vec3(11.0f, -0.5f, 0.0f));
+	bridges.push_back(bridge1);
+
+	bridge1.SetMaterialID(materials[2].getMaterialID());
+	bridge1.SetPosition(glm::vec3(12.0f, 0.2f, 0.0f));
+	bridge1.SetRestPosition(glm::vec3(12.0f, 0.2f, 0.0f));
+	bridges.push_back(bridge1);
+
+	bridge1.SetMaterialID(materials[2].getMaterialID());
+	bridge1.SetPosition(glm::vec3(13.0f, 0.4f, 0.0f));
+	bridge1.SetRestPosition(glm::vec3(13.0f, 0.4f, 0.0f));
+	bridges.push_back(bridge1);
+
+	bridge1.SetMaterialID(materials[2].getMaterialID());
+	bridge1.SetPosition(glm::vec3(14.0f, 0.6f, 0.0f));
+	bridge1.SetRestPosition(glm::vec3(14.0f, 0.6f, 0.0f));
 	bridges.push_back(bridge1);
 
 }

@@ -28,8 +28,8 @@ class Entity
 {
 private:
 	Mesh entityMesh;
-	glm::vec3 position;
-	glm::vec3 rotation;
+	//glm::vec3 position;
+	//glm::vec3 rotation;
 
 	// The center is a vector to a location in the world
 	glm::vec3 boundingBoxCenter;

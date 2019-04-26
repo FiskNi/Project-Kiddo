@@ -73,11 +73,11 @@ bool Entity::CheckCollision(Entity collidingCube)
 	};
 
 	AABB thisBoundingBox;
-	thisBoundingBox.position = GetPosition() + boundingBoxCenter;
+	thisBoundingBox.position = GetPositionBB();
 	thisBoundingBox.size = boundingBoxSize;
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.GetPosition();
+	collidingBoundingBox.position = collidingCube.GetPositionBB();
 	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
