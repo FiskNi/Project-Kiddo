@@ -65,6 +65,25 @@ void RigidEntity::SetVelocityZ(float z)
 	this->velocity.z = z;
 }
 
+void RigidEntity::AddRotation(float x, float y, float z)
+{
+}
+
+void RigidEntity::AddRotationX(float x)
+{
+
+}
+
+void RigidEntity::AddRotationY(float y)
+{
+
+}
+
+void RigidEntity::AddRotationZ(float z)
+{
+
+}
+
 void RigidEntity::Update(float deltaTime)
 {
 	// Get the current position
@@ -74,6 +93,7 @@ void RigidEntity::Update(float deltaTime)
 	const float friction = 0.8f;
 	if (grounded)
 		velocity *= friction;
+
 
 
 

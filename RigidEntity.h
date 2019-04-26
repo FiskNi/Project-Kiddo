@@ -33,6 +33,14 @@ public:
 	void SetVelocityY(float y);
 	void SetVelocityZ(float z);
 
+	void AddRotation(float x, float y, float z);
+	void AddRotationX(float x);
+	void AddRotationY(float y);
+	void AddRotationZ(float z);
+
+
+
+
 	void Update(float deltaTime);
 
 	void SetColliding(bool colliding);

@@ -28,6 +28,8 @@ class Entity
 {
 private:
 	Mesh entityMesh;
+	glm::vec3 position;
+	glm::vec3 rotation;
 
 	// The center is a vector to a location in the world
 	glm::vec3 boundingBoxCenter;
@@ -48,6 +50,9 @@ public:
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
+
+	void SetRotation(float x, float y, float z);
+
 	void SaveCurrentPosition(glm::vec3 pos);
 	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe

@@ -13,7 +13,7 @@ class Mesh
 {
 private:
 	glm::vec3 worldPosition;
-	float worldRotation;
+	glm::vec3 worldRotation;
 
 	unsigned int nrOfVerticies;
 	std::vector<vertexPolygon> vertices;
@@ -33,13 +33,20 @@ public:
 	
 	void setMaterial(unsigned int texID);
 
+	void setPosition(glm::vec3 newPos);
+
+	void SetRotation(float x, float y, float z);
+	void SetRotationX(float x);
+	void SetRotationY(float y);
+	void SetRotationZ(float z);
+
 	unsigned int getMaterialID() const;
 	glm::vec3 getPosition() const;
 	float getRotation() const;
 
-	void setPosition(glm::vec3 newPos);
-	std::vector<vertexPolygon> getvertexPolygons();
 
+
+	std::vector<vertexPolygon> getvertexPolygons();
 	unsigned int GetVertexCount() const { return nrOfVerticies; }
 
 	int getPolygonCount() const;

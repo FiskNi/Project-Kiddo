@@ -3,7 +3,7 @@
 Mesh::Mesh(vertex* vertArr, unsigned int nrOfVerticies)
 {
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->worldRotation = 0.0f;
+	this->worldRotationY = 0.0f;
 
 	ImportMesh(vertArr, nrOfVerticies);
 }
@@ -11,7 +11,7 @@ Mesh::Mesh(vertex* vertArr, unsigned int nrOfVerticies)
 Mesh::Mesh()
 {
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->worldRotation = 0.0f;
+	this->worldRotationY = 0.0f;
 
 }
 
@@ -311,12 +311,24 @@ glm::vec3 Mesh::getPosition() const
 
 float Mesh::getRotation() const
 {
-	return this->worldRotation;
+	return this->worldRotationY;
 }
 
 void Mesh::setPosition(glm::vec3 newPos)
 {
 	worldPosition = newPos;
+}
+
+void Mesh::SetRotationX(float x)
+{
+}
+
+void Mesh::SetRotationY(float y)
+{
+}
+
+void Mesh::SetRotationZ(float z)
+{
 }
 
 std::vector<vertexPolygon> Mesh::getvertexPolygons()
