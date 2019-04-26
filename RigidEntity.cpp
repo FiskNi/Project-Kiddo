@@ -90,15 +90,15 @@ void RigidEntity::Update(float deltaTime)
 	calculatedPosition += velocity * deltaTime;
 	SetPosition(calculatedPosition);
 
-	if (calculatedPosition.y < -10 && calculatedPosition.y > -45) {
-		this->velocity.y, this->velocity.x = 0;
-		this->resetPos();
-	}
+	this->resetPos();
 }
 
 void RigidEntity::resetPos()
 {
-	this->SetPosition(this->startPos);
+	if (GetPosition().y < -10 && GetPosition().y > -45) {
+		this->velocity.y, this->velocity.x = 0;
+		this->SetPosition(this->startPos);	
+	}
 }
 
 void RigidEntity::SetColliding(bool colliding)

@@ -160,6 +160,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	{
 		startingRoom->GetRigids()[i].Update(deltaTime);
 	}
+	
+	
 
 	// Compile render data for the renderer
 	CompileMeshData();

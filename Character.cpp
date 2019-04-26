@@ -4,6 +4,7 @@ Character::Character() : RigidEntity(1)
 {
 	glm::vec3 startPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	SetPosition(startPos);
+	RigidEntity::setStartPosition(startPos);
 	SetGrounded(true);
 
 	this->entityID = 1;
@@ -128,3 +129,5 @@ glm::vec3 Character::Move(GLFWwindow* window)
 
 	return glm::vec3(moveDir);
 }
+
+
