@@ -103,9 +103,6 @@ void RigidEntity::Update(float deltaTime)
 	if (grounded)
 		velocity *= friction;
 
-
-
-
 	if (fabsf(velocity.x) < 0.001f) {
 		velocity.x = 0.0f;
 	}
