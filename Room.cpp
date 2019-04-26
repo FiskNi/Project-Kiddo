@@ -261,8 +261,6 @@ void Room::CompileMeshData()
 	meshes.clear();
 
 	meshes.push_back(this->importMeshes[0]);
-	meshes.push_back(this->importMeshes[1]);
-	meshes.push_back(this->importMeshes[2]);
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -324,35 +322,26 @@ void Room::LoadLights()
 void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Temporary Loader and meshes
-	Loader testLoader("xTestBinary4.bin");
-	Mesh testMesh;
-	Mesh test2;
-	Mesh test3;
+	Loader testLoader("TryCubeBinary.bin");
+	Mesh testMesh(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 
 	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
 	testMesh.setMaterial(materials[0].getMaterialID());
 
-	test2.setPosition(glm::vec3(-12, 3.0, 10.0f));
-	test2.setMaterial(materials[0].getMaterialID());
-
-	test3.setPosition(glm::vec3(-18.0f, 3.0f, 10.0f));
-	test3.setMaterial(materials[0].getMaterialID());
-
 	this->importMeshes.push_back(testMesh);
-	this->importMeshes.push_back(test2);
-	this->importMeshes.push_back(test3);
-
-	for (int i = 0; i < testLoader.getNrOfMeshes(); i++)
-	{
-		this->importMeshes[i].ImportMesh(testLoader.getVerticies(i), testLoader.getNrOfVerticies(i));
-	}
 
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
-	RigidEntity cubeEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+	RigidEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+	newEntity.SetMaterialID(materials[0].getMaterialID());
+
+	newEntity.SetPosition(glm::vec3(9.0f, 1.0f, 0.0f));
+	rigids.push_back(newEntity);
+
+	RigidEntity cubeEntity(1);
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
-	rigids.push_back(cubeEntity);
+	//cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
+	//rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 2.0f));
 	rigids.push_back(cubeEntity);

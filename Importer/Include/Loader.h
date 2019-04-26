@@ -12,6 +12,8 @@ private:
 	vertex ** dataArr;
 	material ** materials;
 
+	texture *** textures;
+
 
 public:
 	Loader(std::string fileName);

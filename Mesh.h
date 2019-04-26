@@ -16,7 +16,7 @@ private:
 	glm::vec3 worldRotation;
 
 
-	unsigned int nrOfVerticies;
+	int nrOfVerticies;
 	std::vector<vertexPolygon> vertices;
 
 	unsigned int materialID;

@@ -34,7 +34,7 @@ struct vertex
 
 struct mesh
 {
-	//char meshName[256];
+	char meshName[256];
 	//unsigned int meshID;
 	//float transformation[16];
 	//bool isChild;
@@ -57,16 +57,22 @@ struct material
 	float opacity;
 	float shininess;
 	float reflectivity;
+	int nrOfTextures;
 	//unsigned char albedoFile[256];
 	//unsigned char normalFile[256];
 };
 
+#pragma pack(push)
+#pragma pack(1)
 struct texture
 {
+	//What material this texture is connected to.
 	int MatIndex;
+	//What index in a materials array of textures this texture belongs to.
 	int texID;
-	unsigned char textureName;
+	unsigned char textureName[256];
 };
+#pragma pack(pop)
 
 struct lightSource
 {
