@@ -124,6 +124,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	PlayerBoxCollision(meshIndex);
 	BoxBoxCollision();
 	BoxNodeCollision();
+	BoxHoldCollision();
 	RigidStaticCollision();
 	RigidGroundCollision();
 	Gravity();
@@ -159,6 +160,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	{
 		startingRoom->GetRigids()[i].Update(deltaTime);
 	}
+	
+	
 
 	// Compile render data for the renderer
 	CompileMeshData();
@@ -262,6 +265,19 @@ void Scene::BoxNodeCollision()
 	}
 }
 
+void Scene::BoxHoldCollision()
+{
+	for (int i = 0; i < startingRoom->GetRigids().size(); ++i) {
+		for (int j = 0 ; j < startingRoom->GetBoxHolds().size(); ++j) {
+			if (!startingRoom->GetBoxHolds()[j].holdingBox() && 
+				startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetBoxHolds()[j])) {
+				startingRoom->GetBoxHolds()[j].setHold(true);
+				startingRoom->GetRigids()[i].SetPosition(glm::vec3(0, -50, 0));
+			}
+		}
+	}
+}
+
 void Scene::RigidStaticCollision()
 {
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
@@ -302,9 +318,27 @@ void Scene::RigidGroundCollision()
 		{
 			startingRoom->GetRigids()[i].SetGrounded(false);
 		}
+		for (int j = 0; j < startingRoom->GetBoxHolds().size();j++) {
+			if (startingRoom->GetBoxHolds()[j].holdingBox() &&
+				startingRoom->GetRigids()[i].CheckCollision(startingRoom->GetBoxHolds()[j])) {
+				// Cancel downwards movement
+				startingRoom->GetRigids()[i].SetGrounded(true);
+				startingRoom->GetRigids()[i].SetVelocityY(0.0f);
+
+				// Moves the entity back up if it's below the ground
+				// Could be improved by larger physics calculations
+				float groundY = startingRoom->GetStatics()[0].GetPositionBB().y;
+				float offset = groundY - startingRoom->GetRigids()[i].GetHitboxBottom();
+				offset *= 20.0f;
+				startingRoom->GetRigids()[i].AddVelocityY(offset);
+			}
+			//else startingRoom->GetRigids()[i].SetGrounded(false);
+
+		}
 	}
 
 	// Player
+
 	if (playerCharacter.CheckCollision(startingRoom->GetStatics()[0]))
 	{
 		// Cancel downwards movement
@@ -322,6 +356,39 @@ void Scene::RigidGroundCollision()
 	{
 		playerCharacter.SetGrounded(false);
 	}
+	//Walking on boxholds
+	for (int i = 0; i < startingRoom->GetBoxHolds().size(); i++) {
+		if (playerCharacter.CheckCollision(startingRoom->GetBoxHolds()[i]) && startingRoom->GetBoxHolds()[i].holdingBox())
+		{
+			// Cancel downwards movement
+			playerCharacter.SetGrounded(true);
+			playerCharacter.SetVelocityY(0.0f);
+
+			// Moves the entity back up if it's below the ground
+			// Could be improved by larger physics calculations
+			float groundY = startingRoom->GetStatics()[0].GetPositionBB().y;
+			float offset = groundY - playerCharacter.GetHitboxBottom();
+			offset *= 20.0f;
+			playerCharacter.AddVelocityY(offset);
+		}
+	}
+	//Walking on boxes
+	//for (int i = 0; i < startingRoom->GetRigids().size(); i++) {
+	//	if (playerCharacter.CheckCollision(startingRoom->GetRigids()[i]))
+	//	{
+	//		// Cancel downwards movement
+	//		playerCharacter.SetGrounded(true);
+	//		playerCharacter.SetVelocityY(0.0f);
+
+	//		// Moves the entity back up if it's below the ground
+	//		// Could be improved by larger physics calculations
+	//		float groundY = startingRoom->GetRigids()[i].GetPositionBB().y;
+	//		float offset = groundY - playerCharacter.GetHitboxBottom();
+	//		offset *= 20.0f;
+	//		playerCharacter.AddVelocityY(offset);
+	//	}
+	//}
+
 
 }
 

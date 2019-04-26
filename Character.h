@@ -17,4 +17,5 @@ public:
 	
 	bool CheckInBound(Entity collidingCube);
 	glm::vec3 Move(GLFWwindow *window);
+
 };

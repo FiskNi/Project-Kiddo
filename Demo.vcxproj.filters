@@ -229,5 +229,8 @@
     <ClInclude Include="Primitive.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="BoxHoldEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

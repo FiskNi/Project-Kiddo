@@ -7,6 +7,7 @@
 #include "Room.h"
 #include "Character.h"
 #include "Camera.h"
+#include "BoxHoldEntity.h"
 
 //============================================================================
 //	- Scenes
@@ -43,6 +44,8 @@ private:
 	void PlayerBoxCollision(int meshIndex);
 	void BoxBoxCollision();
 	void BoxNodeCollision();
+	void BoxHoldCollision();
+
 	unsigned int inBoundCheck(bool collision);
 	void RigidStaticCollision();
 	void RigidGroundCollision();
@@ -66,6 +69,7 @@ private:
 
 	// Character
 	Character playerCharacter;
+
 
 public:
 	Scene();

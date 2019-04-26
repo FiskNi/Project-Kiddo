@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Material.h"
 #include "puzzleNode.h"
+#include "BoxHoldEntity.h"
 
 //============================================================================
 //	- Rooms
@@ -45,6 +46,7 @@ private:
 	// Entity
 	std::vector<RigidEntity> rigids;
 	std::vector<StaticEntity> statics;
+	std::vector<BoxHoldEntity> holdBoxes;
 
 	// PuzzleNode
 	std::vector<puzzleNode> nodes;
@@ -54,6 +56,8 @@ private:
 	// Camera
 	Camera* roomCamera;
 
+	//BoxHold
+
 public:
 	Room(std::vector<Material> materials);
 	~Room();
@@ -62,6 +66,7 @@ public:
 	std::vector<DirectionalLight> GetDirectionalLights() const;
 	std::vector<RigidEntity>& GetRigids();
 	std::vector<StaticEntity>& GetStatics();
+	std::vector<BoxHoldEntity>& GetBoxHolds();
 	std::vector<puzzleNode> GetNodes() const;
 	std::vector<Primitive> GetMeshData() const;
 	Camera* GetCamera();

@@ -89,6 +89,16 @@ void RigidEntity::Update(float deltaTime)
 
 	calculatedPosition += velocity * deltaTime;
 	SetPosition(calculatedPosition);
+
+	this->resetPos();
+}
+
+void RigidEntity::resetPos()
+{
+	if (GetPosition().y < -10 && GetPosition().y > -45) {
+		this->velocity.y, this->velocity.x = 0;
+		this->SetPosition(this->startPos);	
+	}
 }
 
 void RigidEntity::SetColliding(bool colliding)
@@ -104,5 +114,10 @@ void RigidEntity::SetGrounded(bool grounded)
 void RigidEntity::SetHeld(bool holding)
 {
 	this->held = holding;
+}
+
+void RigidEntity::setStartPosition(glm::vec3 pos)
+{
+	this->startPos = pos;
 }
 

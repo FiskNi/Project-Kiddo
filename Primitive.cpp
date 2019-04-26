@@ -3,6 +3,7 @@
 Primitive::Primitive()
 {
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	this->worldRotation = 0.0f;
 
 	gVertexBuffer = 0;
@@ -524,6 +525,7 @@ void Primitive::setPosition(glm::vec3 newPos)
 {
 	worldPosition = newPos;
 }
+
 
 std::vector<vertexPolygon> Primitive::getvertexPolygons()
 {
