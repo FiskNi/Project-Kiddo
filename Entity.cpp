@@ -8,6 +8,8 @@ Entity::Entity(unsigned int i)
 	// This will be changed for a imported mesh
 	if (i == 0)
 		entityMesh.CreatePlaneData();
+	else if (i == 2)
+		entityMesh.CreatePressurePlateData();
 	else
 		entityMesh.CreateCubeData();
 

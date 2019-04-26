@@ -193,6 +193,11 @@ void Room::LoadEntities(std::vector<Material> materials)
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	statics.push_back(planeEntity);
 
+	PressurePlate button;
+	button.SetMaterialID(materials[1].getMaterialID());
+	button.SetPosition(glm::vec3(8, 0, 0));
+	statics.push_back(button);
+
 	BoxHoldEntity boxHold(1);
 	boxHold.SetMaterialID(materials[0].getMaterialID());
 	boxHold.SetPosition(glm::vec3(-11, -1, 0));

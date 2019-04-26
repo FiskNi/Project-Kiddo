@@ -6,6 +6,8 @@ class Camera
 private:
 	void reCalcCamVecs();
 
+	bool locked = false;
+
 public:
 	glm::vec3 camPos;
 	glm::vec3 face;
@@ -36,7 +38,7 @@ public:
 	//WASD camera movement controls. Need only be called in gameLoop if you want to move the specific camera.
 	//Add custom key bindings for devs? Could send in letters as strings and use those as keybinds.
 	void FPSCamControls(GLFWwindow * window, float deltaTime);
-
+	void followPlayer(glm::vec3 vec);
 	//Calculates and returns the view matrix.
 	glm::mat4 GetViewMatrix();
 

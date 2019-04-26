@@ -91,6 +91,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) {
 				moveX = moveSpeed / 5; 
 				moveY = moveSpeed + 0.5;
+				jumpSquat = false;
 			}
 			else if (RigidEntity::IsGrounded())
 				moveX = moveSpeed;
@@ -99,6 +100,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if(jumpSquat && RigidEntity::IsGrounded()){
 				moveX = -moveSpeed / 5;
 				moveY = moveSpeed + 0.5;
+				jumpSquat = false;
 			}
 			else if(RigidEntity::IsGrounded())
 				moveX = -moveSpeed;
@@ -107,6 +109,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) {
 				moveZ = moveSpeed / 5;
 				moveY = moveSpeed + 0.5;
+				jumpSquat = false;
 			}
 			else if(RigidEntity::IsGrounded())
 				moveZ = moveSpeed;
@@ -115,6 +118,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) {
 				moveZ = -moveSpeed / 5;
 				moveY = moveSpeed + 0.5;
+				jumpSquat = false;
 			}
 			else if(RigidEntity::IsGrounded())
 				moveZ = -moveSpeed;

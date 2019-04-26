@@ -29,6 +29,7 @@ public:
 
 	void CreateCubeData();
 	void CreatePlaneData();
+	void CreatePressurePlateData();
 
 	void ImportMesh(vertex*verticies, int nrOfVerticies);
 

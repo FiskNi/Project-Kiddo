@@ -13,7 +13,7 @@
 #include "Material.h"
 #include "puzzleNode.h"
 #include "BoxHoldEntity.h"
-
+#include "Button.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -56,7 +56,7 @@ private:
 	// Camera
 	Camera* roomCamera;
 
-	//BoxHold
+
 
 public:
 	Room(std::vector<Material> materials);

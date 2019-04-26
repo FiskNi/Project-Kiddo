@@ -71,6 +71,7 @@ private:
 	Character playerCharacter;
 
 
+
 public:
 	Scene();
 	~Scene();

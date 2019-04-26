@@ -230,7 +230,10 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="BoxHoldEntity.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

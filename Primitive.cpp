@@ -358,6 +358,279 @@ void Primitive::CreatePlaneData()
 	);
 }
 
+void Primitive::CreatePressurePlateData()
+{
+	// 36 hardcoded vertices representing a button
+
+	vertexPolygon cubeVertex;
+
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	//===============================================
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	//===============================================
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	//===============================================
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	//===============================================
+	//===================BOTTOM QUAD=================
+	//===============================================
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	//===============================================
+	//=================TOP QUAD======================
+	//===============================================
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.4f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	CalculateTangents();
+
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttribute);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttribute);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,				// location in shader
+		3,						// how many elements of type (see next argument)
+		GL_FLOAT,				// type of each element
+		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+	glVertexAttribPointer(
+		3,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 8)
+	);
+
+	glVertexAttribPointer(
+		4,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 11)
+	);
+}
+
 void Primitive::ImportMesh(vertex*vertArr, int nrOfVerticies)
 {
 
