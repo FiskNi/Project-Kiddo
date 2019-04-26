@@ -64,9 +64,10 @@ void Room::CompileMeshData()
 {
 	meshes.clear();
 
-	meshes.push_back(this->importMeshes[0]);
-	meshes.push_back(this->importMeshes[1]);
-	meshes.push_back(this->importMeshes[2]);
+	for (int i = 0; i < this->importMeshes.size(); i++)
+	{
+		meshes.push_back(this->importMeshes[i]);
+	}
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -124,27 +125,16 @@ void Room::LoadEntities(std::vector<Material> materials)
 {
 	RigidEntity cubeEntity(1);
 
-	Loader testLoader("cubeCubeSphere.bin");
-
-	Primitive testMesh;
-	Primitive test2;
-	Primitive test3;
-
-	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
-	testMesh.setMaterial(materials[0].getMaterialID());
-
-	test2.setPosition(glm::vec3(-12, 3.0, 10.0f));
-	test2.setMaterial(materials[0].getMaterialID());
-
-	test3.setPosition(glm::vec3(0.0f, 3.0f, 10.0f));
-	test3.setMaterial(materials[0].getMaterialID());
-
-	this->importMeshes.push_back(testMesh);
-	this->importMeshes.push_back(test2);
-	this->importMeshes.push_back(test3);
+	Loader testLoader("LevelTestBinary.bin");
 
 	for (int i = 0; i < testLoader.getNrOfMeshes(); i++)
 	{
+		Primitive newPrim;
+		newPrim.setPosition(glm::vec3(0, 0.0f, 0));
+		newPrim.setMaterial(materials[0].getMaterialID());
+
+		this->importMeshes.push_back(newPrim);
+
 		this->importMeshes[i].ImportMesh(testLoader.getVerticies(i), testLoader.getNrOfVerticies(i));
 	}
 
