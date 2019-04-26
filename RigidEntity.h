@@ -39,9 +39,6 @@ public:
 	void AddRotationY(float y);
 	void AddRotationZ(float z);
 
-
-
-
 	void Update(float deltaTime);
 
 	void SetColliding(bool colliding);

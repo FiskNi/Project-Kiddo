@@ -129,5 +129,6 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		moveDir *= moveSpeed;
 	}
 
+	inputVector = moveDir;
 	return glm::vec3(moveDir);
 }

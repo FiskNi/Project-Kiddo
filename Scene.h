@@ -39,13 +39,8 @@ private:
 	void LoadCharacter();
 
 	void CompileMeshData();
-
-	void PlayerBoxCollision();
-	void BoxBoxCollision();
-	void BoxNodeCollision();
-	int inBoundCheck();
-	void RigidStaticCollision();
-	void RigidGroundCollision();
+	
+	// Global world update
 	void Gravity();
 	
 

@@ -3,15 +3,16 @@
 #include "Light.h"
 #include "DirectionalLight.h"
 
+#include "Character.h"
 #include "Entity.h"
 #include "RigidEntity.h"
 #include "StaticEntity.h"
-
 #include "puzzleNode.h"
+#include "BridgeEntity.h"
+
 #include "Mesh.h"
 #include "Camera.h"
 #include "Material.h"
-#include "puzzleNode.h"
 
 //============================================================================
 //	- Rooms
@@ -35,6 +36,13 @@ private:
 	void LoadEntities(std::vector<Material> materials);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
+	void PlayerBoxCollision(Character* playerCharacter);
+	int inBoundCheck(Character playerCharacter);
+	void RigidRigidCollision();
+	void RigidNodeCollision();
+	void RigidStaticCollision();
+	void RigidGroundCollision(Character* playerCharacter);
+
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 
@@ -45,8 +53,7 @@ private:
 	// Entity
 	std::vector<RigidEntity> rigids;
 	std::vector<StaticEntity> statics;
-
-	// PuzzleNode
+	std::vector<BridgeEntity> bridges;
 	std::vector<puzzleNode> nodes;
 
 	std::vector<Mesh> importMeshes;
@@ -67,6 +74,10 @@ public:
 	std::vector<Mesh> GetMeshData() const;
 
 	Camera* GetCamera();
+
+	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
+
+
 
 	void CompileMeshData();
 };

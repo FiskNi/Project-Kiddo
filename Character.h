@@ -11,6 +11,8 @@ private:
 	int entityID;
 	bool holdingObject;
 
+	glm::vec3 inputVector;
+
 public:
 	Character();
 	~Character();
@@ -23,5 +25,6 @@ public:
 
 	bool IsHoldingObject() { return holdingObject; }
 	int GetEntityID() const { return entityID; }
+	glm::vec3 GetInputVector() { return inputVector; }
 
 };

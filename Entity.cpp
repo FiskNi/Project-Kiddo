@@ -160,3 +160,8 @@ float Entity::GetHitboxBottom() const
 {
 	return GetPosition().y - boundingBoxSize.y;
 }
+
+float Entity::GetHitboxTop() const
+{
+	return GetPosition().y + boundingBoxSize.y;
+}

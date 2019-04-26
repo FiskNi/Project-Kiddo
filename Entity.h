@@ -69,4 +69,5 @@ public:
 	glm::vec3 GetBoundingBoxSize() const;
 
 	float GetHitboxBottom() const;
+	float GetHitboxTop() const;
 };

@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BridgeEntity.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
@@ -162,6 +163,7 @@
     <None Include="VertexShaderSM.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BridgeEntity.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="DirectionalLight.h" />
