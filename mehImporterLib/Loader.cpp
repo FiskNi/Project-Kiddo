@@ -47,20 +47,20 @@ Loader::Loader(std::string fileName)
 		//Read the size of Mesh from the file. And put it in meshArr[i]
 		binFile.read((char*)&this->meshArr[i], sizeof(mesh));
 
-		//All Couts are just for testing. 
+		//All Couts are just for testing so the .bin file isn't broken. 
 		//COMMENT OUT BEFORE GIT PUSH
 		//Otherwise it'll slow down start up for everyone else and print a lot of info to the console.
-		std::cout << header.nrOfMeshes << std::endl;
+		/*std::cout << header.nrOfMeshes << std::endl;
 		std::cout << meshArr[i].meshName << std::endl;
 		std::cout << meshArr[i].nrOfMaterials << std::endl;
-		std::cout << meshArr[i].nrOfVerticies << std::endl;
+		std::cout << meshArr[i].nrOfVerticies << std::endl;*/
 
 		//Allocate memory for each vertex in this mesh.
 		this->vertexArr[i] = new vertex[this->meshArr[i].nrOfVerticies];
 
 		//COMMENT OUT BEFORE GIT PUSH
-		std::cout << "Mesh Nr: " << i << std::endl;
-		std::cout << "NrOfVerticies: " << meshArr[i].nrOfVerticies << std::endl;
+		/*std::cout << "Mesh Nr: " << i << std::endl;
+		std::cout << "NrOfVerticies: " << meshArr[i].nrOfVerticies << std::endl;*/
 
 		//For-loop for each vertex
 		for (unsigned int j = 0; j < this->meshArr[i].nrOfVerticies; j++)
@@ -70,7 +70,7 @@ Loader::Loader(std::string fileName)
 
 
 			//COMMENT OUT BEFORE GIT PUSH
-			std::cout << this->vertexArr[i][j].pos[0] <<
+			/*std::cout << this->vertexArr[i][j].pos[0] <<
 				"||" << this->vertexArr[i][j].pos[1] <<
 				"||" << this->vertexArr[i][j].pos[2] << std::endl;
 
@@ -97,10 +97,10 @@ Loader::Loader(std::string fileName)
 				"||" << this->vertexArr[i][j].biNormal[1] <<
 				"||" << this->vertexArr[i][j].biNormal[2] << std::endl;
 
-			std::cout << "____________________________" << std::endl;
+			std::cout << "____________________________" << std::endl;*/
 		}
 		//COMMENT OUT BEFORE GIT PUSH
-		std::cout << "count: " << meshArr[i].nrOfMaterials << std::endl;
+		/*std::cout << "count: " << meshArr[i].nrOfMaterials << std::endl;*/
 
 		//Allocate memory for each material in this mesh.
 		this->materialArr[i] = new material[meshArr[i].nrOfMaterials];
@@ -118,7 +118,7 @@ Loader::Loader(std::string fileName)
 			//totTextures += materialArr[i][j].nrOfTextures;
 
 			//COMMENT OUT BEFORE GIT PUSH
-			std::cout << "MATERIAL DATA" << std::endl;
+			/*std::cout << "MATERIAL DATA" << std::endl;
 			std::cout << "-------------------------------------------------------" << std::endl;
 
 			std::cout << "matIndex: " << materialArr[i][j].index << std::endl;
@@ -146,7 +146,7 @@ Loader::Loader(std::string fileName)
 			std::cout << "nrOfTextures: " << materialArr[i][j].nrOfTextures << std::endl;
 
 			std::cout << "MATERIAL END" << std::endl;
-			std::cout << "-------------------------------------------------------" << std::endl;
+			std::cout << "-------------------------------------------------------" << std::endl;*/
 
 			//Allocate Memory for each texture in the material.
 			this->textures[i][j] = new texture[materialArr[i][j].nrOfTextures];
@@ -159,13 +159,13 @@ Loader::Loader(std::string fileName)
 				//Of course we COULD store a mesh index in the texture as well to avoid a triple pointer. But then we'd have unnecessary variables. 
 				binFile.read((char*)&this->textures[i][j][k], sizeof(texture));
 
-				//COMMENT OUT BEFORE LIB EXPORT!
-				std::cout << "Material Index: " << textures[i][j][k].MatIndex << std::endl;
+				//COMMENT OUT BEFORE GIT PUSH
+				/*std::cout << "Material Index: " << textures[i][j][k].MatIndex << std::endl;
 				std::cout << "Texture Index: " << textures[i][j][k].texID << std::endl;
 				std::cout << "Texture Name: " << textures[i][j][k].textureName << std::endl;
 
 				std::cout << "TEXTURE END" << std::endl;
-				std::cout << "-------------------------------------------------------" << std::endl;
+				std::cout << "-------------------------------------------------------" << std::endl;*/
 
 			}
 		}
