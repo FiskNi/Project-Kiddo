@@ -89,14 +89,14 @@ void Renderer::prePassRender(Shader gShaderProgram,
 	{
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
 
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
 
 
-		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getPolygonCount());
-		startIndex += objects[i].getPolygonCount();
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
+		startIndex += objects[i].getVertexCount();
 	}
 }
 
@@ -152,7 +152,7 @@ void Renderer::Render(Shader gShaderProgram,
 	for (int i = 0; i < objects.size(); i++)
 	{
 		// Per object uniforms
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
 
@@ -182,9 +182,9 @@ void Renderer::Render(Shader gShaderProgram,
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getPolygonCount());
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
 
-		startIndex += objects[i].getPolygonCount();
+		startIndex += objects[i].getVertexCount();
 	}
 
 }
@@ -368,7 +368,6 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLui
 
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
 
-	glm::quat test;
 
 	MODEL_MAT = translationMatrix * rotationMatrix;
 

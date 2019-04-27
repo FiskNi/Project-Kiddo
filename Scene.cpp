@@ -116,9 +116,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 
+	Gravity();
+
 	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
 
-	Gravity();
+	
 
 	if (glfwGetKey(renderWindow, GLFW_KEY_J) == GLFW_PRESS)
 	{

@@ -68,11 +68,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	roomCamera->FPSCamControls(renderWindow, deltaTime);
 
 	playerCharacter->SetColliding(false);
+	RigidGroundCollision(playerCharacter);
 	PlayerBoxCollision(playerCharacter);
 	RigidRigidCollision();
 	RigidNodeCollision();
 	RigidStaticCollision();
-	RigidGroundCollision(playerCharacter);
+
 
 	// Box holding
 	if (playerCharacter->GetEntityID() >= 0)
@@ -91,6 +92,81 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		}
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+}
+
+//=============================================================
+//	Room updates
+//	Check all rigid collisions with the ground, including player.
+//	This loop trough all the rigids and all the statics in the scene.
+//	It then does a collision check and applies a highest ground level
+//	depending on which static is being collided with.
+//=============================================================
+void Room::RigidGroundCollision(Character* playerCharacter)
+{
+	// Rigid entites ground collision
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		// Recheck grounded state, assume it's not grounded
+		rigids[i].SetGrounded(false);
+
+		// Variable to find the highest ground level
+		float ground = rigids[i].GetGroundLevel();
+
+		// All the statics
+		for (int j = 0; j < statics.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(statics[j]))
+			{
+				// If this ground is higher use it
+				ground = statics[j].GetHitboxTop();
+
+				// This entity has been confirmed grounded
+				rigids[i].SetGrounded(true);
+			}
+		}
+		// All the bridges
+		for (int j = 0; j < bridges.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(bridges[j]))
+			{
+				// If this ground is higher use it
+				ground = bridges[j].GetHitboxTop();
+
+				// This entity has been confirmed grounded
+				rigids[i].SetGrounded(true);
+			}
+		}
+
+		rigids[i].GroundLevel(ground);
+	}
+
+	// Player ground collisions
+	// Recheck grounded state, assume it's not grounded
+	playerCharacter->SetGrounded(false);
+	// Variable to find the highest ground level
+	float ground = playerCharacter->GetGroundLevel();
+	for (int j = 0; j < statics.size(); ++j)
+	{
+		if (playerCharacter->CheckCollision(statics[j]))
+		{
+	
+			ground = statics[j].GetHitboxTop();
+			playerCharacter->SetGrounded(true);
+	
+		}
+	}
+
+	for (int j = 0; j < bridges.size(); ++j)
+	{
+		if (playerCharacter->CheckCollision(bridges[j]))
+		{
+
+			ground = bridges[j].GetHitboxTop();
+			playerCharacter->SetGrounded(true);
+			
+		}
+	}
+	playerCharacter->GroundLevel(ground);
 }
 
 //=============================================================
@@ -205,76 +281,6 @@ void Room::RigidStaticCollision()
 
 }
 
-void Room::RigidGroundCollision(Character* playerCharacter)
-{
-	// Entity boxes
-	for (int i = 0; i < rigids.size(); i++)
-	{
-		rigids[i].SetGrounded(false);
-		for (int j = 0; j < statics.size(); ++j)
-		{
-			float ground = -100;
-			if (rigids[i].CheckCollision(statics[j]))
-			{
-				// Cancel downwards movement
-				rigids[i].SetGrounded(true);
-				rigids[i].SetVelocityY(0.0f);
-
-				// Moves the entity back up if it's below the ground
-				// Could be improved by larger physics calculations
-				float offset = 0;
-				ground = statics[j].GetHitboxTop();
-				offset = abs(ground - rigids[i].GetHitboxBottom());
-				offset *= 20.0f;
-				//rigids[i].SetVelocityY(offset);
-			}
-		}
-	}
-
-	// Player
-	playerCharacter->SetGrounded(false);
-	float offset = 0;
-	for (int i = 0; i < rigids.size(); i++)
-	{
-		float ground = -100;
-
-
-		for (int j = 0; j < statics.size(); ++j)
-		{
-			if (playerCharacter->CheckCollision(statics[j]) )
-			{
-				// Cancel downwards movement
-				playerCharacter->SetGrounded(true);
-				playerCharacter->SetVelocityY(0.0f);
-
-				// Moves the entity back up if it's below the ground
-				// Could be improved by larger physics calculations
-				ground = fmaxf(statics[j].GetHitboxTop(), ground);
-				offset = abs(ground - playerCharacter->GetHitboxBottom());
-				offset *= 20.0f;
-			}
-		}
-
-		for (int j = 0; j < bridges.size(); ++j)
-		{
-			if (playerCharacter->CheckCollision(bridges[j]))
-			{
-				// Cancel downwards movement
-				playerCharacter->SetGrounded(true);
-				playerCharacter->SetVelocityY(0.0f);
-
-				// Moves the entity back up if it's below the ground
-				// Could be improved by larger physics calculations
-				ground = fmaxf(bridges[j].GetHitboxTop(), ground);
-				offset = abs(ground - playerCharacter->GetHitboxBottom());
-				offset *= 20.0f;
-			}
-		}
-	}
-	playerCharacter->AddVelocityY(offset);
-
-}
-
 //=============================================================
 //	Render update
 //	Compiles mesh data for the renderer
@@ -282,8 +288,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 void Room::CompileMeshData()
 {
 	meshes.clear();
-
-	meshes.push_back(this->importMeshes[0]);
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -346,32 +350,25 @@ void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Temporary Loader and meshes
 	Loader testLoader("TryCubeFrozenBinary.bin");
-	Mesh testMesh(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
-
-	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
-	testMesh.setMaterial(materials[0].getMaterialID());
-
-	this->importMeshes.push_back(testMesh);
 
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
 	RigidEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 	newEntity.SetMaterialID(materials[0].getMaterialID());
-	//newEntity.SetPosition(glm::vec3(3.0f, 1.0f, 4.0f));
 	rigids.push_back(newEntity);
 
 	RigidEntity cubeEntity(1);
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
-	//cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
-	//rigids.push_back(cubeEntity);
+	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
+	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 100.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, 7.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 50.0f, -3.0f));
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));

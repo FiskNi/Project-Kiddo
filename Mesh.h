@@ -35,6 +35,10 @@ public:
 	void setMaterial(unsigned int texID);
 
 	void setPosition(glm::vec3 newPos);
+	void setPosition(float x, float y, float z);
+	void setPositionX(float x);
+	void setPositionY(float y);
+	void setPositionZ(float z);
 
 	void SetRotation(float x, float y, float z);
 	void SetRotationX(float x);
@@ -42,12 +46,13 @@ public:
 	void SetRotationZ(float z);
 
 	unsigned int getMaterialID() const;
-	glm::vec3 getPosition() const;
-	glm::vec3 getRotation() const;
+	glm::vec3 GetPosition() const;
+	glm::vec3 GetRotation() const;
 
-	std::vector<vertexPolygon> getvertexPolygons();
+	std::vector<vertexPolygon> GetVertices();
+	std::vector<vertexPolygon>& ModifyVertices();
 	unsigned int GetVertexCount() const { return nrOfVerticies; }
 
-	int getPolygonCount() const;
+	int getVertexCount() const;
 };
 

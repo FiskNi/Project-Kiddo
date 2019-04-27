@@ -10,7 +10,7 @@ GameEngine::GameEngine()
 	vertexCount = 0;
 	for (int i = 0; i < meshCount; i++)
 	{
-		vertexCount += mainScene.GetMeshData()[i].getvertexPolygons().size();
+		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
 	}
 	// Allocated memory
 	mainSceneVertexData = new vertexPolygon[vertexCount];
@@ -18,10 +18,10 @@ GameEngine::GameEngine()
 	int vertexIndex = 0;
 	for (int i = 0; i < meshCount; i++)
 	{
-		int meshVtxCount = mainScene.GetMeshData()[i].getvertexPolygons().size();
+		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
 		for (int j = 0; j < meshVtxCount; j++)
 		{
-			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].getvertexPolygons()[j];
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
 			vertexIndex++;
 		}
 	}

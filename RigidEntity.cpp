@@ -7,6 +7,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 	grounded = false;
+	groundLevel = -100.0f;
 	held = false;
 }
 
@@ -16,6 +17,7 @@ RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies) : Entity(v
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 	grounded = false;
+	groundLevel = -100.0f;
 	held = false;
 }
 
@@ -97,6 +99,7 @@ void RigidEntity::Update(float deltaTime)
 {
 	// Get the current position
 	glm::vec3 calculatedPosition = GetPosition();
+	calculatedPosition += velocity * deltaTime;
 
 	// Constant global friction
 	const float friction = 0.8f;
@@ -113,7 +116,19 @@ void RigidEntity::Update(float deltaTime)
 		velocity.z = 0.0f;
 	}
 
-	calculatedPosition += velocity * deltaTime;
+	
+
+	if (grounded)
+	{
+		// Hitbox center required further testing
+		float bbBottom = GetHitboxSize().y;
+		float bbCenter = GetHitboxOffset().y;
+		velocity.y = 0.0f;
+		calculatedPosition.y = groundLevel + bbBottom - bbCenter;
+	}
+
+	cout << grounded << endl;
+
 	SetPosition(calculatedPosition);
 }
 
@@ -125,6 +140,11 @@ void RigidEntity::SetColliding(bool colliding)
 void RigidEntity::SetGrounded(bool grounded)
 {
 	this->grounded = grounded;
+}
+
+void RigidEntity::GroundLevel(float y)
+{
+	groundLevel = y;
 }
 
 void RigidEntity::SetHeld(bool holding)

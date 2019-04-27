@@ -239,8 +239,7 @@ void Mesh::ImportMesh(vertex* vertArr, int vertexCount)
 
 void Mesh::CalculateTangents()
 {
-	//// Normal and tangent Calculation
-
+	// Normal and tangent Calculation
 	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 tangent = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 biTangent = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -303,12 +302,12 @@ unsigned int Mesh::getMaterialID() const
 	return this->materialID;
 }
 
-glm::vec3 Mesh::getPosition() const
+glm::vec3 Mesh::GetPosition() const
 {
 	return this->worldPosition;
 }
 
-glm::vec3 Mesh::getRotation() const
+glm::vec3 Mesh::GetRotation() const
 {
 	return this->worldRotation;
 }
@@ -316,6 +315,26 @@ glm::vec3 Mesh::getRotation() const
 void Mesh::setPosition(glm::vec3 newPos)
 {
 	worldPosition = newPos;
+}
+
+void Mesh::setPosition(float x, float y, float z)
+{
+	worldPosition = glm::vec3(x, y, z);
+}
+
+void Mesh::setPositionX(float x)
+{
+	worldPosition.x = x;
+}
+
+void Mesh::setPositionY(float y)
+{
+	worldPosition.y = y;
+}
+
+void Mesh::setPositionZ(float z)
+{
+	worldPosition.z = z;
 }
 
 void Mesh::SetRotation(float x, float y, float z)
@@ -338,12 +357,17 @@ void Mesh::SetRotationZ(float z)
 	worldRotation.z = z;
 }
 
-std::vector<vertexPolygon> Mesh::getvertexPolygons()
+std::vector<vertexPolygon> Mesh::GetVertices()
 {
 	return vertices;
 }
 
-int Mesh::getPolygonCount() const
+std::vector<vertexPolygon>& Mesh::ModifyVertices()
+{
+	return vertices;
+}
+
+int Mesh::getVertexCount() const
 {
 	return vertices.size();
 }

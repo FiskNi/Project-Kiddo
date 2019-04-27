@@ -10,10 +10,10 @@ class RigidEntity : public Entity
 {
 private:
 	glm::vec3 velocity;
-	float acceleration;
 
 	bool collision;
 	bool grounded;
+	float groundLevel;
 	bool held;
 
 
@@ -43,12 +43,14 @@ public:
 
 	void SetColliding(bool colliding);
 	void SetGrounded(bool grounded);
+	void GroundLevel(float y);
 	void SetHeld(bool holding);
 
 	glm::vec3 GetVelocity() const { return velocity; }
 	float GetVelocityX() const { return velocity.x; }
 	float GetVelocityY() const { return velocity.y; }
 	float GetVelocityZ() const { return velocity.z; }
+	float GetGroundLevel() const { return groundLevel; }
 
 	bool IsColliding() const { return collision; }
 	bool IsGrounded() const { return grounded; }

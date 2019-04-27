@@ -35,7 +35,7 @@ bool Character::CheckInBound(Entity collidingCube)
 
 	AABB collidingBoundingBox;
 	collidingBoundingBox.position = collidingCube.GetPositionBB();
-	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
+	collidingBoundingBox.size = collidingCube.GetHitboxSize();
 
 	//=============================================================
 	//	inBoundBox will only be used to check if there is any 
@@ -46,7 +46,7 @@ bool Character::CheckInBound(Entity collidingCube)
 
 	// This is how large the use area around the character is
 	const float bbOffset = 2.0f;
-	inBoundBox.size = glm::vec3(GetBoundingBoxSize().x * bbOffset, 0.5f, GetBoundingBoxSize().y * bbOffset);
+	inBoundBox.size = glm::vec3(GetHitboxSize().x * bbOffset, 0.5f, GetHitboxSize().y * bbOffset);
 
 	//=============================================================
 	//	The collision check here is mostly identical to 

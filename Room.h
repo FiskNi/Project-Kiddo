@@ -56,9 +56,6 @@ private:
 	std::vector<BridgeEntity> bridges;
 	std::vector<puzzleNode> nodes;
 
-	std::vector<Mesh> importMeshes;
-
-
 	// Camera
 	Camera* roomCamera;
 

@@ -51,6 +51,8 @@ public:
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
 
+	void SetPositionY(float y);
+
 	void SetRotation(float x, float y, float z);
 	void SetRotationX(float x);
 	void SetRotationY(float y);
@@ -61,13 +63,13 @@ public:
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
 	// Fixed return to be here
-	Mesh GetMeshData() const;
+	Mesh GetMeshData() const { return entityMesh; }
 
-	glm::vec3 GetPosition() const;
-	glm::vec3 GetSavedPosition() const;
-	glm::vec3 GetPositionBB() const;
-	glm::vec3 GetBoundingBoxSize() const;
-
-	float GetHitboxBottom() const;
-	float GetHitboxTop() const;
+	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
+	glm::vec3 GetSavedPosition() const { return savedPosition; }
+	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }
+	glm::vec3 GetHitboxSize() const { return boundingBoxSize; }
+	glm::vec3 Entity::GetHitboxOffset() const { return boundingBoxCenter; }
+	float GetHitboxBottom() const { return GetPosition().y - boundingBoxSize.y; }
+	float GetHitboxTop() const { return GetPosition().y + boundingBoxSize.y; }
 };
