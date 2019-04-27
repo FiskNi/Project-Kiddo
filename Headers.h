@@ -26,12 +26,11 @@
 
 #include "stb_image.h"
 
-#include "Importer/Include/Loader.h"
+#include "mehImporterLib/Loader.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "glfw3.lib")
-#pragma comment(lib, "meh_importer.lib")
 
 #define WIDTH 1280
 #define HEIGHT 720

@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string.h>
 #include <fstream>
 #include "MeshFormat.h"
 
@@ -9,8 +10,8 @@ private:
 	std::string fileName;
 	mehHeader header;
 	mesh * meshArr;
-	vertex ** dataArr;
-	material ** materials;
+	vertex ** vertexArr;
+	material ** materialArr;
 
 	texture *** textures;
 
@@ -30,5 +31,7 @@ public:
 	mesh getMesh(int meshID);
 	material getMaterial(int meshID, int materialID);
 	material * getAllMaterials(int meshID);
+	texture getTexture(int meshID, int materialID, int textureID);
+	texture ** getAllTextures(int meshID);
 
 };

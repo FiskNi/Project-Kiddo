@@ -213,6 +213,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		rigids[i].SetGrounded(false);
 		for (int j = 0; j < statics.size(); ++j)
 		{
+			float ground = -100;
 			if (rigids[i].CheckCollision(statics[j]))
 			{
 				// Cancel downwards movement
@@ -221,10 +222,11 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 
 				// Moves the entity back up if it's below the ground
 				// Could be improved by larger physics calculations
-				float groundY = statics[j].GetPositionBB().y;
-				float offset = groundY - rigids[i].GetHitboxBottom();
+				float offset = 0;
+				ground = statics[j].GetHitboxTop();
+				offset = abs(ground - rigids[i].GetHitboxBottom());
 				offset *= 20.0f;
-				rigids[i].AddVelocityY(offset);
+				//rigids[i].SetVelocityY(offset);
 			}
 		}
 	}
@@ -343,7 +345,7 @@ void Room::LoadLights()
 void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Temporary Loader and meshes
-	Loader testLoader("TryCubeBinary.bin");
+	Loader testLoader("TryCubeFrozenBinary.bin");
 	Mesh testMesh(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 
 	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
@@ -354,8 +356,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
 	RigidEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 	newEntity.SetMaterialID(materials[0].getMaterialID());
-
-	newEntity.SetPosition(glm::vec3(9.0f, 1.0f, 0.0f));
+	//newEntity.SetPosition(glm::vec3(3.0f, 1.0f, 4.0f));
 	rigids.push_back(newEntity);
 
 	RigidEntity cubeEntity(1);
@@ -364,13 +365,13 @@ void Room::LoadEntities(std::vector<Material> materials)
 	//cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
 	//rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 2.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 100.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 50.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
