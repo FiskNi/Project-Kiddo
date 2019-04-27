@@ -1,6 +1,6 @@
 #pragma once
 #include "Headers.h"
-#include "Primitive.h"
+#include "Mesh.h"
 
 //============================================================================
 //	- Entities
@@ -27,7 +27,9 @@
 class Entity
 {
 private:
-	Primitive entityMesh;
+	Mesh entityMesh;
+	//glm::vec3 position;
+	//glm::vec3 rotation;
 
 	// The center is a vector to a location in the world
 	glm::vec3 boundingBoxCenter;
@@ -35,12 +37,11 @@ private:
 	//	x, y, z, format in worldspace (axis aligned)
 	glm::vec3 boundingBoxSize;
 
-	//ID, playerID = 1, Movable box = 2.
-	unsigned int entityID; 
 	glm::vec3 savedPosition;
 
 public:
 	Entity(unsigned int i);
+	Entity(vertex* vertArr, unsigned int nrOfVerticies);
 	~Entity();
 
 	void InitBoundingBox();
@@ -49,17 +50,26 @@ public:
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
+
+	void SetPositionY(float y);
+
+	void SetRotation(float x, float y, float z);
+	void SetRotationX(float x);
+	void SetRotationY(float y);
+	void SetRotationZ(float z);
+
 	void SaveCurrentPosition(glm::vec3 pos);
 	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
-	unsigned int getEntityID() const;
+	// Fixed return to be here
+	Mesh GetMeshData() const { return entityMesh; }
 
-	Primitive GetMeshData() const;
-	glm::vec3 GetPosition() const;
-	glm::vec3 GetSavedPosition() const;
-	glm::vec3 GetPositionBB() const;
-	glm::vec3 GetBoundingBoxSize() const;
-
-	float GetHitboxBottom() const;
+	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
+	glm::vec3 GetSavedPosition() const { return savedPosition; }
+	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }
+	glm::vec3 GetHitboxSize() const { return boundingBoxSize; }
+	glm::vec3 Entity::GetHitboxOffset() const { return boundingBoxCenter; }
+	float GetHitboxBottom() const { return GetPosition().y - boundingBoxSize.y; }
+	float GetHitboxTop() const { return GetPosition().y + boundingBoxSize.y; }
 };

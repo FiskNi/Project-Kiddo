@@ -3,12 +3,14 @@
 #include "Light.h"
 #include "DirectionalLight.h"
 
+#include "Character.h"
 #include "Entity.h"
 #include "RigidEntity.h"
 #include "StaticEntity.h"
-
 #include "puzzleNode.h"
-#include "Primitive.h"
+#include "BridgeEntity.h"
+
+#include "Mesh.h"
 #include "Camera.h"
 #include "Material.h"
 #include "puzzleNode.h"
@@ -36,8 +38,15 @@ private:
 	void LoadEntities(std::vector<Material> materials);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
+	void PlayerBoxCollision(Character* playerCharacter);
+	int inBoundCheck(Character playerCharacter);
+	void RigidRigidCollision();
+	void RigidNodeCollision();
+	void RigidStaticCollision();
+	void RigidGroundCollision(Character* playerCharacter);
+
 	// Object list for the render queue
-	std::vector<Primitive> meshes;
+	std::vector<Mesh> meshes;
 
 	// Lights are stored in a vector
 	std::vector<Light> pointLights;
@@ -46,12 +55,11 @@ private:
 	// Entity
 	std::vector<RigidEntity> rigids;
 	std::vector<StaticEntity> statics;
+	std::vector<BridgeEntity> bridges;
 	std::vector<BoxHoldEntity> holdBoxes;
 
 	// PuzzleNode
 	std::vector<puzzleNode> nodes;
-
-	std::vector<Primitive> importMeshes;
 
 	// Camera
 	Camera* roomCamera;
@@ -68,8 +76,13 @@ public:
 	std::vector<StaticEntity>& GetStatics();
 	std::vector<BoxHoldEntity>& GetBoxHolds();
 	std::vector<puzzleNode> GetNodes() const;
-	std::vector<Primitive> GetMeshData() const;
+	std::vector<Mesh> GetMeshData() const;
+
 	Camera* GetCamera();
+
+	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
+
+
 
 	void CompileMeshData();
 };

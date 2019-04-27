@@ -22,11 +22,11 @@ bool puzzleNode::checkInside(Entity collidingCube)
 
 	AABB thisBoundingBox;
 	thisBoundingBox.position = GetPositionBB();
-	thisBoundingBox.size = GetBoundingBoxSize();
+	thisBoundingBox.size = GetHitboxSize();
 
 	AABB otherBoundingBox;
 	otherBoundingBox.position = collidingCube.GetPositionBB();
-	otherBoundingBox.size = collidingCube.GetBoundingBoxSize();
+	otherBoundingBox.size = collidingCube.GetHitboxSize();
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
 	glm::vec3 box1p2 = thisBoundingBox.position - thisBoundingBox.size;

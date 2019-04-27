@@ -103,6 +103,13 @@ void main () {
 
 	vec4 finalColor = clamp(vec4(ambientLight + directionalLight + pointLight, 1.0f), 0.0f,  1.0f);
 	fragment_color = finalColor;
+
+
+	// Example depth calculation
+	float depth = -gl_FragCoord.z;
+	depth = depth * 2.0 - 1.0; 
+	depth = (2.0 * 200.0f * 0.1f) / (200.0f + 0.1f - gl_FragCoord.z * (200.0f - 0.1f));
+	depth = depth / 200.0f;
 }
 
 /*

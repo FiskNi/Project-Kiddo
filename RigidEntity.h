@@ -11,15 +11,16 @@ class RigidEntity : public Entity
 private:
 	glm::vec3 startPos;
 	glm::vec3 velocity;
-	float acceleration;
 
 	bool collision;
 	bool grounded;
+	float groundLevel;
 	bool held;
 
 
 public:
 	RigidEntity(unsigned int i);
+	RigidEntity(vertex * vertArr, unsigned int nrOfVerticies);
 	~RigidEntity();
 
 	void AddVelocity(float x, float y, float z);
@@ -34,11 +35,17 @@ public:
 	void SetVelocityY(float y);
 	void SetVelocityZ(float z);
 
+	void AddRotation(float x, float y, float z);
+	void AddRotationX(float x);
+	void AddRotationY(float y);
+	void AddRotationZ(float z);
+
 	void Update(float deltaTime);
 	void resetPos();
 
 	void SetColliding(bool colliding);
 	void SetGrounded(bool grounded);
+	void GroundLevel(float y);
 	void SetHeld(bool holding);
 	void setStartPosition(glm::vec3 pos);
 
@@ -46,6 +53,7 @@ public:
 	float GetVelocityX() const { return velocity.x; }
 	float GetVelocityY() const { return velocity.y; }
 	float GetVelocityZ() const { return velocity.z; }
+	float GetGroundLevel() const { return groundLevel; }
 
 	bool IsColliding() const { return collision; }
 	bool IsGrounded() const { return grounded; }

@@ -1,18 +1,20 @@
-#include "Primitive.h"
+#include "Mesh.h"
 
-Primitive::Primitive()
+Mesh::Mesh(vertex* vertArr, unsigned int nrOfVerticies)
 {
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->worldRotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	this->worldRotation = 0.0f;
-
-	gVertexBuffer = 0;
-	gVertexAttribute = 0;
-	
-	vertex test;
-
+	ImportMesh(vertArr, nrOfVerticies);
 }
-Primitive::~Primitive()
+
+Mesh::Mesh()
+{
+	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->worldRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+}
+
+Mesh::~Mesh()
 {
 
 }
@@ -20,17 +22,14 @@ Primitive::~Primitive()
 //=============================================================
 //	Creates a hardcoded cube primitive and binds it into a VAO buffer
 //=============================================================
-void Primitive::CreateCubeData()
+void Mesh::CreateCubeData()
 {
 	// 36 hardcoded vertices representing a cube
-
 	vertexPolygon cubeVertex;
+
 	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
 	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
-	//cubeVertex.tangent = glm::vec3(0.0f);
-	//cubeVertex.bitangent = glm::vec3(0.0f);
-
 		vertices.push_back(cubeVertex);
 	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
 	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
@@ -179,84 +178,14 @@ void Primitive::CreateCubeData()
 		vertices.push_back(cubeVertex);
 
 	CalculateTangents();
-
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttribute);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
 }
 
 //=============================================================
 //	Creates a hardcoded plane primitive and binds it into a VAO buffer
 //=============================================================
-void Primitive::CreatePlaneData()
+void Mesh::CreatePlaneData()
 {
-	// 6 hardcoded vertices representing a plane
+	//// 6 hardcoded vertices representing a plane
 	vertexPolygon planeVertex;
 	planeVertex.position = glm::vec3(-10.0f, 0.0f, -10.0f);
 	planeVertex.uv = glm::vec2(0.0f, 5.0f);
@@ -286,163 +215,31 @@ void Primitive::CreatePlaneData()
 		vertices.push_back(planeVertex);
 
 	CalculateTangents();
-
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttribute);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertexPolygon), vertices.data(), GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertexPolygon), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
 }
 
-void Primitive::ImportMesh(vertex*vertArr, int nrOfVerticies)
+void Mesh::ImportMesh(vertex* vertArr, int vertexCount)
 {
 
-	vertexPolygon dummyVertex;
-
-	for (int i = 0; i < nrOfVerticies; i++)
+	this->nrOfVerticies = vertexCount;
+	for (int i = 0; i < vertexCount; i++)
 	{
-		/*dummyVertex.position = glm::vec3(vertArr[i].pos[0], vertArr[i].pos[1], vertArr[i].pos[2]);
-		dummyVertex.uv = glm::vec2(vertArr[i].uv[0], vertArr[i].uv[1]);
-		dummyVertex.tangent = glm::vec3(vertArr[i].tangent[0], vertArr[i].tangent[1], vertArr[i].tangent[2]);
-		dummyVertex.bitangent = glm::vec3(vertArr[i].biNormal[0], vertArr[i].biNormal[1], vertArr[i].biNormal[2]);
-		dummyVertex.normals = glm::vec3(vertArr[i].normal[0], vertArr[i].normal[1], vertArr[i].normal[2]);*/
+		vertex vertexData = vertArr[i];
+		vertexPolygon newVertex;
+		newVertex.position = glm::vec3(vertexData.pos[0], vertexData.pos[1], vertexData.pos[2]);
+		newVertex.uv = glm::vec2(vertexData.uv[0], vertexData.uv[1]);
+		newVertex.normals = glm::vec3(vertexData.normal[0], vertexData.normal[1], vertexData.normal[2]);
+		newVertex.tangent = glm::vec3(vertexData.tangent[0], vertexData.tangent[1], vertexData.tangent[2]);
+		newVertex.bitangent = glm::vec3(vertexData.biNormal[0], vertexData.biNormal[1], vertexData.biNormal[2]);
 
-		this->vertices.push_back(dummyVertex);
+		vertices.reserve(vertexCount);
+		vertices.push_back(newVertex);
 	}
 
-	glGenVertexArrays(1, &this->gVertexAttribute);
-
-	glBindVertexArray(this->gVertexAttribute);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	glBufferData(GL_ARRAY_BUFFER, nrOfVerticies * sizeof(vertex), vertArr, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(
-		0,				// location in shader
-		3,						// how many elements of type (see next argument)
-		GL_FLOAT,				// type of each element
-		GL_FALSE,				// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertex), // distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)		// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertex),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
-
 }
 
-void Primitive::CalculateTangents()
+void Mesh::CalculateTangents()
 {
 	// Normal and tangent Calculation
-
 	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 tangent = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 biTangent = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -451,7 +248,6 @@ void Primitive::CalculateTangents()
 	float vertexVectorX, vertexVectorY, vertexVectorZ = 0.0f;
 	glm::vec3 triangleEdge1 = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 triangleEdge2 = glm::vec3(0.0f, 0.0f, 0.0f);
-
 
 	for (int i = 0; i < vertices.size(); i += 3)
 	{
@@ -496,43 +292,83 @@ void Primitive::CalculateTangents()
 
 }
 
-void Primitive::setMaterial(unsigned int id)
+void Mesh::setMaterial(unsigned int id)
 {
 	this->materialID = id;
 }
 
-unsigned int Primitive::getMaterialID() const
+unsigned int Mesh::getMaterialID() const
 {
 	return this->materialID;
 }
 
-GLuint Primitive::getVertexAttribute() const
-{
-	return gVertexAttribute;
-}
-
-glm::vec3 Primitive::getPosition() const
+glm::vec3 Mesh::GetPosition() const
 {
 	return this->worldPosition;
 }
 
-float Primitive::getRotation() const
+glm::vec3 Mesh::GetRotation() const
 {
 	return this->worldRotation;
 }
 
-void Primitive::setPosition(glm::vec3 newPos)
+void Mesh::setPosition(glm::vec3 newPos)
 {
 	worldPosition = newPos;
 }
 
+void Mesh::setPosition(float x, float y, float z)
+{
+	worldPosition = glm::vec3(x, y, z);
+}
 
-std::vector<vertexPolygon> Primitive::getvertexPolygons()
+void Mesh::setPositionX(float x)
+{
+	worldPosition.x = x;
+}
+
+void Mesh::setPositionY(float y)
+{
+	worldPosition.y = y;
+}
+
+void Mesh::setPositionZ(float z)
+{
+	worldPosition.z = z;
+}
+
+void Mesh::SetRotation(float x, float y, float z)
+{
+	worldRotation = glm::vec3(x, y, z);
+}
+
+void Mesh::SetRotationX(float x)
+{
+	worldRotation.x = x;
+}
+
+void Mesh::SetRotationY(float y)
+{
+	worldRotation.y = y;
+}
+
+void Mesh::SetRotationZ(float z)
+{
+	worldRotation.z = z;
+}
+
+std::vector<vertexPolygon> Mesh::GetVertices()
 {
 	return vertices;
 }
 
-unsigned int Primitive::getPolygonCount() const
+std::vector<vertexPolygon>& Mesh::ModifyVertices()
 {
-	return (unsigned)vertices.size();
+	return vertices;
 }
+
+int Mesh::getVertexCount() const
+{
+	return vertices.size();
+}
+

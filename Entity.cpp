@@ -1,7 +1,7 @@
 #include "Entity.h"
 
 
-Entity::Entity(unsigned int i)
+Entity::Entity(unsigned int i) 
 {
 	// This is where the mesh data is created
 	// Currently it creates either a primitive plane or cube
@@ -11,19 +11,33 @@ Entity::Entity(unsigned int i)
 	else
 		entityMesh.CreateCubeData();
 
-	// Starting position
-	// Should be input with the constuctor and possibly required
-	glm::vec3 startPos = glm::vec3(-4.0f, 0.0f, 0.0f);
-	SetPosition(startPos);
+	// For position calculations and vector math
+	savedPosition = GetPosition();
 
+	// Created a bounding box based on the entityMesh
+	InitBoundingBox();
+}
+
+Entity::Entity(vertex* vertArr, unsigned int nrOfVerticies) : entityMesh(vertArr, nrOfVerticies)
+{
 	// For position calculations and vector math
 	savedPosition = GetPosition();
 
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
 
-	// Entity ID for collision checks
-	this->entityID = 2;
+	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead
+	// This should in theory also cause the boundingbox center to always be at 0,0,0 local
+	glm::vec3 worldPosition = boundingBoxCenter;
+	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	{
+		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -boundingBoxCenter);
+		entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+		
+	}
+	InitBoundingBox();
+	entityMesh.setPosition(worldPosition);
+
 }
 
 Entity::~Entity()
@@ -33,18 +47,18 @@ Entity::~Entity()
 
 void Entity::InitBoundingBox()
 {
-	glm::vec3 min = entityMesh.getvertexPolygons()[0].position;
-	glm::vec3 max = entityMesh.getvertexPolygons()[0].position;
+	glm::vec3 min = entityMesh.GetVertices()[0].position;
+	glm::vec3 max = entityMesh.GetVertices()[0].position;
 
-	for (int i = 1; i < entityMesh.getvertexPolygons().size(); i++)
+	for (int i = 1; i < entityMesh.GetVertices().size(); i++)
 	{
-		min.x = fminf(entityMesh.getvertexPolygons()[i].position.x, min.x);
-		min.y = fminf(entityMesh.getvertexPolygons()[i].position.y, min.y);
-		min.z = fminf(entityMesh.getvertexPolygons()[i].position.z, min.z);
+		min.x = fminf(entityMesh.GetVertices()[i].position.x, min.x);
+		min.y = fminf(entityMesh.GetVertices()[i].position.y, min.y);
+		min.z = fminf(entityMesh.GetVertices()[i].position.z, min.z);
 
-		max.x = fmaxf(entityMesh.getvertexPolygons()[i].position.x, max.x);
-		max.y = fmaxf(entityMesh.getvertexPolygons()[i].position.y, max.y);
-		max.z = fmaxf(entityMesh.getvertexPolygons()[i].position.z, max.z);
+		max.x = fmaxf(entityMesh.GetVertices()[i].position.x, max.x);
+		max.y = fmaxf(entityMesh.GetVertices()[i].position.y, max.y);
+		max.z = fmaxf(entityMesh.GetVertices()[i].position.z, max.z);
 	}
 
 	glm::vec3 center = glm::vec3((min + max) * 0.5f);
@@ -62,12 +76,12 @@ bool Entity::CheckCollision(Entity collidingCube)
 	};
 
 	AABB thisBoundingBox;
-	thisBoundingBox.position = GetPosition() + boundingBoxCenter;
+	thisBoundingBox.position = GetPositionBB();
 	thisBoundingBox.size = boundingBoxSize;
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.GetPosition();
-	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
+	collidingBoundingBox.position = collidingCube.GetPositionBB();
+	collidingBoundingBox.size = collidingCube.GetHitboxSize();
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
 	glm::vec3 box1p2 = thisBoundingBox.position - thisBoundingBox.size;
@@ -99,6 +113,16 @@ void Entity::SetPosition(glm::vec3 newPos)
 	entityMesh.setPosition(newPos);
 }
 
+void Entity::SetPositionY(float y)
+{
+	entityMesh.setPositionY(y);
+}
+
+void Entity::SetRotation(float x, float y, float z)
+{
+	entityMesh.SetRotation(x, y, z);
+}
+
 void Entity::SaveCurrentPosition(glm::vec3 pos)
 {
 	savedPosition = pos;
@@ -113,39 +137,4 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 {
 	this->boundingBoxSize = BBoxHalfSize;
 	this->boundingBoxCenter = BBoxCenter;
-}
-
-unsigned int Entity::getEntityID() const
-{
-	return this->entityID;
-}
-
-Primitive Entity::GetMeshData() const
-{
-	return entityMesh;
-}
-
-glm::vec3 Entity::GetPosition() const
-{
-	return entityMesh.getPosition();
-}
-
-glm::vec3 Entity::GetSavedPosition() const
-{
-	return savedPosition;
-}
-
-glm::vec3 Entity::GetPositionBB() const
-{
-	return GetPosition() + boundingBoxCenter;
-}
-
-glm::vec3 Entity::GetBoundingBoxSize() const
-{
-	return boundingBoxSize;
-}
-
-float Entity::GetHitboxBottom() const
-{
-	return GetPosition().y - boundingBoxSize.y;
 }
