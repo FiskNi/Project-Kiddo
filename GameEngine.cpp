@@ -3,9 +3,10 @@
 GameEngine::GameEngine()
 {
 	// Load vertex data for the main scene
-	// Could be handled inside the scene or inside the renderer possibly
-	// Not optimal or dynamic but creates one large render buffer rather than
-	// relying on the mesh to have these
+	// Could possibly be handled inside the scene or inside the renderer
+	// Not dynamic (in constructor) but creates one large render buffer rather than
+	// relying on the mesh to have these. This buffer goes into the renderer and would be swapped between rooms.
+	// The scene handles what data this recieves
 	meshCount = mainScene.GetMeshData().size();
 	vertexCount = 0;
 	for (int i = 0; i < meshCount; i++)
@@ -31,7 +32,7 @@ GameEngine::GameEngine()
 GameEngine::~GameEngine()
 {
 	if (mainSceneVertexData)
-		delete[] mainSceneVertexData;
+		delete mainSceneVertexData;
 }
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)

@@ -2,13 +2,8 @@
 
 Character::Character() : RigidEntity(1)
 {
-	glm::vec3 startPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	SetPosition(startPos);
-	RigidEntity::setStartPosition(startPos);
-	SetGrounded(true);
-
-	this->holdingObject = false;
-	this->entityID = -1;
+	holdingObject = false;
+	entityID = -1;
 }
 
 Character::~Character()
@@ -23,7 +18,7 @@ void Character::SetHoldingObject(bool holding)
 
 void Character::SetEntityID(unsigned int id)
 {
-	this->entityID = id;
+	entityID = id;
 }
 
 bool Character::CheckInBound(Entity collidingCube)
@@ -76,11 +71,12 @@ bool Character::CheckInBound(Entity collidingCube)
 }
 
 //=============================================================
-//	Moves this object based on keyboard input
+//	Calculates a movement vector based on input
 //	Could be adapted into a keyboard callback
 //=============================================================
 glm::vec3 Character::Move(GLFWwindow* window)
 {
+	// Player movement speed
 	const float moveSpeed = 2.0f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
@@ -88,11 +84,8 @@ glm::vec3 Character::Move(GLFWwindow* window)
 	float moveZ = 0.0f;
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
-
 	if (glm::length(GetVelocity()) < maxSpeed)
 	{
-		// Player movement speed
-		
 
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE)
 		{
@@ -100,12 +93,14 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			//RigidEntity::SetGrounded(false);
 			//moveY = moveSpeed;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
 				moveX = moveSpeed / 5; 
-				moveY = moveSpeed + 0.5;
+				moveY = moveSpeed + 10.5;
+				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
 			{
@@ -118,7 +113,8 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if(jumpSquat && RigidEntity::IsGrounded())
 			{
 				moveX = -moveSpeed / 5;
-				moveY = moveSpeed + 0.5;
+				moveY = moveSpeed + 10.5;
+				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
 			{
@@ -131,7 +127,8 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
 				moveZ = moveSpeed / 5;
-				moveY = moveSpeed + 0.5;
+				moveY = moveSpeed + 10.5;
+				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
 			{
@@ -144,7 +141,8 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded())
 			{
 				moveZ = -moveSpeed / 5;
-				moveY = moveSpeed + 0.5;
+				moveY = moveSpeed + 10.5;
+				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
 			{

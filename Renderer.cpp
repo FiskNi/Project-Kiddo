@@ -27,8 +27,11 @@ GLFWwindow* Renderer::getWindow()
 
 //=============================================================
 //	From template - Needs explanation
+//	Handles stuff for the fullscreen quad.
+//	Usefull for rendering techniques.
 //=============================================================
-void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, 
+	float gClearColour[])
 {
 	// first pass
 	// render all geometry to a framebuffer object
@@ -43,6 +46,8 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> obje
 
 //=============================================================
 //	From template - Needs explanation
+//	Handles stuff for the fullscreen quad.
+//	Usefull for rendering techniques.
 //=============================================================
 void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 {
@@ -103,12 +108,9 @@ void Renderer::prePassRender(Shader gShaderProgram,
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram,
-	std::vector<Mesh> objects,
-	Camera camera, float gClearColour[3],
-	std::vector<Light> lightArr,
-	std::vector<DirectionalLight> dirLightArr,
-	std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera camera, 
+	float gClearColour[3], std::vector<Light> lightArr, 
+	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
 {
 	// Position in shader
 	int view_matrix = 5;
@@ -133,7 +135,7 @@ void Renderer::Render(Shader gShaderProgram,
 	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
 	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
-	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.camPos));
+	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.GetPosition()));
 
 	dirLightArr[0].sendToShader(gShaderProgram);
 	//Sending all the lights to shader.
@@ -189,6 +191,10 @@ void Renderer::Render(Shader gShaderProgram,
 
 }
 
+
+//=============================================================
+//	Creates a vertexbuffer from all the recieved vertex data
+//=============================================================
 void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 {
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
@@ -264,6 +270,7 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 
 //=============================================================
 //	From template - Needs explanation
+//	Has to do with the fullscreen quad
 //=============================================================
 int Renderer::CreateFrameBuffer() {
 	int err = 0;
@@ -358,6 +365,8 @@ void Renderer::SetViewport()
 
 //=============================================================
 //	Updates the model matrix for an object
+//	Need to lookup quick matrix multiplication etc for rotation stuff
+//	and what not.
 //=============================================================
 void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLuint shaderProg)
 {
@@ -365,23 +374,19 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLui
 
 
 	glm::mat4 rotationMatrix = glm::rotate(MODEL_MAT, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
 
 
 	MODEL_MAT = translationMatrix * rotationMatrix;
-
-
 }
 
 
-/*
-=============================================================
-Used to activate and bind the generated texture.
-Called during the render loop of objects.
-Sends the information of texture to specified shader program.
-=============================================================
-*/
+
+//=============================================================
+//	Used to activate and bind the generated texture.
+//	Called during the render loop of objects.
+//	Sends the information of texture to specified shader program.
+//=============================================================
 void Renderer::passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg,
 	GLchar* uniformName, int loc)
 {

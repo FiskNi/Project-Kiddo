@@ -2,11 +2,11 @@
 #include "Headers.h"
 
 //============================================================================
-//	- Primitive
-//	Handles pure mesh data (vertices and currently material)
+//	- Mesh
+//	Handles pure mesh data.
 //	This is where everything the renderer needs for the shader inputs and nothing else.
-//		*Will be renamed to "Mesh" as this will do the main mesh handling.
-//		Primitives will be a fallback on meshloading failure
+//	Currently the mesh also holds onto the material id. This could be changed to make
+//	entities hold their own material id.
 //============================================================================
 
 class Mesh
@@ -14,7 +14,6 @@ class Mesh
 private:
 	glm::vec3 worldPosition;
 	glm::vec3 worldRotation;
-
 
 	int nrOfVerticies;
 	std::vector<vertexPolygon> vertices;

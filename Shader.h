@@ -1,6 +1,9 @@
 #pragma once
 #include "Headers.h"
 
+//============================================================================
+//	Simply compiles a shader from the input files
+//============================================================================
 class Shader
 {
 private:
@@ -14,16 +17,15 @@ public:
 	Shader();
 	~Shader();
 
+	// Could be moved to constuctor
 	void CreateShader(const char* vertexShader, const char* fragmentShader);
-	void CreateFSShaders();
 
+	// Fullscreen quad stuff. Can be moved into its own class whenever.
+	void CreateFSShaders();
 	void CreateFullScreenQuad();
 
-	// Deprecated | The VBO is now created and tied to a VAO where the vertrices are specified
-	void createVertexBuffer(std::vector<vertexPolygon> vertices);
-
-	GLuint getVertexAttributes();
-	GLuint getShader();
+	GLuint getVertexAttributes() { return gVertexAttribute; }
+	GLuint getShader() { return gShaderProgram; }
 
 };
 

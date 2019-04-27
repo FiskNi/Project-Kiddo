@@ -21,36 +21,6 @@ Scene::~Scene()
 	delete startingRoom;
 }
 
-std::vector<Light> Scene::GetPointLights() const
-{
-	return startingRoom->GetPointLights();
-}
-
-std::vector<DirectionalLight> Scene::GetDirectionalLights() const
-{
-	return startingRoom->GetDirectionalLights();
-}
-
-std::vector<Material> Scene::GetMaterials() const
-{
-	return materials;
-}
-
-Shader Scene::GetShader(unsigned int i) const
-{
-	return shaders[i];
-}
-
-std::vector<Mesh> Scene::GetMeshData() const
-{
-	return meshes;
-}
-
-Camera Scene::GetCamera() const
-{
-	return *(startingRoom->GetCamera());
-}
-
 void Scene::LoadShaders()
 {
 	// Loads shaders from file
@@ -107,33 +77,30 @@ void Scene::CompileMeshData()
 }
 
 //=============================================================
-//	Scene updates
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	// Player movement vector
-	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
-
+	
 	Gravity();
 
 	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
-
-	
 
 	if (glfwGetKey(renderWindow, GLFW_KEY_J) == GLFW_PRESS)
 	{
 		
 	}
 
+	// Player movement vector
+	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 	// Update player movement
 	if (!playerCharacter.IsColliding())
 	{
 		playerCharacter.AddVelocity(playerMoveVector);
 	}
 
-	// Update the scene (calculate basic physics)
+	// Update the scene
 	playerCharacter.Update(deltaTime);
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
@@ -141,11 +108,13 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 	
 	
-
 	// Compile render data for the renderer
 	CompileMeshData();
 }
 
+//=============================================================
+//	Applies basic gravity to the player and rooms
+//=============================================================
 void Scene::Gravity()
 {
 	// Our downward acceleration

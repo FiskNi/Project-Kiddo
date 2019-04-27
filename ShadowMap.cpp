@@ -90,25 +90,6 @@ void ShadowMap::bindForWriting()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 }
-/*
-=============================================================
- Get the depth map attachment at [0]. 
-=============================================================
-*/
-unsigned int ShadowMap::getDepthMapAttachment() const
-{
-	return this->depthMapAttachments[0];
-}
-
-unsigned int ShadowMap::getShadowID() const
-{
-	return this->shadow_id;
-}
-
-glm::mat4 ShadowMap::getShadowMatrix() const
-{
-	return this->shadow_matrix;
-}
 
 /*
 =============================================================

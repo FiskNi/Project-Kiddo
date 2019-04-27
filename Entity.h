@@ -10,10 +10,7 @@
 //	An entity holds one mesh (currently) that defines the vertice data for renderering.
 //	Every entity will have it's own AABB (hitbox) created for it based on the linked mesh.
 //
-//	*Note, This class should be changed to a virtual class where only the derived classes are usable
-//
-//	Collision (Bounding Box):
-//	The boundingbox might need to be offset from the center of the mesh itself. When making calculations	
+//	*Note, This class should be changed to a abstract class where only the derived classes are usable.
 //
 //	- Usage:
 //	Don't. Use the derived classes 'Static' or 'Rigid'. Static meshes are unmoveable objects that
@@ -21,23 +18,21 @@
 //	boxes.
 //	Recommended to create new derived classes for specific usage, these can additionally
 //	be derived from the already derived classes. A 'Lever' class could for example be a derived 
-//	'Static' class. Suggested to keep names consistent within entities (example "LeverEntity")
+//	'Static' class. Suggested to keep names consistent within entities (example "LeverEntity").
 //============================================================================
 
 class Entity
 {
 private:
 	Mesh entityMesh;
-	//glm::vec3 position;
-	//glm::vec3 rotation;
+	glm::vec3 position;
+	glm::vec3 rotation;
 
 	// The center is a vector to a location in the world
 	glm::vec3 boundingBoxCenter;
 	// The size is the half-size in each direction measured from the center
 	//	x, y, z, format in worldspace (axis aligned)
 	glm::vec3 boundingBoxSize;
-
-	glm::vec3 savedPosition;
 
 public:
 	Entity(unsigned int i);
@@ -58,15 +53,12 @@ public:
 	void SetRotationY(float y);
 	void SetRotationZ(float z);
 
-	void SaveCurrentPosition(glm::vec3 pos);
-	void RestoreSavedPosition();
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 
 	// Fixed return to be here
 	Mesh GetMeshData() const { return entityMesh; }
 
 	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
-	glm::vec3 GetSavedPosition() const { return savedPosition; }
 	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }
 	glm::vec3 GetHitboxSize() const { return boundingBoxSize; }
 	glm::vec3 Entity::GetHitboxOffset() const { return boundingBoxCenter; }

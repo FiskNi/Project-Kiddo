@@ -4,20 +4,22 @@
 
 RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 {
+	startPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 	grounded = false;
-	groundLevel = -100.0f;
+	groundLevel = 0.0f;
 	held = false;
 }
 
 
 RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies) : Entity(vertArr, nrOfVerticies)
 {
+	startPos = GetPosition();
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 	grounded = false;
-	groundLevel = -100.0f;
+	groundLevel = 0.0f;
 	held = false;
 }
 
@@ -28,52 +30,52 @@ RigidEntity::~RigidEntity()
 
 void RigidEntity::AddVelocity(float x, float y, float z)
 {
-	this->velocity += glm::vec3(x, y, z);
+	velocity += glm::vec3(x, y, z);
 }
 
 void RigidEntity::AddVelocity(glm::vec3 vec)
 {
-	this->velocity += vec;
+	velocity += vec;
 }
 
 void RigidEntity::AddVelocityX(float x)
 {
-	this->velocity.x += x;
+	velocity.x += x;
 }
 
 void RigidEntity::AddVelocityY(float y)
 {
-	this->velocity.y += y;
+	velocity.y += y;
 }
 
 void RigidEntity::AddVelocityZ(float z)
 {
-	this->velocity.z += z;
+	velocity.z += z;
 }
 
 void RigidEntity::SetVelocity(float x, float y, float z)
 {
-	this->velocity = glm::vec3(x, y, z);
+	velocity = glm::vec3(x, y, z);
 }
 
 void RigidEntity::SetVelocity(glm::vec3 vec)
 {
-	this->velocity = vec;
+	velocity = vec;
 }
 
 void RigidEntity::SetVelocityX(float x)
 {
-	this->velocity.x = x;
+	velocity.x = x;
 }
 
 void RigidEntity::SetVelocityY(float y)
 {
-	this->velocity.y = y;
+	velocity.y = y;
 }
 
 void RigidEntity::SetVelocityZ(float z)
 {
-	this->velocity.z = z;
+	velocity.z = z;
 }
 
 void RigidEntity::AddRotation(float x, float y, float z)
@@ -114,9 +116,6 @@ void RigidEntity::Update(float deltaTime)
 	
 	if (fabsf(velocity.z) < 0.001f) 
 		velocity.z = 0.0f;
-	
-
-	
 
 	if (grounded)
 	{
@@ -127,24 +126,25 @@ void RigidEntity::Update(float deltaTime)
 		calculatedPosition.y = groundLevel + bbBottom - bbCenter;
 	}
 
-	cout << grounded << endl;
-
 	SetPosition(calculatedPosition);
 
-	this->resetPos();
+	// This has to be lower than the initial ground level or bad things happen
+	if (GetPosition().y < -120.0f)
+	{
+		ResetPos();
+	}
+	
 }
 
-void RigidEntity::resetPos()
+void RigidEntity::ResetPos()
 {
-	if (GetPosition().y < -10 && GetPosition().y > -45) {
-		this->velocity.y, this->velocity.x = 0;
-		this->SetPosition(this->startPos);	
-	}
+	SetPosition(startPos);	
+	SetVelocity(0.0f, 1.0f, 1.0f);
 }
 
 void RigidEntity::SetColliding(bool colliding)
 {
-	this->collision = colliding;
+	collision = colliding;
 }
 
 void RigidEntity::SetGrounded(bool grounded)
@@ -159,11 +159,11 @@ void RigidEntity::GroundLevel(float y)
 
 void RigidEntity::SetHeld(bool holding)
 {
-	this->held = holding;
+	held = holding;
 }
 
-void RigidEntity::setStartPosition(glm::vec3 pos)
+void RigidEntity::SetStartPosition(glm::vec3 pos)
 {
-	this->startPos = pos;
+	startPos = pos;
 }
 

@@ -7,7 +7,7 @@ class Light
 
 private:
 	glm::vec3 lightPos;
-	//~~ Note that diffuse is basically Light Colour.
+	// Diffuse is Light Colour.
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 
@@ -19,9 +19,7 @@ private:
 	float power;
 
 public:
-
 	Light();
-	//Light(glm::vec3 lightPos, glm::vec3 diffuse, glm::vec3 specular, float constant, float linear, float quadratic);
 	~Light();
 
 	glm::vec3 getLightPos();

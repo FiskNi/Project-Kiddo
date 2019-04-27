@@ -23,12 +23,11 @@
 //	a winstate and the stages to get there for a room.
 //
 //	- Usage:
-//	The entire room mesh itself goes into a room class and can be seen as what defines a room.
-//	Add entites that makes up mechanics and pushable boxes into the same room class.
+//	Add entites that makes up mechanics and pushable boxes into the room class.
 //	Cameras also goes into the room class.
 //																
-//	For the room to render everything needs to be added into a primitive (later mesh) list.
-//	This makes it easy to render and de-render specific rooms and their content.
+//	For the room to render, everything needs to be added into a mesh vector.
+//	This makes it easy to render and de-render specific content.
 //============================================================================
 
 class Room
@@ -38,47 +37,46 @@ private:
 	void LoadEntities(std::vector<Material> materials);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
-	void PlayerBoxCollision(Character* playerCharacter);
+	void PlayerRigidCollision(Character* playerCharacter);
 	int inBoundCheck(Character playerCharacter);
 	void RigidRigidCollision();
 	void RigidNodeCollision();
 	void RigidStaticCollision();
 	void RigidGroundCollision(Character* playerCharacter);
+	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 
-	// Lights are stored in a vector
+	// Lights
 	std::vector<Light> pointLights;
 	std::vector<DirectionalLight> dirLights;
 
-	// Entity
+	// Entities
 	std::vector<RigidEntity> rigids;
 	std::vector<StaticEntity> statics;
 	std::vector<BridgeEntity> bridges;
 	std::vector<BoxHoldEntity> holdBoxes;
 
-	// PuzzleNode
+	// PuzzleNodes
 	std::vector<puzzleNode> nodes;
 
 	// Camera
 	Camera* roomCamera;
 
-	//BoxHold
-
 public:
 	Room(std::vector<Material> materials);
 	~Room();
 
-	std::vector<Light>& GetPointLights();
-	std::vector<DirectionalLight> GetDirectionalLights() const;
-	std::vector<RigidEntity>& GetRigids();
-	std::vector<StaticEntity>& GetStatics();
-	std::vector<BoxHoldEntity>& GetBoxHolds();
-	std::vector<puzzleNode> GetNodes() const;
-	std::vector<Mesh> GetMeshData() const;
+	std::vector<Light>& GetPointLights() { return pointLights; }
+	std::vector<DirectionalLight> GetDirectionalLights() const { return dirLights; }
+	std::vector<RigidEntity>& GetRigids() { return rigids; }
+	std::vector<StaticEntity>& GetStatics() { return statics; }
+	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
+	std::vector<puzzleNode> GetNodes() const { return nodes; }
+	std::vector<Mesh> GetMeshData() const { return meshes; }
 
-	Camera* GetCamera();
+	Camera* GetCamera() { return roomCamera; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 

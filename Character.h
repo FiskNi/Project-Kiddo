@@ -3,6 +3,13 @@
 #include "Mesh.h"
 #include "RigidEntity.h"
 
+
+//============================================================================
+//	- Character
+//	The character as can be seen derives from a rigid entity.
+//	This means any physic updates based on velocty etc, can easily be appplied
+//	on the character as well as any moveable objects.
+//============================================================================
 class Character
 	: public RigidEntity
 {

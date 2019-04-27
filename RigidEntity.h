@@ -4,6 +4,7 @@
 //============================================================================
 //	- Rigids
 //	Moveable entities like boxes 
+//	Should not be used, make derived classes
 //============================================================================
 
 class RigidEntity : public Entity
@@ -41,13 +42,13 @@ public:
 	void AddRotationZ(float z);
 
 	void Update(float deltaTime);
-	void resetPos();
+	void ResetPos();
 
 	void SetColliding(bool colliding);
 	void SetGrounded(bool grounded);
 	void GroundLevel(float y);
 	void SetHeld(bool holding);
-	void setStartPosition(glm::vec3 pos);
+	void SetStartPosition(glm::vec3 pos);
 
 	glm::vec3 GetVelocity() const { return velocity; }
 	float GetVelocityX() const { return velocity.x; }

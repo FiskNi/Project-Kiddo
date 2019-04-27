@@ -12,8 +12,7 @@ Room::Room(std::vector<Material> materials)
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
-	// Compile all the mesh data in the room for the renderer
-	// This will first get picked up by the owning scene
+	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
 }
 
@@ -22,43 +21,7 @@ Room::~Room()
 	delete roomCamera;
 }
 
-std::vector<Light>& Room::GetPointLights()
-{
-	return pointLights;
-}
-
-std::vector<DirectionalLight> Room::GetDirectionalLights() const
-{
-	return dirLights;
-}
-
-std::vector<RigidEntity>& Room::GetRigids()
-{
-	return rigids;
-}
-
-std::vector<StaticEntity>& Room::GetStatics()
-{
-	return statics;
-}
-
-std::vector<puzzleNode> Room::GetNodes() const
-{
-	return nodes;
-}
-
-std::vector<Mesh> Room::GetMeshData() const
-{
-	return meshes;
-}
-
-Camera* Room::GetCamera()
-{
-	return roomCamera;
-}
-
 //=============================================================
-//	Room updates
 //	Everything that updates in a room happens here. 
 //	This can include collisions, camera movement,
 //	character collision, etc.
@@ -68,14 +31,22 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	roomCamera->FPSCamControls(renderWindow, deltaTime);
 
 	playerCharacter->SetColliding(false);
+	BoxHolding(playerCharacter, renderWindow);
 	RigidGroundCollision(playerCharacter);
-	PlayerBoxCollision(playerCharacter);
+	PlayerRigidCollision(playerCharacter);
 	RigidRigidCollision();
 	RigidNodeCollision();
 	RigidStaticCollision();
+	
+}
 
-
-	// Box holding
+//=============================================================
+//	Picks up a box in range. Currently uses the vector list as priority
+//	if multiple boxes are in range. 
+//	Can be modified to look for the closest box.
+//=============================================================
+void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
+{
 	if (playerCharacter->GetEntityID() >= 0)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
@@ -93,13 +64,20 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 }
+int Room::inBoundCheck(Character playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++)
+		if (playerCharacter.CheckInBound(rigids[i]))
+			return i;
+
+	return -1;
+}
 
 //=============================================================
-//	Room updates
-//	Check all rigid collisions with the ground, including player.
-//	This loop trough all the rigids and all the statics in the scene.
-//	It then does a collision check and applies a highest ground level
-//	depending on which static is being collided with.
+//	Checks all rigid collisions with the ground, includes the player.
+//	This loops trough all the rigids and all the statics in the scene.
+//	Afterwards does a collision check and applies the highest ground level found.
+//	The actual action on collison happens in the rigid entity class.
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
@@ -170,10 +148,11 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 }
 
 //=============================================================
-//	Room updates
-//	Checks collision from the player to each box in the room
+//	Checks collision from the player to all rigids in the room
+//	Adds velocity to the box being collided with unless the box is
+//	being held.
 //=============================================================
-void Room::PlayerBoxCollision(Character* playerCharacter)
+void Room::PlayerRigidCollision(Character* playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); ++i)
 	{
@@ -197,18 +176,12 @@ void Room::PlayerBoxCollision(Character* playerCharacter)
 	}
 }
 
-int Room::inBoundCheck(Character playerCharacter)
-{
-	for (int i = 0; i < rigids.size(); i++)
-		if (playerCharacter.CheckInBound(rigids[i]))
-			return i;
 
-	return -1;
-}
 
 //=============================================================
-//	Room updates
-//	Checks collision from the a rigid to each other rigid in the room
+//	Checks collision from all rigids to each other rigid in the room.
+//	Boxes will mutually push each other away from one another on collision.
+//	Locked to the x and y world axis.
 //=============================================================
 void Room::RigidRigidCollision()
 {
@@ -241,8 +214,7 @@ void Room::RigidRigidCollision()
 }
 
 //=============================================================
-//	Room updates
-//	Checks collision from a node to each other entity in the room
+//	Checks collision from all entities to all nodes in the room
 //=============================================================
 void Room::RigidNodeCollision()
 {
@@ -259,8 +231,7 @@ void Room::RigidNodeCollision()
 }
 
 //=============================================================
-//	Room updates
-//	Checks collision from a static to each other rigid in the room
+//	Checks collision from all rigids to all statics in the room
 //=============================================================
 void Room::RigidStaticCollision()
 {
@@ -282,7 +253,6 @@ void Room::RigidStaticCollision()
 }
 
 //=============================================================
-//	Render update
 //	Compiles mesh data for the renderer
 //=============================================================
 void Room::CompileMeshData()

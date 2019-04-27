@@ -11,18 +11,12 @@ Entity::Entity(unsigned int i)
 	else
 		entityMesh.CreateCubeData();
 
-	// For position calculations and vector math
-	savedPosition = GetPosition();
-
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
 }
 
 Entity::Entity(vertex* vertArr, unsigned int nrOfVerticies) : entityMesh(vertArr, nrOfVerticies)
 {
-	// For position calculations and vector math
-	savedPosition = GetPosition();
-
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
 
@@ -37,7 +31,6 @@ Entity::Entity(vertex* vertArr, unsigned int nrOfVerticies) : entityMesh(vertArr
 	}
 	InitBoundingBox();
 	entityMesh.setPosition(worldPosition);
-
 }
 
 Entity::~Entity()
@@ -123,18 +116,8 @@ void Entity::SetRotation(float x, float y, float z)
 	entityMesh.SetRotation(x, y, z);
 }
 
-void Entity::SaveCurrentPosition(glm::vec3 pos)
-{
-	savedPosition = pos;
-}
-
-void Entity::RestoreSavedPosition()
-{
-	SetPosition(savedPosition);
-}
-
 void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 {
-	this->boundingBoxSize = BBoxHalfSize;
-	this->boundingBoxCenter = BBoxCenter;
+	boundingBoxSize = BBoxHalfSize;
+	boundingBoxCenter = BBoxCenter;
 }

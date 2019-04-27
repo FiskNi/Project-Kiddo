@@ -6,7 +6,6 @@ class Camera
 private:
 	void reCalcCamVecs();
 
-public:
 	glm::vec3 camPos;
 	glm::vec3 face;
 	glm::vec3 worldUp;
@@ -30,24 +29,22 @@ public:
 	//float zoom;
 	float sensitivity;
 
-	//The Camera Constructor
+public:
 	Camera();
 
-	//WASD camera movement controls. Need only be called in gameLoop if you want to move the specific camera.
-	//Add custom key bindings for devs? Could send in letters as strings and use those as keybinds.
 	void FPSCamControls(GLFWwindow * window, float deltaTime);
 
 	//Calculates and returns the view matrix.
 	glm::mat4 GetViewMatrix();
-
 	glm::mat4 GetProjectionMatrix();
 
 	void setWinSize(float width, float height);
 
 	//Pitch and yaw dependent on mouse movement if active. If limitPitch true standard FPS cam, No Flipping.
 	void pitchYawMouse(float xOffset, float yOffset, bool limitPitch);
-
 	void setProjMat(float width, float height, float nearPlane, float farPlane);
+
+	glm::vec3 GetPosition() const { return camPos; }
 
 };
 

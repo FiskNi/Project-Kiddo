@@ -80,24 +80,5 @@ void Material::createNormal(std::string path)
 
 }
 
-unsigned int Material::getMaterialID() const
-{
-	return materialID;
-}
-
-GLuint Material::getAlbedo() const
-{
-	return albedo;
-}
-
-GLuint Material::getNormal() const
-{
-	return normal;
-}
-
-bool Material::hasNormal() const
-{
-	return hasNormalmap;
-}
 
 

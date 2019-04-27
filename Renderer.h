@@ -13,11 +13,7 @@
 //	The renderer picks up a vector list of elements for renderering from the GameEngine class.
 //	The GameEngine class transfers this list from the scene class, which in turns compiles its list
 //	from all the scene elements and the elements in each room.
-//	
-//	*Important: Right now the elemenets are handled as Primitives (later a mesh class) where each 
-//				Primitive has its own vertex attribute. This could be optimised by instead recieving
-//				only one vertex attribute and instead the vertexcount of each element. In other words
-//				all the elements could be compiled into one buffer before reaching the renderer.
+//	The renderer compiles one buffer from all the vertex data recieved from the gameengine - scene - room
 //
 //	- Usage:
 //	Any specific render techniques can be added and handled here.
