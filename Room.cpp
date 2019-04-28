@@ -95,8 +95,8 @@ int Room::inBoundCheck(Character playerCharacter)
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
 	 //Rigid entites ground collision
-		 for (int i = 0; i < rigids.size(); i++)
-		 {
+	for (int i = 0; i < rigids.size(); i++)
+	{
 		// Recheck grounded state, assume it's not grounded
 		rigids[i].SetGrounded(false);
 
@@ -352,8 +352,8 @@ void Room::CompileMeshData()
 void Room::LoadLights()
 {
 	Light light;
-	light.setDiffuse(glm::vec3(1.0f, 0.3f, 0.5f));
-	light.setSpecular(glm::vec3(1.0f, 0.3f, 0.5f));
+	light.setDiffuse(glm::vec3(0.0f, 1.0, 0.8f));
+	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
 	light.setLightPos(glm::vec3(3.0f, 1.0f, -3.0f));
 	pointLights.push_back(light);
@@ -385,11 +385,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Temporary Loader and meshes
 	Loader testLoader("TryCubeFrozenBinary.bin");
-
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
 	StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 	newEntity.SetMaterialID(materials[0].getMaterialID());
-	newEntity.SetPosition(glm::vec3(newEntity.GetPosition() + glm::vec3(0, -3, 0)));
+	newEntity.SetPositionY(-1.2f);
 	statics.push_back(newEntity);
 
 	RigidEntity cubeEntity(1);
