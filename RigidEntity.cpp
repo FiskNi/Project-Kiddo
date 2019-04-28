@@ -7,6 +7,10 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 	startPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
+
+	forbiddenDir = glm::vec3(0.0f, 0.0f, 0.0f);
+	staticCollision = false;
+
 	grounded = false;
 	groundLevel = 0.0f;
 	held = false;
@@ -145,6 +149,16 @@ void RigidEntity::ResetPos()
 void RigidEntity::SetColliding(bool colliding)
 {
 	collision = colliding;
+}
+
+void RigidEntity::SetCollidingStatic(bool sColliding)
+{
+	this->staticCollision = sColliding;
+}
+
+void RigidEntity::setForbiddenDir(glm::vec3 forbidden)
+{
+	this->forbiddenDir = forbidden;
 }
 
 void RigidEntity::SetGrounded(bool grounded)

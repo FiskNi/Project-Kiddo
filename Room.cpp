@@ -32,6 +32,19 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 	playerCharacter->SetColliding(false);
 	BoxHolding(playerCharacter, renderWindow);
+
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		if (rigids[i].isCollidingStatic())
+		{
+			//If it's not moving it's no longer colliding with the static
+			if (rigids[i].GetVelocity() == glm::vec3(0, 0, 0))
+			{
+				rigids[i].SetCollidingStatic(false);
+			}
+		}
+	}
+
 	RigidGroundCollision(playerCharacter);
 	PlayerRigidCollision(playerCharacter);
 	RigidRigidCollision();
@@ -81,9 +94,9 @@ int Room::inBoundCheck(Character playerCharacter)
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
-	// Rigid entites ground collision
-	for (int i = 0; i < rigids.size(); i++)
-	{
+	 //Rigid entites ground collision
+		 for (int i = 0; i < rigids.size(); i++)
+		 {
 		// Recheck grounded state, assume it's not grounded
 		rigids[i].SetGrounded(false);
 
@@ -171,7 +184,15 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 			pushDir *= 2.0f;
 
 			// Add box velocity
-			rigids[i].AddVelocity(pushDir);
+			if (!rigids[i].isCollidingStatic())
+			{
+				rigids[i].AddVelocity(pushDir);
+			}
+			else
+			{
+				pushDir = normalize(pushDir);
+				playerCharacter->SetVelocity(-pushDir*0.2f);
+			}
 		}
 	}
 }
@@ -207,6 +228,17 @@ void Room::RigidRigidCollision()
 
 					// Add box velocity
 					rigids[j].AddVelocity(pushDir);
+
+					//if (!rigids[i].isCollidingStatic())
+					//{
+					//	rigids[i].AddVelocity(pushDir);
+					//}
+					//else
+					//{
+					//	pushDir = normalize(pushDir);
+					//	//Switch with one of the boxes?
+					//	playerCharacter->SetVelocity(-pushDir * 0.2f);
+					//}
 				}
 			}
 		}
@@ -237,15 +269,48 @@ void Room::RigidStaticCollision()
 {
 	for (int i = 0; i < rigids.size(); i++)
 	{
-		for (int j = 0; j < rigids.size(); ++j)
+		for (int j = 0; j < statics.size(); ++j)
 		{
-			if (rigids[i].CheckCollision(rigids[j]))
+			if (rigids[i].CheckCollision(statics[j]))
 			{
+				//Alternative, are we colliding with top or bottom? if not then we are colliding with sides and should no longer be able to move in the direction we were
+				//How stop that? Either jump back to position frame before(probably laggy) or wall push back with exact opposite intensity should kill movement.
+				//For every single action there's an equal, opposite reaction.
+				glm::vec3 pushDir = statics[j].GetPosition() - rigids[i].GetPosition();
+
+				//The reverse direction from the "Wall"
+				glm::vec3 revDir = glm::normalize(-pushDir);
+
+				if (rigids[i].GetGroundLevel() != statics[j].GetHitboxTop())
+				{
+					if (!rigids[i].isCollidingStatic())
+					{
+						// Normalize and lock to 1 axis
+						if (abs(pushDir.x) >= abs(pushDir.z))
+							pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+						else
+							pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+
+						cout << "rigid" << i << "STATIC COLLISH"<< endl;
+						rigids[i].AddVelocity(-pushDir);
+						//rigids[i].setForbiddenDir(normalize(pushDir));
+						rigids[i].SetCollidingStatic(true);
+					}
+					//else
+					//{
+					//	if (rigids[i].GetVelocity() == glm::vec3(0, 0, 0))
+					//	{
+					//		cout << "collish false" << endl;
+					//		rigids[i].SetCollidingStatic(false);
+					//	}
+					//}
+				}
 
 			}
 			else
 			{
-
+				//Can't be done here since the rigid is constantly NOT colliding with every other static in the scene.
+				//rigids[i].SetCollidingStatic(false);
 			}
 		}
 	}
@@ -322,9 +387,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 	Loader testLoader("TryCubeFrozenBinary.bin");
 
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
-	RigidEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+	StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 	newEntity.SetMaterialID(materials[0].getMaterialID());
-	rigids.push_back(newEntity);
+	newEntity.SetPosition(glm::vec3(newEntity.GetPosition() + glm::vec3(0, -3, 0)));
+	statics.push_back(newEntity);
 
 	RigidEntity cubeEntity(1);
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
@@ -350,7 +416,17 @@ void Room::LoadEntities(std::vector<Material> materials)
 	StaticEntity planeEntity(0);
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-	statics.push_back(planeEntity);
+	//statics.push_back(planeEntity);
+
+	Loader level("LevelTest.bin");
+
+	for (int i = 0; i < level.getNrOfMeshes(); i++)
+	{
+		StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
+		levelEntity.SetMaterialID(materials[0].getMaterialID());
+		//levelEntity.SetPosition
+		this->statics.push_back(levelEntity);
+	}
 
 	BridgeEntity bridge1(1);
 
