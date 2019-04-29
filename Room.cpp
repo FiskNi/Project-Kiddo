@@ -51,7 +51,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidNodeCollision();
 	RigidStaticCollision();
 	BridgeUpdates(renderWindow);
-	
 }
 
 //=============================================================
@@ -272,9 +271,11 @@ void Room::RigidStaticCollision()
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				//Alternative, are we colliding with top or bottom? if not then we are colliding with sides and should no longer be able to move in the direction we were
-				//How stop that? Either jump back to position frame before(probably laggy) or wall push back with exact opposite intensity should kill movement.
-				//For every single action there's an equal, opposite reaction.
+				// Alternative, are we colliding with top or bottom? if not then we are colliding 
+				// with sides and should no longer be able to move in the direction we were
+				// How stop that? Either jump back to position frame before(probably laggy) or 
+				// wall push back with exact opposite intensity should kill movement.
+				// For every single action there's an equal, opposite reaction.
 				glm::vec3 pushDir = statics[j].GetPosition() - rigids[i].GetPosition();
 
 				//The reverse direction from the "Wall"
@@ -327,7 +328,7 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 		}
 		else
 		{
-			bridges[i].Retract();
+			//bridges[i].Retract();
 		}
 	}
 }

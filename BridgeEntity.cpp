@@ -8,6 +8,7 @@ BridgeEntity::BridgeEntity(unsigned int i) : StaticEntity (i)
 	extendDistance = 2.0f;
 	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 	extended = false;
+	extending = false;
 	linkID = -999;
 }
 
@@ -17,6 +18,7 @@ BridgeEntity::BridgeEntity(vertex* vertArr, unsigned int nrOfVerticies) : Static
 	extendDistance = 2.0f;
 	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 	extended = false;
+	extending = false;
 	linkID = -999;
 }
 
@@ -64,18 +66,52 @@ bool BridgeEntity::CheckLinkID(int id)
 
 void BridgeEntity::Extend()
 {
-	extended = true;
+	extending = true;
 }
 
 void BridgeEntity::Retract()
 {
-	extended = false;
+	extending = false;
 }
 
-void BridgeEntity::Update()
+void BridgeEntity::Update(float deltaTime)
 {
-	if (extended)
-		SetPosition(restPosition + (extendDirection * extendDistance));
+	if (extending)
+	{	
+		if (!extended)
+		{
+			const float speed = 50.0f;
+			glm::vec3 velocity = extendDirection * speed * deltaTime;
+			glm::vec3 calculatedPosition = GetPosition();
+			calculatedPosition += velocity * deltaTime;
+
+			if (extendDirection == glm::vec3(1.0f, 0.0f, 0.0f))
+				if ((restPosition + (extendDirection * extendDistance)).x > GetPosition().x)
+					SetPosition(calculatedPosition);
+				else
+					extended = true;
+
+			if (extendDirection == glm::vec3(-1.0f, 0.0f, 0.0f))
+				if ((restPosition + (extendDirection * extendDistance)).x < GetPosition().x)
+					SetPosition(calculatedPosition);
+				else
+					extended = false;
+
+			if (extendDirection == glm::vec3(0.0f, 0.0f, 1.0f))
+				if ((restPosition + (extendDirection * extendDistance)).z < GetPosition().z)
+					SetPosition(calculatedPosition);
+				else
+					extended = false;
+
+			if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
+				if ((restPosition + (extendDirection * extendDistance)).z > GetPosition().z)
+					SetPosition(calculatedPosition);
+				else
+					extended = false;
+		}
+	}	
 	else
+	{
 		SetPosition(restPosition);
+	}
 }

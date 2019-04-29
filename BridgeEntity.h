@@ -8,6 +8,7 @@ private:
 	float extendDistance;
 	glm::vec3 extendDirection;
 	bool extended;
+	bool extending;
 
 	int linkID;
 
@@ -28,7 +29,7 @@ public:
 
 	void Extend();
 	void Retract();
-	void Update();
+	void Update(float deltaTime);
 	
 	bool getExtended() { return extended; }
 

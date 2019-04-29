@@ -104,7 +104,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	for (int i = 0; i < startingRoom->GetBridges().size(); i++)
 	{
-		startingRoom->GetBridges()[i].Update();
+		startingRoom->GetBridges()[i].Update(deltaTime);
 	}
 
 	
