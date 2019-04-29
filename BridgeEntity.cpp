@@ -95,23 +95,24 @@ void BridgeEntity::Update(float deltaTime)
 				if ((restPosition + (extendDirection * extendDistance)).x < GetPosition().x)
 					SetPosition(calculatedPosition);
 				else
-					extended = false;
+					extended = true;
 
 			if (extendDirection == glm::vec3(0.0f, 0.0f, 1.0f))
 				if ((restPosition + (extendDirection * extendDistance)).z < GetPosition().z)
 					SetPosition(calculatedPosition);
 				else
-					extended = false;
+					extended = true;
 
 			if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
 				if ((restPosition + (extendDirection * extendDistance)).z > GetPosition().z)
 					SetPosition(calculatedPosition);
 				else
-					extended = false;
+					extended = true;
 		}
 	}	
 	else
 	{
 		SetPosition(restPosition);
+		extended = false;
 	}
 }

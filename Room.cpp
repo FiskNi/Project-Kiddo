@@ -326,9 +326,9 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 		{
 			bridges[i].Extend();
 		}
-		else
+		else if(bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
 		{
-			//bridges[i].Retract();
+			bridges[i].Retract();
 		}
 	}
 }
