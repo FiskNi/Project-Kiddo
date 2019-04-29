@@ -5,7 +5,11 @@ class BridgeEntity :
 {
 private:
 	glm::vec3 restPosition;
+	float extendDistance;
+	glm::vec3 extendDirection;
 	bool extended;
+
+	int linkID;
 
 
 public:
@@ -14,6 +18,13 @@ public:
 	~BridgeEntity();
 
 	void SetRestPosition(glm::vec3 position);
+	void SetExtendDistance(float d);
+	void SetExtendingForwardX();
+	void SetExtendingBackwardX();
+	void SetExtendingForwardZ();
+	void SetExtendingBackwardZ();
+
+	bool CheckLinkID(int id);
 
 	void Extend();
 	void Retract();

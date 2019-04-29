@@ -50,6 +50,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidRigidCollision();
 	RigidNodeCollision();
 	RigidStaticCollision();
+	BridgeUpdates(renderWindow);
 	
 }
 
@@ -135,15 +136,15 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	// Recheck grounded state, assume it's not grounded
 	playerCharacter->SetGrounded(false);
 	// Variable to find the highest ground level
+	// System for this currently not implemented.
+	// Right now the objects further back in the vector will be dominating the ground variable.
 	float ground = playerCharacter->GetGroundLevel();
 	for (int j = 0; j < statics.size(); ++j)
 	{
 		if (playerCharacter->CheckCollision(statics[j]))
 		{
-	
 			ground = statics[j].GetHitboxTop();
-			playerCharacter->SetGrounded(true);
-	
+			playerCharacter->SetGrounded(true);	
 		}
 	}
 
@@ -151,10 +152,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(bridges[j]))
 		{
-
 			ground = bridges[j].GetHitboxTop();
 			playerCharacter->SetGrounded(true);
-			
 		}
 	}
 	playerCharacter->GroundLevel(ground);
@@ -317,6 +316,23 @@ void Room::RigidStaticCollision()
 
 }
 
+void Room::BridgeUpdates(GLFWwindow *renderWindow)
+{
+	for (int i = 0; i < bridges.size(); i++)
+	{
+		// Template for the updates, this can be replaced by whatever event
+		if (bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_H) == GLFW_PRESS)
+		{
+			bridges[i].Extend();
+		}
+		else
+		{
+			bridges[i].Retract();
+		}
+	}
+}
+
+
 //=============================================================
 //	Compiles mesh data for the renderer
 //=============================================================
@@ -423,31 +439,17 @@ void Room::LoadEntities(std::vector<Material> materials)
 	{
 		StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
 		levelEntity.SetMaterialID(materials[0].getMaterialID());
-		//levelEntity.SetPosition
+		levelEntity.OffsetPositionY(1.2f);
 		this->statics.push_back(levelEntity);
 	}
 
 	BridgeEntity bridge1(1);
 
 	bridge1.SetMaterialID(materials[2].getMaterialID());
-	bridge1.SetPosition(glm::vec3(11.0f, -0.5f, 0.0f));
-	bridge1.SetRestPosition(glm::vec3(11.0f, -0.5f, 0.0f));
+	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
+	bridge1.SetRestPosition(glm::vec3(-5.0f, -0.5f, 0.0f));
 	bridges.push_back(bridge1);
 
-	bridge1.SetMaterialID(materials[2].getMaterialID());
-	bridge1.SetPosition(glm::vec3(12.0f, 0.2f, 0.0f));
-	bridge1.SetRestPosition(glm::vec3(12.0f, 0.2f, 0.0f));
-	bridges.push_back(bridge1);
-
-	bridge1.SetMaterialID(materials[2].getMaterialID());
-	bridge1.SetPosition(glm::vec3(13.0f, 0.4f, 0.0f));
-	bridge1.SetRestPosition(glm::vec3(13.0f, 0.4f, 0.0f));
-	bridges.push_back(bridge1);
-
-	bridge1.SetMaterialID(materials[2].getMaterialID());
-	bridge1.SetPosition(glm::vec3(14.0f, 0.6f, 0.0f));
-	bridge1.SetRestPosition(glm::vec3(14.0f, 0.6f, 0.0f));
-	bridges.push_back(bridge1);
 
 }
 

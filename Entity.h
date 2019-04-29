@@ -45,8 +45,14 @@ public:
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
-
 	void SetPositionY(float y);
+
+
+	void OffsetPosition(glm::vec3 offset);
+	void OffsetPosition(float x, float y, float z);
+	void OffsetPositionX(float x);
+	void OffsetPositionY(float y);
+	void OffsetPositionZ(float z);
 
 	void SetRotation(float x, float y, float z);
 	void SetRotationX(float x);

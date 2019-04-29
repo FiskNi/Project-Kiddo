@@ -111,6 +111,31 @@ void Entity::SetPositionY(float y)
 	entityMesh.setPositionY(y);
 }
 
+void Entity::OffsetPosition(glm::vec3 offset)
+{
+	entityMesh.setPosition(entityMesh.GetPosition() + offset);
+}
+
+void Entity::OffsetPosition(float x, float y, float z)
+{
+	entityMesh.setPosition(entityMesh.GetPosition() + glm::vec3(x, y, z));
+}
+
+void Entity::OffsetPositionX(float x)
+{
+	entityMesh.setPosition(glm::vec3(entityMesh.GetPosition().x + x, entityMesh.GetPosition().y, entityMesh.GetPosition().z));
+}
+
+void Entity::OffsetPositionY(float y)
+{
+	entityMesh.setPosition(glm::vec3(entityMesh.GetPosition().x, entityMesh.GetPosition().y + y, entityMesh.GetPosition().z));
+}
+
+void Entity::OffsetPositionZ(float z)
+{
+	entityMesh.setPosition(glm::vec3(entityMesh.GetPosition().x, entityMesh.GetPosition().y, entityMesh.GetPosition().z + z));
+}
+
 void Entity::SetRotation(float x, float y, float z)
 {
 	entityMesh.SetRotation(x, y, z);

@@ -87,11 +87,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
 
-	if (glfwGetKey(renderWindow, GLFW_KEY_J) == GLFW_PRESS)
-	{
-		
-	}
-
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 	// Update player movement
@@ -106,7 +101,12 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	{
 		startingRoom->GetRigids()[i].Update(deltaTime);
 	}
-	
+
+	for (int i = 0; i < startingRoom->GetBridges().size(); i++)
+	{
+		startingRoom->GetBridges()[i].Update();
+	}
+
 	
 	// Compile render data for the renderer
 	CompileMeshData();

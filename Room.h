@@ -73,12 +73,15 @@ public:
 	std::vector<RigidEntity>& GetRigids() { return rigids; }
 	std::vector<StaticEntity>& GetStatics() { return statics; }
 	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
-	std::vector<puzzleNode> GetNodes() const { return nodes; }
+	std::vector<puzzleNode>& GetNodes() { return nodes; }
+	std::vector<BridgeEntity>& GetBridges() { return bridges; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
 	Camera* GetCamera() { return roomCamera; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
+
+	void BridgeUpdates(GLFWwindow * renderWindow);
 
 
 
