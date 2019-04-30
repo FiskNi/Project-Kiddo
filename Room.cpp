@@ -52,6 +52,8 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidStaticCollision();
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision();
+
+	ButtonInteract(renderWindow, playerCharacter);
 }
 
 //=============================================================
@@ -101,6 +103,32 @@ void Room::BoxPlateCollision()
 	}
 
 }
+
+void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
+{
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		for (int i = 0; i < buttons.size(); i++) {
+			if (playerCharacter->CheckCollision(buttons[i])) {
+				if (buttons[i].isPressed()) {
+					if (buttons[i].isPressed())
+						std::cout << "hi" << std::endl;
+					buttons[i].setPressed(false);
+					break;
+				}
+				else {
+					buttons[i].setPressed(true);
+					break;
+				}
+					
+				if (buttons[i].isPressed())
+					std::cout << "hi" << std::endl;
+				
+			}
+
+		}
+	}
+}
+
 int Room::inBoundCheck(Character playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); i++)
@@ -388,6 +416,11 @@ void Room::CompileMeshData()
 	for (int i = 0; i < plates.size(); i++) {
 		meshes.push_back(plates[i].GetMeshData());
 	}
+
+	for (int i = 0; i < buttons.size(); i++) 
+	{
+		meshes.push_back(buttons[i].GetMeshData());
+	}
 }
 
 //=============================================================
@@ -485,6 +518,12 @@ void Room::LoadEntities(std::vector<Material> materials)
 	plate.setBBY(0.9);
 	plate.scaleBB(1.3);
 	plates.push_back(plate);
+
+	Button button;
+	button.SetMaterialID(materials[1].getMaterialID());
+	button.SetPosition(glm::vec3(5, -1, 6));
+	button.scaleBB(2);
+	buttons.push_back(button);
 
 }
 

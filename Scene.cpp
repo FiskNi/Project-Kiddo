@@ -107,6 +107,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		startingRoom->GetBridges()[i].Update(deltaTime);
 	}
 
+
 	
 	// Compile render data for the renderer
 	CompileMeshData();
