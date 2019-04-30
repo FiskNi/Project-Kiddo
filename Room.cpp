@@ -51,6 +51,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidNodeCollision();
 	RigidStaticCollision();
 	BridgeUpdates(renderWindow);
+	BoxPlateCollision();
 }
 
 //=============================================================
@@ -76,6 +77,29 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 		}
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+}
+void Room::BoxPlateCollision()
+{
+	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
+	for (int i = 0; i < plates.size(); i++) {
+		bool pressed = false;
+
+		if (!plates[i].isPressed()) {
+			for (int j = 0; j < rigids.size(); j++) {
+				if (!pressed) {
+					if (rigids[j].CheckCollision(plates[i])) {
+						if (plates[i].CheckInsideCollision(rigids[j])) {
+							pressed = true;
+						}
+					}
+				}
+			}
+		}
+
+		plates[i].setPressed(pressed);
+		if (pressed) std::cout << "hi" << std::endl;
+	}
+
 }
 int Room::inBoundCheck(Character playerCharacter)
 {
@@ -360,6 +384,10 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(bridges[i].GetMeshData());
 	}
+
+	for (int i = 0; i < plates.size(); i++) {
+		meshes.push_back(plates[i].GetMeshData());
+	}
 }
 
 //=============================================================
@@ -435,15 +463,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	//statics.push_back(planeEntity);
 
 	Loader level("LevelTest.bin");
-	PressurePlate button;
-	button.SetMaterialID(materials[1].getMaterialID());
-	button.SetPosition(glm::vec3(8, 0, 0));
-	statics.push_back(button);
-
-	BoxHoldEntity boxHold(1);
-	boxHold.SetMaterialID(materials[0].getMaterialID());
-	boxHold.SetPosition(glm::vec3(-11, -1, 0));
-	holdBoxes.push_back(boxHold);
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
@@ -460,6 +479,12 @@ void Room::LoadEntities(std::vector<Material> materials)
 	bridge1.SetRestPosition(glm::vec3(-5.0f, -0.5f, 0.0f));
 	bridges.push_back(bridge1);
 
+	PressurePlate plate;
+	plate.SetMaterialID(materials[2].getMaterialID());
+	plate.SetPosition(glm::vec3(0, -1, 0));
+	plate.setBBY(0.9);
+	plate.scaleBB(1.3);
+	plates.push_back(plate);
 
 }
 

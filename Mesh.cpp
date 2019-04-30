@@ -217,6 +217,164 @@ void Mesh::CreatePlaneData()
 	CalculateTangents();
 }
 
+void Mesh::CreatePlateData()
+{
+	// 36 hardcoded vertices representing a cube
+	vertexPolygon cubeVertex;
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, -1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 0.0f, 1.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(-1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(1.0f, 0.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.5f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, -1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(1.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, 0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 0.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+	cubeVertex.position = glm::vec3(-0.5f, -0.3f, -0.5f);
+	cubeVertex.uv = glm::vec2(0.0f, 1.0f);
+	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
+	vertices.push_back(cubeVertex);
+
+	CalculateTangents();
+}
+
 void Mesh::ImportMesh(vertex* vertArr, int vertexCount)
 {
 

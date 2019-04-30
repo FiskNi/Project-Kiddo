@@ -42,25 +42,14 @@ void Camera::FPSCamControls(GLFWwindow * window, float deltaTime)
 {
 	float camSpeed = this->mSpeed*deltaTime;
 
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		if (this->locked) {
-			this->locked = false;
-		}
-		else {
-			this->locked = true;
-		}
-	}
-		
-	if (!locked) {
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-			this->camPos -= camSpeed * this->camRight;
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-			this->camPos += camSpeed * this->camRight;
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-			this->camPos += camSpeed * this->face;
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-			this->camPos -= camSpeed * this->face;
-	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		this->camPos -= camSpeed * this->camRight;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		this->camPos += camSpeed * this->camRight;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		this->camPos += camSpeed * this->face;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		this->camPos -= camSpeed * this->face;
 	if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
 		this->camPos += camSpeed * this->camUp;
 	if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
@@ -73,15 +62,8 @@ void Camera::FPSCamControls(GLFWwindow * window, float deltaTime)
 		this->camYaw += camSpeed * 10;
 	if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
 		this->camYaw -= camSpeed * 10;
-	reCalcCamVecs();
-}
 
-void Camera::followPlayer(glm::vec3 vec)
-{
-	if (locked) {
-		camPos.x = vec.x +2;
-		camPos.z = vec.z - 3;
-	}
+	reCalcCamVecs();
 }
 
 glm::mat4 Camera::GetViewMatrix()

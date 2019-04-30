@@ -234,10 +234,8 @@
     </ClInclude>
     <ClInclude Include="BridgeEntity.h">
       <Filter>Header Files\Entities</Filter>
-    <ClInclude Include="BoxHoldEntity.h">
-      <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="PressurePlate.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>

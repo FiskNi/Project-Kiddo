@@ -42,6 +42,7 @@ public:
 	void InitBoundingBox();
 
 	bool CheckCollision(Entity collidingCube);
+	bool CheckInsideCollision(Entity AABB);
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
@@ -60,6 +61,9 @@ public:
 	void SetRotationZ(float z);
 
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
+	void scaleBB(float x);
+	void scaleBBY(float y);
+	void setBBY(float y);
 
 	// Fixed return to be here
 	Mesh GetMeshData() const { return entityMesh; }

@@ -97,7 +97,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	// Update the scene
 	playerCharacter.Update(deltaTime);
-	startingRoom->GetCamera()->followPlayer(playerCharacter.GetPosition());
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
 		startingRoom->GetRigids()[i].Update(deltaTime);

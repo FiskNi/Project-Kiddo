@@ -6,9 +6,6 @@ class Camera
 private:
 	void reCalcCamVecs();
 
-	bool locked = false;
-
-public:
 	glm::vec3 camPos;
 	glm::vec3 face;
 	glm::vec3 worldUp;
@@ -36,7 +33,7 @@ public:
 	Camera();
 
 	void FPSCamControls(GLFWwindow * window, float deltaTime);
-	void followPlayer(glm::vec3 vec);
+
 	//Calculates and returns the view matrix.
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix();
