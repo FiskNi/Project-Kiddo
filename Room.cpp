@@ -469,7 +469,11 @@ void Room::LoadEntities(std::vector<Material> materials)
 	newEntity.SetPositionY(-1.2f);
 	statics.push_back(newEntity);
 
-	RigidEntity cubeEntity(1);
+	// Loader for the box meshes
+	// Use "boxSharpBinary.bin" for a simpler box, and "boxEdgyBinary.bin" for a fancier look
+	Loader boxLoader("boxEdgyBinary.bin");
+
+	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
