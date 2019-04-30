@@ -1,12 +1,12 @@
 #pragma once
 
-//Make sure that the size of the struct is exact.
+//These pragma commands can be used to ENSURE that the struct is the exact size it should be.
+//I've yet to run into the issues that sizeof(>>InsertStruct<<) is inaccurate but according to one of my sources it could happen.
 #pragma pack(push)
 #pragma pack(1)
 struct mehHeader
 {
 	//unsigned int meshGroupAmount;
-	/*unsigned int nrOfVerticies;*/
 	unsigned int nrOfMeshes;
 	//unsigned int animationAmount;
 	//unsigned int lightSourceAmount;
@@ -34,7 +34,7 @@ struct vertex
 
 struct mesh
 {
-	//char meshName[256];
+	char meshName[256];
 	//unsigned int meshID;
 	//float transformation[16];
 	//bool isChild;
@@ -57,15 +57,18 @@ struct material
 	float opacity;
 	float shininess;
 	float reflectivity;
+	unsigned int nrOfTextures;
 	//unsigned char albedoFile[256];
 	//unsigned char normalFile[256];
 };
 
 struct texture
 {
+	//What material this texture is connected to.
 	int MatIndex;
+	//What index in a materials array of textures this texture belongs to.
 	int texID;
-	unsigned char textureName;
+	unsigned char textureName[256];
 };
 
 struct lightSource

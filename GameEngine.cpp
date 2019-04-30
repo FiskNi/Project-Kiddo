@@ -2,11 +2,37 @@
 
 GameEngine::GameEngine()
 {
+	// Load vertex data for the main scene
+	// Could possibly be handled inside the scene or inside the renderer
+	// Not dynamic (in constructor) but creates one large render buffer rather than
+	// relying on the mesh to have these. This buffer goes into the renderer and would be swapped between rooms.
+	// The scene handles what data this recieves
+	meshCount = mainScene.GetMeshData().size();
+	vertexCount = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+	}
+	// Allocated memory
+	mainSceneVertexData = new vertexPolygon[vertexCount];
 
+	int vertexIndex = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < meshVtxCount; j++)
+		{
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 }
 
 GameEngine::~GameEngine()
 {
+	if (mainSceneVertexData)
+		delete mainSceneVertexData;
 }
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -53,7 +79,7 @@ void GameEngine::Run()
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE)) 
+		if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE))
 		{
 			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
 		}
@@ -76,7 +102,13 @@ void GameEngine::Run()
 		UpdateImGui(renderDepth);
 
 		// ---- Main render call --- ///
-		mainRenderer.Render(mainScene.GetShader(0), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetPointLights(), mainScene.GetDirectionalLights(), mainScene.GetMaterials());
+		mainRenderer.Render(mainScene.GetShader(0), 
+			mainScene.GetMeshData(), 
+			mainScene.GetCamera(), 
+			gClearColour, 
+			mainScene.GetPointLights(), 
+			mainScene.GetDirectionalLights(), 
+			mainScene.GetMaterials());
 
 		// Render a second pass for the fullscreen quad
 		mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
@@ -130,6 +162,7 @@ void GameEngine::UpdateImGui(bool &renderDepth)
 	ImGui::Begin("Debug window");								// Create a window called "Hello, world!" and append into it.
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Text("This is some useful text.");					// Display some text (you can use a format strings too)
+
 	ImGui::SliderFloat("float", &gFloat, 0.0f, 1.0f);			// Edit 1 float using a slider from 0.0f to 1.0f    
 	ImGui::ColorEdit3("Clear color", gClearColour);				// Edit 3 floats representing a color
 	ImGui::SliderAngle("RotateFrame", &gRotate2Z);

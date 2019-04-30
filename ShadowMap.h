@@ -1,6 +1,10 @@
 #pragma once 
 #include "Headers.h" 
 
+//============================================================================
+//	Shadowmapperino
+//	
+//============================================================================
 class ShadowMap
 {
 private:
@@ -21,9 +25,9 @@ public:
 	void CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg);
 	void bindForWriting();
 	
-	unsigned int getDepthMapAttachment() const; 
-	unsigned int getShadowID() const;
-	glm::mat4 getShadowMatrix() const;
+	unsigned int getDepthMapAttachment() const { return depthMapAttachments[0]; }
+	unsigned int getShadowID() const { return shadow_id; }
+	glm::mat4 getShadowMatrix() const { return shadow_matrix; }
 
 	void setTextureSize(unsigned int);
 };

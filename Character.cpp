@@ -2,17 +2,23 @@
 
 Character::Character() : RigidEntity(1)
 {
-	glm::vec3 startPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	SetPosition(startPos);
-	RigidEntity::setStartPosition(startPos);
-	SetGrounded(true);
-
-	this->entityID = 1;
+	holdingObject = false;
+	entityID = -1;
 }
 
 Character::~Character()
 {
 
+}
+
+void Character::SetHoldingObject(bool holding)
+{
+	holdingObject = true;
+}
+
+void Character::SetEntityID(unsigned int id)
+{
+	entityID = id;
 }
 
 bool Character::CheckInBound(Entity collidingCube)
@@ -24,19 +30,19 @@ bool Character::CheckInBound(Entity collidingCube)
 	};
 
 	AABB collidingBoundingBox;
-	collidingBoundingBox.position = collidingCube.GetPosition();
-	collidingBoundingBox.size = collidingCube.GetBoundingBoxSize();
+	collidingBoundingBox.position = collidingCube.GetPositionBB();
+	collidingBoundingBox.size = collidingCube.GetHitboxSize();
 
 	//=============================================================
 	//	inBoundBox will only be used to check if there is any 
 	//	object inside. If so, we can check for grab.
 	//=============================================================
 	AABB inBoundBox;
-	inBoundBox.position = GetPosition();
+	inBoundBox.position = GetPositionBB();
 
 	// This is how large the use area around the character is
 	const float bbOffset = 2.0f;
-	inBoundBox.size = glm::vec3(GetBoundingBoxSize().x * bbOffset, 0.5f, GetBoundingBoxSize().y * bbOffset);
+	inBoundBox.size = glm::vec3(GetHitboxSize().x * bbOffset, 0.5f, GetHitboxSize().y * bbOffset);
 
 	//=============================================================
 	//	The collision check here is mostly identical to 
@@ -65,11 +71,12 @@ bool Character::CheckInBound(Entity collidingCube)
 }
 
 //=============================================================
-//	Moves this object based on keyboard input
+//	Calculates a movement vector based on input
 //	Could be adapted into a keyboard callback
 //=============================================================
 glm::vec3 Character::Move(GLFWwindow* window)
 {
+	// Player movement speed
 	const float moveSpeed = 2.0f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
@@ -79,58 +86,92 @@ glm::vec3 Character::Move(GLFWwindow* window)
 
 	if (glm::length(GetVelocity()) < maxSpeed)
 	{
-		// Player movement speed
-		
 
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE){
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE)
+		{
        		jumpSquat = true;
 			//RigidEntity::SetGrounded(false);
 			//moveY = moveSpeed;
 		}
+
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			if (jumpSquat && RigidEntity::IsGrounded()) {
+		{
+			if (jumpSquat && RigidEntity::IsGrounded()) 
+			{
 				moveX = moveSpeed / 5; 
 				moveY = moveSpeed + 0.5;
 				jumpSquat = false;
 			}
 			else if (RigidEntity::IsGrounded())
+			{
 				moveX = moveSpeed;
+			}
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			if(jumpSquat && RigidEntity::IsGrounded()){
+		{
+			if(jumpSquat && RigidEntity::IsGrounded())
+			{
 				moveX = -moveSpeed / 5;
 				moveY = moveSpeed + 0.5;
 				jumpSquat = false;
 			}
-			else if(RigidEntity::IsGrounded())
+			else if (RigidEntity::IsGrounded())
+			{
 				moveX = -moveSpeed;
+			}
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			if (jumpSquat && RigidEntity::IsGrounded()) {
+		{
+			if (jumpSquat && RigidEntity::IsGrounded()) 
+			{
 				moveZ = moveSpeed / 5;
 				moveY = moveSpeed + 0.5;
 				jumpSquat = false;
 			}
-			else if(RigidEntity::IsGrounded())
+			else if (RigidEntity::IsGrounded())
+			{
 				moveZ = moveSpeed;
+			}
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			if (jumpSquat && RigidEntity::IsGrounded()) {
+		{
+			if (jumpSquat && RigidEntity::IsGrounded())
+			{
 				moveZ = -moveSpeed / 5;
 				moveY = moveSpeed + 0.5;
 				jumpSquat = false;
 			}
-			else if(RigidEntity::IsGrounded())
+			else if (RigidEntity::IsGrounded())
+			{
 				moveZ = -moveSpeed;
+			}
+		}
+
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 			jumpSquat = false;
 
+		/*if (glm::length(GetVelocity()) > 0.5f)
+		{
+			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
+			
+			float rotation = acos(cosRotation);
+
+			if(GetVelocityX() > 0)
+				SetRotation(0.0f, rotation, 0.0f);
+			else
+				SetRotation(0.0f, -rotation, 0.0f);
+		}*/
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
 		//moveDir = glm::normalize(moveDir);
 		moveDir *= moveSpeed;
 	}
 
+	inputVector = moveDir;
 	return glm::vec3(moveDir);
 }
 

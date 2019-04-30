@@ -15,6 +15,9 @@ Renderer::~Renderer()
 {
 	glDeleteFramebuffers(1, &gFbo);
 	glDeleteTextures(2, gFboTextureAttachments);
+	glDeleteVertexArrays(1, &gVertexAttribute);
+	glDeleteBuffers(1, &gVertexBuffer);
+
 }
 
 GLFWwindow* Renderer::getWindow()
@@ -24,8 +27,11 @@ GLFWwindow* Renderer::getWindow()
 
 //=============================================================
 //	From template - Needs explanation
+//	Handles stuff for the fullscreen quad.
+//	Usefull for rendering techniques.
 //=============================================================
-void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive> objects, float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, 
+	float gClearColour[])
 {
 	// first pass
 	// render all geometry to a framebuffer object
@@ -40,6 +46,8 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Primitive>
 
 //=============================================================
 //	From template - Needs explanation
+//	Handles stuff for the fullscreen quad.
+//	Usefull for rendering techniques.
 //=============================================================
 void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 {
@@ -65,7 +73,7 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
 void Renderer::prePassRender(Shader gShaderProgram, 
-	std::vector<Primitive> objects, 
+	std::vector<Mesh> objects, 
 	Camera camera, 
 	float gClearColour[3], 
 	std::vector<DirectionalLight> dirLightArr)
@@ -79,31 +87,30 @@ void Renderer::prePassRender(Shader gShaderProgram,
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
-
+	glBindVertexArray(gVertexAttribute);
 	// tell opengl we are going to use the VAO we described earlier
+	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
 
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
-		glBindVertexArray(objects[i].getVertexAttribute());
 
-		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
+
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
+		startIndex += objects[i].getVertexCount();
 	}
 }
 
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, 
-	std::vector<Primitive> objects, 
-	Camera camera, float gClearColour[3], 
-	std::vector<Light> lightArr, 
-	std::vector<DirectionalLight> dirLightArr, 
-	std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera camera, 
+	float gClearColour[3], std::vector<Light> lightArr, 
+	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
 {
 	// Position in shader
 	int view_matrix = 5;
@@ -128,7 +135,7 @@ void Renderer::Render(Shader gShaderProgram,
 	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
 	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
-	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.camPos));
+	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.GetPosition()));
 
 	dirLightArr[0].sendToShader(gShaderProgram);
 	//Sending all the lights to shader.
@@ -136,23 +143,25 @@ void Renderer::Render(Shader gShaderProgram,
 	{
 		lightArr[i].sendToShader(gShaderProgram, i);
 	}
-	
+
 	// Main render queue
 	// Currently the render swaps buffer for every object which could become slow further on
 	// If possible the rendercalls could be improved
+
+	glBindVertexArray(gVertexAttribute);
+
 	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
 		// Per object uniforms
-		CreateModelMatrix(objects[i].getPosition(), objects[i].getRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
-		glBindVertexArray(objects[i].getVertexAttribute());
 
 		// Binds the albedo texture from a material
-		passTextureData(GL_TEXTURE0, 
+		passTextureData(GL_TEXTURE0,
 			materials[objects[i].getMaterialID()].getAlbedo(),
 			gShaderProgram.getShader(),
 			"diffuseTex", 0);
@@ -167,21 +176,101 @@ void Renderer::Render(Shader gShaderProgram,
 		}
 
 		// Binds the shadowmap (handles by the renderer)
-		passTextureData(GL_TEXTURE2, 
-			shadowMap.getDepthMapAttachment(), 
+		passTextureData(GL_TEXTURE2,
+			shadowMap.getDepthMapAttachment(),
 			gShaderProgram.getShader(),
 			"shadowMap", 2);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, 0, objects[i].getPolygonCount());
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
+
+		startIndex += objects[i].getVertexCount();
 	}
-	
+
+}
+
+
+//=============================================================
+//	Creates a vertexbuffer from all the recieved vertex data
+//=============================================================
+void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
+{
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttribute);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttribute);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(vertexPolygon), vertices, GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,							// location in shader
+		3,							// how many elements of type (see next argument)
+		GL_FLOAT,					// type of each element
+		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(vertexPolygon),		// distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+	glVertexAttribPointer(
+		3,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 8)
+	);
+
+	glVertexAttribPointer(
+		4,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 11)
+	);
 }
 
 //=============================================================
 //	From template - Needs explanation
+//	Has to do with the fullscreen quad
 //=============================================================
 int Renderer::CreateFrameBuffer() {
 	int err = 0;
@@ -276,22 +365,28 @@ void Renderer::SetViewport()
 
 //=============================================================
 //	Updates the model matrix for an object
+//	Need to lookup quick matrix multiplication etc for rotation stuff
+//	and what not.
 //=============================================================
-void Renderer::CreateModelMatrix(glm::vec3 translation, float rotation, GLuint shaderProg)
+void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLuint shaderProg)
 {
-	glm::mat4 ID_MAT = glm::mat4(1.0f);
-	MODEL_MAT = glm::translate(ID_MAT, translation);
-	MODEL_MAT = glm::rotate(MODEL_MAT, rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	MODEL_MAT = glm::mat4(1.0f);
+
+
+	glm::mat4 rotationMatrix = glm::rotate(MODEL_MAT, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
+
+
+	MODEL_MAT = translationMatrix * rotationMatrix;
 }
 
 
-/*
-=============================================================
-Used to activate and bind the generated texture.
-Called during the render loop of objects.
-Sends the information of texture to specified shader program.
-=============================================================
-*/
+
+//=============================================================
+//	Used to activate and bind the generated texture.
+//	Called during the render loop of objects.
+//	Sends the information of texture to specified shader program.
+//=============================================================
 void Renderer::passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg,
 	GLchar* uniformName, int loc)
 {

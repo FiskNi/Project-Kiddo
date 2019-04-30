@@ -9,70 +9,337 @@ Room::Room(std::vector<Material> materials)
 	LoadPuzzleNode(materials);
 
 
-
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
-	// Compile all the mesh data in the room for the renderer
-	// This will first get picked up by the owning scene
+	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
 }
 
 Room::~Room()
 {
-}
-
-std::vector<Light>& Room::GetPointLights()
-{
-	return pointLights;
-}
-
-std::vector<DirectionalLight> Room::GetDirectionalLights() const
-{
-	return dirLights;
-}
-
-std::vector<RigidEntity>& Room::GetRigids()
-{
-	return rigids;
-}
-
-std::vector<StaticEntity>& Room::GetStatics()
-{
-	return statics;
-}
-
-std::vector<BoxHoldEntity>& Room::GetBoxHolds()
-{
-	return this->holdBoxes;
-}
-
-std::vector<puzzleNode> Room::GetNodes() const
-{
-	return nodes;
-}
-
-std::vector<Primitive> Room::GetMeshData() const
-{
-	return meshes;
-}
-
-Camera* Room::GetCamera()
-{
-	return roomCamera;
+	delete roomCamera;
 }
 
 //=============================================================
-//	Render update
+//	Everything that updates in a room happens here. 
+//	This can include collisions, camera movement,
+//	character collision, etc.
+//=============================================================
+void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime)
+{
+	roomCamera->FPSCamControls(renderWindow, deltaTime);
+
+	playerCharacter->SetColliding(false);
+	BoxHolding(playerCharacter, renderWindow);
+
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		if (rigids[i].isCollidingStatic())
+		{
+			//If it's not moving it's no longer colliding with the static
+			if (rigids[i].GetVelocity() == glm::vec3(0, 0, 0))
+			{
+				rigids[i].SetCollidingStatic(false);
+			}
+		}
+	}
+
+	RigidGroundCollision(playerCharacter);
+	PlayerRigidCollision(playerCharacter);
+	RigidRigidCollision();
+	RigidNodeCollision();
+	RigidStaticCollision();
+	BridgeUpdates(renderWindow);
+}
+
+//=============================================================
+//	Picks up a box in range. Currently uses the vector list as priority
+//	if multiple boxes are in range. 
+//	Can be modified to look for the closest box.
+//=============================================================
+void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
+{
+	if (playerCharacter->GetEntityID() >= 0)
+	{
+		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
+		{
+			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+			{
+				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
+				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+			}
+		}
+		else
+		{
+			rigids[playerCharacter->GetEntityID()].SetHeld(false);
+		}
+	}
+	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+}
+int Room::inBoundCheck(Character playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++)
+		if (playerCharacter.CheckInBound(rigids[i]))
+			return i;
+
+	return -1;
+}
+
+//=============================================================
+//	Checks all rigid collisions with the ground, includes the player.
+//	This loops trough all the rigids and all the statics in the scene.
+//	Afterwards does a collision check and applies the highest ground level found.
+//	The actual action on collison happens in the rigid entity class.
+//=============================================================
+void Room::RigidGroundCollision(Character* playerCharacter)
+{
+	 //Rigid entites ground collision
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		// Recheck grounded state, assume it's not grounded
+		rigids[i].SetGrounded(false);
+
+		// Variable to find the highest ground level
+		float ground = rigids[i].GetGroundLevel();
+
+		// All the statics
+		for (int j = 0; j < statics.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(statics[j]))
+			{
+				// If this ground is higher use it
+				ground = statics[j].GetHitboxTop();
+
+				// This entity has been confirmed grounded
+				rigids[i].SetGrounded(true);
+			}
+		}
+		// All the bridges
+		for (int j = 0; j < bridges.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(bridges[j]))
+			{
+				// If this ground is higher use it
+				ground = bridges[j].GetHitboxTop();
+
+				// This entity has been confirmed grounded
+				rigids[i].SetGrounded(true);
+			}
+		}
+
+		rigids[i].GroundLevel(ground);
+	}
+
+	// Player ground collisions
+	// Recheck grounded state, assume it's not grounded
+	playerCharacter->SetGrounded(false);
+	// Variable to find the highest ground level
+	// System for this currently not implemented.
+	// Right now the objects further back in the vector will be dominating the ground variable.
+	float ground = playerCharacter->GetGroundLevel();
+	for (int j = 0; j < statics.size(); ++j)
+	{
+		if (playerCharacter->CheckCollision(statics[j]))
+		{
+			ground = statics[j].GetHitboxTop();
+			playerCharacter->SetGrounded(true);	
+		}
+	}
+
+	for (int j = 0; j < bridges.size(); ++j)
+	{
+		if (playerCharacter->CheckCollision(bridges[j]))
+		{
+			ground = bridges[j].GetHitboxTop();
+			playerCharacter->SetGrounded(true);
+		}
+	}
+	playerCharacter->GroundLevel(ground);
+}
+
+//=============================================================
+//	Checks collision from the player to all rigids in the room
+//	Adds velocity to the box being collided with unless the box is
+//	being held.
+//=============================================================
+void Room::PlayerRigidCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); ++i)
+	{
+		if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
+		{
+			playerCharacter->SetColliding(true);
+
+			// Push direction vector
+			glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+
+			// Normalize and lock to 1 axis
+			if (abs(pushDir.x) >= abs(pushDir.z))
+				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+			else
+				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+			pushDir *= 2.0f;
+
+			// Add box velocity
+			if (!rigids[i].isCollidingStatic())
+			{
+				rigids[i].AddVelocity(pushDir);
+			}
+			else
+			{
+				pushDir = normalize(pushDir);
+				playerCharacter->SetVelocity(-pushDir*0.2f);
+			}
+		}
+	}
+}
+
+
+
+//=============================================================
+//	Checks collision from all rigids to each other rigid in the room.
+//	Boxes will mutually push each other away from one another on collision.
+//	Locked to the x and y world axis.
+//=============================================================
+void Room::RigidRigidCollision()
+{
+	// Could possibly be done with recursion to check subsequent collisions
+	// Could be made better with proper physic calculations
+	for (int i = 0; i < rigids.size(); ++i)
+	{
+		for (int j = 0; j < rigids.size(); ++j)
+		{
+			if (i != j && !rigids[j].IsHeld() && rigids[i].CheckCollision(rigids[j]))
+			{
+				if (!rigids[j].IsColliding())
+				{
+					// Push direction vector
+					glm::vec3 pushDir = rigids[j].GetPosition() - rigids[i].GetPosition();
+
+					// Normalize and lock to 1 axis
+					if (abs(pushDir.x) >= abs(pushDir.z))
+						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+					else
+						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+					pushDir *= 2.0f;
+
+					// Add box velocity
+					rigids[j].AddVelocity(pushDir);
+
+					//if (!rigids[i].isCollidingStatic())
+					//{
+					//	rigids[i].AddVelocity(pushDir);
+					//}
+					//else
+					//{
+					//	pushDir = normalize(pushDir);
+					//	//Switch with one of the boxes?
+					//	playerCharacter->SetVelocity(-pushDir * 0.2f);
+					//}
+				}
+			}
+		}
+	}
+}
+
+//=============================================================
+//	Checks collision from all entities to all nodes in the room
+//=============================================================
+void Room::RigidNodeCollision()
+{
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		if (nodes[0].CheckCollision(rigids[i]))
+		{
+			for (int j = 0; j < rigids.size(); ++j)
+			{
+				cout << "Solved" << endl;
+			}
+		}
+	}
+}
+
+//=============================================================
+//	Checks collision from all rigids to all statics in the room
+//=============================================================
+void Room::RigidStaticCollision()
+{
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		for (int j = 0; j < statics.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(statics[j]))
+			{
+				// Alternative, are we colliding with top or bottom? if not then we are colliding 
+				// with sides and should no longer be able to move in the direction we were
+				// How stop that? Either jump back to position frame before(probably laggy) or 
+				// wall push back with exact opposite intensity should kill movement.
+				// For every single action there's an equal, opposite reaction.
+				glm::vec3 pushDir = statics[j].GetPosition() - rigids[i].GetPosition();
+
+				//The reverse direction from the "Wall"
+				glm::vec3 revDir = glm::normalize(-pushDir);
+
+				if (rigids[i].GetGroundLevel() != statics[j].GetHitboxTop())
+				{
+					if (!rigids[i].isCollidingStatic())
+					{
+						// Normalize and lock to 1 axis
+						if (abs(pushDir.x) >= abs(pushDir.z))
+							pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+						else
+							pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+
+						cout << "rigid" << i << "STATIC COLLISH"<< endl;
+						rigids[i].AddVelocity(-pushDir);
+						//rigids[i].setForbiddenDir(normalize(pushDir));
+						rigids[i].SetCollidingStatic(true);
+					}
+					//else
+					//{
+					//	if (rigids[i].GetVelocity() == glm::vec3(0, 0, 0))
+					//	{
+					//		cout << "collish false" << endl;
+					//		rigids[i].SetCollidingStatic(false);
+					//	}
+					//}
+				}
+
+			}
+			else
+			{
+				//Can't be done here since the rigid is constantly NOT colliding with every other static in the scene.
+				//rigids[i].SetCollidingStatic(false);
+			}
+		}
+	}
+
+}
+
+void Room::BridgeUpdates(GLFWwindow *renderWindow)
+{
+	for (int i = 0; i < bridges.size(); i++)
+	{
+		// Template for the updates, this can be replaced by whatever event
+		if (bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_H) == GLFW_PRESS)
+		{
+			bridges[i].Extend();
+		}
+		else if(bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
+		{
+			bridges[i].Retract();
+		}
+	}
+}
+
+
+//=============================================================
 //	Compiles mesh data for the renderer
 //=============================================================
 void Room::CompileMeshData()
 {
 	meshes.clear();
-
-	meshes.push_back(this->importMeshes[0]);
-	meshes.push_back(this->importMeshes[1]);
-	meshes.push_back(this->importMeshes[2]);
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -88,9 +355,10 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(nodes[i].GetMeshData());
 	}
-	for (int i = 0; i < holdBoxes.size(); i++) {
-		if(holdBoxes[i].holdingBox())
-			meshes.push_back(holdBoxes[i].GetMeshData());
+
+	for (int i = 0; i < bridges.size(); i++)
+	{
+		meshes.push_back(bridges[i].GetMeshData());
 	}
 }
 
@@ -101,8 +369,8 @@ void Room::CompileMeshData()
 void Room::LoadLights()
 {
 	Light light;
-	light.setDiffuse(glm::vec3(1.0f, 0.3f, 0.5f));
-	light.setSpecular(glm::vec3(1.0f, 0.3f, 0.5f));
+	light.setDiffuse(glm::vec3(0.0f, 1.0, 0.8f));
+	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
 	light.setLightPos(glm::vec3(3.0f, 1.0f, -3.0f));
 	pointLights.push_back(light);
@@ -132,67 +400,41 @@ void Room::LoadLights()
 //=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
+	// Temporary Loader and meshes
+	Loader testLoader("TryCubeFrozenBinary.bin");
+	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
+	StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+	newEntity.SetMaterialID(materials[0].getMaterialID());
+	newEntity.SetPositionY(-1.2f);
+	statics.push_back(newEntity);
+
 	RigidEntity cubeEntity(1);
-
-	Loader testLoader("cubeCubeSphere.bin");
-
-	Primitive testMesh;
-	Primitive test2;
-	Primitive test3;
-
-	testMesh.setPosition(glm::vec3(-6.0f, 3.0f, 10.0f));
-	testMesh.setMaterial(materials[0].getMaterialID());
-
-	test2.setPosition(glm::vec3(-12, 3.0, 10.0f));
-	test2.setMaterial(materials[0].getMaterialID());
-
-	test3.setPosition(glm::vec3(0.0f, 3.0f, 10.0f));
-	test3.setMaterial(materials[0].getMaterialID());
-
-	this->importMeshes.push_back(testMesh);
-	this->importMeshes.push_back(test2);
-	this->importMeshes.push_back(test3);
-
-	for (int i = 0; i < testLoader.getNrOfMeshes(); i++)
-	{
-		this->importMeshes[i].ImportMesh(testLoader.getVerticies(i), testLoader.getNrOfVerticies(i));
-	}
-
-	rigids.reserve(6);
-
-
-
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, -3.0f));
-	cubeEntity.setStartPosition(glm::vec3(3.0f, 1.0f, -3.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 2.0f));
-	cubeEntity.setStartPosition(glm::vec3(3.0f, 1.0f, 2.0f));
+	cubeEntity.SetPosition(glm::vec3(3.0f, 100.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
-	cubeEntity.setStartPosition(glm::vec3(3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
-	cubeEntity.setStartPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
-	cubeEntity.setStartPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
-	cubeEntity.setStartPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
 	
 	StaticEntity planeEntity(0);
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-	statics.push_back(planeEntity);
+	//statics.push_back(planeEntity);
 
+	Loader level("LevelTest.bin");
 	PressurePlate button;
 	button.SetMaterialID(materials[1].getMaterialID());
 	button.SetPosition(glm::vec3(8, 0, 0));
@@ -203,8 +445,21 @@ void Room::LoadEntities(std::vector<Material> materials)
 	boxHold.SetPosition(glm::vec3(-11, -1, 0));
 	holdBoxes.push_back(boxHold);
 
-	boxHold.SetPosition(glm::vec3(-12, -1, 0));
-	holdBoxes.push_back(boxHold);
+	for (int i = 0; i < level.getNrOfMeshes(); i++)
+	{
+		StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
+		levelEntity.SetMaterialID(materials[0].getMaterialID());
+		levelEntity.OffsetPositionY(1.2f);
+		this->statics.push_back(levelEntity);
+	}
+
+	BridgeEntity bridge1(1);
+
+	bridge1.SetMaterialID(materials[2].getMaterialID());
+	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
+	bridge1.SetRestPosition(glm::vec3(-5.0f, -0.5f, 0.0f));
+	bridges.push_back(bridge1);
+
 
 }
 

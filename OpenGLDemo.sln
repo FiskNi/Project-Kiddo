@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", "Demo.vcxproj", "{9AFF6E4E-5D21-4DDE-948B-0E6BE0365098}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mehImporterLib", "mehImporterLib\mehImporterLib.vcxproj", "{F1D03895-20A0-4535-9776-1F3708D1D19E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,19 @@ Global
 		{9AFF6E4E-5D21-4DDE-948B-0E6BE0365098}.Release|Win32.Build.0 = Release|Win32
 		{9AFF6E4E-5D21-4DDE-948B-0E6BE0365098}.Release|x64.ActiveCfg = Release|x64
 		{9AFF6E4E-5D21-4DDE-948B-0E6BE0365098}.Release|x64.Build.0 = Release|x64
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Debug|Win32.Build.0 = Debug|Win32
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Debug|x64.ActiveCfg = Debug|x64
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Debug|x64.Build.0 = Debug|x64
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Release|Win32.ActiveCfg = Release|Win32
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Release|Win32.Build.0 = Release|Win32
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Release|x64.ActiveCfg = Release|x64
+		{F1D03895-20A0-4535-9776-1F3708D1D19E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4876F0E3-9992-4937-BAA5-8D4F1C567591}
 	EndGlobalSection
 EndGlobal
