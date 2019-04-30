@@ -495,7 +495,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	//statics.push_back(planeEntity);
 
-	Loader level("LevelTest.bin");
+	Loader level("Resources/Assets/BinaryFiles/Rooms/Level1[Culled].bin");
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
