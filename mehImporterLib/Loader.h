@@ -8,13 +8,13 @@ class Loader
 {
 private:
 	std::string fileName;
-	mehHeader header;
 	mesh * meshArr;
-	vertex ** vertexArr;
 	material ** materialArr;
 
 	texture *** textures;
 
+	unsigned int meshCount;
+	unsigned int materialCount;
 
 public:
 	Loader(std::string fileName);
