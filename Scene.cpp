@@ -108,6 +108,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		startingRoom->GetBridges()[i].Update(deltaTime);
 	}
 
+
 	
 	// Compile render data for the renderer
 	CompileMeshData();
@@ -119,7 +120,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 void Scene::Gravity()
 {
 	// Our downward acceleration
-	const float gravity = -0.283;
+	const float gravity = -2.283;
 
 	// Entity boxes
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)

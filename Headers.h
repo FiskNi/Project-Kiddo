@@ -29,8 +29,8 @@
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "glfw3.lib")
 
-#define WIDTH 1280
-#define HEIGHT 720
+#define WIDTH 1920
+#define HEIGHT 1080
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
 #define nr_P_LIGHTS 6

@@ -15,7 +15,8 @@
 #include "Material.h"
 #include "puzzleNode.h"
 #include "BoxHoldEntity.h"
-
+#include "PressurePlate.h"
+#include "Button.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -44,6 +45,9 @@ private:
 	void RigidStaticCollision();
 	void RigidGroundCollision(Character* playerCharacter);
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
+	void BoxPlateCollision();
+	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
+
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -57,6 +61,8 @@ private:
 	std::vector<StaticEntity> statics;
 	std::vector<BridgeEntity> bridges;
 	std::vector<BoxHoldEntity> holdBoxes;
+	std::vector<PressurePlate> plates;
+	std::vector<Button> buttons;
 
 	// PuzzleNodes
 	std::vector<puzzleNode> nodes;
@@ -76,6 +82,7 @@ public:
 	std::vector<puzzleNode>& GetNodes() { return nodes; }
 	std::vector<BridgeEntity>& GetBridges() { return bridges; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
+	std::vector<Button>& getButtons() { return buttons; }
 
 	Camera* GetCamera() { return roomCamera; }
 

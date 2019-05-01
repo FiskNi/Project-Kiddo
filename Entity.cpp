@@ -8,8 +8,10 @@ Entity::Entity(unsigned int i)
 	// This will be changed for a imported mesh
 	if (i == 0)
 		entityMesh.CreatePlaneData();
-	else
+	else if (i == 1)
 		entityMesh.CreateCubeData();
+	else if (i == 2)
+		entityMesh.CreatePlateData();
 
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
@@ -97,6 +99,21 @@ bool Entity::CheckCollision(Entity collidingCube)
 	return false;
 }
 
+bool Entity::CheckInsideCollision(Entity AABB)
+{
+	if (   AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x
+		&& AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x
+		&& AABB.GetPositionBB().y + AABB.boundingBoxSize.y < this->GetPositionBB().y + boundingBoxSize.y
+		&& AABB.GetPositionBB().y - AABB.boundingBoxSize.y > this->GetPositionBB().y - boundingBoxSize.y
+		&& AABB.GetPositionBB().z + AABB.boundingBoxSize.z < this->GetPositionBB().z + boundingBoxSize.z
+		&& AABB.GetPositionBB().z - AABB.boundingBoxSize.z > this->GetPositionBB().z - boundingBoxSize.z)
+	{
+		return true;
+
+	}
+	else return false;
+}
+
 void Entity::SetMaterialID(unsigned int id)
 {
 	entityMesh.setMaterial(id);
@@ -146,4 +163,19 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 {
 	boundingBoxSize = BBoxHalfSize;
 	boundingBoxCenter = BBoxCenter;
+}
+
+void Entity::scaleBB(float x)
+{
+	boundingBoxSize *= x;
+}
+
+void Entity::scaleBBY(float y)
+{
+	boundingBoxSize.y *= y;
+}
+
+void Entity::setBBY(float y)
+{
+	boundingBoxSize.y = y;
 }

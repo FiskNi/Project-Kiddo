@@ -51,6 +51,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidNodeCollision();
 	RigidStaticCollision();
 	BridgeUpdates(renderWindow);
+	BoxPlateCollision();
+
+	ButtonInteract(renderWindow, playerCharacter);
 }
 
 //=============================================================
@@ -77,6 +80,55 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 }
+void Room::BoxPlateCollision()
+{
+	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
+	for (int i = 0; i < plates.size(); i++) {
+		bool pressed = false;
+
+		if (!plates[i].isPressed()) {
+			for (int j = 0; j < rigids.size(); j++) {
+				if (!pressed) {
+					if (rigids[j].CheckCollision(plates[i])) {
+						if (plates[i].CheckInsideCollision(rigids[j])) {
+							pressed = true;
+						}
+					}
+				}
+			}
+		}
+
+		plates[i].setPressed(pressed);
+		if (pressed) std::cout << "hi" << std::endl;
+	}
+
+}
+
+void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
+{
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		for (int i = 0; i < buttons.size(); i++) {
+			if (playerCharacter->CheckCollision(buttons[i])) {
+				if (buttons[i].isPressed()) {
+					if (buttons[i].isPressed())
+						std::cout << "hi" << std::endl;
+					buttons[i].setPressed(false);
+					break;
+				}
+				else {
+					buttons[i].setPressed(true);
+					break;
+				}
+					
+				if (buttons[i].isPressed())
+					std::cout << "hi" << std::endl;
+				
+			}
+
+		}
+	}
+}
+
 int Room::inBoundCheck(Character playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); i++)
@@ -360,6 +412,15 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(bridges[i].GetMeshData());
 	}
+
+	for (int i = 0; i < plates.size(); i++) {
+		meshes.push_back(plates[i].GetMeshData());
+	}
+
+	for (int i = 0; i < buttons.size(); i++) 
+	{
+		meshes.push_back(buttons[i].GetMeshData());
+	}
 }
 
 //=============================================================
@@ -408,7 +469,11 @@ void Room::LoadEntities(std::vector<Material> materials)
 	newEntity.SetPositionY(-1.2f);
 	statics.push_back(newEntity);
 
-	RigidEntity cubeEntity(1);
+	// Loader for the box meshes
+	// Use "boxSharpBinary.bin" for a simpler box, and "boxEdgyBinary.bin" for a fancier look
+	Loader boxLoader("boxEdgyBinary.bin");
+
+	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
@@ -434,7 +499,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	//statics.push_back(planeEntity);
 
-	Loader level("LevelTest.bin");
+	Loader level("Resources/Assets/BinaryFiles/Rooms/Level1[Culled].bin");
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
@@ -451,6 +516,18 @@ void Room::LoadEntities(std::vector<Material> materials)
 	bridge1.SetRestPosition(glm::vec3(-5.0f, -0.5f, 0.0f));
 	bridges.push_back(bridge1);
 
+	PressurePlate plate;
+	plate.SetMaterialID(materials[2].getMaterialID());
+	plate.SetPosition(glm::vec3(0, -1, 0));
+	plate.setBBY(0.9);
+	plate.scaleBB(1.3);
+	plates.push_back(plate);
+
+	Button button;
+	button.SetMaterialID(materials[1].getMaterialID());
+	button.SetPosition(glm::vec3(5, -1, 6));
+	button.scaleBB(2);
+	buttons.push_back(button);
 
 }
 

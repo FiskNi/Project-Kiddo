@@ -150,6 +150,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			}
 		}
 
+
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 			jumpSquat = false;
 
