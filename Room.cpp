@@ -448,45 +448,45 @@ void Room::LoadLights()
 //=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
-	//// Temporary Loader and meshes
-	//Loader testLoader("TryCubeFrozenBinary.bin");
-	//// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
-	//StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
-	//newEntity.SetMaterialID(materials[0].getMaterialID());
-	//newEntity.SetPositionY(-1.2f);
-	//statics.push_back(newEntity);
+	// Temporary Loader and meshes
+	Loader testLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
+	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
+	StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+	newEntity.SetMaterialID(materials[0].getMaterialID());
+	newEntity.SetPositionY(-1.2f);
+	statics.push_back(newEntity);
 
-	//// Loader for the box meshes
-	//// Use "boxSharpBinary.bin" for a simpler box, and "boxEdgyBinary.bin" for a fancier look
-	//Loader boxLoader("boxEdgyBinary.bin");
+	// Loader for the box meshes
+	// Use "boxSharpBinary.bin" for a simpler box, and "boxEdgyBinary.bin" for a fancier look
+	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 
-	//RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
-	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
+	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
+	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
-	//cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
-	//rigids.push_back(cubeEntity);
+	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
+	rigids.push_back(cubeEntity);
 
-	//cubeEntity.SetPosition(glm::vec3(3.0f, 100.0f, 2.0f));
-	//rigids.push_back(cubeEntity);
+	cubeEntity.SetPosition(glm::vec3(3.0f, 100.0f, 2.0f));
+	rigids.push_back(cubeEntity);
 
-	//cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
-	//rigids.push_back(cubeEntity);
+	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
+	rigids.push_back(cubeEntity);
 
-	//cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
-	//rigids.push_back(cubeEntity);
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
+	rigids.push_back(cubeEntity);
 
-	//cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
-	//rigids.push_back(cubeEntity);
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
+	rigids.push_back(cubeEntity);
 
-	//cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
-	//rigids.push_back(cubeEntity);
-	//
+	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
+	rigids.push_back(cubeEntity);
+	
 	StaticEntity planeEntity(0);
 	planeEntity.SetMaterialID(materials[0].getMaterialID());
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	//statics.push_back(planeEntity);
 
-	Loader level("Resources/Assets/BinaryFiles/Rooms/Level1[Plain].meh");
+	Loader level("Resources/Assets/GameReady/Rooms/Level1[Plain].meh");
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{

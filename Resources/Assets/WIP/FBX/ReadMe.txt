@@ -1,0 +1,1 @@
+This folder holds FBX files. Will be removed once game is ready to be built.
