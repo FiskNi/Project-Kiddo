@@ -49,7 +49,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	PlayerRigidCollision(playerCharacter);
 	RigidRigidCollision();
 	RigidNodeCollision();
-	RigidStaticCollision();
+	RigidStaticCollision(playerCharacter);
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision();
 
@@ -248,15 +248,10 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 			pushDir *= 2.0f;
 
 			// Add box velocity
-			if (!rigids[i].isCollidingStatic())
-			{
-				rigids[i].AddVelocity(pushDir);
-			}
-			else
-			{
-				pushDir = normalize(pushDir);
-				playerCharacter->SetVelocity(-pushDir*0.2f);
-			}
+			rigids[i].AddVelocity(pushDir);
+
+			// If collision with something in the X direction
+				playerCharacter->AddVelocityX(-playerCharacter->GetVelocityX());
 		}
 	}
 }
@@ -292,17 +287,6 @@ void Room::RigidRigidCollision()
 
 					// Add box velocity
 					rigids[j].AddVelocity(pushDir);
-
-					//if (!rigids[i].isCollidingStatic())
-					//{
-					//	rigids[i].AddVelocity(pushDir);
-					//}
-					//else
-					//{
-					//	pushDir = normalize(pushDir);
-					//	//Switch with one of the boxes?
-					//	playerCharacter->SetVelocity(-pushDir * 0.2f);
-					//}
 				}
 			}
 		}
@@ -329,7 +313,7 @@ void Room::RigidNodeCollision()
 //=============================================================
 //	Checks collision from all rigids to all statics in the room
 //=============================================================
-void Room::RigidStaticCollision()
+void Room::RigidStaticCollision(Character* playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -337,47 +321,36 @@ void Room::RigidStaticCollision()
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				// Alternative, are we colliding with top or bottom? if not then we are colliding 
-				// with sides and should no longer be able to move in the direction we were
-				// How stop that? Either jump back to position frame before(probably laggy) or 
-				// wall push back with exact opposite intensity should kill movement.
-				// For every single action there's an equal, opposite reaction.
 				glm::vec3 pushDir = statics[j].GetPosition() - rigids[i].GetPosition();
-
-				//The reverse direction from the "Wall"
-				glm::vec3 revDir = glm::normalize(-pushDir);
 
 				if (rigids[i].GetGroundLevel() != statics[j].GetHitboxTop())
 				{
-					if (!rigids[i].isCollidingStatic())
-					{
-						// Normalize and lock to 1 axis
-						if (abs(pushDir.x) >= abs(pushDir.z))
-							pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-						else
-							pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 
-						cout << "rigid" << i << "STATIC COLLISH"<< endl;
-						rigids[i].AddVelocity(-pushDir);
-						//rigids[i].setForbiddenDir(normalize(pushDir));
-						rigids[i].SetCollidingStatic(true);
-					}
-					//else
-					//{
-					//	if (rigids[i].GetVelocity() == glm::vec3(0, 0, 0))
-					//	{
-					//		cout << "collish false" << endl;
-					//		rigids[i].SetCollidingStatic(false);
-					//	}
-					//}
+					// If collision with a static in the X direction
+					rigids[i].SetVelocityX(0.0f);
 				}
 
 			}
-			else
+		}
+	}
+
+
+	for (int i = 0; i < statics.size(); ++i)
+	{
+		if (playerCharacter->CheckCollision(statics[i]))
+		{
+			glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
+
+			//The reverse direction from the "Wall"
+			glm::vec3 revDir = glm::normalize(-pushDir);
+
+			if (playerCharacter->GetGroundLevel() != statics[i].GetHitboxTop())
 			{
-				//Can't be done here since the rigid is constantly NOT colliding with every other static in the scene.
-				//rigids[i].SetCollidingStatic(false);
+
+				// If collision with a static in the X direction
+				playerCharacter->SetVelocityX(0.0f);
 			}
+
 		}
 	}
 
