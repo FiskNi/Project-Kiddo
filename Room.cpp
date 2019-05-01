@@ -326,6 +326,18 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		{
 			if (playerCharacter->GetGroundLevel() != statics[i].GetHitboxTop())
 			{
+
+				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
+
+				// Lock to 1 axis
+				if (abs(pushDir.x) >= abs(pushDir.z))
+					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+				else
+					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+
+				playerCharacter->SetVelocity(0.0f, 0.0f, 0.0f);
+				playerCharacter->AddVelocity(-pushDir);
+
 				//playerCharacter->SetColliding(true);
 				// *** WORK IN PROGRESS
 				// If collision with a static in the X direction
@@ -477,7 +489,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	}
 
 	BridgeEntity bridge1(1);
-
 	bridge1.SetMaterialID(materials[2].getMaterialID());
 	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
 	bridge1.SetRestPosition(glm::vec3(-5.0f, -0.5f, 0.0f));
@@ -495,7 +506,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	button.SetPosition(glm::vec3(5, -1, 6));
 	button.scaleBB(2);
 	buttons.push_back(button);
-
 }
 
 //=============================================================

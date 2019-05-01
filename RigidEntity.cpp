@@ -127,6 +127,7 @@ void RigidEntity::Update(float deltaTime)
 		calculatedPosition.y = groundLevel + bbBottom - bbCenter;
 	}
 
+	// Move this entity
 	SetPosition(calculatedPosition);
 
 	// This has to be lower than the initial ground level or bad things happen
