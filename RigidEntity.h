@@ -17,7 +17,6 @@ private:
 	bool grounded;
 	float groundLevel;
 	bool held;
-	bool staticCollision;
 
 
 public:
@@ -46,7 +45,6 @@ public:
 	void ResetPos();
 
 	void SetColliding(bool colliding);
-	void SetCollidingStatic(bool sColliding);
 	void SetGrounded(bool grounded);
 	void GroundLevel(float y);
 	void SetHeld(bool holding);
@@ -58,7 +56,6 @@ public:
 	float GetVelocityZ() const { return velocity.z; }
 	float GetGroundLevel() const { return groundLevel; }
 	bool IsColliding() const { return collision; }
-	bool isCollidingStatic() const { return staticCollision; }
 	bool IsGrounded() const { return grounded; }
 	bool IsHeld() const { return held; }
 

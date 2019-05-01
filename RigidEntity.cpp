@@ -8,8 +8,6 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 
-	staticCollision = false;
-
 	grounded = false;
 	groundLevel = 0.0f;
 	held = false;
@@ -148,11 +146,6 @@ void RigidEntity::ResetPos()
 void RigidEntity::SetColliding(bool colliding)
 {
 	collision = colliding;
-}
-
-void RigidEntity::SetCollidingStatic(bool sColliding)
-{
-	this->staticCollision = sColliding;
 }
 
 void RigidEntity::SetGrounded(bool grounded)

@@ -30,20 +30,13 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 {
 	roomCamera->FPSCamControls(renderWindow, deltaTime);
 
+	// Reset collisions
 	playerCharacter->SetColliding(false);
-	BoxHolding(playerCharacter, renderWindow);
-
 	for (int i = 0; i < rigids.size(); i++)
-	{
-		if (rigids[i].isCollidingStatic())
-		{
-			//If it's not moving it's no longer colliding with the static
-			if (rigids[i].GetVelocity() == glm::vec3(0, 0, 0))
-			{
-				rigids[i].SetCollidingStatic(false);
-			}
-		}
-	}
+		rigids[i].SetColliding(false);
+
+
+	BoxHolding(playerCharacter, renderWindow);
 
 	RigidGroundCollision(playerCharacter);
 	PlayerRigidCollision(playerCharacter);
@@ -189,12 +182,10 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		rigids[i].GroundLevel(ground);
 	}
 
+
 	// Player ground collisions
 	// Recheck grounded state, assume it's not grounded
 	playerCharacter->SetGrounded(false);
-	// Variable to find the highest ground level
-	// System for this currently not implemented.
-	// Right now the objects further back in the vector will be dominating the ground variable.
 	float ground = playerCharacter->GetGroundLevel();
 	for (int j = 0; j < statics.size(); ++j)
 	{
@@ -239,23 +230,20 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 
 			// Push direction vector
 			glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+			//pushDir = glm::normalize(pushDir);
 
-			// Normalize and lock to 1 axis
+			// Lock to 1 axis
 			if (abs(pushDir.x) >= abs(pushDir.z))
 				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 			else
 				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-			pushDir *= 2.0f;
+			pushDir *= 1.0f;
 
 			// Add box velocity
 			rigids[i].AddVelocity(pushDir);
-
-			// If collision with something in the X direction
-				playerCharacter->AddVelocityX(-playerCharacter->GetVelocityX());
 		}
 	}
 }
-
 
 
 //=============================================================
@@ -278,7 +266,7 @@ void Room::RigidRigidCollision()
 					// Push direction vector
 					glm::vec3 pushDir = rigids[j].GetPosition() - rigids[i].GetPosition();
 
-					// Normalize and lock to 1 axis
+					// Lock to 1 axis
 					if (abs(pushDir.x) >= abs(pushDir.z))
 						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 					else
@@ -321,15 +309,12 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				glm::vec3 pushDir = statics[j].GetPosition() - rigids[i].GetPosition();
-
 				if (rigids[i].GetGroundLevel() != statics[j].GetHitboxTop())
 				{
-
+					// *** WORK IN PROGRESS
 					// If collision with a static in the X direction
-					rigids[i].SetVelocityX(0.0f);
+					// rigids[i].SetVelocityX(0.0f);
 				}
-
 			}
 		}
 	}
@@ -339,18 +324,13 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(statics[i]))
 		{
-			glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
-
-			//The reverse direction from the "Wall"
-			glm::vec3 revDir = glm::normalize(-pushDir);
-
 			if (playerCharacter->GetGroundLevel() != statics[i].GetHitboxTop())
 			{
-
+				//playerCharacter->SetColliding(true);
+				// *** WORK IN PROGRESS
 				// If collision with a static in the X direction
-				playerCharacter->SetVelocityX(0.0f);
+				// playerCharacter->SetVelocityX(0.0f);
 			}
-
 		}
 	}
 
