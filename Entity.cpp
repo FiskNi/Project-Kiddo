@@ -70,6 +70,7 @@ bool Entity::CheckCollision(Entity collidingCube)
 		glm::vec3 size;
 	};
 
+
 	AABB thisBoundingBox;
 	thisBoundingBox.position = GetPositionBB();
 	thisBoundingBox.size = boundingBoxSize;

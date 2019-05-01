@@ -41,7 +41,6 @@ public:
 	void setWinSize(float width, float height);
 
 	//Pitch and yaw dependent on mouse movement if active. If limitPitch true standard FPS cam, No Flipping.
-	void pitchYawMouse(float xOffset, float yOffset, bool limitPitch);
 	void setProjMat(float width, float height, float nearPlane, float farPlane);
 
 	glm::vec3 GetPosition() const { return camPos; }

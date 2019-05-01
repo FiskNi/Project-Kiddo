@@ -42,7 +42,8 @@ private:
 	int inBoundCheck(Character playerCharacter);
 	void RigidRigidCollision();
 	void RigidNodeCollision();
-	void RigidStaticCollision();
+
+	void RigidStaticCollision(Character* playerCharacter);
 	void RigidGroundCollision(Character* playerCharacter);
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 	void BoxPlateCollision();

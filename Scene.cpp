@@ -72,6 +72,7 @@ void Scene::CompileMeshData()
 	// Fills the "meshes" vector with all the mesh data (primitive)
 	startingRoom->CompileMeshData();
 	meshes.clear();
+
 	meshes = startingRoom->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
 }
@@ -82,7 +83,11 @@ void Scene::CompileMeshData()
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	
+	if (!playerCharacter.IsColliding())
+	{
+		playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+	}
+
 	Gravity();
 
 	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
@@ -90,10 +95,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
 	// Update player movement
-	if (!playerCharacter.IsColliding())
-	{
-		playerCharacter.AddVelocity(playerMoveVector);
-	}
+	
 
 	// Update the scene
 	playerCharacter.Update(deltaTime);

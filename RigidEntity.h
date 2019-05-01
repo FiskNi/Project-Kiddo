@@ -12,7 +12,6 @@ class RigidEntity : public Entity
 private:
 	glm::vec3 startPos;
 	glm::vec3 velocity;
-	glm::vec3 forbiddenDir;
 
 	bool collision;
 	bool grounded;
@@ -48,7 +47,6 @@ public:
 
 	void SetColliding(bool colliding);
 	void SetCollidingStatic(bool sColliding);
-	void setForbiddenDir(glm::vec3 forbidden);
 	void SetGrounded(bool grounded);
 	void GroundLevel(float y);
 	void SetHeld(bool holding);
@@ -59,7 +57,6 @@ public:
 	float GetVelocityY() const { return velocity.y; }
 	float GetVelocityZ() const { return velocity.z; }
 	float GetGroundLevel() const { return groundLevel; }
-	glm::vec3 getForbidden() const { return forbiddenDir; }
 	bool IsColliding() const { return collision; }
 	bool isCollidingStatic() const { return staticCollision; }
 	bool IsGrounded() const { return grounded; }
