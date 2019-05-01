@@ -41,6 +41,7 @@ struct mesh
 	//char parentName[256];
 	unsigned int nrOfMaterials;
 	unsigned int nrOfVerticies;
+	vertex* vertices;
 	//unsigned int bones;
 	//bool customAttribute;
 	//char customAttributeName[256];

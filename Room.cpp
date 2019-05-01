@@ -429,7 +429,7 @@ void Room::LoadLights()
 void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Temporary Loader and meshes
-	Loader testLoader("TryCubeFrozenBinary.bin");
+	Loader testLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
 	StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
 	newEntity.SetMaterialID(materials[0].getMaterialID());
@@ -438,7 +438,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	// Loader for the box meshes
 	// Use "boxSharpBinary.bin" for a simpler box, and "boxEdgyBinary.bin" for a fancier look
-	Loader boxLoader("boxEdgyBinary.bin");
+	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
@@ -466,7 +466,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	//statics.push_back(planeEntity);
 
-	Loader level("Resources/Assets/BinaryFiles/Rooms/Level1[Culled].bin");
+	Loader level("Resources/Assets/GameReady/Rooms/Level1[Plain].meh");
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{

@@ -1,0 +1,1 @@
+This folder contains Maya scenes. Will be removed at later state.
