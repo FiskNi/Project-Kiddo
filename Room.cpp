@@ -146,6 +146,8 @@ int Room::inBoundCheck(Character playerCharacter)
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
+	const float maxDiff = 1.0f; // Max ground height difference
+
 	 //Rigid entites ground collision
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -160,23 +162,27 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				// If this ground is higher use it
-				ground = statics[j].GetHitboxTop();
-
-				// This entity has been confirmed grounded
-				rigids[i].SetGrounded(true);
+				// If ground is close enough
+				if (abs(rigids[i].GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
+				{
+					ground = statics[j].GetHitboxTop();
+					rigids[i].SetGrounded(true);
+				}
+				
 			}
 		}
 		// All the bridges
 		for (int j = 0; j < bridges.size(); ++j)
 		{
 			if (rigids[i].CheckCollision(bridges[j]))
-			{
-				// If this ground is higher use it
-				ground = bridges[j].GetHitboxTop();
+			{	
+				// If ground is close enough
+				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
+				{
+					ground = bridges[j].GetHitboxTop();
+					rigids[i].SetGrounded(true);
+				}
 
-				// This entity has been confirmed grounded
-				rigids[i].SetGrounded(true);
 			}
 		}
 
@@ -194,8 +200,12 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(statics[j]))
 		{
-			ground = statics[j].GetHitboxTop();
-			playerCharacter->SetGrounded(true);	
+			// If ground is close enough
+			if (abs(playerCharacter->GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
+			{
+				ground = statics[j].GetHitboxTop();
+				playerCharacter->SetGrounded(true);
+			}	
 		}
 	}
 
@@ -203,8 +213,12 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(bridges[j]))
 		{
-			ground = bridges[j].GetHitboxTop();
-			playerCharacter->SetGrounded(true);
+			// If ground is close enough
+			if (abs(playerCharacter->GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
+			{
+				ground = bridges[j].GetHitboxTop();
+				playerCharacter->SetGrounded(true);
+			}	
 		}
 	}
 	playerCharacter->GroundLevel(ground);
@@ -429,26 +443,26 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights()
 {
-	Light light;
-	light.setDiffuse(glm::vec3(0.0f, 1.0, 0.8f));
+	Light light(3.0f, 1.0f, -3.0f, 22, 160, 8);
+	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
-	light.setLightPos(glm::vec3(3.0f, 1.0f, -3.0f));
+	light.setLightPos(glm::vec3(8.0f, 2.0f, -3.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(3.0f, 1.0f, 2.0f));
+	light.setLightPos(glm::vec3(8.0f, 2.0f, 2.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(3.0f, 1.0f, 7.0f));
+	light.setLightPos(glm::vec3(8.0f, 2.0f, 7.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-3.0f, 1.0f, -3.0f));
+	light.setLightPos(glm::vec3(-8.0f, 2.0f, -3.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-3.0f, 1.0f, 2.0f));
+	light.setLightPos(glm::vec3(-8.0f, 2.0f, 2.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-3.0f, 1.0f, 7.0f));
+	light.setLightPos(glm::vec3(-8.0f, 2.0f, 7.0f));
 	pointLights.push_back(light);
 
 	DirectionalLight light2;
@@ -504,7 +518,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
 		StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
-		levelEntity.SetMaterialID(materials[0].getMaterialID());
+		levelEntity.SetMaterialID(materials[2].getMaterialID());
 		levelEntity.OffsetPositionY(1.2f);
 		this->statics.push_back(levelEntity);
 	}

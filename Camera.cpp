@@ -17,12 +17,13 @@ void Camera::reCalcCamVecs()
 
 Camera::Camera()
 {
-	this->camPos = glm::vec3(0, 7, -7);
-	this->worldUp = glm::vec3(0, 1, 0);
-	this->camYaw = 90.0f;
+	this->camPos = glm::vec3(0.0f, 7.0f, 14.0f);
+	this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	this->camYaw = -90.0f;
 	this->camPitch = -40.0f;
+	this->camRight = glm::vec3(1.0f, 0.0f, 0.0f);
 
-	this->face = glm::vec3(0, 0, 1);
+	this->face = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->mSpeed = 3.5f;
 	this->sensitivity = 0.15f;
 
@@ -83,25 +84,6 @@ void Camera::setWinSize(float width, float height)
 	this->height = height;
 
 	setProjMat(this->width, this->height, this->nearPlane, this->farPlane);
-}
-
-void Camera::pitchYawMouse(float xOffset, float yOffset, bool limitPitch = true)
-{
-	xOffset *= this->sensitivity;
-	yOffset *= this->sensitivity;
-
-	this->camYaw += xOffset;
-	this->camPitch += yOffset;
-
-	if (limitPitch)
-	{
-		if (this->camPitch > 89.0f)
-			this->camPitch = 89.0f;
-		if (this->camPitch < -89.0f)
-			this->camPitch = 89.0f;
-	}
-
-	reCalcCamVecs();
 }
 
 void Camera::setProjMat(float width, float height, float nearPlane, float farPlane)
