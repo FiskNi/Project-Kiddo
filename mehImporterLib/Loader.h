@@ -9,7 +9,8 @@ class Loader
 private:
 	std::string fileName;
 	mesh * meshArr;
-	material ** materialArr;
+	material * materialArr;
+	//material ** materialArr;
 
 	texture *** textures;
 

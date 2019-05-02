@@ -48,55 +48,56 @@ Loader::Loader(std::string fileName)
 	// std::cout << aLength << std::endl;
 	//==========================================
 	this->meshArr = new mesh[meshCount];
+	this->materialArr = new material[materialCount];
 
 	for (int i = 0; i < meshCount; i++)
 	{
 
 		binFile.read((char*)&this->meshArr[i].meshName, sizeof(char) * 256);
-		//std::cout << "Mesh Name: " << meshArr[i].meshName << std::endl;
+		std::cout << "Mesh Name: " << meshArr[i].meshName << std::endl;
 		binFile.read((char*)&this->meshArr[i].nrOfMaterials, sizeof(int));
-		//std::cout << "Material count: " << meshArr[i].nrOfMaterials << std::endl;
+		std::cout << "Material count: " << meshArr[i].nrOfMaterials << std::endl;
 		binFile.read((char*)&this->meshArr[i].nrOfVerticies, sizeof(int));
-		//std::cout << "Vertex count: " << meshArr[i].nrOfVerticies << std::endl;
+		std::cout << "Vertex count: " << meshArr[i].nrOfVerticies << std::endl;
 
 		// Allocate memory for the array of vertex arrays
 		meshArr[i].vertices = new vertex[meshArr[i].nrOfVerticies];
 		
-
+		//Read data for all the vertices, this includes pos, uv, normals, tangents and binormals.
 		for (int j = 0; j < meshArr[i].nrOfVerticies; j++)
 		{
 			binFile.read((char*)&this->meshArr[i].vertices[j], sizeof(float) * 14);
-			//Pos
-			//---------------------------Debug---------------------------------
-			/*std::cout << "Vertex position: " << meshArr[i].vertices[j].pos[0]
-					  << "  " << meshArr[i].vertices[j].pos[1]
-					  << "  " << meshArr[i].vertices[j].pos[2] << std::endl;*/
-			
-			//UV
-			//---------------------------Debug---------------------------------
-			/*std::cout << "UV cords: " << meshArr[i].vertices[j].uv[0]
-					  << "  " << meshArr[i].vertices[j].uv[1] << std::endl;*/
-			
-			//Normal
-			//---------------------------Debug---------------------------------
-			/*std::cout << "Normals: " << meshArr[i].vertices[j].normal[0]
-					  << "  " << meshArr[i].vertices[j].normal[1]
-					  << "  " << meshArr[i].vertices[j].normal[2] << std::endl;*/
-			
-			//Tangent
-			//---------------------------Debug---------------------------------
-			/*std::cout << "Tangent: " << meshArr[i].vertices[j].tangent[0]
-					  << "  " << meshArr[i].vertices[j].tangent[1]
-					  << "  " << meshArr[i].vertices[j].tangent[2] << std::endl;*/
-			
-			//Binormal
-			//---------------------------Debug---------------------------------
-			/*std::cout << "Binormal: " << meshArr[i].vertices[j].biNormal[0]
-					  << "  " << meshArr[i].vertices[j].biNormal[1]
-					  << "  " << meshArr[i].vertices[j].biNormal[2] << std::endl;*/
-			
 		}
 
+	}
+
+	for (int i = 0; i < materialCount; i++)
+	{
+		binFile.read((char*)&this->materialArr[i].materialIndex, sizeof(int));
+		std::cout << "Material Index: " << materialArr[i].materialIndex << std::endl;
+
+		binFile.read((char*)&this->materialArr[i].materialName, sizeof(char) * 256);
+		std::cout << "Material name: " << materialArr[i].materialName << std::endl;
+
+		binFile.read((char*)&this->materialArr[i].ambient, sizeof(float) * 3);
+		std::cout << "Ambient: " << materialArr[i].ambient[0]
+					     << "  " << materialArr[i].ambient[1]
+					     << "  " << materialArr[i].ambient[2] << std::endl;
+
+		binFile.read((char*)&this->materialArr[i].diffuse, sizeof(float) * 3);
+		std::cout << "Diffuse: " << materialArr[i].diffuse[0]
+						 << "  " << materialArr[i].diffuse[1]
+					     << "  " << materialArr[i].diffuse[2] << std::endl;
+
+		binFile.read((char*)&this->materialArr[i].specular, sizeof(float) * 3);
+		std::cout << "Specular: " << materialArr[i].specular[0]
+						  << "  " << materialArr[i].specular[1]
+			              << "  " << materialArr[i].specular[2] << std::endl;
+
+		binFile.read((char*)&this->materialArr[i].emissive, sizeof(float) * 3);
+		std::cout << "Emissive: " << materialArr[i].emissive[0]
+			              << "  " << materialArr[i].emissive[1]
+			              << "  " << materialArr[i].emissive[2] << std::endl;
 	}
 
 
@@ -256,11 +257,10 @@ Loader::~Loader()
 		//delete[] this->vertexArr[i];
 		//delete[] this->materialArr[i];
 		if (meshArr[i].vertices)
-		{
 			delete[] this->meshArr[i].vertices;
-		}
 	}
 	delete[] this->meshArr;
+	delete[] this->materialArr;
 	//delete[] this->textures;
 	//delete[] this->vertexArr;
 	//delete[] this->meshArr;
@@ -313,21 +313,21 @@ texture Loader::getTexture(int meshID, int materialID, int textureID)
 	return texture();
 }
 
-texture ** Loader::getAllTextures(int meshID)
-{
-	//texture** returnPtr;//This must be allocated to with this->materials[meshID][i].nrOfTextures
-	//But that would require a bool variable or something for the destructor to destroy it. We can't destroy it here if we wanna use the array.
-
-	//returnPtr = new texture*[this->meshArr[meshID].nrOfMaterials]
-
-	for (unsigned int i = 0; i < this->meshArr[meshID].nrOfMaterials; i++)
-	{
-		//returnPtr[i] = new texture[his->materialArr[meshID][i].nrOfTextures]
-		for (unsigned int j = 0; j < this->materialArr[meshID][i].nrOfTextures; j++)
-		{
-			//returnPtr[i][j] = textures[meshID][i][j];//this won't work right now as it has no allocated memory.
-		}
-	}
-	//Should return the returnPtr
-	return nullptr;
-}
+//texture ** Loader::getAllTextures(int meshID)
+//{
+//	//texture** returnPtr;//This must be allocated to with this->materials[meshID][i].nrOfTextures
+//	//But that would require a bool variable or something for the destructor to destroy it. We can't destroy it here if we wanna use the array.
+//
+//	//returnPtr = new texture*[this->meshArr[meshID].nrOfMaterials]
+//
+//	for (unsigned int i = 0; i < this->meshArr[meshID].nrOfMaterials; i++)
+//	{
+//		//returnPtr[i] = new texture[his->materialArr[meshID][i].nrOfTextures]
+//		for (unsigned int j = 0; j < this->materialArr[meshID][i].nrOfTextures; j++)
+//		{
+//			//returnPtr[i][j] = textures[meshID][i][j];//this won't work right now as it has no allocated memory.
+//		}
+//	}
+//	//Should return the returnPtr
+//	return nullptr;
+//}
