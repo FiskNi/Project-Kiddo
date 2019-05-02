@@ -45,6 +45,10 @@ uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 
+layout(location = 11) uniform vec3 ambient;
+layout(location = 12) uniform vec3 diffuse;
+layout(location = 13) uniform vec3 specular;
+layout(location = 14) uniform vec3 emissive;
 
 #define NR_P_LIGHTS 6
 uniform PointLight pointLights[NR_P_LIGHTS];

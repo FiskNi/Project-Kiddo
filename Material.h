@@ -31,6 +31,12 @@ private:
 
 	bool hasNormalmap;
 
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+	glm::vec3 emissive;
+
+
 public:
 	Material(char* name, unsigned int id);
 	~Material();
@@ -44,6 +50,12 @@ public:
 	GLuint getAlbedo() const { return albedo; }
 	GLuint getNormal() const { return normal; }
 	bool hasNormal() const { return hasNormalmap; }
+
+	glm::vec3 getAmbient() const { return ambient; }
+	glm::vec3 getDiffuse() const { return diffuse; }
+	glm::vec3 getSpecular() const { return specular; }
+	glm::vec3 getEmissive() const { return emissive; }
+
 };
 
 
