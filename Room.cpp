@@ -478,7 +478,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
 	//statics.push_back(planeEntity);
 
-	Loader level("Resources/Assets/GameReady/Rooms/Level1[Plain].meh");
+	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled].meh");
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
@@ -488,10 +488,11 @@ void Room::LoadEntities(std::vector<Material> materials)
 		this->statics.push_back(levelEntity);
 	}
 
-	BridgeEntity bridge1(1);
+	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11));
 	bridge1.SetMaterialID(materials[2].getMaterialID());
 	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
-	bridge1.SetRestPosition(glm::vec3(-5.0f, -0.5f, 0.0f));
+	bridge1.SetRestPosition(glm::vec3(-15.0f, -1.9f, 3.5f));
+	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
 	PressurePlate plate;

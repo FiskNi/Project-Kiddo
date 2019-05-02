@@ -32,13 +32,31 @@ struct vertex
 	float biNormal[3];
 };
 
+struct material
+{
+	unsigned int materialIndex;
+	char materialName[256];
+	float ambient[3];
+	float diffuse[3];
+	float specular[3];
+	float emissive[3];
+	//float opacity;
+	//float shininess;
+	//float reflectivity;
+	unsigned int nrOfTextures;
+	//unsigned char albedoFile[256];
+	//unsigned char normalFile[256];
+};
+
 struct mesh
 {
 	char meshName[256];
+	char materialName[256];
 	//unsigned int meshID;
 	//float transformation[16];
 	//bool isChild;
 	//char parentName[256];
+	//unsigned int materialIndex;
 	unsigned int nrOfMaterials;
 	unsigned int nrOfVerticies;
 	vertex* vertices;
@@ -47,21 +65,6 @@ struct mesh
 	//char customAttributeName[256];
 };
 
-struct material
-{
-	int index;
-	char materialName[256];
-	float ambient[3];
-	float diffuse[3];
-	float specular[3];
-	float emissive[3];
-	float opacity;
-	float shininess;
-	float reflectivity;
-	unsigned int nrOfTextures;
-	//unsigned char albedoFile[256];
-	//unsigned char normalFile[256];
-};
 
 struct texture
 {
