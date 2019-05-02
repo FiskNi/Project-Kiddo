@@ -12,6 +12,7 @@ class RigidEntity : public Entity
 private:
 	glm::vec3 startPos;
 	glm::vec3 velocity;
+	glm::vec3 savedPos;
 
 	bool collision;
 	bool grounded;
@@ -54,6 +55,8 @@ public:
 	float GetVelocityX() const { return velocity.x; }
 	float GetVelocityY() const { return velocity.y; }
 	float GetVelocityZ() const { return velocity.z; }
+	glm::vec3 GetSavedPos() const { return savedPos; }
+
 	float GetGroundLevel() const { return groundLevel; }
 	bool IsColliding() const { return collision; }
 	bool IsGrounded() const { return grounded; }
