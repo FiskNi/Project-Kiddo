@@ -45,7 +45,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidStaticCollision(playerCharacter);
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision();
-
 	ButtonInteract(renderWindow, playerCharacter);
 }
 
@@ -73,53 +72,48 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 }
+
 void Room::BoxPlateCollision()
 {
 	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
-	for (int i = 0; i < plates.size(); i++) {
-		bool pressed = false;
-
-		if (!plates[i].isPressed()) {
-			for (int j = 0; j < rigids.size(); j++) {
-				if (!pressed) {
-					if (rigids[j].CheckCollision(plates[i])) {
-						if (plates[i].CheckInsideCollision(rigids[j])) {
-							pressed = true;
-						}
-					}
-				}
+	for (int i = 0; i < plates.size(); i++) 
+	{
+		plates[i].setPressed(false);
+		for (int j = 0; j < rigids.size(); j++)
+		{
+			if (!plates[i].isPressed() && rigids[j].CheckCollision(plates[i]) && plates[i].CheckInsideCollision(rigids[j]))
+			{
+				plates[i].setPressed(true);
 			}
 		}
-
-		plates[i].setPressed(pressed);
-		if (pressed) std::cout << "hi" << std::endl;
 	}
 
+	if (plates[0].isPressed())
+	{
+		bridges[0].Extend();
+	}
 }
 
+//=============================================================
+//	Checks all rigid collisions with the ground, includes the player.
+//	This loops trough all the rigids and all the statics in the scene.
+//	Afterwards does a collision check and applies the highest ground level found.
+//	The actual action on collison happens in the rigid entity class.
+//=============================================================
 void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 {
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		for (int i = 0; i < buttons.size(); i++) {
-			if (playerCharacter->CheckCollision(buttons[i])) {
-				if (buttons[i].isPressed()) {
-					if (buttons[i].isPressed())
-						std::cout << "hi" << std::endl;
-					buttons[i].setPressed(false);
-					break;
-				}
-				else {
-					buttons[i].setPressed(true);
-					break;
-				}
-					
-				if (buttons[i].isPressed())
-					std::cout << "hi" << std::endl;
-				
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		for (int i = 0; i < buttons.size(); i++)
+		{
+			if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
+			{
+				buttons[i].setPressed(true);
 			}
-
 		}
 	}
+
+
 }
 
 int Room::inBoundCheck(Character playerCharacter)
@@ -323,7 +317,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				if (rigids[i].GetGroundLevel() != statics[j].GetHitboxTop())
+				if (abs(rigids[i].GetGroundLevel() - statics[j].GetHitboxTop()) <= 2.0f)
 				{
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
@@ -516,15 +510,15 @@ void Room::LoadEntities(std::vector<Material> materials)
 	bridges.push_back(bridge1);
 
 	PressurePlate plate;
-	plate.SetMaterialID(materials[2].getMaterialID());
-	plate.SetPosition(glm::vec3(0, -1, 0));
-	plate.setBBY(0.9);
-	plate.scaleBB(1.3);
+	plate.SetMaterialID(materials[1].getMaterialID());
+	plate.SetPosition(glm::vec3(-4.0f, -1.0f, 2.0f));
+	plate.setBBY(2.0f);
+	plate.scaleBB(2.0f);
 	plates.push_back(plate);
 
 	Button button;
 	button.SetMaterialID(materials[1].getMaterialID());
-	button.SetPosition(glm::vec3(5, -1, 6));
+	button.SetPosition(glm::vec3(5.0f, -1.0f, 6.0f));
 	button.scaleBB(2);
 	buttons.push_back(button);
 }

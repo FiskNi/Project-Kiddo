@@ -109,7 +109,6 @@ bool Entity::CheckInsideCollision(Entity AABB)
 		&& AABB.GetPositionBB().z - AABB.boundingBoxSize.z > this->GetPositionBB().z - boundingBoxSize.z)
 	{
 		return true;
-
 	}
 	else return false;
 }
