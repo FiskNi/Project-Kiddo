@@ -11,16 +11,15 @@ void Camera::reCalcCamVecs()
 	this->face = glm::normalize(face);
 
 	this->camRight = glm::normalize(glm::cross(this->face, this->worldUp));
-	this->camUp = glm::normalize(glm::cross(this->camRight, this->face));
-	
+	this->camUp = glm::normalize(glm::cross(this->camRight, this->face));	
 }
 
 Camera::Camera()
 {
-	this->camPos = glm::vec3(0.0f, 7.0f, 14.0f);
+	this->camPos = glm::vec3(4.8f, 4.f, 11.f);
 	this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	this->camYaw = -90.0f;
-	this->camPitch = -40.0f;
+	this->camYaw = -132.2f;
+	this->camPitch = -36.5f;
 	this->camRight = glm::vec3(1.0f, 0.0f, 0.0f);
 
 	this->face = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -88,5 +87,6 @@ void Camera::setWinSize(float width, float height)
 
 void Camera::setProjMat(float width, float height, float nearPlane, float farPlane)
 {
-	this->projMat = glm::perspective((3.14f*0.45f), width / height, nearPlane, farPlane);
+	//this->projMat = glm::perspective((3.14f*0.45f), width / height, nearPlane, farPlane);
+	this->projMat = glm::ortho(-8.f * 4.f, 8.f*4.f, -4.5f * 4.f, 4.5f*4.f, nearPlane, farPlane);
 }

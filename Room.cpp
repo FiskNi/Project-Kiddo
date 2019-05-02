@@ -496,17 +496,22 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
-		StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
-		levelEntity.SetMaterialID(materials[2].getMaterialID());
-		levelEntity.OffsetPositionY(1.2f);
-		this->statics.push_back(levelEntity);
+		if (i != 8)
+		{
+			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
+			levelEntity.SetMaterialID(materials[2].getMaterialID());
+			levelEntity.OffsetPositionY(1.2f);
+			this->statics.push_back(levelEntity);
+		}
 	}
 
-	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11));
+	BridgeEntity bridge1(level.getVerticies(8), level.getNrOfVerticies(8));
 	bridge1.SetMaterialID(materials[2].getMaterialID());
 	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
-	bridge1.SetRestPosition(glm::vec3(-15.0f, -1.9f, 3.5f));
-	bridge1.SetExtendDistance(4.2f);
+
+	//bridge1.SetRestPosition(glm::vec3(0.f, -1.9f, -3.5f));
+	bridge1.SetExtendingForwardZ();
+	bridge1.SetExtendDistance(-1.2f);
 	bridges.push_back(bridge1);
 
 	PressurePlate plate;
