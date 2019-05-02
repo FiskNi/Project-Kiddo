@@ -13,6 +13,7 @@ StaticEntity::StaticEntity(vertex* vertArr, unsigned int nrOfVerticies) : Entity
 
 StaticEntity::~StaticEntity()
 {
+
 }
 
 
