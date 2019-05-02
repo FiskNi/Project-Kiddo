@@ -85,6 +85,8 @@ void BridgeEntity::Update(float deltaTime)
 			glm::vec3 calculatedPosition = GetPosition();
 			calculatedPosition += velocity * deltaTime;
 
+			glm::vec3 extendStop = restPosition + extendDirection * extendDistance;
+
 			if (extendDirection == glm::vec3(1.0f, 0.0f, 0.0f))
 				if ((restPosition + (extendDirection * extendDistance)).x > GetPosition().x)
 					SetPosition(calculatedPosition);
@@ -98,13 +100,13 @@ void BridgeEntity::Update(float deltaTime)
 					extended = true;
 
 			if (extendDirection == glm::vec3(0.0f, 0.0f, 1.0f))
-				if ((restPosition + (extendDirection * extendDistance)).z < GetPosition().z)
+				if ((restPosition + (extendDirection * extendDistance)).z > GetPosition().z)
 					SetPosition(calculatedPosition);
 				else
 					extended = true;
 
 			if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
-				if ((restPosition + (extendDirection * extendDistance)).z > GetPosition().z)
+				if ((restPosition + (extendDirection * extendDistance)).z < GetPosition().z)
 					SetPosition(calculatedPosition);
 				else
 					extended = true;

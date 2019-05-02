@@ -317,7 +317,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				if (abs(rigids[i].GetGroundLevel() - statics[j].GetHitboxTop()) <= 2.0f)
+				if (abs(rigids[i].GetGroundLevel() - statics[j].GetHitboxTop()) >= 2.0f)
 				{
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
@@ -341,7 +341,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(statics[i]))
 		{
-			if (playerCharacter->GetGroundLevel() != statics[i].GetHitboxTop())
+			if (abs(rigids[i].GetGroundLevel() - playerCharacter->GetHitboxTop()) >= 2.0f)
 			{
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
 				pushDir = normalize(pushDir);
@@ -455,17 +455,15 @@ void Room::LoadLights()
 void Room::LoadEntities(std::vector<Material> materials)
 {
 	// Temporary Loader and meshes
-	Loader testLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
+	//Loader testLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
-	StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
-	newEntity.SetMaterialID(materials[0].getMaterialID());
-	newEntity.SetPositionY(-1.2f);
-	statics.push_back(newEntity);
+	//StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
+	//newEntity.SetMaterialID(materials[0].getMaterialID());
+	//newEntity.SetPositionY(-1.2f);
+	//statics.push_back(newEntity);
 
 	// Loader for the box meshes
-	// Use "boxSharpBinary.bin" for a simpler box, and "boxEdgyBinary.bin" for a fancier look
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
-
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
@@ -486,17 +484,11 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
 	rigids.push_back(cubeEntity);
-	
-	StaticEntity planeEntity(0);
-	planeEntity.SetMaterialID(materials[0].getMaterialID());
-	planeEntity.SetPosition(glm::vec3(0.0f, -0.5f, 0.0f));
-	//statics.push_back(planeEntity);
 
 	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled].meh");
-
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
-		if (i != 8)
+		if (1 != 8)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
 			levelEntity.SetMaterialID(materials[2].getMaterialID());
@@ -508,10 +500,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 	BridgeEntity bridge1(level.getVerticies(8), level.getNrOfVerticies(8));
 	bridge1.SetMaterialID(materials[2].getMaterialID());
 	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
-
 	//bridge1.SetRestPosition(glm::vec3(0.f, -1.9f, -3.5f));
+	bridge1.OffsetPositionY(1.2f);
 	bridge1.SetExtendingForwardZ();
-	bridge1.SetExtendDistance(-1.2f);
+	bridge1.SetExtendDistance(3.2f);
 	bridges.push_back(bridge1);
 
 	PressurePlate plate;
