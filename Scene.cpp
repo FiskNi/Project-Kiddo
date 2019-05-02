@@ -83,26 +83,28 @@ void Scene::CompileMeshData()
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	if (!playerCharacter.IsColliding())
-	{
-		playerCharacter.AddVelocity(playerCharacter.GetInputVector());
-	}
-
-
 	Gravity();
-
-	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
 
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
-	// Update player movement
+	//if (!playerCharacter.IsColliding())
+	//{
+		playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+	//}
+
+	// First update
+	playerCharacter.Update(deltaTime);
+
+	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
+
+	// To be removed or not
 	if (!playerCharacter.IsColliding())
 	{
 		//playerCharacter.AddVelocity(playerCharacter.GetInputVector());
 	}
 
 	// Update the scene
-	playerCharacter.Update(deltaTime);
+	//playerCharacter.Update(deltaTime);
 	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 	{
 		startingRoom->GetRigids()[i].Update(deltaTime);
@@ -114,7 +116,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 
 
-	
 	// Compile render data for the renderer
 	CompileMeshData();
 }

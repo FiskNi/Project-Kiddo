@@ -77,7 +77,7 @@ bool Character::CheckInBound(Entity collidingCube)
 glm::vec3 Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 2.0f;
+	const float moveSpeed = 1.5f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
@@ -154,7 +154,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 			jumpSquat = false;
 
-		/*if (glm::length(GetVelocity()) > 0.5f)
+		if (glm::length(GetVelocity()) > 0.5f)
 		{
 			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
 			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
@@ -165,10 +165,12 @@ glm::vec3 Character::Move(GLFWwindow* window)
 				SetRotation(0.0f, rotation, 0.0f);
 			else
 				SetRotation(0.0f, -rotation, 0.0f);
-		}*/
+		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
-		//moveDir = glm::normalize(moveDir);
+		
+		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
+
 		moveDir *= moveSpeed;
 	}
 
