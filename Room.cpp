@@ -117,8 +117,6 @@ void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 			}
 		}
 	}
-
-
 }
 
 int Room::inBoundCheck(Character playerCharacter)
@@ -163,6 +161,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				
 			}
 		}
+
 		// All the bridges
 		for (int j = 0; j < bridges.size(); ++j)
 		{
@@ -250,7 +249,6 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 			{
 				playerCharacter->SetColliding(true);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
-				//playerCharacter->SetVelocity(pushDir);
 			}
 
 		}
@@ -334,7 +332,6 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 					pushDir *= 2.0f;
 
-					//rigids[i].AddVelocity(-pushDir);
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
@@ -357,7 +354,6 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				else
 					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 				pushDir *= 2.0f;
-
 
 				playerCharacter->AddVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
@@ -411,7 +407,8 @@ void Room::CompileMeshData()
 		meshes.push_back(bridges[i].GetMeshData());
 	}
 
-	for (int i = 0; i < plates.size(); i++) {
+	for (int i = 0; i < plates.size(); i++) 
+	{
 		meshes.push_back(plates[i].GetMeshData());
 	}
 
@@ -459,23 +456,12 @@ void Room::LoadLights()
 //=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
-	// Temporary Loader and meshes
-	//Loader testLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
-	// Uses the first slot of the testLoader file which is currently a cube "xTestBinary4.bin"
-	//StaticEntity newEntity(testLoader.getVerticies(0), testLoader.getNrOfVerticies(0));
-	//newEntity.SetMaterialID(materials[0].getMaterialID());
-	//newEntity.SetPositionY(-1.2f);
-	//statics.push_back(newEntity);
-
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
-	rigids.push_back(cubeEntity);
-
-	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 4.0f));
 	rigids.push_back(cubeEntity);
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 5.0f));
