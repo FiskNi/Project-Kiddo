@@ -65,6 +65,7 @@ void Scene::LoadCharacter()
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
 	playerCharacter.SetMaterialID(2);
+	playerCharacter.OffsetPositionX(-3.0f);
 }
 
 void Scene::CompileMeshData()

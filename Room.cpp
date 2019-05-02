@@ -92,6 +92,10 @@ void Room::BoxPlateCollision()
 	{
 		bridges[0].Extend();
 	}
+	else
+	{
+		bridges[0].Retract();
+	}
 }
 
 //=============================================================
@@ -106,6 +110,7 @@ void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 	{
 		for (int i = 0; i < buttons.size(); i++)
 		{
+			buttons[i].setPressed(false);
 			if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
 			{
 				buttons[i].setPressed(true);
@@ -317,7 +322,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		{
 			if (rigids[i].CheckCollision(statics[j]))
 			{
-				if (abs(rigids[i].GetGroundLevel() - statics[j].GetHitboxTop()) >= 2.0f)
+				if (abs(statics[j].GetHitboxTop() - rigids[i].GetHitboxBottom()) >= 0.5f)
 				{
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
@@ -341,7 +346,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(statics[i]))
 		{
-			if (abs(rigids[i].GetGroundLevel() - playerCharacter->GetHitboxTop()) >= 2.0f)
+			if (abs(statics[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
 				pushDir = normalize(pushDir);
@@ -467,55 +472,42 @@ void Room::LoadEntities(std::vector<Material> materials)
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 10.0f, -3.0f));
+	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 100.0f, 2.0f));
+	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 4.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(3.0f, 1.0f, 7.0f));
+	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, -3.0f));
-	rigids.push_back(cubeEntity);
-
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 2.0f));
-	rigids.push_back(cubeEntity);
-
-	cubeEntity.SetPosition(glm::vec3(-3.0f, 1.0f, 7.0f));
-	rigids.push_back(cubeEntity);
-
-	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled].meh");
+	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
 		if (i != 5)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
 			levelEntity.SetMaterialID(materials[2].getMaterialID());
-			levelEntity.OffsetPositionY(1.2f);
 			this->statics.push_back(levelEntity);
 		}
 	}
 
 	BridgeEntity bridge1(level.getVerticies(5), level.getNrOfVerticies(5));
 	bridge1.SetMaterialID(materials[2].getMaterialID());
-	//bridge1.SetPosition(glm::vec3(-5.0f, -0.5f, 0.0f)); // This doesnt matter while the update function is running
-	//bridge1.SetRestPosition(glm::vec3(0.f, -1.9f, -3.5f));
-	bridge1.OffsetPositionY(1.2f);
-	bridge1.SetExtendingForwardZ();
-	bridge1.SetExtendDistance(3.2f);
+	bridge1.SetExtendingBackwardX();
+	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
 	PressurePlate plate;
 	plate.SetMaterialID(materials[1].getMaterialID());
-	plate.SetPosition(glm::vec3(-4.0f, -1.0f, 2.0f));
+	plate.SetPosition(glm::vec3(1.0f, -2.2f, 2.0f));
 	plate.setBBY(2.0f);
 	plate.scaleBB(2.0f);
 	plates.push_back(plate);
 
 	Button button;
-	button.SetMaterialID(materials[1].getMaterialID());
-	button.SetPosition(glm::vec3(5.0f, -1.0f, 6.0f));
+	button.SetMaterialID(materials[0].getMaterialID());
+	button.SetPosition(glm::vec3(-4.0f, -2.0f, 9.0f));
 	button.scaleBB(2);
 	buttons.push_back(button);
 }
@@ -528,7 +520,7 @@ void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
 	winNode.SetMaterialID(materials[3].getMaterialID());
-	winNode.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+	winNode.SetPosition(glm::vec3(-5.0f, -2.7f, -1.0f));
 	nodes.push_back(winNode);
 }
 
