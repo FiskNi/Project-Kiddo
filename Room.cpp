@@ -241,7 +241,8 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 			// Add box velocity
 			rigids[i].AddVelocity(pushDir);
 
-
+			// This always comes in as false so this if state doesn't work but is a template
+			// for a possible solution. To be deleted later if not used.
 			if (playerCharacter->IsColliding())
 			{
 				playerCharacter->AddVelocity(-pushDir);
@@ -277,6 +278,7 @@ void Room::RigidRigidCollision()
 				{
 					// Push direction vector
 					glm::vec3 pushDir = rigids[j].GetPosition() - rigids[i].GetPosition();
+					pushDir = normalize(pushDir);
 
 					// Lock to 1 axis
 					if (abs(pushDir.x) >= abs(pushDir.z))
@@ -324,8 +326,8 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				if (rigids[i].GetGroundLevel() != statics[j].GetHitboxTop())
 				{
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
-
 					pushDir = normalize(pushDir);
+
 					// Lock to 1 axis
 					if (abs(pushDir.x) >= abs(pushDir.z))
 						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
@@ -333,9 +335,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
 					pushDir *= 2.0f;
 
-
 					//rigids[i].AddVelocity(-pushDir);
-
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
@@ -349,9 +349,9 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		{
 			if (playerCharacter->GetGroundLevel() != statics[i].GetHitboxTop())
 			{
-
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
 				pushDir = normalize(pushDir);
+
 				// Lock to 1 axis
 				if (abs(pushDir.x) >= abs(pushDir.z))
 					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
@@ -361,10 +361,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 
 
 				playerCharacter->AddVelocity(-pushDir);
-
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
-
-
 			}
 		}
 	}
