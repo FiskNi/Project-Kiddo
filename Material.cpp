@@ -9,6 +9,11 @@ Material::Material(char* name, unsigned int id)
 	albedo = 0;
 	normal = 0;
 	hasNormalmap = 0;
+
+	this->ambient = glm::vec3(1, 0, 0);
+	this->diffuse = glm::vec3(0);
+	this->specular = glm::vec3(0);
+	this->emissive = glm::vec3(0);
 }
 
 

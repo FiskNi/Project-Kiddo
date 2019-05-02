@@ -119,6 +119,10 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	int shadow_matrix = 8;
 	int cam_pos = 9;
 	int has_normal = 10;
+	int ambient = 11;
+	int diffuse = 12;
+	int specular = 13;
+	int emissive = 14;
 
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -174,6 +178,11 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 				gShaderProgram.getShader(),
 				"normalTex", 1);
 		}
+
+		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getAmbient()));
+		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getDiffuse()));
+		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getSpecular()));
+		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getEmissive()));
 
 		// Binds the shadowmap (handles by the renderer)
 		passTextureData(GL_TEXTURE2,
