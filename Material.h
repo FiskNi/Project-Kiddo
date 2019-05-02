@@ -27,6 +27,8 @@ private:
 	GLuint albedo;
 	GLuint normal;
 
+
+
 	bool hasNormalmap;
 
 	glm::vec3 ambient;

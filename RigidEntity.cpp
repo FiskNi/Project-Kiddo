@@ -5,6 +5,7 @@
 RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 {
 	startPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	savedPos = startPos;
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 
@@ -128,6 +129,7 @@ void RigidEntity::Update(float deltaTime)
 	}
 
 	// Move this entity
+	savedPos = GetPosition();
 	SetPosition(calculatedPosition);
 
 	// This has to be lower than the initial ground level or bad things happen
