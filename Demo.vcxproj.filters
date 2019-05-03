@@ -126,6 +126,9 @@
     <ClCompile Include="BridgeEntity.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="boxHolder.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Fragment.glsl">
@@ -239,6 +242,9 @@
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="boxHolder.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>
