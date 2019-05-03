@@ -133,7 +133,7 @@ void RigidEntity::Update(float deltaTime)
 	SetPosition(calculatedPosition);
 
 	// This has to be lower than the initial ground level or bad things happen
-	if (GetPosition().y < -120.0f)
+	if (GetPosition().y < -10.0f)
 	{
 		ResetPos();
 	}
