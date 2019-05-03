@@ -117,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\exporterImporterHeaders.cpp" />
     <ClCompile Include="libMain.cpp" />
     <ClCompile Include="Loader.cpp" />
   </ItemGroup>

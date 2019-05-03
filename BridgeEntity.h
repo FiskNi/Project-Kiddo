@@ -19,6 +19,7 @@ public:
 	~BridgeEntity();
 
 	void SetRestPosition(glm::vec3 position);
+	void SetRestPosition(float x, float y, float z);
 	void SetExtendDistance(float d);
 	void SetExtendingForwardX();
 	void SetExtendingBackwardX();

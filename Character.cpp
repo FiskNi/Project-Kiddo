@@ -87,18 +87,18 @@ glm::vec3 Character::Move(GLFWwindow* window)
 	if (glm::length(GetVelocity()) < maxSpeed)
 	{
 
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE)
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
 		{
        		jumpSquat = true;
-			//RigidEntity::SetGrounded(false);
-			//moveY = moveSpeed;
+			moveY = moveSpeed + 10.5;
+			SetGrounded(false);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
-				moveX = moveSpeed / 5; 
+				moveX = -moveSpeed / 5; 
 				moveY = moveSpeed + 10.5;
 				SetGrounded(false);
 			}
@@ -112,7 +112,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		{
 			if(jumpSquat && RigidEntity::IsGrounded())
 			{
-				moveX = -moveSpeed / 5;
+				moveX = moveSpeed / 5;
 				moveY = moveSpeed + 10.5;
 				SetGrounded(false);
 			}
@@ -126,7 +126,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		{
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
-				moveZ = moveSpeed / 5;
+				moveZ = -moveSpeed / 5;
 				moveY = moveSpeed + 10.5;
 				SetGrounded(false);
 			}
@@ -140,7 +140,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		{
 			if (jumpSquat && RigidEntity::IsGrounded())
 			{
-				moveZ = -moveSpeed / 5;
+				moveZ = moveSpeed / 5;
 				moveY = moveSpeed + 10.5;
 				SetGrounded(false);
 			}
@@ -150,7 +150,6 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			}
 		}
 
-
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 			jumpSquat = false;
 
@@ -158,7 +157,6 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		{
 			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
 			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
-			
 			float rotation = acos(cosRotation);
 
 			if(GetVelocityX() > 0)
