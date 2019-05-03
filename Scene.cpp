@@ -88,10 +88,10 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	// Player movement vector
 	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
-	//if (!playerCharacter.IsColliding())
-	//{
+	if (!playerCharacter.IsColliding())
+	{
 		playerCharacter.AddVelocity(playerCharacter.GetInputVector());
-	//}
+	}
 
 	// First update
 	playerCharacter.Update(deltaTime);

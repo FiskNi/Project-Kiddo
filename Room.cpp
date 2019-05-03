@@ -46,6 +46,35 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision();
 	ButtonInteract(renderWindow, playerCharacter);
+
+	// Game events
+	if (plates[0].isPressed())
+	{
+		bridges[0].Extend();		
+	}
+	else
+	{
+		bridges[0].Retract();
+	}
+
+	if (plates[1].isPressed())
+	{
+		bridges[1].Extend();
+	}
+	else
+	{
+		bridges[1].Retract();
+	}
+
+	if (buttons[0].isPressed())
+	{
+		bridges[2].Extend();
+	}
+	else
+	{
+		bridges[2].Retract();
+	}
+
 }
 
 //=============================================================
@@ -88,14 +117,9 @@ void Room::BoxPlateCollision()
 		}
 	}
 
-	if (plates[0].isPressed())
-	{
-		bridges[0].Extend();
-	}
-	else
-	{
-		bridges[0].Retract();
-	}
+
+	
+
 }
 
 //=============================================================
@@ -110,7 +134,6 @@ void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 	{
 		for (int i = 0; i < buttons.size(); i++)
 		{
-			buttons[i].setPressed(false);
 			if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
 			{
 				buttons[i].setPressed(true);
@@ -478,38 +501,48 @@ void Room::LoadEntities(std::vector<Material> materials)
 		}
 	}
 
+	
+	BridgeEntity bridge0(level.getVerticies(5), level.getNrOfVerticies(5));
+	bridge0.SetRestPosition(-5.0f, -3.1f, 16.5f);
+	bridge0.SetMaterialID(materials[2].getMaterialID());
+	bridge0.SetExtendingBackwardZ();
+	bridge0.SetExtendDistance(4.2f);
+	bridges.push_back(bridge0);
+
 	BridgeEntity bridge1(level.getVerticies(5), level.getNrOfVerticies(5));
 	bridge1.SetMaterialID(materials[2].getMaterialID());
 	bridge1.SetExtendingBackwardX();
 	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
-	//BridgeEntity bridge2(level.getVerticies(5), level.getNrOfVerticies(5));
-	//bridge2.SetRestPosition(-5.0f, -2.7f, 4.0f);
-	//bridge2.SetMaterialID(materials[2].getMaterialID());
-	//bridge2.SetExtendingBackwardX();
-	//bridge2.SetExtendDistance(4.2f);
-	//bridges.push_back(bridge2);
+	BridgeEntity bridge2(level.getVerticies(5), level.getNrOfVerticies(5));
+	bridge2.SetRestPosition(-5.0f, -3.1f, -9.0f);
+	bridge2.SetMaterialID(materials[2].getMaterialID());
+	bridge2.SetExtendingForwardZ();
+	bridge2.SetExtendDistance(4.2f);
+	bridges.push_back(bridge2);
 
-	//BridgeEntity bridge3(level.getVerticies(5), level.getNrOfVerticies(5));
-	//bridge1.SetRestPosition(-5.0f, -2.7f, 4.0f);
-	//bridge1.SetMaterialID(materials[2].getMaterialID());
-	//bridge1.SetExtendingBackwardX();
-	//bridge1.SetExtendDistance(4.2f);
-	//bridges.push_back(bridge3);
 
-	PressurePlate plate;
-	plate.SetMaterialID(materials[1].getMaterialID());
-	plate.SetPosition(glm::vec3(1.0f, -2.2f, 2.0f));
-	plate.setBBY(2.0f);
-	plate.scaleBB(2.0f);
-	plates.push_back(plate);
+	// 
+	PressurePlate plate0;
+	plate0.SetMaterialID(materials[1].getMaterialID());
+	plate0.SetPosition(glm::vec3(-2.0f, -2.2f, 9.5f));
+	plate0.setBBY(2.0f);
+	plate0.scaleBB(2.0f);
+	plates.push_back(plate0);
 
-	Button button;
-	button.SetMaterialID(materials[0].getMaterialID());
-	button.SetPosition(glm::vec3(-4.0f, -2.0f, 9.0f));
-	button.scaleBB(2);
-	buttons.push_back(button);
+	PressurePlate plate1;
+	plate1.SetMaterialID(materials[1].getMaterialID());
+	plate1.SetPosition(glm::vec3(-2.0f, -2.2f, 16.0f));
+	plate1.setBBY(2.0f);
+	plate1.scaleBB(2.0f);
+	plates.push_back(plate1);
+	
+	Button button0;
+	button0.SetMaterialID(materials[0].getMaterialID());
+	button0.SetPosition(glm::vec3(10.0f, -1.8f, 1.0f));
+	button0.scaleBB(2);
+	buttons.push_back(button0);
 }
 
 //=============================================================
@@ -520,7 +553,7 @@ void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
 	winNode.SetMaterialID(materials[3].getMaterialID());
-	winNode.SetPosition(glm::vec3(-5.0f, -2.7f, -1.0f));
+	winNode.SetPosition(glm::vec3(-5.0f, -2.7f, -9.0f));
 	nodes.push_back(winNode);
 }
 
