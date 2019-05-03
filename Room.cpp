@@ -498,7 +498,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
-		if (i != 5)
+		if (i != 11)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
 			levelEntity.SetMaterialID(materials[2].getMaterialID());
