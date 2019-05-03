@@ -31,6 +31,11 @@ void BridgeEntity::SetRestPosition(glm::vec3 position)
 	restPosition = position;
 }
 
+void BridgeEntity::SetRestPosition(float x, float y, float z)
+{
+	restPosition = glm::vec3(x, y, z);
+}
+
 void BridgeEntity::SetExtendDistance(float d)
 {
 	extendDistance = d;
@@ -80,10 +85,10 @@ void BridgeEntity::Update(float deltaTime)
 	{	
 		if (!extended)
 		{
-			const float speed = 50.0f;
+			const float speed = 5.0f;
 			glm::vec3 velocity = extendDirection * speed * deltaTime;
 			glm::vec3 calculatedPosition = GetPosition();
-			calculatedPosition += velocity * deltaTime;
+			calculatedPosition += velocity;
 
 			glm::vec3 extendStop = restPosition + extendDirection * extendDistance;
 
