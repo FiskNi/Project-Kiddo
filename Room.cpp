@@ -514,6 +514,17 @@ void Room::LoadLights()
 //=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
+	// =================================================================================== //
+	//               Index of meshes in scene "level1[Culled]Fixed.meh					   //
+	// ----------------------------------------------------------------------------------- //
+	// 0. doorLeft		| 5. platformMain		| 10. platformSwitch	  | 15. wallLeft   //
+	// 1. doorGoal		| 6. plarformEntrance   | 11. drawBridge		  | 16. wallVoid   //
+	// 2. platformGoal  | 7. cube1				| 12. doorEntrance		  |                //
+	// 3. switch1       | 8. cube2				| 13. platformPressurePad |				   //
+	// 4. doorRight	    | 9. pressurePad1		| 14. wallRight			  |				   //
+	// ----------------------------------------------------------------------------------- //
+	// =================================================================================== //
+
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
@@ -528,7 +539,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
-		if (i != 5)
+		if (i != 11)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
 			levelEntity.SetMaterialID(materials[2].getMaterialID());
@@ -552,21 +563,21 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 
 	
-	BridgeEntity bridge0(level.getVerticies(5), level.getNrOfVerticies(5));
-	bridge0.SetRestPosition(-5.0f, -3.1f, 16.5f);
+	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11));
+	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
 	bridge0.SetMaterialID(materials[2].getMaterialID());
 	bridge0.SetExtendingBackwardZ();
 	bridge0.SetExtendDistance(4.2f);
 	bridges.push_back(bridge0);
 
-	BridgeEntity bridge1(level.getVerticies(5), level.getNrOfVerticies(5));
+	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11));
 	bridge1.SetMaterialID(materials[2].getMaterialID());
 	bridge1.SetExtendingBackwardX();
 	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
-	BridgeEntity bridge2(level.getVerticies(5), level.getNrOfVerticies(5));
-	bridge2.SetRestPosition(-5.0f, -3.1f, -9.0f);
+	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11));
+	bridge2.SetRestPosition(-5.0f, bridge2.GetPosition().y, -9.0f);
 	bridge2.SetMaterialID(materials[2].getMaterialID());
 	bridge2.SetExtendingForwardZ();
 	bridge2.SetExtendDistance(4.2f);
@@ -576,21 +587,21 @@ void Room::LoadEntities(std::vector<Material> materials)
 	// 
 	PressurePlate plate0;
 	plate0.SetMaterialID(materials[1].getMaterialID());
-	plate0.SetPosition(glm::vec3(-2.0f, -2.2f, 9.5f));
+	plate0.SetPosition(glm::vec3(-2.0f, 0.5f, 9.5f));
 	plate0.setBBY(2.0f);
 	plate0.scaleBB(2.0f);
 	plates.push_back(plate0);
 
 	PressurePlate plate1;
 	plate1.SetMaterialID(materials[1].getMaterialID());
-	plate1.SetPosition(glm::vec3(-2.0f, -2.2f, 16.0f));
+	plate1.SetPosition(glm::vec3(-2.0f, 0.5f, 16.0f));
 	plate1.setBBY(2.0f);
 	plate1.scaleBB(2.0f);
 	plates.push_back(plate1);
 	
 	Button button0;
 	button0.SetMaterialID(materials[0].getMaterialID());
-	button0.SetPosition(glm::vec3(10.0f, -1.8f, 1.0f));
+	button0.SetPosition(glm::vec3(10.0f, 1.4f, 1.0f));
 	button0.scaleBB(2);
 	buttons.push_back(button0);
 }
@@ -603,7 +614,7 @@ void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
 	winNode.SetMaterialID(materials[3].getMaterialID());
-	winNode.SetPosition(glm::vec3(-5.0f, -2.7f, -9.0f));
+	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
 	nodes.push_back(winNode);
 }
 
