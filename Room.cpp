@@ -47,6 +47,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision();
 	ButtonInteract(renderWindow, playerCharacter);
 
+
 	// Game events
 	if (plates[0].isPressed())
 	{
@@ -200,9 +201,24 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			}
 		}
 
+		//All the boxHolders
+		for (int j = 0; j < holders.size(); ++j)
+		{
+			if (rigids[i].CheckHolderCollision(holders[j]))
+			{
+				// If ground is close enough
+				if (abs(rigids[i].GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
+				{
+					holders[j].boxReturn();
+					rigids[i].SetPosition(glm::vec3(999, 0, 0));
+					ground = holders[j].GetHitboxTopOffsetBB();
+					rigids[i].SetGrounded(true);
+				}
+			}
+		}
+
 		rigids[i].GroundLevel(ground);
 	}
-
 
 	// Player ground collisions
 	// Recheck grounded state, assume it's not grounded
@@ -231,6 +247,20 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}	
+		}
+	}
+
+	for (int j = 0; j < holders.size(); ++j)
+	{
+		if (playerCharacter->CheckHolderCollision(holders[j]))
+		{
+			// If ground is close enough
+			if (abs(playerCharacter->GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
+			{
+				holders[j].puntBox();
+				ground = holders[j].GetHitboxTopOffsetBB();
+				playerCharacter->SetGrounded(true);
+			}
 		}
 	}
 	playerCharacter->GroundLevel(ground);
@@ -439,6 +469,11 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(buttons[i].GetMeshData());
 	}
+
+	for (int i = 0; i < holders.size(); i++)
+	{
+		meshes.push_back(holders[i].GetMeshData());
+	}
 }
 
 //=============================================================
@@ -500,6 +535,21 @@ void Room::LoadEntities(std::vector<Material> materials)
 			this->statics.push_back(levelEntity);
 		}
 	}
+
+	boxHolder newBox(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
+	newBox.SetMaterialID(materials[0].getMaterialID());
+	//glm::vec3 tempPos = newBox.GetPosition();
+
+	//newBox.SetPosition(glm::vec3(15, 25, 1000));
+	//glm::vec3 tempPosition = newBox.GetPositionBB();
+	//newBox.setPositionBBOffset(tempPosition);
+	/*glm::vec3 tempPos = newBox.GetHitboxOffset();*/
+
+	//newBox.SetBoundingBox(tempPos, newBox.GetHitboxSize());
+	//newBox.puntBox();
+	this->holders.push_back(newBox);
+
+
 
 	
 	BridgeEntity bridge0(level.getVerticies(5), level.getNrOfVerticies(5));

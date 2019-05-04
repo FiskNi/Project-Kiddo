@@ -389,6 +389,7 @@ void Mesh::ImportMesh(vertex* vertArr, int vertexCount)
 		newVertex.tangent = glm::vec3(vertexData.tangent[0], vertexData.tangent[1], vertexData.tangent[2]);
 		newVertex.bitangent = glm::vec3(vertexData.biNormal[0], vertexData.biNormal[1], vertexData.biNormal[2]);
 
+		//The reserve should be above the for-loop
 		vertices.reserve(vertexCount);
 		vertices.push_back(newVertex);
 	}

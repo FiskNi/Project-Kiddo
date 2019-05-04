@@ -2,15 +2,19 @@
 
 #include "StaticEntity.h"
 
-class boxHolder
+class boxHolder : public StaticEntity
 {
 private:
-	glm::vec3 worldPos;
-	glm::vec3 rotation;
-
-	std::vector<StaticEntity> bridge;
+	glm::vec3 origPos;
+	glm::vec3 origBBPos;
 	
 public:
-	boxHolder();
+	boxHolder(unsigned int i);
+	boxHolder(vertex * vertArr, unsigned int nrOfVerticies);
 	~boxHolder();
+
+	void puntBox();
+	void boxReturn();
+
+
 };

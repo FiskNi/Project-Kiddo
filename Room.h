@@ -17,6 +17,8 @@
 #include "BoxHoldEntity.h"
 #include "PressurePlate.h"
 #include "Button.h"
+
+#include "boxHolder.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -49,6 +51,8 @@ private:
 	void BoxPlateCollision();
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
+	//void 
+
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -64,6 +68,8 @@ private:
 	std::vector<BoxHoldEntity> holdBoxes;
 	std::vector<PressurePlate> plates;
 	std::vector<Button> buttons;
+
+	std::vector<boxHolder> holders;
 
 	// PuzzleNodes
 	std::vector<puzzleNode> nodes;
