@@ -47,7 +47,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision();
 	ButtonInteract(renderWindow, playerCharacter);
 
+
 	// Game events
+	// This is where link IDs will be added for each entity in the scene based on importer attributes
 	if (plates[0].isPressed())
 	{
 		bridges[0].Extend();		
@@ -116,10 +118,6 @@ void Room::BoxPlateCollision()
 			}
 		}
 	}
-
-
-	
-
 }
 
 //=============================================================
@@ -447,7 +445,7 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights()
 {
-	Light light(3.0f, 1.0f, -3.0f, 22, 160, 8);
+	Light light(3.0f, 1.0f, -3.0f, 15, 160, 8);
 	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
@@ -479,6 +477,13 @@ void Room::LoadLights()
 //=============================================================
 void Room::LoadEntities(std::vector<Material> materials)
 {
+
+	//==========
+	// Entity loading will be changed to take in custom attributes and base what is loaded into the room on these
+	// Will need to move the Loader up from this location to properly take in materials as well
+	// The pipeline needs to be looked over in general to determine how things will load and be created
+	//==========
+
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));

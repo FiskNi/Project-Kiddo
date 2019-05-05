@@ -98,8 +98,6 @@ void Renderer::prePassRender(Shader gShaderProgram,
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
-
-
 		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
 		startIndex += objects[i].getVertexCount();
 	}
