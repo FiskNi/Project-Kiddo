@@ -11,7 +11,7 @@ class StaticEntity : public Entity
 {
 public:
 	StaticEntity(unsigned int i);
-	StaticEntity(vertex * vertArr, unsigned int nrOfVerticies);
+	StaticEntity(vertex * vertArr, unsigned int nrOfVerticies, unsigned int matID);
 	~StaticEntity();
 
 };
