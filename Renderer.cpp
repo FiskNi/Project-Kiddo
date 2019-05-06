@@ -4,6 +4,7 @@
 
 Renderer::Renderer()
 {
+
 	initWindow(WIDTH, HEIGHT);
 
 	// Creates the frame buffer for shadow mapping

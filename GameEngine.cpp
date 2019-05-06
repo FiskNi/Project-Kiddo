@@ -35,25 +35,15 @@ GameEngine::~GameEngine()
 		delete mainSceneVertexData;
 }
 
-static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
+void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_SPACE)
-	{
-		switch (action)
-		{
-		case GLFW_PRESS:
-			cout << "Space key is pressed" << endl;
-		break;
-		case GLFW_REPEAT:
-			cout << "Space is held down" << endl;
-			break;
-		case GLFW_RELEASE:
-			cout << "Space is released" << endl;
-			break;
-		default:
-			break;
-		}
-	}
+	//if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+	//	if (mainScene.getState() == enum STATE PAUSED) {
+	//		mainScene.setState(enum STATE PLAYING);
+	//	}
+	//	else mainScene.setState(enum STATE PAUSED);
+	//}
+	
 }
 
 //=============================================================
@@ -79,10 +69,10 @@ void GameEngine::Run()
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE))
-		{
-			glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
-		}
+		//if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE))
+		//{
+		//	glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
+		//}
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;

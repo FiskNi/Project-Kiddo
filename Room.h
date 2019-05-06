@@ -90,7 +90,6 @@ public:
 	std::vector<BridgeEntity>& GetBridges() { return bridges; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
-
 	Camera* GetCamera() { return roomCamera; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
