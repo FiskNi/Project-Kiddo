@@ -48,7 +48,7 @@ private:
 	void RigidStaticCollision(Character* playerCharacter);
 	void RigidGroundCollision(Character* playerCharacter);
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
-	void BoxPlateCollision();
+	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
 	//void 

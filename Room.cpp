@@ -44,7 +44,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidNodeCollision();
 	RigidStaticCollision(playerCharacter);
 	BridgeUpdates(renderWindow);
-	BoxPlateCollision();
+	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 
 
@@ -104,7 +104,7 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 }
 
-void Room::BoxPlateCollision()
+void Room::BoxPlateCollision(Character* playerCharacter)
 {
 	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
 	for (int i = 0; i < plates.size(); i++) 
@@ -117,6 +117,12 @@ void Room::BoxPlateCollision()
 				plates[i].setPressed(true);
 			}
 		}
+
+		if (!plates[i].isPressed() && playerCharacter->CheckCollision(plates[i]) && plates[i].CheckInsideCollision(*playerCharacter))
+		{
+			plates[i].setPressed(true);
+		}
+
 	}
 }
 
@@ -179,7 +185,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					ground = statics[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
-				
 			}
 		}
 
@@ -194,7 +199,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					ground = bridges[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
-
 			}
 		}
 
@@ -543,9 +547,11 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
+	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 5.0f));
+	cubeEntity.SetPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
+	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
 	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
@@ -571,7 +577,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 		materials[0].getMaterialID(), materials[0].getMaterialID());
 	box2.SetMaterialID(materials[0].getMaterialID());
 	box2.SetBoxHolderPosition(glm::vec3(7,-1,0));
-	
+
 	box2.puntBox();
 	//box2.setVisible(true);
 	this->holders.push_back(box2);
