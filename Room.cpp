@@ -549,8 +549,8 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
-	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
-	cubeEntity.SetMaterialID(materials[0].getMaterialID());
+	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
+	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
@@ -565,8 +565,8 @@ void Room::LoadEntities(std::vector<Material> materials)
 	{
 		if (i != 11)
 		{
-			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
-			levelEntity.SetMaterialID(materials[2].getMaterialID());
+			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[2].getMaterialID());
+			//levelEntity.SetMaterialID(materials[2].getMaterialID());
 			this->statics.push_back(levelEntity);
 		}
 	}
@@ -589,23 +589,23 @@ void Room::LoadEntities(std::vector<Material> materials)
 	this->holders.push_back(box2);
 
 
-
-	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11));
+	
+	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
-	bridge0.SetMaterialID(materials[2].getMaterialID());
+	//bridge0.SetMaterialID(materials[2].getMaterialID());
 	bridge0.SetExtendingBackwardZ();
 	bridge0.SetExtendDistance(4.2f);
 	bridges.push_back(bridge0);
 
-	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11));
-	bridge1.SetMaterialID(materials[2].getMaterialID());
+	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
+	//bridge1.SetMaterialID(materials[2].getMaterialID());
 	bridge1.SetExtendingBackwardX();
 	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
-	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11));
+	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge2.SetRestPosition(-5.0f, bridge2.GetPosition().y, -9.0f);
-	bridge2.SetMaterialID(materials[2].getMaterialID());
+	//bridge2.SetMaterialID(materials[2].getMaterialID());
 	bridge2.SetExtendingForwardZ();
 	bridge2.SetExtendDistance(4.2f);
 	bridges.push_back(bridge2);
