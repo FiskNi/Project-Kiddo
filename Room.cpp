@@ -49,6 +49,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 
 	// Game events
+#pragma region events
 	if (plates[0].isPressed())
 	{
 		bridges[0].Extend();		
@@ -75,6 +76,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	{
 		bridges[2].Retract();
 	}
+#pragma endregion
 
 }
 
@@ -237,6 +239,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			{
 				ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
+				playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 			}	
 		}
 	}
@@ -250,6 +253,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			{
 				ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
+				playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 			}	
 		}
 	}
@@ -266,6 +270,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					//holders[j].puntBox();
 					ground = holders[j].GetHitboxTopOffsetBB();
 					playerCharacter->SetGrounded(true);
+					playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 				}
 			}
 		}

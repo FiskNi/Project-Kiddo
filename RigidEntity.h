@@ -50,6 +50,7 @@ public:
 	void GroundLevel(float y);
 	void SetHeld(bool holding);
 	void SetStartPosition(glm::vec3 pos);
+	void SetSavedPosition(glm::vec3 pos) { savedPos = pos; }
 
 	glm::vec3 GetVelocity() const { return velocity; }
 	float GetVelocityX() const { return velocity.x; }
