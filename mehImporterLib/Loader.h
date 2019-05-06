@@ -8,14 +8,20 @@ class Loader
 {
 private:
 	std::string fileName;
-	mesh * meshArr;
-	material * materialArr;
+	MehHeader * meshHeader;
+	MeshGroup * meshGroup;
+	PhongMaterial * material;
+	GeoTransformations * geoTransform;
+	MeshVert * meshVert;
+	LoadedMesh * mesh;
+	MeshHolder * meshHolder;
+	//material * materialArr;
 	//material ** materialArr;
-
-	texture *** textures;
 
 	unsigned int meshCount;
 	unsigned int materialCount;
+
+	Texture *** textures;
 
 public:
 	Loader(std::string fileName);
@@ -25,14 +31,17 @@ public:
 	int getNrOfMeshes();
 	std::string getFileName();
 
-	vertex *getVerticies(int meshID);
+	Vertex *getVerticies(int meshID);
 	int getNrOfVerticies(int meshID);
 
+	char* getAlbedo()const;
+	char* getNormal()const;
+
 	//Stubs. Yet unimplemented. Where meshID is the meshes position in the array.
-	mesh getMesh(int meshID);
-	material getMaterial(int meshID, int materialID);
-	material * getAllMaterials(int meshID);
-	texture getTexture(int meshID, int materialID, int textureID);
-	texture ** getAllTextures(int meshID);
+	LoadedMesh getMesh(int meshID);
+	PhongMaterial getMaterial(int meshID, int materialID);
+	PhongMaterial * getAllMaterials(int meshID);
+	Texture getTexture(int meshID, int materialID, int textureID);
+	Texture ** getAllTextures(int meshID);
 
 };

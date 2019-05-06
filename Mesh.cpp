@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(vertex* vertArr, unsigned int nrOfVerticies)
+Mesh::Mesh(Vertex* vertArr, unsigned int nrOfVerticies)
 {
 	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->worldRotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -375,19 +375,19 @@ void Mesh::CreatePlateData()
 	CalculateTangents();
 }
 
-void Mesh::ImportMesh(vertex* vertArr, int vertexCount)
+void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 {
 
 	this->nrOfVerticies = vertexCount;
 	for (int i = 0; i < vertexCount; i++)
 	{
-		vertex vertexData = vertArr[i];
+		Vertex vertexData = vertArr[i];
 		vertexPolygon newVertex;
-		newVertex.position = glm::vec3(vertexData.pos[0], vertexData.pos[1], vertexData.pos[2]);
+		newVertex.position = glm::vec3(vertexData.position[0], vertexData.position[1], vertexData.position[2]);
 		newVertex.uv = glm::vec2(vertexData.uv[0], vertexData.uv[1]);
 		newVertex.normals = glm::vec3(vertexData.normal[0], vertexData.normal[1], vertexData.normal[2]);
 		newVertex.tangent = glm::vec3(vertexData.tangent[0], vertexData.tangent[1], vertexData.tangent[2]);
-		newVertex.bitangent = glm::vec3(vertexData.biNormal[0], vertexData.biNormal[1], vertexData.biNormal[2]);
+		newVertex.bitangent = glm::vec3(vertexData.bitangent[0], vertexData.bitangent[1], vertexData.bitangent[2]);
 
 		//The reserve should be above the for-loop
 		vertices.reserve(vertexCount);

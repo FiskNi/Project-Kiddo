@@ -12,7 +12,7 @@ BridgeEntity::BridgeEntity(unsigned int i) : StaticEntity (i)
 	linkID = -999;
 }
 
-BridgeEntity::BridgeEntity(vertex* vertArr, unsigned int nrOfVerticies) : StaticEntity(vertArr, nrOfVerticies)
+BridgeEntity::BridgeEntity(Vertex* vertArr, unsigned int nrOfVerticies) : StaticEntity(vertArr, nrOfVerticies)
 {
 	restPosition = GetPosition();
 	extendDistance = 2.0f;

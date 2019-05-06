@@ -549,7 +549,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
-	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	Loader level("Resources/Assets/GameReady/Rooms/level1[Culled]Fixed.meh");
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
 		if (i != 11)
@@ -578,7 +578,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	this->holders.push_back(box2);
 
 
-	
+
 	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11));
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
 	bridge0.SetMaterialID(materials[2].getMaterialID());

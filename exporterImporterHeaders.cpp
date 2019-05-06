@@ -30,7 +30,7 @@ struct mesh
 
 };
 
-struct vertex
+struct Vertex
 {
 	float pos[3];
 	float uv[2];

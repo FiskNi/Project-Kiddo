@@ -21,14 +21,14 @@ private:
 	unsigned int materialID;
 
 public:
-	Mesh(vertex* vertArr, unsigned int nrOfVerticies);
+	Mesh(Vertex* vertArr, unsigned int nrOfVerticies);
 	Mesh();
 	~Mesh();
 
 	void CreateCubeData();
 	void CreatePlaneData();
 	void CreatePlateData();
-	void ImportMesh(vertex* verticies, int nrOfVerticies);
+	void ImportMesh(Vertex* verticies, int nrOfVerticies);
 
 	void CalculateTangents();
 	
