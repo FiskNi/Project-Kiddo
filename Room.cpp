@@ -560,7 +560,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 		if (i != 11)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[2].getMaterialID());
-			//levelEntity.SetMaterialID(materials[2].getMaterialID());
 			this->statics.push_back(levelEntity);
 		}
 	}
@@ -570,36 +569,30 @@ void Room::LoadEntities(std::vector<Material> materials)
 	newBox.SetMaterialID(materials[0].getMaterialID());
 	newBox.SetBoxHolderPosition(glm::vec3(5, -1, 0));
 	newBox.puntBox();
-	//newBox.setVisible(true);
 	this->holders.push_back(newBox);
 
 	boxHolder box2(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), 
 		materials[0].getMaterialID(), materials[0].getMaterialID());
 	box2.SetMaterialID(materials[0].getMaterialID());
 	box2.SetBoxHolderPosition(glm::vec3(7,-1,0));
-
 	box2.puntBox();
-	//box2.setVisible(true);
 	this->holders.push_back(box2);
 
 
 	
 	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
-	//bridge0.SetMaterialID(materials[2].getMaterialID());
 	bridge0.SetExtendingBackwardZ();
 	bridge0.SetExtendDistance(4.2f);
 	bridges.push_back(bridge0);
 
 	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
-	//bridge1.SetMaterialID(materials[2].getMaterialID());
 	bridge1.SetExtendingBackwardX();
 	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
 	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge2.SetRestPosition(-5.0f, bridge2.GetPosition().y, -9.0f);
-	//bridge2.SetMaterialID(materials[2].getMaterialID());
 	bridge2.SetExtendingForwardZ();
 	bridge2.SetExtendDistance(4.2f);
 	bridges.push_back(bridge2);
