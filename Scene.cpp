@@ -2,8 +2,21 @@
 
 
 
+
+
+
+
+void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		scene->press();
+	}
+}
+
 Scene::Scene()
 {
+	//state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 	LoadShaders();
 	LoadMaterials();
@@ -84,41 +97,55 @@ void Scene::CompileMeshData()
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	Gravity();
+	glfwSetKeyCallback(renderWindow, key_callback);
 
-	// Player movement vector
-	glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
-	if (!playerCharacter.IsColliding())
-	{
-		playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+	//if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	//	keyPress = true;
+	//	if (state == PAUSED) {
+	//		state = PLAYING;
+	//	}
+	//	else state = PAUSED;
+	//}
+	//if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
+	//	keyPress = false;
+	//}
+	if (state == 1) {
+		Gravity();
+
+		// Player movement vector
+		glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
+		if (!playerCharacter.IsColliding())
+		{
+			playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+		}
+
+		// First update
+		playerCharacter.Update(deltaTime);
+
+		startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
+
+		// To be removed or not
+		if (!playerCharacter.IsColliding())
+		{
+			//playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+		}
+
+		// Update the scene
+		//playerCharacter.Update(deltaTime);
+		for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+		{
+			startingRoom->GetRigids()[i].Update(deltaTime);
+		}
+
+		for (int i = 0; i < startingRoom->GetBridges().size(); i++)
+		{
+			startingRoom->GetBridges()[i].Update(deltaTime);
+		}
+
+
+		// Compile render data for the renderer
+		CompileMeshData();
 	}
-
-	// First update
-	playerCharacter.Update(deltaTime);
-
-	startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
-
-	// To be removed or not
-	if (!playerCharacter.IsColliding())
-	{
-		//playerCharacter.AddVelocity(playerCharacter.GetInputVector());
-	}
-
-	// Update the scene
-	//playerCharacter.Update(deltaTime);
-	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
-	{
-		startingRoom->GetRigids()[i].Update(deltaTime);
-	}
-
-	for (int i = 0; i < startingRoom->GetBridges().size(); i++)
-	{
-		startingRoom->GetBridges()[i].Update(deltaTime);
-	}
-
-
-	// Compile render data for the renderer
-	CompileMeshData();
 }
 
 //=============================================================
@@ -144,6 +171,5 @@ void Scene::Gravity()
 		playerCharacter.AddVelocityY(gravity);
 	}
 }
-
 
 

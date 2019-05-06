@@ -8,7 +8,6 @@
 #include "Character.h"
 #include "Camera.h"
 #include "BoxHoldEntity.h"
-
 //============================================================================
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
@@ -31,6 +30,9 @@
 class Scene
 {
 private:
+	int state = 1;
+	bool keyPress;
+	void press() { std::cout << "hi" << std::endl; }
 	void LoadShaders();
 	void LoadMaterials();
 	void LoadCharacter();
@@ -59,7 +61,7 @@ private:
 
 	// Character
 	Character playerCharacter;
-
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	Scene();
@@ -71,6 +73,7 @@ public:
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
+	void SetState() { this->press(); }
 	Camera GetCamera() const { return *(startingRoom->GetCamera()); }
 
 	void Update(GLFWwindow* renderWindow, float deltaTime);

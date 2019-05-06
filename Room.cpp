@@ -206,8 +206,12 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
 				{
-					holders[j].boxReturn();
-					rigids[i].SetPosition(glm::vec3(999, 0, 0));
+					if (holders[j].getVisible() == false)
+					{
+						holders[j].setVisible(true);
+						holders[j].boxReturn();
+						rigids[i].SetPosition(glm::vec3(999, 0, 0));
+					}
 					ground = holders[j].GetHitboxTopOffsetBB();
 					rigids[i].SetGrounded(true);
 				}
@@ -249,14 +253,17 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 
 	for (int j = 0; j < holders.size(); ++j)
 	{
-		if (playerCharacter->CheckHolderCollision(holders[j]))
+		if (holders[j].getVisible() == true)
 		{
-			// If ground is close enough
-			if (abs(playerCharacter->GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
+			if (playerCharacter->CheckHolderCollision(holders[j]))
 			{
-				holders[j].puntBox();
-				ground = holders[j].GetHitboxTopOffsetBB();
-				playerCharacter->SetGrounded(true);
+				// If ground is close enough
+				if (abs(playerCharacter->GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
+				{
+					//holders[j].puntBox();
+					ground = holders[j].GetHitboxTopOffsetBB();
+					playerCharacter->SetGrounded(true);
+				}
 			}
 		}
 	}
@@ -470,6 +477,7 @@ void Room::CompileMeshData()
 	for (int i = 0; i < holders.size(); i++)
 	{
 		meshes.push_back(holders[i].GetMeshData());
+		meshes.push_back(holders[i].GetHolderMeshData());
 	}
 }
 
@@ -551,19 +559,22 @@ void Room::LoadEntities(std::vector<Material> materials)
 		}
 	}
 
-	boxHolder newBox(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
+	boxHolder newBox(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), 
+		materials[0].getMaterialID(), materials[0].getMaterialID());
 	newBox.SetMaterialID(materials[0].getMaterialID());
-	//glm::vec3 tempPos = newBox.GetPosition();
-
-	//newBox.SetPosition(glm::vec3(15, 25, 1000));
-	//glm::vec3 tempPosition = newBox.GetPositionBB();
-	//newBox.setPositionBBOffset(tempPosition);
-	/*glm::vec3 tempPos = newBox.GetHitboxOffset();*/
-
-	//newBox.SetBoundingBox(tempPos, newBox.GetHitboxSize());
-	//newBox.puntBox();
+	newBox.SetBoxHolderPosition(glm::vec3(5, -1, 0));
+	newBox.puntBox();
+	//newBox.setVisible(true);
 	this->holders.push_back(newBox);
 
+	boxHolder box2(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), 
+		materials[0].getMaterialID(), materials[0].getMaterialID());
+	box2.SetMaterialID(materials[0].getMaterialID());
+	box2.SetBoxHolderPosition(glm::vec3(7,-1,0));
+	
+	box2.puntBox();
+	//box2.setVisible(true);
+	this->holders.push_back(box2);
 
 
 	
