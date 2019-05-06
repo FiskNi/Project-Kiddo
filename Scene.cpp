@@ -6,7 +6,7 @@
 
 
 
-void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -126,14 +126,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 		startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
 
-		// To be removed or not
-		if (!playerCharacter.IsColliding())
-		{
-			//playerCharacter.AddVelocity(playerCharacter.GetInputVector());
-		}
-
 		// Update the scene
-		//playerCharacter.Update(deltaTime);
 		for (int i = 0; i < startingRoom->GetRigids().size(); i++)
 		{
 			startingRoom->GetRigids()[i].Update(deltaTime);

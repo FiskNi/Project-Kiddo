@@ -579,7 +579,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	this->holders.push_back(box2);
 
 
-	
 	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
 	bridge0.SetExtendingBackwardZ();
@@ -597,8 +596,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	bridge2.SetExtendDistance(4.2f);
 	bridges.push_back(bridge2);
 
-
-	// 
 	PressurePlate plate0;
 	plate0.SetMaterialID(materials[1].getMaterialID());
 	plate0.SetPosition(glm::vec3(-2.0f, 0.5f, 9.5f));
