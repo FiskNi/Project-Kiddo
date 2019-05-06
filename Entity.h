@@ -36,7 +36,7 @@ private:
 
 public:
 	Entity(unsigned int i);
-	Entity(vertex* vertArr, unsigned int nrOfVerticies);
+	Entity(vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
 	~Entity();
 
 	void InitBoundingBox();
