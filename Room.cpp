@@ -358,13 +358,16 @@ void Room::RigidRigidCollision()
 //=============================================================
 void Room::RigidNodeCollision()
 {
-	for (int i = 0; i < rigids.size(); i++)
-	{
-		if (nodes[0].CheckCollision(rigids[i]))
+	if (isRoomCompleted != true) {
+		for (int i = 0; i < rigids.size(); i++)
 		{
-			for (int j = 0; j < rigids.size(); ++j)
+			if (nodes[0].CheckCollision(rigids[i]))
 			{
-				cout << "Solved" << endl;
+				for (int j = 0; j < rigids.size(); ++j)
+				{
+					cout << "Solved" << endl;
+					isRoomCompleted = true;
+				}
 			}
 		}
 	}
@@ -554,7 +557,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
-	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	Loader level("Resources/Assets/GameReady/Rooms/level1[Culled]Fixed.meh");
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
 		if (i != 11)

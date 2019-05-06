@@ -21,12 +21,15 @@ private:
 	glm::vec3 inputVector;
 	bool jumpSquat = false;
 
+	glm::vec3 respawnPos;
+
 public:
 	Character();
 	~Character();
 	
 	void SetHoldingObject(bool holding);
 	void SetEntityID(unsigned int id);
+	void SetRespawn(glm::vec3 pos) { respawnPos = pos; }
 
 	bool CheckInBound(Entity collidingCube);
 	glm::vec3 Move(GLFWwindow *window);
@@ -34,5 +37,7 @@ public:
 	bool IsHoldingObject() { return holdingObject; }
 	int GetEntityID() const { return entityID; }
 	glm::vec3 GetInputVector() { return inputVector; }
+	glm::vec3 GetRespawnPos() { return respawnPos; }
+	
 
 };

@@ -17,7 +17,7 @@ Entity::Entity(unsigned int i)
 	InitBoundingBox();
 }
 
-Entity::Entity(vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : entityMesh(vertArr, nrOfVerticies)
+Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : entityMesh(vertArr, nrOfVerticies)
 {
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();

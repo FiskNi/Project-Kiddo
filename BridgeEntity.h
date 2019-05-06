@@ -15,7 +15,7 @@ private:
 
 public:
 	BridgeEntity(unsigned int i);
-	BridgeEntity(vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	BridgeEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
 	~BridgeEntity();
 
 	void SetRestPosition(glm::vec3 position);

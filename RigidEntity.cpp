@@ -15,7 +15,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 }
 
 
-RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : Entity(vertArr, nrOfVerticies, matID)
+RigidEntity::RigidEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : Entity(vertArr, nrOfVerticies, matID)
 {
 	startPos = GetPosition();
 	savedPos = startPos;

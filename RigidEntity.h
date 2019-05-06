@@ -22,7 +22,7 @@ private:
 
 public:
 	RigidEntity(unsigned int i);
-	RigidEntity(vertex * vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	RigidEntity(Vertex * vertArr, unsigned int nrOfVerticies, unsigned int matID);
 	~RigidEntity();
 
 	void AddVelocity(float x, float y, float z);
@@ -50,6 +50,7 @@ public:
 	void GroundLevel(float y);
 	void SetHeld(bool holding);
 	void SetStartPosition(glm::vec3 pos);
+	void SetSavedPosition(glm::vec3 pos) { savedPos = pos; }
 
 	glm::vec3 GetVelocity() const { return velocity; }
 	float GetVelocityX() const { return velocity.x; }

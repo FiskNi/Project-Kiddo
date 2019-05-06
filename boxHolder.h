@@ -14,7 +14,7 @@ private:
 	
 public:
 	boxHolder(unsigned int i);
-	boxHolder(vertex * vertArr, unsigned int nrOfVerticies, unsigned int holderMatID, unsigned int boxMatID);
+	boxHolder(Vertex * vertArr, unsigned int nrOfVerticies, unsigned int holderMatID, unsigned int boxMatID);
 	~boxHolder();
 
 	void puntBox();
