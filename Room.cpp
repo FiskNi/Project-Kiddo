@@ -238,7 +238,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			{
 				ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
-				playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 			}	
 		}
 	}
@@ -252,7 +251,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			{
 				ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
-				playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 			}	
 		}
 	}
@@ -269,7 +267,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					//holders[j].puntBox();
 					ground = holders[j].GetHitboxTopOffsetBB();
 					playerCharacter->SetGrounded(true);
-					playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 				}
 			}
 		}
