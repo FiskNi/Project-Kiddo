@@ -53,6 +53,8 @@ private:
 
 	//void 
 
+	bool isRoomCompleted;
+
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -91,6 +93,8 @@ public:
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
+
+	bool GetIsRoomCompleted() const { return isRoomCompleted; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 

@@ -1,2 +1,5 @@
-﻿  Room.cpp
+﻿  GameEngine.cpp
+  Scene.cpp
+  main.cpp
+  Generating Code...
   Demo.vcxproj -> C:\Users\Martina\Documents\GitHub Martina\Project-Kiddo\x64\Debug\Demo.exe

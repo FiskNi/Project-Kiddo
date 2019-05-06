@@ -358,13 +358,16 @@ void Room::RigidRigidCollision()
 //=============================================================
 void Room::RigidNodeCollision()
 {
-	for (int i = 0; i < rigids.size(); i++)
-	{
-		if (nodes[0].CheckCollision(rigids[i]))
+	if (isRoomCompleted != true) {
+		for (int i = 0; i < rigids.size(); i++)
 		{
-			for (int j = 0; j < rigids.size(); ++j)
+			if (nodes[0].CheckCollision(rigids[i]))
 			{
-				cout << "Solved" << endl;
+				for (int j = 0; j < rigids.size(); ++j)
+				{
+					cout << "Solved" << endl;
+					isRoomCompleted = true;
+				}
 			}
 		}
 	}

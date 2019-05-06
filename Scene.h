@@ -30,9 +30,14 @@
 class Scene
 {
 private:
-	int state = 1;
+	int state;
 	bool keyPress;
-	void press() { std::cout << "hi" << std::endl; }
+	const int PLAYING = 1;
+	const int PAUSE = 2;
+	bool printOnce;
+	bool callOnce;
+	//void press() { std::cout << "hi" << std::endl; }
+
 	void LoadShaders();
 	void LoadMaterials();
 	void LoadCharacter();
@@ -61,7 +66,7 @@ private:
 
 	// Character
 	Character playerCharacter;
-	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	Scene();
@@ -73,7 +78,7 @@ public:
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
-	void SetState() { this->press(); }
+	//void SetState() { this->press(); }
 	Camera GetCamera() const { return *(startingRoom->GetCamera()); }
 
 	void Update(GLFWwindow* renderWindow, float deltaTime);
