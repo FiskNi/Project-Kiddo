@@ -33,6 +33,7 @@ Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies) : entityMesh(vertArr
 	}
 	InitBoundingBox();
 	entityMesh.setPosition(worldPosition);
+	SetMaterialID(matID);
 }
 
 Entity::~Entity()

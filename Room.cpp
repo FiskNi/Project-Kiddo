@@ -44,12 +44,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	RigidNodeCollision();
 	RigidStaticCollision(playerCharacter);
 	BridgeUpdates(renderWindow);
-	BoxPlateCollision();
+	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 
 
 	// Game events
-#pragma region events
+	// This is where link IDs will be added for each entity in the scene based on importer attributes
 	if (plates[0].isPressed())
 	{
 		bridges[0].Extend();		
@@ -76,7 +76,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	{
 		bridges[2].Retract();
 	}
-#pragma endregion
 
 }
 
@@ -105,7 +104,7 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 }
 
-void Room::BoxPlateCollision()
+void Room::BoxPlateCollision(Character* playerCharacter)
 {
 	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
 	for (int i = 0; i < plates.size(); i++) 
@@ -118,11 +117,13 @@ void Room::BoxPlateCollision()
 				plates[i].setPressed(true);
 			}
 		}
+
+		if (!plates[i].isPressed() && playerCharacter->CheckCollision(plates[i]) && plates[i].CheckInsideCollision(*playerCharacter))
+		{
+			plates[i].setPressed(true);
+		}
+
 	}
-
-
-	
-
 }
 
 //=============================================================
@@ -184,7 +185,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					ground = statics[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
-				
 			}
 		}
 
@@ -199,7 +199,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					ground = bridges[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
-
 			}
 		}
 
@@ -239,7 +238,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			{
 				ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
-				playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 			}	
 		}
 	}
@@ -253,7 +251,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			{
 				ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
-				playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 			}	
 		}
 	}
@@ -270,7 +267,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					//holders[j].puntBox();
 					ground = holders[j].GetHitboxTopOffsetBB();
 					playerCharacter->SetGrounded(true);
-					playerCharacter->SetSavedPosition(playerCharacter->GetPosition());
 				}
 			}
 		}
@@ -362,13 +358,16 @@ void Room::RigidRigidCollision()
 //=============================================================
 void Room::RigidNodeCollision()
 {
-	for (int i = 0; i < rigids.size(); i++)
-	{
-		if (nodes[0].CheckCollision(rigids[i]))
+	if (isRoomCompleted != true) {
+		for (int i = 0; i < rigids.size(); i++)
 		{
-			for (int j = 0; j < rigids.size(); ++j)
+			if (nodes[0].CheckCollision(rigids[i]))
 			{
-				cout << "Solved" << endl;
+				for (int j = 0; j < rigids.size(); ++j)
+				{
+					cout << "Solved" << endl;
+					isRoomCompleted = true;
+				}
 			}
 		}
 	}
@@ -495,7 +494,7 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights()
 {
-	Light light(3.0f, 1.0f, -3.0f, 22, 160, 8);
+	Light light(3.0f, 1.0f, -3.0f, 15, 160, 8);
 	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
@@ -538,15 +537,24 @@ void Room::LoadEntities(std::vector<Material> materials)
 	// ----------------------------------------------------------------------------------- //
 	// =================================================================================== //
 
+
+	//==========
+	// Entity loading will be changed to take in custom attributes and base what is loaded into the room on these
+	// Will need to move the Loader up from this location to properly take in materials as well
+	// The pipeline needs to be looked over in general to determine how things will load and be created
+	//==========
+
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
-	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0));
-	cubeEntity.SetMaterialID(materials[0].getMaterialID());
+	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
+	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
+	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	rigids.push_back(cubeEntity);
 
-	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 5.0f));
+	cubeEntity.SetPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
+	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
 	Loader level("Resources/Assets/GameReady/Rooms/level1[Culled]Fixed.meh");
@@ -554,8 +562,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	{
 		if (i != 11)
 		{
-			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i));
-			levelEntity.SetMaterialID(materials[2].getMaterialID());
+			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[2].getMaterialID());
 			this->statics.push_back(levelEntity);
 		}
 	}
@@ -565,36 +572,30 @@ void Room::LoadEntities(std::vector<Material> materials)
 	newBox.SetMaterialID(materials[0].getMaterialID());
 	newBox.SetBoxHolderPosition(glm::vec3(5, -1, 0));
 	newBox.puntBox();
-	//newBox.setVisible(true);
 	this->holders.push_back(newBox);
 
 	boxHolder box2(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), 
 		materials[0].getMaterialID(), materials[0].getMaterialID());
 	box2.SetMaterialID(materials[0].getMaterialID());
 	box2.SetBoxHolderPosition(glm::vec3(7,-1,0));
-	
 	box2.puntBox();
-	//box2.setVisible(true);
 	this->holders.push_back(box2);
 
 
-
-	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11));
+	
+	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
-	bridge0.SetMaterialID(materials[2].getMaterialID());
 	bridge0.SetExtendingBackwardZ();
 	bridge0.SetExtendDistance(4.2f);
 	bridges.push_back(bridge0);
 
-	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11));
-	bridge1.SetMaterialID(materials[2].getMaterialID());
+	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge1.SetExtendingBackwardX();
 	bridge1.SetExtendDistance(4.2f);
 	bridges.push_back(bridge1);
 
-	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11));
+	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge2.SetRestPosition(-5.0f, bridge2.GetPosition().y, -9.0f);
-	bridge2.SetMaterialID(materials[2].getMaterialID());
 	bridge2.SetExtendingForwardZ();
 	bridge2.SetExtendDistance(4.2f);
 	bridges.push_back(bridge2);
