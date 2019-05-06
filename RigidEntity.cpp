@@ -4,7 +4,7 @@
 
 RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 {
-	startPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	startPos = glm::vec3(0.0f, 5.0f, 0.0f);
 	savedPos = startPos;
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
@@ -18,6 +18,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies) : Entity(vertArr, nrOfVerticies)
 {
 	startPos = GetPosition();
+	savedPos = startPos;
 	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
 	collision = false;
 	grounded = false;

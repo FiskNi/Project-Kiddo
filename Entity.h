@@ -42,6 +42,7 @@ public:
 	void InitBoundingBox();
 
 	bool CheckCollision(Entity collidingCube);
+	bool CheckHolderCollision(Entity collidingCube);
 	bool CheckInsideCollision(Entity AABB);
 
 	void SetMaterialID(unsigned int materialID);
@@ -60,6 +61,8 @@ public:
 	void SetRotationY(float y);
 	void SetRotationZ(float z);
 
+	void setPositionBBOffset(glm::vec3 newPos);
+
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
 	void scaleBB(float x);
 	void scaleBBY(float y);
@@ -71,7 +74,11 @@ public:
 	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
 	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }
 	glm::vec3 GetHitboxSize() const { return boundingBoxSize; }
-	glm::vec3 Entity::GetHitboxOffset() const { return boundingBoxCenter; }
+	glm::vec3 GetHitboxOffset() const { return boundingBoxCenter; }
 	float GetHitboxBottom() const { return GetPosition().y - boundingBoxSize.y; }
 	float GetHitboxTop() const { return GetPosition().y + boundingBoxSize.y; }
+
+	float GetHitboxBottomOffsetBB() const { return GetHitboxOffset().y - boundingBoxSize.y; }
+	float GetHitboxTopOffsetBB() const { return GetHitboxOffset().y + boundingBoxSize.y; }
+
 };
