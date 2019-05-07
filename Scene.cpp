@@ -153,15 +153,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Reset callOnce to false once the key has been let go of
 		callOnce = false;
 	}
-	{
-		keyPress = true;
-		SwitchRoom();
-		
-	}
 
-	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_RELEASE) {
-		keyPress = false;
-	}
+
 
 	if (state == PLAYING)
 	{
@@ -170,6 +163,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			std::cout << "PLAYING" << std::endl;
 			printOnce = true;
 		}
+
 		Gravity();
 
 		// Player movement vector
