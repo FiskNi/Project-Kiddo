@@ -15,7 +15,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 }
 
 
-RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : Entity(vertArr, nrOfVerticies, matID)
+RigidEntity::RigidEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : Entity(vertArr, nrOfVerticies, matID)
 {
 	startPos = GetPosition();
 	savedPos = startPos;
@@ -26,6 +26,16 @@ RigidEntity::RigidEntity(vertex* vertArr, unsigned int nrOfVerticies, unsigned i
 	held = false;
 }
 
+RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID) : Entity(inLoader, index, matID)
+{
+	startPos = GetPosition();
+	savedPos = startPos;
+	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
+	collision = false;
+	grounded = false;
+	groundLevel = 0.0f;
+	held = false;
+}
 
 RigidEntity::~RigidEntity()
 {

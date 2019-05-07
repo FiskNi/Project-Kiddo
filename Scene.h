@@ -12,7 +12,8 @@
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
 //	Everything that defines current states and everything that gets transfered between rooms goes here.
-//	Examples are materials and the character, also other gamestate changes relevant to that level. (Currently relevant to the entire game itself since no additional levels).
+//	Examples are materials and the character, also other gamestate changes relevant to that level. 
+//						(Currently relevant to the entire game itself since no additional levels).
 //												
 //	*Right now there is no need for additional levels for the game project "Project Kiddo" though the usage
 //	 of the scene is still relevant.
@@ -30,9 +31,14 @@
 class Scene
 {
 private:
-	int state = 1;
+	int state;
 	bool keyPress;
-	void press() { std::cout << "hi" << std::endl; }
+	const int PLAYING = 1;
+	const int PAUSE = 2;
+	bool printOnce;
+	bool callOnce;
+	//void press() { std::cout << "hi" << std::endl; }
+
 	void LoadShaders();
 	void LoadMaterials();
 	void LoadCharacter();
@@ -64,7 +70,7 @@ private:
 
 	// Character
 	Character playerCharacter;
-	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	Scene();
@@ -76,8 +82,8 @@ public:
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
-	void SetState() { this->press(); }
-	Camera GetCamera() const { return *(rooms[0]->GetCamera()); }
+	//void SetState() { this->press(); }
+	Camera GetCamera() const { return *(startingRoom->GetCamera()); }
 
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void SwitchRoom();

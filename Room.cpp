@@ -358,13 +358,16 @@ void Room::RigidRigidCollision()
 //=============================================================
 void Room::RigidNodeCollision()
 {
-	for (int i = 0; i < rigids.size(); i++)
-	{
-		if (nodes[0].CheckCollision(rigids[i]))
+	if (isRoomCompleted != true) {
+		for (int i = 0; i < rigids.size(); i++)
 		{
-			for (int j = 0; j < rigids.size(); ++j)
+			if (nodes[0].CheckCollision(rigids[i]))
 			{
-				cout << "Solved" << endl;
+				for (int j = 0; j < rigids.size(); ++j)
+				{
+					cout << "Solved" << endl;
+					isRoomCompleted = true;
+				}
 			}
 		}
 	}
@@ -548,8 +551,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader &level)
 
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
-	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
-	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
+	//RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
+	RigidEntity cubeEntity(&boxLoader, 0, materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
@@ -585,7 +588,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader &level)
 	this->holders.push_back(box2);
 
 
-	
 	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
 	bridge0.SetExtendingBackwardZ();
@@ -603,8 +605,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader &level)
 	bridge2.SetExtendDistance(4.2f);
 	bridges.push_back(bridge2);
 
-
-	// 
 	PressurePlate plate0;
 	plate0.SetMaterialID(materials[1].getMaterialID());
 	plate0.SetPosition(glm::vec3(-2.0f, 0.5f, 9.5f));
