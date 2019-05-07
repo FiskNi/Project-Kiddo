@@ -121,10 +121,13 @@ int Loader::getNrOfVerticies(int meshID)
 	return this->mesh[meshID].vertexCount;
 }
 
-MehHeader Loader::GetMeshData(int index) const
-{
-
-}
+//MehHeader Loader::GetMeshData(int index) const
+//{
+//	MehHeader temp;
+//
+//
+//	return tmep;
+//}
 
 char* Loader::getAlbedo()const
 {
