@@ -4,23 +4,26 @@
 //I've yet to run into the issues that sizeof(>>InsertStruct<<) is inaccurate but according to one of my sources it could happen.
 #include <vector>
 
-#pragma pack(push)
-#pragma pack(1)
 struct MehHeader
 {
-	unsigned int meshCount;
-	unsigned int materialCount;
-
+	int meshCount;
+	int groupCount;
+	int materialCount;
+	int pointLightCount;
+	int dirLightCount;
 };
-#pragma pack(pop)
 
 struct MeshGroup
 {
 	char groupName[256];
-	float transformation[3];
+	
+	float translation[3];
 	float rotation[3];
+	float scale[3];
+
 	bool isChild;
-	char parent[256];
+	char parentName[256];
+	int parentType;
 };
 
 struct Vertex
@@ -45,13 +48,6 @@ struct PhongMaterial
 	char normal[256];
 };
 
-struct GeoTransformations
-{
-	float translation[3];
-	float rotation[3];
-	float scale[3];
-};
-
 struct MeshVert
 {
 	Vertex* vertices;
@@ -61,7 +57,14 @@ struct LoadedMesh
 {
 	char name[256];
 	char materialName[256];
-	//char childName;
+	
+	float translation[3];
+	float rotation[3];
+	float scale[3];
+
+	bool isChild;
+	char parentName[256];
+	int parentType;
 
 	int type;
 	int link;
