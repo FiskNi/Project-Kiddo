@@ -13,7 +13,8 @@
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
 //	Everything that defines current states and everything that gets transfered between rooms goes here.
-//	Examples are materials and the character, also other gamestate changes relevant to that level. (Currently relevant to the entire game itself since no additional levels).
+//	Examples are materials and the character, also other gamestate changes relevant to that level. 
+//						(Currently relevant to the entire game itself since no additional levels).
 //												
 //	*Right now there is no need for additional levels for the game project "Project Kiddo" though the usage
 //	 of the scene is still relevant.
@@ -42,6 +43,7 @@ private:
 	void LoadShaders();
 	void LoadMaterials();
 	void LoadCharacter();
+	void LoadLevels();
 
 	void CompileMeshData();
 	
@@ -63,7 +65,9 @@ private:
 	std::vector<Material> materials;
 
 	// Rooms
-	Room* startingRoom;
+	std::vector<Room *> rooms;
+
+	unsigned int roomNr;
 
 	// Character
 	Character playerCharacter;
@@ -73,16 +77,17 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const { return startingRoom->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return startingRoom->GetDirectionalLights(); }
+	std::vector<Light> GetPointLights() const { return rooms[0]->GetPointLights(); }
+	std::vector<DirectionalLight> GetDirectionalLights() const { return rooms[0]->GetDirectionalLights(); }
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
 	//void SetState() { this->press(); }
-	Camera GetCamera() const { return *(startingRoom->GetCamera()); }
+	Camera GetCamera() const { return *(rooms[0]->GetCamera()); }
 
 	void Update(GLFWwindow* renderWindow, float deltaTime);
+	void SwitchRoom();
 
 
 };

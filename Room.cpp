@@ -2,12 +2,12 @@
 
 
 
-Room::Room(std::vector<Material> materials)
+Room::Room(std::vector<Material> materials, Loader &aLoader)
 {
 	LoadLights();
-	LoadEntities(materials);
+	LoadEntities(materials, aLoader);
 	LoadPuzzleNode(materials);
-
+	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
@@ -443,6 +443,11 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 	}
 }
 
+void Room::destroyRoom()
+{
+	delete roomCamera;
+}
+
 
 //=============================================================
 //	Compiles mesh data for the renderer
@@ -524,7 +529,7 @@ void Room::LoadLights()
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials)
+void Room::LoadEntities(std::vector<Material> materials, Loader &level)
 {
 	// =================================================================================== //
 	//               Index of meshes in scene "level1[Culled]Fixed.meh					   //
@@ -546,8 +551,8 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/GroupTest.meh");
-	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
-	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
+	//RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
+	RigidEntity cubeEntity(&boxLoader, 0, materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
@@ -557,9 +562,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
-	Loader level("Resources/Assets/GameReady/Rooms/level1[Culled]Fixed.meh");
+	//Loader level(levelPath);
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
+		//Custom attributes to be detected here before pushed into the appropriate category?
 		if (i != 11)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[0].getMaterialID());
@@ -582,7 +588,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	this->holders.push_back(box2);
 
 
-	
 	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
 	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
 	bridge0.SetExtendingBackwardZ();
@@ -600,8 +605,6 @@ void Room::LoadEntities(std::vector<Material> materials)
 	bridge2.SetExtendDistance(4.2f);
 	bridges.push_back(bridge2);
 
-
-	// 
 	PressurePlate plate0;
 	plate0.SetMaterialID(materials[1].getMaterialID());
 	plate0.SetPosition(glm::vec3(-2.0f, 0.5f, 9.5f));

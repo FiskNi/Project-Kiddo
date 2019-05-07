@@ -37,7 +37,7 @@ class Room
 {
 private:
 	void LoadLights();
-	void LoadEntities(std::vector<Material> materials);
+	void LoadEntities(std::vector<Material> materials, Loader &level);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
 	void PlayerRigidCollision(Character* playerCharacter);
@@ -51,9 +51,6 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
-	//void 
-
-	bool isRoomCompleted;
 
 
 	// Object list for the render queue
@@ -79,8 +76,10 @@ private:
 	// Camera
 	Camera* roomCamera;
 
+	bool isRoomCompleted;
+
 public:
-	Room(std::vector<Material> materials);
+	Room(std::vector<Material> materials, Loader &aLoader);
 	~Room();
 
 	std::vector<Light>& GetPointLights() { return pointLights; }
@@ -94,11 +93,11 @@ public:
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
 
-	bool GetIsRoomCompleted() const { return isRoomCompleted; }
-
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
 	void BridgeUpdates(GLFWwindow * renderWindow);
+
+	void destroyRoom();
 
 
 

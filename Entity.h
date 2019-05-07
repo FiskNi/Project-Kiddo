@@ -1,25 +1,25 @@
-#pragma once
-#include "Headers.h"
-#include "Mesh.h"
+#pragma once 
+#include "Headers.h" 
+#include "Mesh.h" 
 
-//============================================================================
-//	- Entities
-//	Entities are interactable objects in the world. More or less this includes 
-//	everything we can see and define as objects in the scene.
-//	This includes walls, boxes, buttons, etc.
-//	An entity holds one mesh (currently) that defines the vertice data for renderering.
-//	Every entity will have it's own AABB (hitbox) created for it based on the linked mesh.
-//
-//	*Note, This class should be changed to a abstract class where only the derived classes are usable.
-//
-//	- Usage:
-//	Don't. Use the derived classes 'Static' or 'Rigid'. Static meshes are unmoveable objects that
-//	the player can collide with, examples are walls and ground. Rigids are moveable objects like													 		
-//	boxes.
-//	Recommended to create new derived classes for specific usage, these can additionally
-//	be derived from the already derived classes. A 'Lever' class could for example be a derived 
-//	'Static' class. Suggested to keep names consistent within entities (example "LeverEntity").
-//============================================================================
+//============================================================================ 
+//	- Entities 
+//	Entities are interactable objects in the world. More or less this includes  
+//	everything we can see and define as objects in the scene. 
+//	This includes walls, boxes, buttons, etc. 
+//	An entity holds one mesh (currently) that defines the vertice data for renderering. 
+//	Every entity will have it's own AABB (hitbox) created for it based on the linked mesh. 
+// 
+//	*Note, This class should be changed to a abstract class where only the derived classes are usable. 
+// 
+//	- Usage: 
+//	Don't. Use the derived classes 'Static' or 'Rigid'. Static meshes are unmoveable objects that 
+//	the player can collide with, examples are walls and ground. Rigids are moveable objects like													 		 
+//	boxes. 
+//	Recommended to create new derived classes for specific usage, these can additionally 
+//	be derived from the already derived classes. A 'Lever' class could for example be a derived  
+//	'Static' class. Suggested to keep names consistent within entities (example "LeverEntity"). 
+//============================================================================ 
 
 class Entity
 {
@@ -27,16 +27,18 @@ private:
 	Mesh entityMesh;
 	glm::vec3 position;
 	glm::vec3 rotation;
+	glm::vec3 scale;
 
-	// The center is a vector to a location in the world
+	// The center is a vector to a location in the world 
 	glm::vec3 boundingBoxCenter;
-	// The size is the half-size in each direction measured from the center
-	//	x, y, z, format in worldspace (axis aligned)
+	// The size is the half-size in each direction measured from the center 
+	//	x, y, z, format in worldspace (axis aligned) 
 	glm::vec3 boundingBoxSize;
 
 public:
 	Entity(unsigned int i);
 	Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	Entity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Entity();
 
 	void InitBoundingBox();
@@ -57,18 +59,25 @@ public:
 	void OffsetPositionZ(float z);
 
 	void SetRotation(float x, float y, float z);
+	void SetRotation(glm::vec3);
 	void SetRotationX(float x);
 	void SetRotationY(float y);
 	void SetRotationZ(float z);
 
+	void SetScale(float x, float y, float z);
+	void SetScale(glm::vec3);
+	void SetScaleX(float x);
+	void SetScaleY(float y);
+	void SetScaleZ(float z);
+
 	void setPositionBBOffset(glm::vec3 newPos);
 
-	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe
+	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe 
 	void scaleBB(float x);
 	void scaleBBY(float y);
 	void setBBY(float y);
 
-	// Fixed return to be here
+	// Fixed return to be here 
 	Mesh GetMeshData() const { return entityMesh; }
 
 	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }

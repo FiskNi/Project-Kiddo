@@ -12,8 +12,9 @@
 class Mesh
 {
 private:
-	glm::vec3 worldPosition;
-	glm::vec3 worldRotation;
+	glm::vec3 position;
+	glm::vec3 rotation;
+	glm::vec3 scale;
 
 	int nrOfVerticies;
 	std::vector<vertexPolygon> vertices;
@@ -31,7 +32,7 @@ public:
 	void ImportMesh(Vertex* verticies, int nrOfVerticies);
 
 	void CalculateTangents();
-	
+
 	void setMaterial(unsigned int texID);
 
 	void setPosition(glm::vec3 newPos);
@@ -40,10 +41,15 @@ public:
 	void setPositionY(float y);
 	void setPositionZ(float z);
 
+	void SetRotation(glm::vec3 newRot);
 	void SetRotation(float x, float y, float z);
 	void SetRotationX(float x);
 	void SetRotationY(float y);
 	void SetRotationZ(float z);
+
+	void SetScale(glm::vec3 newSca);
+	void SetScale(float x, float y, float z);
+
 
 	unsigned int getMaterialID() const;
 	glm::vec3 GetPosition() const;
@@ -55,4 +61,5 @@ public:
 
 	int getVertexCount() const;
 };
+
 
