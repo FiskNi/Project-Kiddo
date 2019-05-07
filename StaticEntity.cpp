@@ -9,6 +9,11 @@ StaticEntity::StaticEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned
 
 }
 
+StaticEntity::StaticEntity(Loader* inLoader, unsigned int index, unsigned int matID) : Entity(inLoader, index, matID)
+{
+
+}
+
 StaticEntity::~StaticEntity()
 {
 

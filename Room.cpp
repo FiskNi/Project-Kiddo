@@ -546,8 +546,8 @@ void Room::LoadEntities(std::vector<Material> materials)
 
 	// Loader for the box meshes
 	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
-	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
-	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
+	//RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
+	RigidEntity cubeEntity(&boxLoader, 0, materials[0].getMaterialID());
 
 	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
@@ -557,6 +557,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
+	
 	Loader level("Resources/Assets/GameReady/Rooms/level1[Culled]Fixed.meh");
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{

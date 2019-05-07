@@ -12,7 +12,8 @@
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
 //	Everything that defines current states and everything that gets transfered between rooms goes here.
-//	Examples are materials and the character, also other gamestate changes relevant to that level. (Currently relevant to the entire game itself since no additional levels).
+//	Examples are materials and the character, also other gamestate changes relevant to that level. 
+//						(Currently relevant to the entire game itself since no additional levels).
 //												
 //	*Right now there is no need for additional levels for the game project "Project Kiddo" though the usage
 //	 of the scene is still relevant.
@@ -41,7 +42,6 @@ private:
 	void LoadShaders();
 	void LoadMaterials();
 	void LoadCharacter();
-
 	void CompileMeshData();
 	
 	// Global world updates

@@ -2,16 +2,16 @@
 
 Mesh::Mesh(Vertex* vertArr, unsigned int nrOfVerticies)
 {
-	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->worldRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	ImportMesh(vertArr, nrOfVerticies);
 }
 
 Mesh::Mesh()
 {
-	this->worldPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->worldRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 Mesh::~Mesh()
@@ -463,57 +463,72 @@ unsigned int Mesh::getMaterialID() const
 
 glm::vec3 Mesh::GetPosition() const
 {
-	return this->worldPosition;
+	return this->position;
 }
 
 glm::vec3 Mesh::GetRotation() const
 {
-	return this->worldRotation;
+	return this->rotation;
 }
 
 void Mesh::setPosition(glm::vec3 newPos)
 {
-	worldPosition = newPos;
+	position = newPos;
 }
 
 void Mesh::setPosition(float x, float y, float z)
 {
-	worldPosition = glm::vec3(x, y, z);
+	position = glm::vec3(x, y, z);
 }
 
 void Mesh::setPositionX(float x)
 {
-	worldPosition.x = x;
+	position.x = x;
 }
 
 void Mesh::setPositionY(float y)
 {
-	worldPosition.y = y;
+	position.y = y;
 }
 
 void Mesh::setPositionZ(float z)
 {
-	worldPosition.z = z;
+	position.z = z;
+}
+
+void Mesh::SetRotation(glm::vec3 newRot)
+{
+	rotation = newRot;
 }
 
 void Mesh::SetRotation(float x, float y, float z)
 {
-	worldRotation = glm::vec3(x, y, z);
+	rotation = glm::vec3(x, y, z);
 }
 
 void Mesh::SetRotationX(float x)
 {
-	worldRotation.x = x;
+	rotation.x = x;
 }
 
 void Mesh::SetRotationY(float y)
 {
-	worldRotation.y = y;
+	rotation.y = y;
 }
 
 void Mesh::SetRotationZ(float z)
 {
-	worldRotation.z = z;
+	rotation.z = z;
+}
+
+void Mesh::SetScale(glm::vec3 newSca)
+{
+	scale = newSca;
+}
+
+void Mesh::SetScale(float x, float y, float z)
+{
+	scale = glm::vec3(x, y, z);
 }
 
 std::vector<vertexPolygon> Mesh::GetVertices()

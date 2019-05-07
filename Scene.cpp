@@ -1,11 +1,6 @@
 #include "Scene.h"
 
 
-
-
-
-
-
 //void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 //{
 //	Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
@@ -18,14 +13,21 @@
 
 Scene::Scene()
 {
+	Loader firstLoader("");
+
+	Loader character("");
+
 	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 	LoadShaders();
-	LoadMaterials();
+	LoadMaterials(&firstLoader);
 	LoadCharacter();
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
+
 	startingRoom = new Room(materials);
+
+
 
 	// Compiles all the meshdata of the scene for the renderer
 	CompileMeshData();
@@ -58,6 +60,7 @@ void Scene::LoadMaterials()
 	// Initialize materials and textures
 	// The constructor integer is the material id slot
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
+
 	Material planeMat("Plane Material", materials.size());
 	planeMat.createAlbedo("Resources/Textures/brickwall.jpg");
 	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
@@ -104,31 +107,38 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	//glfwSetKeyCallback(renderWindow, key_callback);
 
 	// Checks if ESC is pressed to switch the state between PLAYING and PAUSED
-	if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
+	{
 		keyPress = true;
-		if (callOnce != true) {
-			if (state == PAUSE) {
+		if (callOnce != true) 
+		{
+			if (state == PAUSE) 
 				state = PLAYING;		
-			}
-			else {
+			else 
 				state = PAUSE;
-			}
+
 			// Sets printOnce to false so the states will print PLAYING or PAUSED depending on active state
-			if (printOnce) {
+			if (printOnce)
 				printOnce = false;
-			}
+
 			// Sets callOnce to true so this function won't keep switching between PLAYING and PAUSE as ESC is held down
 			//		If this isn't used, the accuracy of tapping ESC will be unclear, and it might not switch states correctly.
 			callOnce = true;
 		}
 	}
-	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
+	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_RELEASE) 
+	{
 		keyPress = false;
 		// Reset callOnce to false once the key has been let go of
 		callOnce = false;
 	}
-	if (state == PLAYING) {
-		if (printOnce != true) {
+
+
+
+	if (state == PLAYING)
+	{
+		if (printOnce != true) 
+		{
 			std::cout << "PLAYING" << std::endl;
 			printOnce = true;
 		}
@@ -152,7 +162,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		{
 			startingRoom->GetRigids()[i].Update(deltaTime);
 		}
-
 		for (int i = 0; i < startingRoom->GetBridges().size(); i++)
 		{
 			startingRoom->GetBridges()[i].Update(deltaTime);
@@ -162,9 +171,13 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-	if (state == PAUSE) {
+
+
+	if (state == PAUSE) 
+	{
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
-		if (printOnce != true) {
+		if (printOnce != true) 
+		{
 			std::cout << "PAUSED" << std::endl;
 			printOnce = true;
 		}

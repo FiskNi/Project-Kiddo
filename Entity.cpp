@@ -22,17 +22,45 @@ Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) 
 	// Created a bounding box based on the entityMesh
 	InitBoundingBox();
 
+	position = glm::vec3(0.0f);
+	rotation = glm::vec3(0.0f);
+	scale = glm::vec3(0.0f);
+
 	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead
-	// This should in theory also cause the boundingbox center to always be at 0,0,0 local
+	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local
 	glm::vec3 worldPosition = boundingBoxCenter;
 	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
 	{
 		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -boundingBoxCenter);
 		entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
-		
 	}
 	InitBoundingBox();
 	entityMesh.setPosition(worldPosition);
+
+
+	SetMaterialID(matID);
+}
+
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->getVerticies(index), inLoader->getNrOfVerticies(index))
+{
+	// Created a bounding box based on the entityMesh
+	InitBoundingBox();
+
+	//position = inLoader.GetPosition(index);
+	//rotation = inLoader.GetRotation(index);
+	//scale = inLoader.GetScale(index);
+
+	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead
+	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local
+	glm::vec3 worldPosition = boundingBoxCenter;
+	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	{
+		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -boundingBoxCenter);
+		entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+	}
+	InitBoundingBox();
+	entityMesh.setPosition(worldPosition);
+
 	SetMaterialID(matID);
 }
 
@@ -223,4 +251,13 @@ void Entity::scaleBBY(float y)
 void Entity::setBBY(float y)
 {
 	boundingBoxSize.y = y;
+}
+
+void Entity::SetScale(float x, float y, float z)
+{
+	
+}
+
+void Entity::SetScale(glm::vec3)
+{
 }

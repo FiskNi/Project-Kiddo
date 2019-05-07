@@ -23,6 +23,7 @@ private:
 public:
 	RigidEntity(unsigned int i);
 	RigidEntity(Vertex * vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~RigidEntity();
 
 	void AddVelocity(float x, float y, float z);
