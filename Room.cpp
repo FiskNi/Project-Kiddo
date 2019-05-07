@@ -545,7 +545,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	//==========
 
 	// Loader for the box meshes
-	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/cube.meh");
+	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/GroupTest.meh");
 	RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
 	//cubeEntity.SetMaterialID(materials[0].getMaterialID());
 
@@ -562,7 +562,7 @@ void Room::LoadEntities(std::vector<Material> materials)
 	{
 		if (i != 11)
 		{
-			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[2].getMaterialID());
+			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[0].getMaterialID());
 			this->statics.push_back(levelEntity);
 		}
 	}

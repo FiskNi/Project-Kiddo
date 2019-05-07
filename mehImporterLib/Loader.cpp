@@ -35,22 +35,43 @@ Loader::Loader(std::string fileName)
 	// really reading the size of all it contains
 	// so if it has 2 ints that'd be 8 bytes.
 	//==========================================
-	
+
+
+	//binFile.read((char*)&this->meshCount, sizeof(int));
+	//std::cout << meshCount << std::endl;
+
 	//Mesh
-	binFile.read((char*)&this->meshCount, sizeof(unsigned int));
-	std::cout << "Mesh count: " << meshCount << std::endl;
-	binFile.read((char*)&this->materialCount, sizeof(unsigned int));
-	std::cout << "Material count: " << materialCount << std::endl;
+	binFile.read((char*)&this->fileHeader, sizeof(MehHeader));
+	std::cout
+		<< "meshCount: " << fileHeader.meshCount << std::endl
+		<< "groupCount: " << fileHeader.groupCount << std::endl
+		<< "materialCount: " << fileHeader.materialCount << std::endl
+		<< "pointLightCount: " << fileHeader.pointLightCount << std::endl
+		<< "dirLightCount: " << fileHeader.dirLightCount << std::endl;
 
 	//==========================================
 	// Size of file in bytes/length of file in chars.
 	// std::cout << aLength << std::endl;
 	//==========================================
-	this->mesh = new LoadedMesh[meshCount];
-	this->meshVert = new MeshVert[meshCount];
-	this->material = new PhongMaterial[materialCount];
+	this->meshGroup = new MeshGroup[fileHeader.groupCount ];
+	this->mesh = new LoadedMesh[fileHeader.meshCount];
+	this->meshVert = new MeshVert[fileHeader.meshCount];
+	this->material = new PhongMaterial[fileHeader.materialCount ];
 
-	for (int i = 0; i < meshCount; i++)
+	for (int i = 0; i < fileHeader.groupCount ; i++)
+	{
+		binFile.read((char*)&this->meshGroup[i], sizeof(MeshGroup));
+		std::cout
+			<< "Group Name: " << meshGroup[i].groupName << std::endl
+			<< "translation: " << meshGroup[i].translation << std::endl
+			<< "rotation: " << meshGroup[i].rotation << std::endl
+			<< "scale: " << meshGroup[i].scale << std::endl
+			<< "isChild: " << meshGroup[i].isChild << std::endl
+			<< "parent name: " << meshGroup[i].parentName << std::endl
+			<< "parent type: " << meshGroup[i].parentType << std::endl;
+	}
+
+	for (int i = 0; i < fileHeader.meshCount; i++)
 	{
 
 		binFile.read((char*)&this->mesh[i], sizeof(LoadedMesh));
@@ -66,7 +87,7 @@ Loader::Loader(std::string fileName)
 
 	}
 
-	for (int i = 0; i < materialCount; i++)
+	for (int i = 0; i < fileHeader.materialCount ; i++)
 	{
 		binFile.read((char*)&this->material[i], sizeof(PhongMaterial));
 	}
@@ -76,7 +97,7 @@ Loader::Loader(std::string fileName)
 
 Loader::~Loader()
 {
-	for (unsigned int i = 0; i < this->meshCount; i++)
+	for (unsigned int i = 0; i < this->fileHeader.meshCount; i++)
 	{
 		/*for (unsigned int j = 0; j < this->meshArr[i].nrOfMaterials; j++)
 		{
@@ -98,12 +119,12 @@ Loader::~Loader()
 
 int Loader::getHeader()
 {
-	return this->meshCount;
+	return this->fileHeader.meshCount;
 }
 
 int Loader::getNrOfMeshes()
 {
-	return this->meshCount;
+	return this->fileHeader.meshCount;
 }
 
 std::string Loader::getFileName()
@@ -121,14 +142,14 @@ int Loader::getNrOfVerticies(int meshID)
 	return this->mesh[meshID].vertexCount;
 }
 
-char* Loader::getAlbedo()const
+char* Loader::getAlbedo(int materialID)const
 {
-	return material->albedo;
+	return material[materialID].albedo;
 }
 
-char* Loader::getNormal()const
+char* Loader::getNormal(int materialID)const
 {
-	return material->normal;
+	return material[materialID].normal;
 }
 
 LoadedMesh Loader::getMesh(int meshID)
@@ -145,28 +166,3 @@ PhongMaterial * Loader::getAllMaterials(int meshID)
 {
 	return nullptr;
 }
-
-Texture Loader::getTexture(int meshID, int materialID, int textureID)
-{
-	//Just step through the textures triple array with given info.
-	return Texture();
-}
-
-//texture ** Loader::getAllTextures(int meshID)
-//{
-//	//texture** returnPtr;//This must be allocated to with this->materials[meshID][i].nrOfTextures
-//	//But that would require a bool variable or something for the destructor to destroy it. We can't destroy it here if we wanna use the array.
-//
-//	//returnPtr = new texture*[this->meshArr[meshID].nrOfMaterials]
-//
-//	for (unsigned int i = 0; i < this->meshArr[meshID].nrOfMaterials; i++)
-//	{
-//		//returnPtr[i] = new texture[his->materialArr[meshID][i].nrOfTextures]
-//		for (unsigned int j = 0; j < this->materialArr[meshID][i].nrOfTextures; j++)
-//		{
-//			//returnPtr[i][j] = textures[meshID][i][j];//this won't work right now as it has no allocated memory.
-//		}
-//	}
-//	//Should return the returnPtr
-//	return nullptr;
-//}
