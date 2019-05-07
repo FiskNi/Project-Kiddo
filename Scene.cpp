@@ -17,19 +17,7 @@ Scene::Scene()
 
 	Loader character("");
 
-
-
-//void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
-//{
-//	Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
-//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-//		scene->press();
-//	}
-//}
-
-Scene::Scene()
-{
-	//state = 1;
+	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 
 	Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
@@ -139,6 +127,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
 	//glfwSetKeyCallback(renderWindow, key_callback);
 
+	// Checks if ESC is pressed to switch the state between PLAYING and PAUSED
 	if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
 	{
 		keyPress = true;
