@@ -37,7 +37,7 @@ class Room
 {
 private:
 	void LoadLights();
-	void LoadEntities(std::vector<Material> materials, Loader &level);
+	void LoadEntities(std::vector<Material> materials, Loader& level);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
 	void PlayerRigidCollision(Character* playerCharacter);
@@ -95,7 +95,7 @@ public:
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
-	void BridgeUpdates(GLFWwindow * renderWindow);
+	void BridgeUpdates(GLFWwindow* renderWindow);
 
 	void destroyRoom();
 

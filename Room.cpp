@@ -529,7 +529,7 @@ void Room::LoadLights()
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials, Loader &level)
+void Room::LoadEntities(std::vector<Material> materials, Loader& level)
 {
 	// =================================================================================== //
 	//               Index of meshes in scene "level1[Culled]Fixed.meh					   //
