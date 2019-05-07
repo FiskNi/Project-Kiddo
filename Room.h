@@ -37,7 +37,7 @@ class Room
 {
 private:
 	void LoadLights();
-	void LoadEntities(std::vector<Material> materials);
+	void LoadEntities(std::vector<Material> materials, Loader &level);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
 	void PlayerRigidCollision(Character* playerCharacter);
@@ -78,7 +78,7 @@ private:
 	Camera* roomCamera;
 
 public:
-	Room(std::vector<Material> materials);
+	Room(std::vector<Material> materials, Loader &aLoader);
 	~Room();
 
 	std::vector<Light>& GetPointLights() { return pointLights; }
@@ -95,6 +95,8 @@ public:
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
 	void BridgeUpdates(GLFWwindow * renderWindow);
+
+	void destroyRoom();
 
 
 

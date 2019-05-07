@@ -36,6 +36,7 @@ private:
 	void LoadShaders();
 	void LoadMaterials();
 	void LoadCharacter();
+	void LoadLevels();
 
 	void CompileMeshData();
 	
@@ -57,7 +58,9 @@ private:
 	std::vector<Material> materials;
 
 	// Rooms
-	Room* startingRoom;
+	std::vector<Room *> rooms;
+
+	unsigned int roomNr;
 
 	// Character
 	Character playerCharacter;
@@ -67,16 +70,17 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const { return startingRoom->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return startingRoom->GetDirectionalLights(); }
+	std::vector<Light> GetPointLights() const { return rooms[0]->GetPointLights(); }
+	std::vector<DirectionalLight> GetDirectionalLights() const { return rooms[0]->GetDirectionalLights(); }
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
 	void SetState() { this->press(); }
-	Camera GetCamera() const { return *(startingRoom->GetCamera()); }
+	Camera GetCamera() const { return *(rooms[0]->GetCamera()); }
 
 	void Update(GLFWwindow* renderWindow, float deltaTime);
+	void SwitchRoom();
 
 
 };

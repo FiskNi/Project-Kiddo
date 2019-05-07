@@ -2,10 +2,10 @@
 
 
 
-Room::Room(std::vector<Material> materials)
+Room::Room(std::vector<Material> materials, Loader &aLoader)
 {
 	LoadLights();
-	LoadEntities(materials);
+	LoadEntities(materials, aLoader);
 	LoadPuzzleNode(materials);
 
 
@@ -440,6 +440,11 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 	}
 }
 
+void Room::destroyRoom()
+{
+	delete roomCamera;
+}
+
 
 //=============================================================
 //	Compiles mesh data for the renderer
@@ -521,7 +526,7 @@ void Room::LoadLights()
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials)
+void Room::LoadEntities(std::vector<Material> materials, Loader &level)
 {
 	// =================================================================================== //
 	//               Index of meshes in scene "level1[Culled]Fixed.meh					   //
@@ -554,9 +559,10 @@ void Room::LoadEntities(std::vector<Material> materials)
 	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
 	rigids.push_back(cubeEntity);
 
-	Loader level("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	//Loader level(levelPath);
 	for (int i = 0; i < level.getNrOfMeshes(); i++)
 	{
+		//Custom attributes to be detected here before pushed into the appropriate category?
 		if (i != 11)
 		{
 			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[2].getMaterialID());
