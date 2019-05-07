@@ -83,7 +83,7 @@ public:
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
 	//void SetState() { this->press(); }
-	Camera GetCamera() const { return *(startingRoom->GetCamera()); }
+	Camera GetCamera() const { return *(rooms[0]->GetCamera()); }
 
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void SwitchRoom();

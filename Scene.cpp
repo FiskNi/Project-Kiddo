@@ -13,16 +13,16 @@
 
 Scene::Scene()
 {
-	Loader firstLoader("");
+	//Loader firstLoader("");
 
-	Loader character("");
+	//Loader character("");
 
 	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 
 	Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 	LoadShaders();
-	LoadMaterials(&firstLoader);
+	LoadMaterials();
 	LoadCharacter();
 	LoadLevels();
 
@@ -154,7 +154,16 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		callOnce = false;
 	}
 
+	if (glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
+	{
+		keyPress = true;
+		SwitchRoom();
 
+	}
+
+	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_RELEASE) {
+		keyPress = false;
+	}
 
 	if (state == PLAYING)
 	{
@@ -227,7 +236,7 @@ void Scene::SwitchRoom()
 		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 		rooms[1] = new Room(materials, temp);
 	}
-	playerCharacter.SetPosition(playerCharacter.GetStartPosition());
+	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
 
 	this->roomNr += 1;
 }

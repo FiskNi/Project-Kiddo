@@ -32,7 +32,7 @@ public:
 	void ImportMesh(Vertex* verticies, int nrOfVerticies);
 
 	void CalculateTangents();
-	
+
 	void setMaterial(unsigned int texID);
 
 	void setPosition(glm::vec3 newPos);
@@ -61,4 +61,5 @@ public:
 
 	int getVertexCount() const;
 };
+
 

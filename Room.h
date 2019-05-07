@@ -51,9 +51,6 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
-	//void 
-
-	bool isRoomCompleted;
 
 
 	// Object list for the render queue
@@ -79,6 +76,8 @@ private:
 	// Camera
 	Camera* roomCamera;
 
+	bool isRoomCompleted;
+
 public:
 	Room(std::vector<Material> materials, Loader &aLoader);
 	~Room();
@@ -93,8 +92,6 @@ public:
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
-
-	bool GetIsRoomCompleted() const { return isRoomCompleted; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 

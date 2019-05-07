@@ -7,7 +7,7 @@ Room::Room(std::vector<Material> materials, Loader &aLoader)
 	LoadLights();
 	LoadEntities(materials, aLoader);
 	LoadPuzzleNode(materials);
-
+	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;

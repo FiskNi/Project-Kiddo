@@ -58,7 +58,6 @@ public:
 	float GetVelocityY() const { return velocity.y; }
 	float GetVelocityZ() const { return velocity.z; }
 	glm::vec3 GetSavedPos() const { return savedPos; }
-	glm::vec3 GetStartPosition() const { return startPos; }
 
 	float GetGroundLevel() const { return groundLevel; }
 	bool IsColliding() const { return collision; }
@@ -66,4 +65,3 @@ public:
 	bool IsHeld() const { return held; }
 
 };
-
