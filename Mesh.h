@@ -23,6 +23,7 @@ private:
 
 public:
 	Mesh(Vertex* vertArr, unsigned int nrOfVerticies);
+	Mesh(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int materialID);
 	Mesh();
 	~Mesh();
 

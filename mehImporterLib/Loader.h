@@ -9,39 +9,27 @@ class Loader
 private:
 	std::string fileName;
 	MehHeader fileHeader;
-	MeshGroup * meshGroup;
-	PhongMaterial * material;
-	MeshVert * meshVert;
-	LoadedMesh * mesh;
-	MeshHolder * meshHolder;
-	//material * materialArr;
-	//material ** materialArr;
-
-	int meshCount;
-	int groupCount;
-	int materialCount;
-	int pointLightCount;
-	int dirLightCount;
-
+	MeshGroup* meshGroup;
+	PhongMaterial* material;
+	MeshVert* meshVert;
+	LoaderMesh* mesh;
 
 public:
 	Loader(std::string fileName);
 	~Loader();
 
-	int getHeader();
-	int getNrOfMeshes();
-	std::string getFileName();
+	int GetHeader() { return fileHeader.meshCount; }
+	int GetMeshCount() { return fileHeader.meshCount; }
+	std::string GetFileName() { return fileName; }
 
-	Vertex *getVerticies(int meshID);
-	int getNrOfVerticies(int meshID);
+	Vertex *GetVerticies(int meshID) { return meshVert[meshID].vertices; }
+	int GetVertexCount(int meshID) { return mesh[meshID].vertexCount; }
 
-	char* getAlbedo(int materialID)const;
-	char* getNormal(int materialID)const;
-	MehHeader GetMeshData(int index) const;
-
-
-	//Stubs. Yet unimplemented. Where meshID is the meshes position in the array.
-	LoadedMesh getMesh(int meshID);
-	PhongMaterial getMaterial(int meshID, int materialID);
-	PhongMaterial * getAllMaterials(int meshID);
+	// New, remove above when implemented
+	LoaderMesh GetMesh(int index) const { return mesh[index]; }
+	int GetType(int index) const { return mesh[index].type; }
+	int GetLink(int index) const { return mesh[index].link; }
+	
+	PhongMaterial GetMaterial(int index) const { return material[index]; }
+	int GetMaterialCount() const { return fileHeader.materialCount; }
 };

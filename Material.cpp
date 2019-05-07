@@ -8,7 +8,9 @@ Material::Material(char* name, unsigned int id)
 	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;
-	hasNormalmap = 0;
+
+	hasAlbedoMap = 0;
+	hasNormalMap = 0;
 
 	this->ambient = glm::vec3(0);
 	this->diffuse = glm::vec3(0);
@@ -22,7 +24,7 @@ Material::Material(PhongMaterial material, unsigned int id)
 	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;
-	hasNormalmap = 0;
+	hasNormalMap = 0;
 	for (int i = 0; i < 3; i++)
 		this->ambient[i] = material.ambient[i];
 	for (int i = 0; i < 3; i++)
@@ -32,7 +34,6 @@ Material::Material(PhongMaterial material, unsigned int id)
 	for (int i = 0; i < 3; i++)
 		this->emissive[i] = material.emissive[i];
 	this->opacity = material.opacity;
-
 
 	createAlbedo(material.albedo);
 	createNormal(material.normal);
@@ -67,9 +68,12 @@ void Material::createAlbedo(std::string path)
 		//Function arguments:  | Target | Mipmap | Image format | Width | Height | Legacy, need to be 0 | Format | Data type | Image data |
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widht, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		hasAlbedoMap = true;
 	}
 	else
 		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
+
 	stbi_image_free(data);
 }
 
@@ -98,13 +102,12 @@ void Material::createNormal(std::string path)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widht, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-		hasNormalmap = true;
+		hasNormalMap = true;
 	}
 	else
 		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
+
 	stbi_image_free(data);
-
-
 }
 
 

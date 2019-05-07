@@ -13,35 +13,22 @@
 
 Scene::Scene()
 {
-	//Loader firstLoader("");
-
-	//Loader character("");
 
 	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 
-	Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
 	LoadShaders();
-	LoadMaterials();
+	LoadMaterials(&startingRoom);
 	LoadCharacter();
 	LoadLevels();
 
-	//Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-	//Loader temp2("Resources/Assets/GameReady/InteractableObjects/cube.meh");
 
+	currentBuffer = 0;
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
-	this->roomNr = 0;
-	int nrOfRooms = 1;
-
-	Room * currRoom;
-	Room * nextRoom;
-
-	currRoom = new Room(materials, temp);
-	nextRoom = new Room(materials, temp);
-
-	rooms.push_back(currRoom);
-	rooms.push_back(nextRoom);
+	firstRoomBuffer = new Room(materials, &startingRoom);
+	secondRoomBuffer = new Room(materials, &startingRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
 	CompileMeshData();
@@ -49,10 +36,9 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (int i = 0; i < rooms.size(); i++)
-	{
-		delete rooms[i];
-	}
+
+	delete firstRoomBuffer;
+	delete secondRoomBuffer;
 }
 
 void Scene::LoadShaders()
@@ -72,7 +58,7 @@ void Scene::LoadShaders()
 	shaders.push_back(fsqShader);
 }
 
-void Scene::LoadMaterials()
+void Scene::LoadMaterials(Loader* inLoader)
 {
 	// Initialize materials and textures
 	// The constructor integer is the material id slot
@@ -96,12 +82,11 @@ void Scene::LoadMaterials()
 	nodeMat.createAlbedo("Resources/Textures/broken.png");
 	materials.push_back(nodeMat);
 
-	// New loaded materials
-	//for (int i = 0; i < loader.GetMaterialCount(); i++)
-	//{
-		//Material fillMat(loader.GetMaterial(i));
-		//materials.push_back(fillMat);
-	//}
+	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
+	{
+		Material fillMat(inLoader->GetMaterial(i), materials.size());
+		materials.push_back(fillMat);
+	}
 
 }
 
@@ -120,11 +105,13 @@ void Scene::LoadLevels()
 
 void Scene::CompileMeshData()
 {
-	// Fills the "meshes" vector with all the mesh data (primitive)
-	rooms[0]->CompileMeshData();
+	// Compile the mesh data of the first room
 	meshes.clear();
 
-	meshes = rooms[0]->GetMeshData();
+	firstRoomBuffer->CompileMeshData();
+	meshes = firstRoomBuffer->GetMeshData();
+
+	// Compile character data
 	meshes.push_back(playerCharacter.GetMeshData());
 }
 
@@ -194,18 +181,18 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// First update
 		playerCharacter.Update(deltaTime);
 
-		rooms[0]->Update(&playerCharacter, renderWindow, deltaTime);
+		firstRoomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Update the scene
 		//playerCharacter.Update(deltaTime);
-		for (int i = 0; i < rooms[0]->GetRigids().size(); i++)
+		for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
 		{
-			rooms[0]->GetRigids()[i].Update(deltaTime);
+			firstRoomBuffer->GetRigids()[i].Update(deltaTime);
 		}
 
-		for (int i = 0; i < rooms[0]->GetBridges().size(); i++)
+		for (int i = 0; i < firstRoomBuffer->GetBridges().size(); i++)
 		{
-			rooms[0]->GetBridges()[i].Update(deltaTime);
+			firstRoomBuffer->GetBridges()[i].Update(deltaTime);
 		}
 
 
@@ -227,7 +214,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 void Scene::SwitchRoom()
 {
-	delete rooms[0];
+	/*delete rooms[0];
 
 	rooms[0] = rooms[1];
 	if (roomNr == 0)
@@ -247,7 +234,7 @@ void Scene::SwitchRoom()
 	}
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
 
-	this->roomNr += 1;
+	this->roomNr += 1;*/
 }
 
 //=============================================================
@@ -259,11 +246,11 @@ void Scene::Gravity()
 	const float gravity = -2.283;
 
 	// Entity boxes
-	for (int i = 0; i < rooms[0]->GetRigids().size(); i++)
+	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
 	{	
-		if (!rooms[0]->GetRigids()[i].IsGrounded())
+		if (!firstRoomBuffer->GetRigids()[i].IsGrounded())
 		{
-			rooms[0]->GetRigids()[i].AddVelocityY(gravity);
+			firstRoomBuffer->GetRigids()[i].AddVelocityY(gravity);
 		}
 	}
 

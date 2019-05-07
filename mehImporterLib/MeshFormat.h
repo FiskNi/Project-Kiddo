@@ -53,7 +53,7 @@ struct MeshVert
 	Vertex* vertices;
 };
 
-struct LoadedMesh
+struct LoaderMesh
 {
 	char name[256];
 	char materialName[256];
@@ -69,43 +69,5 @@ struct LoadedMesh
 	int type;
 	int link;
 
-	unsigned int vertexCount;
+	int vertexCount;
 };
-
-struct MeshHolder
-{
-	char name[256];
-	char materialName[256];
-	//vector<MeshHolder> children;
-
-	// Might make this into a vector
-	//vector<Vertex> vertices;
-	unsigned int vertexCount;
-	Vertex* vertices;
-
-	int type;
-	int link;
-
-	// Constructor that may not be needed
-	MeshHolder()
-	{
-		vertices = nullptr;
-	}
-};
-
-struct Texture
-{
-	//What material this texture is connected to.
-	int MatIndex;
-	//What index in a materials array of textures this texture belongs to.
-	int texID;
-	unsigned char textureName[256];
-};
-
-struct LightSource
-{
-	float pos[3];
-	float direction[3];
-};
-
-

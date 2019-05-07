@@ -25,6 +25,8 @@ class Entity
 {
 private:
 	Mesh entityMesh;
+
+	string name;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
@@ -84,8 +86,8 @@ public:
 	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }
 	glm::vec3 GetHitboxSize() const { return boundingBoxSize; }
 	glm::vec3 GetHitboxOffset() const { return boundingBoxCenter; }
-	float GetHitboxBottom() const { return GetPosition().y - boundingBoxSize.y; }
-	float GetHitboxTop() const { return GetPosition().y + boundingBoxSize.y; }
+	float GetHitboxBottom() const { return GetPosition().y - boundingBoxSize.y + boundingBoxCenter.y; }
+	float GetHitboxTop() const { return GetPosition().y + boundingBoxSize.y + boundingBoxCenter.y; }
 
 	float GetHitboxBottomOffsetBB() const { return GetHitboxOffset().y - boundingBoxSize.y; }
 	float GetHitboxTopOffsetBB() const { return GetHitboxOffset().y + boundingBoxSize.y; }

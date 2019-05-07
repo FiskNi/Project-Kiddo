@@ -39,16 +39,17 @@ out vec4 fragment_color;
 // this is a uniform value, the very same value for ALL pixel shader executions
 layout(location = 9) uniform vec3 camPos;
 layout(location = 10) uniform bool hasNormalmap;
+layout(location = 11) uniform bool hasAlbedoMap;
 
 // Texture inputs 
 uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 
-layout(location = 11) uniform vec3 ambient;
-layout(location = 12) uniform vec3 diffuse;
-layout(location = 13) uniform vec3 specular;
-layout(location = 14) uniform vec3 emissive;
+layout(location = 12) uniform vec3 matAmbient;
+layout(location = 13) uniform vec3 matDiffuse;
+layout(location = 14) uniform vec3 matSpecular;
+layout(location = 15) uniform vec3 matEmissive;
 
 #define NR_P_LIGHTS 6
 uniform PointLight pointLights[NR_P_LIGHTS];
@@ -57,8 +58,19 @@ uniform DirectionalLight dirLight;
 vec3 CalculatePointLight(PointLight light, vec3 pixelPos, vec3 aNormal, vec3 viewDir);
 vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 
-void main () {
-	vec4 diffuse = texture(diffuseTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
+void main () 
+{
+	vec4 diffuse = vec4(0);
+
+	if (hasAlbedoMap)
+	{
+		diffuse = texture(diffuseTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
+	}
+	else
+	{
+		diffuse = vec4(matAmbient, 1.0f);
+	}
+	
 	vec3 normal = normalize(fsInput.normal);
 
 	if (hasNormalmap)

@@ -41,25 +41,24 @@ Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) 
 	SetMaterialID(matID);
 }
 
-Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->getVerticies(index), inLoader->getNrOfVerticies(index))
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
 {
 	// Created a bounding box based on the entityMesh 
-	InitBoundingBox();
+	LoaderMesh temp = inLoader->GetMesh(index);
+	name = inLoader->GetMesh(index).name;
 
-	//position = inLoader.GetPosition(index); 
-	//rotation = inLoader.GetRotation(index); 
-	//scale = inLoader.GetScale(index); 
+	position = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
+	rotation = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
+	scale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
 
-	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
-	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
-	glm::vec3 worldPosition = boundingBoxCenter;
 	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
 	{
-		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -boundingBoxCenter);
-		entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+		//glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -position);
+		//entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
 	}
 	InitBoundingBox();
-	entityMesh.setPosition(worldPosition);
+
+	entityMesh.setPosition(position);
 
 	SetMaterialID(matID);
 }

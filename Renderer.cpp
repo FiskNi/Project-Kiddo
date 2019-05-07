@@ -118,10 +118,11 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	int shadow_matrix = 8;
 	int cam_pos = 9;
 	int has_normal = 10;
-	int ambient = 11;
-	int diffuse = 12;
-	int specular = 13;
-	int emissive = 14;
+	int has_albedo = 11;
+	int ambient = 12;
+	int diffuse = 13;
+	int specular = 14;
+	int emissive = 15;
 
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
@@ -160,6 +161,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
+		glUniform1ui(has_albedo, materials[objects[i].getMaterialID()].hasAlbedo());
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 

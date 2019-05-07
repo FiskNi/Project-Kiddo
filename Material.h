@@ -27,7 +27,8 @@ private:
 	GLuint albedo;
 	GLuint normal;
 
-	bool hasNormalmap;
+	bool hasAlbedoMap;
+	bool hasNormalMap;
 
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
@@ -49,7 +50,8 @@ public:
 	// For the renderer only
 	GLuint getAlbedo() const { return albedo; }
 	GLuint getNormal() const { return normal; }
-	bool hasNormal() const { return hasNormalmap; }
+	bool hasAlbedo() const { return hasAlbedoMap; }
+	bool hasNormal() const { return hasNormalMap; }
 
 	glm::vec3 getAmbient() const { return ambient; }
 	glm::vec3 getDiffuse() const { return diffuse; }

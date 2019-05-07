@@ -8,6 +8,14 @@ Mesh::Mesh(Vertex* vertArr, unsigned int nrOfVerticies)
 	ImportMesh(vertArr, nrOfVerticies);
 }
 
+Mesh::Mesh(Vertex * vertArr, unsigned int nrOfVerticies, unsigned int materialID)
+{
+	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->materialID = materialID;
+	ImportMesh(vertArr, nrOfVerticies);
+}
+
 Mesh::Mesh()
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);

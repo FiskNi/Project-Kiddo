@@ -30,7 +30,7 @@ RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matI
 {
 	startPos = GetPosition();
 	savedPos = startPos;
-	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
+	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	collision = false;
 	grounded = false;
 	groundLevel = 0.0f;

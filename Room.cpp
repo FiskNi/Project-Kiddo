@@ -2,7 +2,7 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader &aLoader)
+Room::Room(std::vector<Material> materials, Loader* aLoader)
 {
 	LoadLights();
 	LoadEntities(materials, aLoader);
@@ -50,7 +50,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
-	if (plates[0].isPressed())
+	/*if (plates[0].isPressed())
 	{
 		bridges[0].Extend();		
 	}
@@ -75,7 +75,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	else
 	{
 		bridges[2].Retract();
-	}
+	}*/
 
 }
 
@@ -454,7 +454,13 @@ void Room::destroyRoom()
 //=============================================================
 void Room::CompileMeshData()
 {
+	// NEEDS TO BE CHANGED SO THE VECTOR DOESNT REALLOCATED ALL THE TIME
 	meshes.clear();
+
+	for (int i = 0; i < roomMeshes.size(); i++)
+	{
+		meshes.push_back(roomMeshes[i]);
+	}
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -529,19 +535,8 @@ void Room::LoadLights()
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials, Loader& level)
+void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 {
-	// =================================================================================== //
-	//               Index of meshes in scene "level1[Culled]Fixed.meh					   //
-	// ----------------------------------------------------------------------------------- //
-	// 0. doorLeft		| 5. platformMain		| 10. platformSwitch	  | 15. wallLeft   //
-	// 1. doorGoal		| 6. plarformEntrance   | 11. drawBridge		  | 16. wallVoid   //
-	// 2. platformGoal  | 7. cube1				| 12. doorEntrance		  |                //
-	// 3. switch1       | 8. cube2				| 13. platformPressurePad |				   //
-	// 4. doorRight	    | 9. pressurePad1		| 14. wallRight			  |				   //
-	// ----------------------------------------------------------------------------------- //
-	// =================================================================================== //
-
 
 	//==========
 	// Entity loading will be changed to take in custom attributes and base what is loaded into the room on these
@@ -549,81 +544,108 @@ void Room::LoadEntities(std::vector<Material> materials, Loader& level)
 	// The pipeline needs to be looked over in general to determine how things will load and be created
 	//==========
 
-	// Loader for the box meshes
-	Loader boxLoader("Resources/Assets/GameReady/InteractableObjects/GroupTest.meh");
-	//RigidEntity cubeEntity(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), materials[0].getMaterialID());
-	RigidEntity cubeEntity(&boxLoader, 0, materials[0].getMaterialID());
-
-	cubeEntity.SetPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
-	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 4.0f, 3.0f));
-	rigids.push_back(cubeEntity);
-
-	cubeEntity.SetPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
-	cubeEntity.SetStartPosition(glm::vec3(-8.0f, 5.0f, 5.0f));
-	rigids.push_back(cubeEntity);
-
-	//Loader level(levelPath);
-	for (int i = 0; i < level.getNrOfMeshes(); i++)
+	for (int i = 0; i < level->GetMeshCount(); i++)
 	{
 		//Custom attributes to be detected here before pushed into the appropriate category?
-		if (i != 11)
+		switch (level->GetType(i))
 		{
-			StaticEntity levelEntity(level.getVerticies(i), level.getNrOfVerticies(i), materials[0].getMaterialID());
-			this->statics.push_back(levelEntity);
+		case 0:		// Mesh
+			{
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				roomMeshes.push_back(mesh);
+			}
+			break;
+		case 1:		// Mesh
+			{
+				//Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				//roomMeshes.push_back(mesh);
+			}
+			break;
+
+		case 2:		// Static
+			{
+				StaticEntity levelEntity(level, i, materials[0].getMaterialID());
+				statics.push_back(levelEntity);
+			}
+			break;
+
+		case 3:		// Rigid
+			{
+				RigidEntity cubeEntity(level, i, materials[0].getMaterialID());
+				rigids.push_back(cubeEntity);
+			}
+			break;
+
+		case 4:		// Bridge
+			{
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				roomMeshes.push_back(mesh);
+			}
+			break;
+
+		case 5:		// DrawBridge
+			{
+				BridgeEntity bridgeEntity(level, i, materials[2].getMaterialID());
+				// Needs to be looked over, might need values from maya
+				bridgeEntity.SetExtendingBackwardZ();
+				bridgeEntity.SetExtendDistance(4.2f);
+				bridges.push_back(bridgeEntity);
+			}
+			break;
+
+		case 6:		// Button
+			{
+				Button button;
+				button.SetMaterialID(materials[0].getMaterialID());
+				button.scaleBB(2);
+				buttons.push_back(button);
+			}
+			break;
+
+		case 7:		// Presure Plate
+			{
+				PressurePlate pPlate;
+				pPlate.SetMaterialID(materials[1].getMaterialID());
+				pPlate.setBBY(2.0f);
+				pPlate.scaleBB(2.0f);
+				plates.push_back(pPlate);
+			}
+			break;
+
+		case 8:		// Character
+			break;
+
+		case 9:		// Door
+			{
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				roomMeshes.push_back(mesh);
+			}
+			break;
+
+		case 10:	// Plushie
+			break;
+
+		case 11:	// Light
+			break;
+
+		case 12:	// Collectible
+			break;
+
+		case 13:	// Box holder
+			{
+				boxHolder boxHolderEntity(level, i, materials[0].getMaterialID(), materials[0].getMaterialID());
+				boxHolderEntity.puntBox();
+				this->holders.push_back(boxHolderEntity);
+			}
+			break;
+
+		default:
+			break;
 		}
-	}
 
-	boxHolder newBox(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), 
-		materials[0].getMaterialID(), materials[0].getMaterialID());
-	newBox.SetMaterialID(materials[0].getMaterialID());
-	newBox.SetBoxHolderPosition(glm::vec3(5, -1, 0));
-	newBox.puntBox();
-	this->holders.push_back(newBox);
-
-	boxHolder box2(boxLoader.getVerticies(0), boxLoader.getNrOfVerticies(0), 
-		materials[0].getMaterialID(), materials[0].getMaterialID());
-	box2.SetMaterialID(materials[0].getMaterialID());
-	box2.SetBoxHolderPosition(glm::vec3(7,-1,0));
-	box2.puntBox();
-	this->holders.push_back(box2);
-
-
-	BridgeEntity bridge0(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
-	bridge0.SetRestPosition(-5.0f, bridge0.GetPosition().y, 16.5f);
-	bridge0.SetExtendingBackwardZ();
-	bridge0.SetExtendDistance(4.2f);
-	bridges.push_back(bridge0);
-
-	BridgeEntity bridge1(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
-	bridge1.SetExtendingBackwardX();
-	bridge1.SetExtendDistance(4.2f);
-	bridges.push_back(bridge1);
-
-	BridgeEntity bridge2(level.getVerticies(11), level.getNrOfVerticies(11), materials[2].getMaterialID());
-	bridge2.SetRestPosition(-5.0f, bridge2.GetPosition().y, -9.0f);
-	bridge2.SetExtendingForwardZ();
-	bridge2.SetExtendDistance(4.2f);
-	bridges.push_back(bridge2);
-
-	PressurePlate plate0;
-	plate0.SetMaterialID(materials[1].getMaterialID());
-	plate0.SetPosition(glm::vec3(-2.0f, 0.5f, 9.5f));
-	plate0.setBBY(2.0f);
-	plate0.scaleBB(2.0f);
-	plates.push_back(plate0);
-
-	PressurePlate plate1;
-	plate1.SetMaterialID(materials[1].getMaterialID());
-	plate1.SetPosition(glm::vec3(-2.0f, 0.5f, 16.0f));
-	plate1.setBBY(2.0f);
-	plate1.scaleBB(2.0f);
-	plates.push_back(plate1);
 	
-	Button button0;
-	button0.SetMaterialID(materials[0].getMaterialID());
-	button0.SetPosition(glm::vec3(10.0f, 1.4f, 1.0f));
-	button0.scaleBB(2);
-	buttons.push_back(button0);
+
+	}
 }
 
 //=============================================================

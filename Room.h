@@ -37,7 +37,7 @@ class Room
 {
 private:
 	void LoadLights();
-	void LoadEntities(std::vector<Material> materials, Loader& level);
+	void LoadEntities(std::vector<Material> materials, Loader* level);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
 	void PlayerRigidCollision(Character* playerCharacter);
@@ -55,6 +55,7 @@ private:
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
+	std::vector<Mesh> roomMeshes;
 
 	// Lights
 	std::vector<Light> pointLights;
@@ -79,7 +80,7 @@ private:
 	bool isRoomCompleted;
 
 public:
-	Room(std::vector<Material> materials, Loader &aLoader);
+	Room(std::vector<Material> materials, Loader* aLoader);
 	~Room();
 
 	std::vector<Light>& GetPointLights() { return pointLights; }
