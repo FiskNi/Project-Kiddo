@@ -16,6 +16,28 @@ Material::Material(char* name, unsigned int id)
 	this->emissive = glm::vec3(0);
 }
 
+Material::Material(PhongMaterial material, unsigned int id)
+{
+	this->name = material.name;
+	materialID = id;	// The ID to match with an object comes in with the constuctor
+	albedo = 0;
+	normal = 0;
+	hasNormalmap = 0;
+	for (int i = 0; i < 3; i++)
+		this->ambient[i] = material.ambient[i];
+	for (int i = 0; i < 3; i++)
+		this->diffuse[i] = material.diffuse[i];
+	for (int i = 0; i < 3; i++)
+		this->specular[i] = material.specular[i];
+	for (int i = 0; i < 3; i++)
+		this->emissive[i] = material.emissive[i];
+	this->opacity = material.opacity;
+
+
+	createAlbedo(material.albedo);
+	createNormal(material.normal);
+}
+
 
 Material::~Material()
 {

@@ -27,18 +27,18 @@ private:
 	GLuint albedo;
 	GLuint normal;
 
-
-
 	bool hasNormalmap;
 
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 	glm::vec3 emissive;
+	float opacity;
 
 
 public:
 	Material(char* name, unsigned int id);
+	Material(PhongMaterial material, unsigned int id);
 	~Material();
 
 	void createAlbedo(std::string path);

@@ -13,20 +13,15 @@
 
 Scene::Scene()
 {
-	Loader firstLoader("");
-
-	Loader character("");
-
 	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 	LoadShaders();
-	LoadMaterials(&firstLoader);
+	LoadMaterials();
 	LoadCharacter();
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
 
 	startingRoom = new Room(materials);
-
 
 
 	// Compiles all the meshdata of the scene for the renderer
@@ -61,6 +56,7 @@ void Scene::LoadMaterials()
 	// The constructor integer is the material id slot
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
 
+	// Hardcoded materials that will be moved
 	Material planeMat("Plane Material", materials.size());
 	planeMat.createAlbedo("Resources/Textures/brickwall.jpg");
 	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
@@ -77,6 +73,14 @@ void Scene::LoadMaterials()
 	Material nodeMat("Node Material", materials.size());
 	nodeMat.createAlbedo("Resources/Textures/broken.png");
 	materials.push_back(nodeMat);
+
+	// New loaded materials
+	//for (int i = 0; i < loader.GetMaterialCount(); i++)
+	//{
+		//Material fillMat(loader.GetMaterial(i));
+		//materials.push_back(fillMat);
+	//}
+
 }
 
 void Scene::LoadCharacter()

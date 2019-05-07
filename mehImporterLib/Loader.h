@@ -34,14 +34,11 @@ public:
 	Vertex *getVerticies(int meshID);
 	int getNrOfVerticies(int meshID);
 
+	MehHeader GetMeshData(int index) const;
+
 	char* getAlbedo()const;
 	char* getNormal()const;
 
-	//Stubs. Yet unimplemented. Where meshID is the meshes position in the array.
-	LoadedMesh getMesh(int meshID);
-	PhongMaterial getMaterial(int meshID, int materialID);
-	PhongMaterial * getAllMaterials(int meshID);
-	Texture getTexture(int meshID, int materialID, int textureID);
-	Texture ** getAllTextures(int meshID);
-
+	PhongMaterial GetMaterial(int i) const;
+	int GetMaterialCount() const;
 };

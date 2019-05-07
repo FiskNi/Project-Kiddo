@@ -111,7 +111,7 @@ std::string Loader::getFileName()
 	return this->fileName;
 }
 
-Vertex * Loader::getVerticies(int meshID)
+Vertex* Loader::getVerticies(int meshID)
 {
 	return this->meshVert[meshID].vertices;
 }
@@ -119,6 +119,11 @@ Vertex * Loader::getVerticies(int meshID)
 int Loader::getNrOfVerticies(int meshID)
 {
 	return this->mesh[meshID].vertexCount;
+}
+
+MehHeader Loader::GetMeshData(int index) const
+{
+
 }
 
 char* Loader::getAlbedo()const
@@ -131,42 +136,16 @@ char* Loader::getNormal()const
 	return material->normal;
 }
 
-LoadedMesh Loader::getMesh(int meshID)
+PhongMaterial Loader::GetMaterial(int i) const
 {
-	return LoadedMesh();
+	return material[i];
 }
 
-PhongMaterial Loader::getMaterial(int meshID, int materialID)
+int Loader::GetMaterialCount() const
 {
-	return PhongMaterial();
+	return materialCount;
 }
 
-PhongMaterial * Loader::getAllMaterials(int meshID)
-{
-	return nullptr;
-}
 
-Texture Loader::getTexture(int meshID, int materialID, int textureID)
-{
-	//Just step through the textures triple array with given info.
-	return Texture();
-}
 
-//texture ** Loader::getAllTextures(int meshID)
-//{
-//	//texture** returnPtr;//This must be allocated to with this->materials[meshID][i].nrOfTextures
-//	//But that would require a bool variable or something for the destructor to destroy it. We can't destroy it here if we wanna use the array.
-//
-//	//returnPtr = new texture*[this->meshArr[meshID].nrOfMaterials]
-//
-//	for (unsigned int i = 0; i < this->meshArr[meshID].nrOfMaterials; i++)
-//	{
-//		//returnPtr[i] = new texture[his->materialArr[meshID][i].nrOfTextures]
-//		for (unsigned int j = 0; j < this->materialArr[meshID][i].nrOfTextures; j++)
-//		{
-//			//returnPtr[i][j] = textures[meshID][i][j];//this won't work right now as it has no allocated memory.
-//		}
-//	}
-//	//Should return the returnPtr
-//	return nullptr;
-//}
+
