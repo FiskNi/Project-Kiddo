@@ -13,16 +13,35 @@
 
 Scene::Scene()
 {
+	//Loader firstLoader("");
+
+	//Loader character("");
+
 	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
+
+	Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 	LoadShaders();
 	LoadMaterials();
 	LoadCharacter();
+	LoadLevels();
+
+	//Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	//Loader temp2("Resources/Assets/GameReady/InteractableObjects/cube.meh");
+
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
+	this->roomNr = 0;
+	int nrOfRooms = 1;
 
-	startingRoom = new Room(materials);
+	Room * currRoom;
+	Room * nextRoom;
 
+	currRoom = new Room(materials, temp);
+	nextRoom = new Room(materials, temp);
+
+	rooms.push_back(currRoom);
+	rooms.push_back(nextRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
 	CompileMeshData();
@@ -30,7 +49,10 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	delete startingRoom;
+	for (int i = 0; i < rooms.size(); i++)
+	{
+		delete rooms[i];
+	}
 }
 
 void Scene::LoadShaders()
@@ -92,13 +114,17 @@ void Scene::LoadCharacter()
 	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
 }
 
+void Scene::LoadLevels()
+{
+}
+
 void Scene::CompileMeshData()
 {
 	// Fills the "meshes" vector with all the mesh data (primitive)
-	startingRoom->CompileMeshData();
+	rooms[0]->CompileMeshData();
 	meshes.clear();
 
-	meshes = startingRoom->GetMeshData();
+	meshes = rooms[0]->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
 }
 
@@ -137,7 +163,16 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		callOnce = false;
 	}
 
+	if (glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
+	{
+		keyPress = true;
+		SwitchRoom();
 
+	}
+
+	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_RELEASE) {
+		keyPress = false;
+	}
 
 	if (state == PLAYING)
 	{
@@ -159,16 +194,18 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// First update
 		playerCharacter.Update(deltaTime);
 
-		startingRoom->Update(&playerCharacter, renderWindow, deltaTime);
+		rooms[0]->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Update the scene
-		for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+		//playerCharacter.Update(deltaTime);
+		for (int i = 0; i < rooms[0]->GetRigids().size(); i++)
 		{
-			startingRoom->GetRigids()[i].Update(deltaTime);
+			rooms[0]->GetRigids()[i].Update(deltaTime);
 		}
-		for (int i = 0; i < startingRoom->GetBridges().size(); i++)
+
+		for (int i = 0; i < rooms[0]->GetBridges().size(); i++)
 		{
-			startingRoom->GetBridges()[i].Update(deltaTime);
+			rooms[0]->GetBridges()[i].Update(deltaTime);
 		}
 
 
@@ -188,6 +225,31 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 }
 
+void Scene::SwitchRoom()
+{
+	delete rooms[0];
+
+	rooms[0] = rooms[1];
+	if (roomNr == 0)
+	{
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+		rooms[1] = new Room(materials, temp);
+	}
+	else if (roomNr == 1)
+	{
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+		rooms[1] = new Room(materials, temp);
+	}
+	else
+	{
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+		rooms[1] = new Room(materials, temp);
+	}
+	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
+
+	this->roomNr += 1;
+}
+
 //=============================================================
 //	Applies basic gravity to the player and rooms
 //=============================================================
@@ -197,11 +259,11 @@ void Scene::Gravity()
 	const float gravity = -2.283;
 
 	// Entity boxes
-	for (int i = 0; i < startingRoom->GetRigids().size(); i++)
+	for (int i = 0; i < rooms[0]->GetRigids().size(); i++)
 	{	
-		if (!startingRoom->GetRigids()[i].IsGrounded())
+		if (!rooms[0]->GetRigids()[i].IsGrounded())
 		{
-			startingRoom->GetRigids()[i].AddVelocityY(gravity);
+			rooms[0]->GetRigids()[i].AddVelocityY(gravity);
 		}
 	}
 

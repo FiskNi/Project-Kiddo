@@ -1,11 +1,11 @@
-#include "Entity.h"
+#include "Entity.h" 
 
 
-Entity::Entity(unsigned int i) 
+Entity::Entity(unsigned int i)
 {
-	// This is where the mesh data is created
-	// Currently it creates either a primitive plane or cube
-	// This will be changed for a imported mesh
+	// This is where the mesh data is created 
+	// Currently it creates either a primitive plane or cube 
+	// This will be changed for a imported mesh 
 	if (i == 0)
 		entityMesh.CreatePlaneData();
 	else if (i == 1)
@@ -13,21 +13,21 @@ Entity::Entity(unsigned int i)
 	else if (i == 2)
 		entityMesh.CreatePlateData();
 
-	// Created a bounding box based on the entityMesh
+	// Created a bounding box based on the entityMesh 
 	InitBoundingBox();
 }
 
 Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : entityMesh(vertArr, nrOfVerticies)
 {
-	// Created a bounding box based on the entityMesh
+	// Created a bounding box based on the entityMesh 
 	InitBoundingBox();
 
 	position = glm::vec3(0.0f);
 	rotation = glm::vec3(0.0f);
 	scale = glm::vec3(0.0f);
 
-	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead
-	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local
+	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
+	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
 	glm::vec3 worldPosition = boundingBoxCenter;
 	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
 	{
@@ -43,15 +43,15 @@ Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) 
 
 Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->getVerticies(index), inLoader->getNrOfVerticies(index))
 {
-	// Created a bounding box based on the entityMesh
+	// Created a bounding box based on the entityMesh 
 	InitBoundingBox();
 
-	//position = inLoader.GetPosition(index);
-	//rotation = inLoader.GetRotation(index);
-	//scale = inLoader.GetScale(index);
+	//position = inLoader.GetPosition(index); 
+	//rotation = inLoader.GetRotation(index); 
+	//scale = inLoader.GetScale(index); 
 
-	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead
-	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local
+	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
+	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
 	glm::vec3 worldPosition = boundingBoxCenter;
 	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
 	{
@@ -169,7 +169,7 @@ bool Entity::CheckHolderCollision(Entity collidingCube)
 
 bool Entity::CheckInsideCollision(Entity AABB)
 {
-	if (   AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x
+	if (AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x
 		&& AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x
 		&& AABB.GetPositionBB().y + AABB.boundingBoxSize.y < this->GetPositionBB().y + boundingBoxSize.y
 		&& AABB.GetPositionBB().y - AABB.boundingBoxSize.y > this->GetPositionBB().y - boundingBoxSize.y
@@ -255,7 +255,7 @@ void Entity::setBBY(float y)
 
 void Entity::SetScale(float x, float y, float z)
 {
-	
+
 }
 
 void Entity::SetScale(glm::vec3)

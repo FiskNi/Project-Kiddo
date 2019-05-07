@@ -65,4 +65,3 @@ public:
 	bool IsHeld() const { return held; }
 
 };
-

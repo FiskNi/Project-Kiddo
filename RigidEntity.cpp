@@ -1,4 +1,4 @@
-#include "RigidEntity.h"
+#include "RigidEntity.h" 
 
 
 
@@ -112,48 +112,48 @@ void RigidEntity::AddRotationZ(float z)
 
 void RigidEntity::Update(float deltaTime)
 {
-	// Get the current position
+	// Get the current position 
 	glm::vec3 calculatedPosition = GetPosition();
 	calculatedPosition += velocity * deltaTime;
 
-	// Constant global friction
+	// Constant global friction 
 	const float friction = 0.8f;
 	if (grounded)
 		velocity *= friction;
 
-	if (fabsf(velocity.x) < 0.001f) 
+	if (fabsf(velocity.x) < 0.001f)
 		velocity.x = 0.0f;
 
-	if (fabsf(velocity.y) < 0.001f) 
+	if (fabsf(velocity.y) < 0.001f)
 		velocity.y = 0.0f;
-	
-	if (fabsf(velocity.z) < 0.001f) 
+
+	if (fabsf(velocity.z) < 0.001f)
 		velocity.z = 0.0f;
 
 	if (grounded)
 	{
-		// Hitbox center required further testing
+		// Hitbox center required further testing 
 		float bbBottom = GetHitboxSize().y;
 		float bbCenter = GetHitboxOffset().y;
 		velocity.y = 0.0f;
 		calculatedPosition.y = groundLevel + bbBottom - bbCenter;
 	}
 
-	// Move this entity
+	// Move this entity 
 	savedPos = GetPosition();
 	SetPosition(calculatedPosition);
 
-	// This has to be lower than the initial ground level or bad things happen
+	// This has to be lower than the initial ground level or bad things happen 
 	if (GetPosition().y < -3.0f)
 	{
 		ResetPos();
 	}
-	
+
 }
 
 void RigidEntity::ResetPos()
 {
-	SetPosition(startPos);	
+	SetPosition(startPos);
 	SetVelocity(0.0f, 1.0f, 1.0f);
 }
 
@@ -181,4 +181,3 @@ void RigidEntity::SetStartPosition(glm::vec3 pos)
 {
 	startPos = pos;
 }
-
