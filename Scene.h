@@ -76,6 +76,7 @@ private:
 	bool currentBuffer;
 	Room* firstRoomBuffer;
 	Room* secondRoomBuffer;
+	int roomNr;
 
 	// Character
 	Character playerCharacter;

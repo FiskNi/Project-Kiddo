@@ -39,6 +39,7 @@ Scene::Scene()
 	// Loads content | *Each function could return a bool incase of failure
 
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter();
@@ -49,7 +50,7 @@ Scene::Scene()
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
 	firstRoomBuffer = new Room(materials, &startingRoom);
-	secondRoomBuffer = new Room(materials, &startingRoom);
+	secondRoomBuffer = new Room(materials, &secondRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
 	CompileMeshData();
@@ -195,27 +196,27 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 void Scene::SwitchRoom()
 {
-	/*delete rooms[0];
+	delete firstRoomBuffer;
 
-	rooms[0] = rooms[1];
+	firstRoomBuffer = secondRoomBuffer;
 	if (roomNr == 0)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-		rooms[1] = new Room(materials, temp);
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else if (roomNr == 1)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-		rooms[1] = new Room(materials, temp);
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-		rooms[1] = new Room(materials, temp);
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		secondRoomBuffer = new Room(materials, &temp);
 	}
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
 
-	this->roomNr += 1;*/
+	this->roomNr += 1;
 }
 
 //=============================================================
