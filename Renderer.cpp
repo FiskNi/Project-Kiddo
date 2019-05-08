@@ -382,15 +382,11 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLui
 {
 	MODEL_MAT = glm::mat4(1.0f);
 
-
 	glm::mat4 rotationMatrix = glm::rotate(MODEL_MAT, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
 
-
 	MODEL_MAT = translationMatrix * rotationMatrix;
 }
-
-
 
 //=============================================================
 //	Used to activate and bind the generated texture.

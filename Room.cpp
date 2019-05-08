@@ -509,22 +509,22 @@ void Room::LoadLights()
 	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
-	light.setLightPos(glm::vec3(8.0f, 2.0f, -3.0f));
+	light.setLightPos(glm::vec3(1118.0f, 2.0f, -3.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(8.0f, 2.0f, 2.0f));
+	light.setLightPos(glm::vec3(1118.0f, 2.0f, 2.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(8.0f, 2.0f, 7.0f));
+	light.setLightPos(glm::vec3(1118.0f, 2.0f, 7.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-8.0f, 2.0f, -3.0f));
+	light.setLightPos(glm::vec3(-1118.0f, 2.0f, -3.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-8.0f, 2.0f, 2.0f));
+	light.setLightPos(glm::vec3(-1118.0f, 2.0f, 2.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-8.0f, 2.0f, 7.0f));
+	light.setLightPos(glm::vec3(-1118.0f, 2.0f, 7.0f));
 	pointLights.push_back(light);
 
 	DirectionalLight light2;

@@ -2,13 +2,13 @@
 
 DirectionalLight::DirectionalLight()
 {
-	this->lightPos = glm::vec3(4.0, 6.0, 2.0);
-	this->direction = glm::vec3(4.0, 6.0, 2.0);
+	this->lightPos = glm::vec3(0.0, 1.0, 0.0);
+	this->direction = glm::vec3(0.0, 1.0, 0.0);
 	this->diffuse = glm::vec3(1.0f, 0.82f, 0.6f);
 	this->specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
 	// Light strength
-	float str = 0.3f;
+	float str = 0.8f;
 	diffuse *= str;
 }
 
