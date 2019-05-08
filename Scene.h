@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Room.h"
+#include "Menu.h"
 #include "Character.h"
 #include "Camera.h"
 #include "BoxHoldEntity.h"
@@ -54,6 +55,7 @@ private:
 	void LoadLevels();
 
 	void CompileMeshData();
+	//void CompileMeshDataPauseMenu();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -92,10 +94,12 @@ public:
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
 	//void SetState() { this->press(); }
+	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(firstRoomBuffer->GetCamera()); }
 
-	void Update(GLFWwindow* renderWindow, float deltaTime);
+	void StateUpdate(GLFWwindow * renderWindow);
 	void SwitchRoom();
+	void Update(GLFWwindow* renderWindow, float deltaTime);
 
 
 };

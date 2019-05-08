@@ -52,6 +52,7 @@ public:
 
 	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, float gClearColour[]);
 	void secondPassRenderTemp(Shader gShaderProgram);
+	void secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint *pauseOverlayTexture);
 
 	void prePassRender(Shader gShaderProgram, 
 		std::vector<Mesh> objects, 

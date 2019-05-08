@@ -136,6 +136,16 @@ void Scene::CompileMeshData()
 	meshes.push_back(playerCharacter.GetMeshData());
 }
 
+//void Scene::CompileMeshDataPauseMenu()
+//{
+//	// Fills the "meshes" vector with all the mesh data (primitive)
+//	tempMenuRoom->CompileMeshData();
+//	meshes.clear();
+//
+//	meshes = tempMenuRoom->GetMeshData();
+//	//meshes.push_back(playerCharacter.GetMeshData());
+//}
+
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
@@ -148,11 +158,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		setUserPointer = true;
 	}
 
+	// Checks if ESC is pressed to switch the state between PLAYING and PAUSED
+	StateUpdate(renderWindow);
 
-	if (state == PLAYING)
-	{
-		if (printOnce != true) 
-		{
+	if (state == PLAYING) {
+		if (printOnce != true) {
 			std::cout << "PLAYING" << std::endl;
 			printOnce = true;
 		}
@@ -187,9 +197,19 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-	else 
-	{
-		//Add a pausemenu here
+	if (state == PAUSE) {
+		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
+		if (printOnce != true) {
+			std::cout << "PAUSED" << std::endl;
+			std::cout << "Press the numbers below to perform actions: " << std::endl;
+			std::cout << "1 - Resume" << std::endl;
+			//std::cout << "2 - Restart" << std::endl;
+			std::cout << "3 - Exit" << std::endl;
+			printOnce = true;
+		}
+
+		//CompileMeshDataPauseMenu();
+		CompileMeshData();
 	}
 }
 
@@ -216,6 +236,52 @@ void Scene::SwitchRoom()
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
 
 	this->roomNr += 1;*/
+}
+
+void Scene::StateUpdate(GLFWwindow * renderWindow)
+{
+	if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		keyPress = true;
+		if (callOnce != true) {
+			if (state == PAUSE) {
+				state = PLAYING;
+			}
+			else {
+				state = PAUSE;
+			}
+			// Sets printOnce to false so the states will print PLAYING or PAUSED depending on active state
+			if (printOnce) {
+				printOnce = false;
+			}
+			// Sets callOnce to true so this function won't keep switching between PLAYING and PAUSE as ESC is held down
+			//		If this isn't used, the accuracy of tapping ESC will be unclear, and it might not switch states correctly.
+			callOnce = true;
+		}
+	}
+	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
+		keyPress = false;
+		// Reset callOnce to false once the key has been let go of
+		callOnce = false;
+	}
+	if (state == PAUSE && glfwGetKey(renderWindow, GLFW_KEY_1) == GLFW_PRESS) {
+		// Resumes the game if pressed during the PAUSE state
+		state = PLAYING;
+		if (printOnce) {
+			printOnce = false;
+		}
+	}
+	if (state == PAUSE && glfwGetKey(renderWindow, GLFW_KEY_2) == GLFW_PRESS) {
+		// ****USE THIS TO RESTART LEVEL****
+		/*state = PLAYING;
+		if (printOnce) {
+			printOnce = false;
+		}*/
+	}
+	if (state == PAUSE && glfwGetKey(renderWindow, GLFW_KEY_3) == GLFW_PRESS) {
+		// Closes the window and exits the game
+		glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+
+	}
 }
 
 //=============================================================

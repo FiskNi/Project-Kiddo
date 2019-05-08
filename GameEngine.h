@@ -12,6 +12,7 @@
 #include "DirectionalLight.h"
 #include "puzzleNode.h"
 #include "Scene.h"
+#include "Menu.h"
 #define MAX_KEYS 1024
 class GameEngine
 {

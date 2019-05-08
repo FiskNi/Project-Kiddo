@@ -1,4 +1,6 @@
 ﻿  GameEngine.cpp
+  Menu.cpp
+  Renderer.cpp
   Scene.cpp
   main.cpp
   Generating Code...

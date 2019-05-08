@@ -69,6 +69,30 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
 }
 
+void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint *pauseOverlayTexture)
+{
+	// NOT WORKING PROPERLY RN
+	// first pass is done!
+	// now render a second pass
+	// bind default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(gShaderProgram.getShader());
+	glBindVertexArray(gShaderProgram.getVertexAttributes());
+	glDisable(GL_DEPTH_TEST);
+	// bind texture drawn in the first pass!
+	glActiveTexture(GL_TEXTURE0);
+
+	//gFboTextureAttachments[0] = pauseOverlayTexture;
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[0]);
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
+}
+
+
 
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
