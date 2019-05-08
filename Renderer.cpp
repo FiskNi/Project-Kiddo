@@ -69,6 +69,28 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
 }
 
+void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture)
+{
+
+	// Renders alternative Full Screen Quad to cover the screen with a Pause Screen Overlay
+	// bind default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(gShaderProgram.getShader());
+	glBindVertexArray(gShaderProgram.getVertexAttributes());
+	glDisable(GL_DEPTH_TEST);
+	// bind texture drawn in the first pass!
+	glActiveTexture(GL_TEXTURE0);
+	// Binds the pauseOverlayTexture instead of gFboTextureAttachments[0], this is the overlay texture
+	glBindTexture(GL_TEXTURE_2D, pauseOverlayTexture);
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, gFboTextureAttachments[1]);
+	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
+}
+
+
 
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.

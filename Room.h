@@ -81,6 +81,7 @@ private:
 
 public:
 	Room(std::vector<Material> materials, Loader* aLoader);
+	Room(std::vector<Material> materials, int state);
 	~Room();
 
 	std::vector<Light>& GetPointLights() { return pointLights; }

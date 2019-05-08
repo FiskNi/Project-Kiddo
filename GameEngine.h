@@ -12,6 +12,7 @@
 #include "DirectionalLight.h"
 #include "puzzleNode.h"
 #include "Scene.h"
+#include "Menu.h"
 #define MAX_KEYS 1024
 class GameEngine
 {
@@ -40,6 +41,10 @@ private:
 	// Main scene
 	Scene mainScene;
 	friend void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void roomSwitched();
+
+	// Main Menu
+	Menu mainMenu;
 
 public:
 	GameEngine();

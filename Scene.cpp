@@ -1,34 +1,76 @@
 #include "Scene.h"
 
 
-//void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
-//{
-//	Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
-//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-//		scene->press();
-//		scene->PauseMenu();
-//
-//	}
-//}
+void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
+
+	//IF PAUSED
+	if (scene->state == PAUSED) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			//UNPAUSE
+			scene->state = PLAYING;
+			std::cout << "PLAYING" << std::endl;
+		}
+			
+
+		if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+			//SWITCHES ROOM BUT ACTUALLY RESETS
+			scene->SwitchRoom();
+		}
+
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+			//RESUMES GAME
+			scene->state = PLAYING;
+			std::cout << "RESUME" << std::endl;
+		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+			//RESTART HERE
+			scene->SwitchRoom();
+			std::cout << "Restarting level" << std::endl;
+		}
+
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			//CLOSES WINDOW
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+
+	}
+	// IF PLAYING
+	else if (scene->state == PLAYING) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			//scene->CompileMeshDataPauseMenu();
+			scene->state = PAUSED;
+			std::cout << "PAUSED" << std::endl;
+			std::cout << "Press the numbers below to perform actions: " << std::endl;
+			std::cout << "1 - Resume" << std::endl;
+			std::cout << "2 - Restart" << std::endl;
+			std::cout << "3 - Exit" << std::endl;
+		}
+	}
+}
 
 Scene::Scene()
 {
 
-	state = 1;
+	//state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
+	//Loader startingRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter();
 	LoadLevels();
 
-
+	this->isSwitched = false;
 	currentBuffer = 0;
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
 	firstRoomBuffer = new Room(materials, &startingRoom);
-	secondRoomBuffer = new Room(materials, &startingRoom);
+	secondRoomBuffer = new Room(materials, &secondRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
 	CompileMeshData();
@@ -115,59 +157,30 @@ void Scene::CompileMeshData()
 	meshes.push_back(playerCharacter.GetMeshData());
 }
 
+//void Scene::CompileMeshDataPauseMenu()
+//{
+//	// Fills the "meshes" vector with all the mesh data (primitive)
+//	tempMenuRoom->CompileMeshData();
+//	meshes.clear();
+//
+//	meshes = tempMenuRoom->GetMeshData();
+//	//meshes.push_back(playerCharacter.GetMeshData());
+//}
+
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	//glfwSetKeyCallback(renderWindow, key_callback);
-
-	// Checks if ESC is pressed to switch the state between PLAYING and PAUSED
-	if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
-	{
-		keyPress = true;
-		if (callOnce != true) 
-		{
-			if (state == PAUSE) 
-				state = PLAYING;		
-			else 
-				state = PAUSE;
-
-			// Sets printOnce to false so the states will print PLAYING or PAUSED depending on active state
-			if (printOnce)
-				printOnce = false;
-
-			// Sets callOnce to true so this function won't keep switching between PLAYING and PAUSE as ESC is held down
-			//		If this isn't used, the accuracy of tapping ESC will be unclear, and it might not switch states correctly.
-			callOnce = true;
-		}
-	}
-	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_RELEASE) 
-	{
-		keyPress = false;
-		// Reset callOnce to false once the key has been let go of
-		callOnce = false;
+	if (!setUserPointer) {
+		glfwSetWindowUserPointer(renderWindow, this);
+		glfwSetKeyCallback(renderWindow, key_callback);
+		setUserPointer = true;
 	}
 
-	if (glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
-	{
-		keyPress = true;
-		SwitchRoom();
 
-	}
-
-	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_RELEASE) {
-		keyPress = false;
-	}
-
-	if (state == PLAYING)
-	{
-		if (printOnce != true) 
-		{
-			std::cout << "PLAYING" << std::endl;
-			printOnce = true;
-		}
+	if (state == PLAYING) {
 
 		Gravity();
 
@@ -199,42 +212,46 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-
-
-	if (state == PAUSE) 
-	{
+	else{
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
-		if (printOnce != true) 
-		{
-			std::cout << "PAUSED" << std::endl;
-			printOnce = true;
-		}
+
+		
+
+		//CompileMeshDataPauseMenu();
+		//CompileMeshData();
 	}
+}
+
+void Scene::SetIsSwitched(bool isSwitched)
+{
+	this->isSwitched = isSwitched;
 }
 
 void Scene::SwitchRoom()
 {
-	/*delete rooms[0];
+	delete firstRoomBuffer;
 
-	rooms[0] = rooms[1];
+	firstRoomBuffer = secondRoomBuffer;
 	if (roomNr == 0)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-		rooms[1] = new Room(materials, temp);
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else if (roomNr == 1)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-		rooms[1] = new Room(materials, temp);
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
-		rooms[1] = new Room(materials, temp);
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		secondRoomBuffer = new Room(materials, &temp);
 	}
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
 
-	this->roomNr += 1;*/
+	CompileMeshData();
+	this->isSwitched = true;
+	this->roomNr += 1;
 }
 
 //=============================================================

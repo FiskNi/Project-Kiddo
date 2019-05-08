@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Room.h"
+#include "Menu.h"
 #include "Character.h"
 #include "Camera.h"
 #include "BoxHoldEntity.h"
@@ -32,13 +33,13 @@
 class Scene
 {
 private:
-	int state;
-	bool keyPress;
-	const int PLAYING = 1;
-	const int PAUSE = 2;
-	bool printOnce;
-	bool callOnce;
-	//void press() { std::cout << "hi" << std::endl; }
+	bool setUserPointer = false;
+	/*enum GAMESTATE {
+		PAUSED,
+		PLAYING,
+		MAINMENU
+	};*/
+	GAMESTATE state = PLAYING;
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -46,6 +47,7 @@ private:
 	void LoadLevels();
 
 	void CompileMeshData();
+	//void CompileMeshDataPauseMenu();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -68,10 +70,12 @@ private:
 	bool currentBuffer;
 	Room* firstRoomBuffer;
 	Room* secondRoomBuffer;
+	int roomNr;
+	bool isSwitched;
 
 	// Character
 	Character playerCharacter;
-	//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	Scene();
@@ -82,12 +86,16 @@ public:
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
+	bool GetIsSwitched() const{ return isSwitched; }
 
 	//void SetState() { this->press(); }
+	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(firstRoomBuffer->GetCamera()); }
 
-	void Update(GLFWwindow* renderWindow, float deltaTime);
+
 	void SwitchRoom();
+	void Update(GLFWwindow* renderWindow, float deltaTime);
+	void SetIsSwitched(bool isSwitched);
 
 
 };
