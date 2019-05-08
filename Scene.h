@@ -32,10 +32,17 @@
 class Scene
 {
 private:
-	int state;
+	enum GAMESTATE {
+		PAUSED,
+		PLAYING,
+		MAINMENU
+	};
+	//
+	GAMESTATE state = PLAYING;
 	bool keyPress;
-	const int PLAYING = 1;
-	const int PAUSE = 2;
+
+	//const int PLAYING = 1;
+	//const int PAUSE = 2;
 	bool printOnce;
 	bool callOnce;
 	//void press() { std::cout << "hi" << std::endl; }
@@ -71,7 +78,7 @@ private:
 
 	// Character
 	Character playerCharacter;
-	//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 public:
 	Scene();
