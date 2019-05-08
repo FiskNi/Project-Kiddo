@@ -1,5 +1,31 @@
 #include "GameEngine.h"
 
+void GameEngine::roomSwitched()
+{
+	meshCount = mainScene.GetMeshData().size();
+	vertexCount = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+	}
+	// Allocated memory
+	mainSceneVertexData = new vertexPolygon[vertexCount];
+
+	int vertexIndex = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < meshVtxCount; j++)
+		{
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+
+	mainScene.SetIsSwitched(false);
+}
+
 GameEngine::GameEngine()
 {
 	// Load vertex data for the main scene
@@ -101,13 +127,13 @@ void GameEngine::Run()
 			mainScene.GetMaterials());
 
 		// Render a textured full screen quad if game is paused (DOES NOT WORK PROPERLY RN AND TEXTURE HAS MEMORY LEAKS)
-		//if (mainScene.GetCurrentState() == PAUSE) {
-			//mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), "Resources/Textures/boxTexture.png");
-		//}
-		//else {
+		if (mainScene.GetCurrentState() == PAUSED) {
+			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+		}
+		else {
 			// Render a second pass for the fullscreen quad
 			mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
-		//}
+		}
 	
 		// Draw fullscreen quad
 		// Could be moved to the renderer
@@ -117,6 +143,11 @@ void GameEngine::Run()
 		// Render ImGui
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (mainScene.GetIsSwitched())
+		{
+			roomSwitched();
+		}
 
 		glfwSwapBuffers(mainRenderer.getWindow());
 	}

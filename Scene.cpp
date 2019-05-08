@@ -64,7 +64,7 @@ Scene::Scene()
 	LoadCharacter();
 	LoadLevels();
 
-
+	this->isSwitched = false;
 	currentBuffer = 0;
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
@@ -221,6 +221,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 }
 
+void Scene::SetIsSwitched(bool isSwitched)
+{
+	this->isSwitched = isSwitched;
+}
+
 void Scene::SwitchRoom()
 {
 	delete firstRoomBuffer;
@@ -243,6 +248,8 @@ void Scene::SwitchRoom()
 	}
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
 
+	CompileMeshData();
+	this->isSwitched = true;
 	this->roomNr += 1;
 }
 

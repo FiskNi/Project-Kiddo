@@ -41,6 +41,10 @@ private:
 	// Main scene
 	Scene mainScene;
 	friend void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void roomSwitched();
+
+	// Main Menu
+	Menu mainMenu;
 
 public:
 	GameEngine();

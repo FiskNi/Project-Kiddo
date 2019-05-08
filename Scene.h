@@ -34,11 +34,11 @@ class Scene
 {
 private:
 	bool setUserPointer = false;
-	enum GAMESTATE {
+	/*enum GAMESTATE {
 		PAUSED,
 		PLAYING,
 		MAINMENU
-	};
+	};*/
 	GAMESTATE state = PLAYING;
 
 	void LoadShaders();
@@ -71,6 +71,7 @@ private:
 	Room* firstRoomBuffer;
 	Room* secondRoomBuffer;
 	int roomNr;
+	bool isSwitched;
 
 	// Character
 	Character playerCharacter;
@@ -85,6 +86,7 @@ public:
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
+	bool GetIsSwitched() const{ return isSwitched; }
 
 	//void SetState() { this->press(); }
 	int GetCurrentState() const { return state; };
@@ -93,6 +95,7 @@ public:
 
 	void SwitchRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
+	void SetIsSwitched(bool isSwitched);
 
 
 };
