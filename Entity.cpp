@@ -44,7 +44,6 @@ Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) 
 Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
 {
 	// Created a bounding box based on the entityMesh 
-	LoaderMesh temp = inLoader->GetMesh(index);
 	name = inLoader->GetMesh(index).name;
 
 	position = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
@@ -97,7 +96,6 @@ bool Entity::CheckCollision(Entity collidingCube)
 		glm::vec3 position;
 		glm::vec3 size;
 	};
-
 
 	AABB thisBoundingBox;
 

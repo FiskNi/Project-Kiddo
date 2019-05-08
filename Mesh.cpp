@@ -402,6 +402,8 @@ void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 		vertices.push_back(newVertex);
 	}
 
+	//CalculateTangents();
+
 }
 
 void Mesh::CalculateTangents()
@@ -445,6 +447,10 @@ void Mesh::CalculateTangents()
 		tangent.z = (U1 * triangleEdge1.z - V2 * triangleEdge2.z) * (1.0f / (U1 * V2 - U2 * V1));
 
 		tangent = glm::normalize(tangent);
+
+		//vertices[i].normals = normal;
+		//vertices[i + 1].normals = normal;
+		//vertices[i + 2].normals = normal;
 
 		vertices[i].tangent = tangent;
 		vertices[i + 1].tangent = tangent;

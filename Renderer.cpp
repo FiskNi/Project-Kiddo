@@ -133,7 +133,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	glUseProgram(gShaderProgram.getShader());
 
 	// Shadowmap ViewProjection matrix
-	shadowMap.CreateShadowMatrixData(glm::vec3(4.0, 6.0, 2.0), gShaderProgram.getShader());
+	shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
 
 	// Per shader uniforms
 	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));

@@ -1,6 +1,7 @@
 #version 440
 // Vertexshader outputs
-in VS_OUT{
+in VS_OUT
+{
 	vec3 position;
 	vec2 uv;
 	vec3 normal;
@@ -61,6 +62,8 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir);
 void main () 
 {
 	vec4 diffuse = vec4(0);
+	vec3 normal = normalize(fsInput.normal);
+	
 
 	if (hasAlbedoMap)
 	{
@@ -71,9 +74,8 @@ void main ()
 		diffuse = vec4(matAmbient, 1.0f);
 	}
 	
-	vec3 normal = normalize(fsInput.normal);
-
-	if (hasNormalmap)
+	// hasNormalMap
+	if (1 == 2)
 	{
 		vec3 tangent = normalize(fsInput.tangent - dot(fsInput.tangent, fsInput.normal) * fsInput.normal);
 		vec3 biTangent = cross(fsInput.normal, tangent);
@@ -91,9 +93,8 @@ void main ()
 	projLightCoords = projLightCoords * 0.5 + 0.5;
 	float shadowMapDepth = texture(shadowMap, projLightCoords.xy).r;
 	float lightDepthValue = projLightCoords.z;
-	float bias = 0.001f;
+	float bias = 0.01f;
 	lightDepthValue -= bias;
-
 	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -1; x <= 1; ++x)
     {
@@ -113,19 +114,20 @@ void main ()
 	vec3 pointLight = vec3(0.0f);
 	for(int i = 0; i < 6; ++i)
 	{
-		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
+		//pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
 	}
 
 
 	vec4 finalColor = clamp(vec4(ambientLight + directionalLight + pointLight, 1.0f), 0.0f,  1.0f);
 	fragment_color = finalColor;
+	//fragment_color = vec4(fsInput.tangent, 1.0f);
 
 
 	// Example depth calculation
-	float depth = -gl_FragCoord.z;
-	depth = depth * 2.0 - 1.0; 
-	depth = (2.0 * 200.0f * 0.1f) / (200.0f + 0.1f - gl_FragCoord.z * (200.0f - 0.1f));
-	depth = depth / 200.0f;
+	//float depth = -gl_FragCoord.z;
+	//depth = depth * 2.0 - 1.0; 
+	//depth = (2.0 * 200.0f * 0.1f) / (200.0f + 0.1f - gl_FragCoord.z * (200.0f - 0.1f));
+	//depth = depth / 200.0f;
 }
 
 /*

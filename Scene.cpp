@@ -17,7 +17,7 @@ Scene::Scene()
 	state = 1;
 	// Loads content | *Each function could return a bool incase of failure
 
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter();
@@ -93,7 +93,7 @@ void Scene::LoadMaterials(Loader* inLoader)
 void Scene::LoadCharacter()
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
-	playerCharacter.SetMaterialID(2);
+	playerCharacter.SetMaterialID(1);
 	playerCharacter.OffsetPositionX(-3.0f);
 	playerCharacter.OffsetPositionY(3.0f);
 	playerCharacter.SetStartPosition(playerCharacter.GetPosition());

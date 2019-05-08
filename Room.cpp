@@ -35,7 +35,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	for (int i = 0; i < rigids.size(); i++)
 		rigids[i].SetColliding(false);
 
-
 	BoxHolding(playerCharacter, renderWindow);
 
 	RigidGroundCollision(playerCharacter);
@@ -46,7 +45,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
-
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -551,34 +549,34 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].getMaterialID());
 				roomMeshes.push_back(mesh);
 			}
 			break;
 		case 1:		// Mesh
 			{
-				//Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
-				//roomMeshes.push_back(mesh);
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				roomMeshes.push_back(mesh);
 			}
 			break;
 
 		case 2:		// Static
 			{
-				StaticEntity levelEntity(level, i, materials[0].getMaterialID());
+				StaticEntity levelEntity(level, i, materials[1].getMaterialID());
 				statics.push_back(levelEntity);
 			}
 			break;
 
 		case 3:		// Rigid
 			{
-				RigidEntity cubeEntity(level, i, materials[0].getMaterialID());
+				RigidEntity cubeEntity(level, i, materials[1].getMaterialID());
 				rigids.push_back(cubeEntity);
 			}
 			break;
 
 		case 4:		// Bridge
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].getMaterialID());
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -596,7 +594,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 6:		// Button
 			{
 				Button button;
-				button.SetMaterialID(materials[0].getMaterialID());
+				button.SetMaterialID(materials[1].getMaterialID());
 				button.scaleBB(2);
 				buttons.push_back(button);
 			}
@@ -617,7 +615,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].getMaterialID());
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -633,7 +631,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 13:	// Box holder
 			{
-				boxHolder boxHolderEntity(level, i, materials[0].getMaterialID(), materials[0].getMaterialID());
+				boxHolder boxHolderEntity(level, i, materials[1].getMaterialID(), materials[1].getMaterialID());
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
 			}
