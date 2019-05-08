@@ -1,34 +1,53 @@
 #include "Scene.h"
 
 
-//void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
-//{
-//	Scene* scene = static_cast<Scene*>(glfwGetWindowUserPointer(window));
-//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-//		scene->press();
-//		scene->PauseMenu();
-//
-//	}
-//}
-
 void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		if (scene->state == PAUSED) {
+
+	//IF PAUSED
+	if (scene->state == PAUSED) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			//UNPAUSE
 			scene->state = PLAYING;
 			std::cout << "PLAYING" << std::endl;
+		}
+			
 
+		if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+			//SWITCHES ROOM BUT ACTUALLY RESETS
+			scene->SwitchRoom();
 		}
-		else {
-			scene->state = PAUSED;
-			std::cout << "PAUSED" << std::endl;
+
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+			//RESUMES GAME
+			scene->state = PLAYING;
+			std::cout << "RESUME" << std::endl;
 		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+			//RESTART HERE
+			scene->SwitchRoom();
+			std::cout << "Restarting level" << std::endl;
+		}
+
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			//CLOSES WINDOW
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
 
 	}
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		scene->SwitchRoom();
+	// IF PLAYING
+	else if (scene->state == PLAYING) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			//scene->CompileMeshDataPauseMenu();
+			scene->state = PAUSED;
+			std::cout << "PAUSED" << std::endl;
+			std::cout << "Press the numbers below to perform actions: " << std::endl;
+			std::cout << "1 - Resume" << std::endl;
+			std::cout << "2 - Restart" << std::endl;
+			std::cout << "3 - Exit" << std::endl;
+		}
 	}
 }
 
@@ -137,6 +156,16 @@ void Scene::CompileMeshData()
 	meshes.push_back(playerCharacter.GetMeshData());
 }
 
+//void Scene::CompileMeshDataPauseMenu()
+//{
+//	// Fills the "meshes" vector with all the mesh data (primitive)
+//	tempMenuRoom->CompileMeshData();
+//	meshes.clear();
+//
+//	meshes = tempMenuRoom->GetMeshData();
+//	//meshes.push_back(playerCharacter.GetMeshData());
+//}
+
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
@@ -150,13 +179,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 
 
-	if (state == PLAYING)
-	{
-		if (printOnce != true) 
-		{
-			std::cout << "PLAYING" << std::endl;
-			printOnce = true;
-		}
+	if (state == PLAYING) {
 
 		Gravity();
 
@@ -188,9 +211,13 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-	else 
-	{
-		//Add a pausemenu here
+	else{
+		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
+
+		
+
+		//CompileMeshDataPauseMenu();
+		//CompileMeshData();
 	}
 }
 

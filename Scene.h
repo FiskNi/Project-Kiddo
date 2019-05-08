@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Room.h"
+#include "Menu.h"
 #include "Character.h"
 #include "Camera.h"
 #include "BoxHoldEntity.h"
@@ -38,15 +39,7 @@ private:
 		PLAYING,
 		MAINMENU
 	};
-	//
 	GAMESTATE state = PLAYING;
-	bool keyPress;
-
-	//const int PLAYING = 1;
-	//const int PAUSE = 2;
-	bool printOnce;
-	bool callOnce;
-	//void press() { std::cout << "hi" << std::endl; }
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -54,6 +47,7 @@ private:
 	void LoadLevels();
 
 	void CompileMeshData();
+	//void CompileMeshDataPauseMenu();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -93,10 +87,12 @@ public:
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 
 	//void SetState() { this->press(); }
+	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(firstRoomBuffer->GetCamera()); }
 
-	void Update(GLFWwindow* renderWindow, float deltaTime);
+
 	void SwitchRoom();
+	void Update(GLFWwindow* renderWindow, float deltaTime);
 
 
 };
