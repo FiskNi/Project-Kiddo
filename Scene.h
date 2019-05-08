@@ -32,6 +32,7 @@
 class Scene
 {
 private:
+	bool setUserPointer = false;
 	enum GAMESTATE {
 		PAUSED,
 		PLAYING,

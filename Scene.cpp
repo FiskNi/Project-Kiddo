@@ -27,6 +27,9 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 		}
 
 	}
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+		scene->SwitchRoom();
+	}
 }
 
 Scene::Scene()
@@ -139,46 +142,12 @@ void Scene::CompileMeshData()
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	glfwSetWindowUserPointer(renderWindow, this);
-	glfwSetKeyCallback(renderWindow, key_callback);
-
-	//// Checks if ESC is pressed to switch the state between PLAYING and PAUSED
-	//if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
-	//{
-	//	keyPress = true;
-	//	if (callOnce != true) 
-	//	{
-	//		if (state == PAUSE) 
-	//			state = PLAYING;		
-	//		else 
-	//			state = PAUSE;
-
-	//		// Sets printOnce to false so the states will print PLAYING or PAUSED depending on active state
-	//		if (printOnce)
-	//			printOnce = false;
-
-	//		// Sets callOnce to true so this function won't keep switching between PLAYING and PAUSE as ESC is held down
-	//		//		If this isn't used, the accuracy of tapping ESC will be unclear, and it might not switch states correctly.
-	//		callOnce = true;
-	//	}
-	//}
-	//if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_RELEASE) 
-	//{
-	//	keyPress = false;
-	//	// Reset callOnce to false once the key has been let go of
-	//	callOnce = false;
-	//}
-
-	if (glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
-	{
-		keyPress = true;
-		SwitchRoom();
-
+	if (!setUserPointer) {
+		glfwSetWindowUserPointer(renderWindow, this);
+		glfwSetKeyCallback(renderWindow, key_callback);
+		setUserPointer = true;
 	}
 
-	if (keyPress && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_RELEASE) {
-		keyPress = false;
-	}
 
 	if (state == PLAYING)
 	{
@@ -218,17 +187,10 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-
-
-	//if (state == PAUSE) 
-	//{
-	//	// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
-	//	if (printOnce != true) 
-	//	{
-	//		std::cout << "PAUSED" << std::endl;
-	//		printOnce = true;
-	//	}
-	//}
+	else 
+	{
+		//Add a pausemenu here
+	}
 }
 
 void Scene::SwitchRoom()
