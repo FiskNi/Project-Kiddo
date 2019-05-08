@@ -2,8 +2,8 @@
 
 #include "Headers.h"
 
-#define PLAYING 1
-#define PAUSE 2
+//#define PLAYING 1
+//#define PAUSE 2
 
 class Menu {
 private:

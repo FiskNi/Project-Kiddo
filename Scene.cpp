@@ -159,7 +159,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 
 	// Checks if ESC is pressed to switch the state between PLAYING and PAUSED
-	StateUpdate(renderWindow);
+	//StateUpdate(renderWindow);
 
 	if (state == PLAYING) {
 		if (printOnce != true) {
@@ -197,7 +197,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-	if (state == PAUSE) {
+	if (state == PAUSED) {
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
 		if (printOnce != true) {
 			std::cout << "PAUSED" << std::endl;
@@ -243,11 +243,11 @@ void Scene::StateUpdate(GLFWwindow * renderWindow)
 	if (glfwGetKey(renderWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		keyPress = true;
 		if (callOnce != true) {
-			if (state == PAUSE) {
+			if (state == PAUSED) {
 				state = PLAYING;
 			}
 			else {
-				state = PAUSE;
+				state = PAUSED;
 			}
 			// Sets printOnce to false so the states will print PLAYING or PAUSED depending on active state
 			if (printOnce) {
@@ -263,21 +263,21 @@ void Scene::StateUpdate(GLFWwindow * renderWindow)
 		// Reset callOnce to false once the key has been let go of
 		callOnce = false;
 	}
-	if (state == PAUSE && glfwGetKey(renderWindow, GLFW_KEY_1) == GLFW_PRESS) {
+	if (state == PAUSED && glfwGetKey(renderWindow, GLFW_KEY_1) == GLFW_PRESS) {
 		// Resumes the game if pressed during the PAUSE state
 		state = PLAYING;
 		if (printOnce) {
 			printOnce = false;
 		}
 	}
-	if (state == PAUSE && glfwGetKey(renderWindow, GLFW_KEY_2) == GLFW_PRESS) {
+	if (state == PAUSED && glfwGetKey(renderWindow, GLFW_KEY_2) == GLFW_PRESS) {
 		// ****USE THIS TO RESTART LEVEL****
 		/*state = PLAYING;
 		if (printOnce) {
 			printOnce = false;
 		}*/
 	}
-	if (state == PAUSE && glfwGetKey(renderWindow, GLFW_KEY_3) == GLFW_PRESS) {
+	if (state == PAUSED && glfwGetKey(renderWindow, GLFW_KEY_3) == GLFW_PRESS) {
 		// Closes the window and exits the game
 		glfwSetWindowShouldClose(renderWindow, GL_TRUE);
 
