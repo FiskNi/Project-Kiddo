@@ -61,7 +61,8 @@ void Material::createAlbedo(std::string path)
 		colourChannels;
 	
 	const char* filePath = path.c_str();
-	
+	// Flips the imported texture according to OpenGL UVs
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(filePath, &widht, &height, &colourChannels, 0);
 	if (data)
 	{
@@ -94,7 +95,8 @@ void Material::createNormal(std::string path)
 		colourChannels;
 
 	const char* filePath = path.c_str();
-
+	// Flips the imported texture according to OpenGL UVs
+	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(filePath, &widht, &height, &colourChannels, 0);
 	if (data)
 	{

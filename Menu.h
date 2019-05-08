@@ -5,6 +5,12 @@
 //#define PLAYING 1
 //#define PAUSE 2
 
+enum GAMESTATE {
+	PAUSED,
+	PLAYING,
+	MAINMENU
+};
+
 class Menu {
 private:
 	GLuint pauseOverlayTexture;
@@ -14,7 +20,7 @@ public:
 	~Menu();
 
 	void CompileMenuMeshData();
-	void CreatePauseOverlayTexture(std::string &path);
+	void CreatePauseOverlayTexture(std::string path);
 
-	GLuint* GetPauseOverlay() { return &pauseOverlayTexture; }
+	GLuint GetPauseOverlay() { return pauseOverlayTexture; }
 };

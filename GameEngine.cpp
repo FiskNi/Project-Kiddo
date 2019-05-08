@@ -127,13 +127,13 @@ void GameEngine::Run()
 			mainScene.GetMaterials());
 
 		// Render a textured full screen quad if game is paused (DOES NOT WORK PROPERLY RN AND TEXTURE HAS MEMORY LEAKS)
-		//if (mainScene.GetCurrentState() == PAUSE) {
-			//mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), "Resources/Textures/boxTexture.png");
-		//}
-		//else {
+		if (mainScene.GetCurrentState() == PAUSED) {
+			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+		}
+		else {
 			// Render a second pass for the fullscreen quad
 			mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
-		//}
+		}
 	
 		// Draw fullscreen quad
 		// Could be moved to the renderer
