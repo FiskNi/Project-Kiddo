@@ -39,15 +39,7 @@ private:
 		PLAYING,
 		MAINMENU
 	};
-	//
 	GAMESTATE state = PLAYING;
-	bool keyPress;
-
-	//const int PLAYING = 1;
-	//const int PAUSE = 2;
-	bool printOnce;
-	bool callOnce;
-	//void press() { std::cout << "hi" << std::endl; }
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -97,7 +89,7 @@ public:
 	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(firstRoomBuffer->GetCamera()); }
 
-	void StateUpdate(GLFWwindow * renderWindow);
+
 	void SwitchRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 
