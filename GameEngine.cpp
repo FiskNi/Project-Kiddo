@@ -1,5 +1,31 @@
 #include "GameEngine.h"
 
+void GameEngine::roomSwitched()
+{
+	meshCount = mainScene.GetMeshData().size();
+	vertexCount = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+	}
+	// Allocated memory
+	mainSceneVertexData = new vertexPolygon[vertexCount];
+
+	int vertexIndex = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < meshVtxCount; j++)
+		{
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+
+	mainScene.SetIsSwitched(false);
+}
+
 GameEngine::GameEngine()
 {
 	// Load vertex data for the main scene
@@ -117,6 +143,11 @@ void GameEngine::Run()
 		// Render ImGui
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (mainScene.GetIsSwitched())
+		{
+			roomSwitched();
+		}
 
 		glfwSwapBuffers(mainRenderer.getWindow());
 	}
