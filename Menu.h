@@ -19,7 +19,7 @@ public:
 	Menu();
 	~Menu();
 
-	void CompileMenuMeshData();
+	//void CompileMainMenuMeshData();
 	void CreatePauseOverlayTexture(std::string path);
 
 	GLuint GetPauseOverlay() { return pauseOverlayTexture; }

@@ -32,7 +32,18 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 
 		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 			//CLOSES WINDOW
-			glfwSetWindowShouldClose(window, GL_TRUE);
+			//glfwSetWindowShouldClose(window, GL_TRUE);
+
+			scene->state = MAINMENU;
+			//scene->SwitchRoom();
+			scene->SwitchMainMenu();
+			std::cout << "Returning to Main Menu" << std::endl;
+			std::cout << "Loading..." << std::endl;
+			std::cout << "MAIN MENU" << std::endl;
+			std::cout << "Press the numbers below to perform actions: " << std::endl;
+			std::cout << "1 - Start" << std::endl;
+			//std::cout << "2 - Settings" << std::endl;
+			std::cout << "3 - Exit" << std::endl;
 		}
 
 
@@ -49,16 +60,40 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			std::cout << "3 - Exit" << std::endl;
 		}
 	}
+	else if (scene->state == MAINMENU) {
+
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+			//RESUMES GAME
+			scene->state = PLAYING;
+			//scene->SwitchRoom();
+			scene->isSwitched = true;
+			std::cout << "START GAME/RESUME" << std::endl;
+			std::cout << "Loading takes time!" << std::endl;
+		}
+		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		//	//RESTART HERE
+		//	scene->ResetRoom();
+		//	scene->state = PLAYING;
+		//	std::cout << "Restarting level" << std::endl;
+		//}
+
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			//CLOSES WINDOW
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+	}
 }
 
 Scene::Scene()
 {
 
-	//state = 1;
+	state = MAINMENU;
 	// Loads content | *Each function could return a bool incase of failure
 
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
 	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
+
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter();
@@ -70,9 +105,11 @@ Scene::Scene()
 	// Initializes startingroom. Existing materials is needed for all the entities.
 	firstRoomBuffer = new Room(materials, &startingRoom);
 	secondRoomBuffer = new Room(materials, &secondRoom);
+	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
-	CompileMeshData();
+	//CompileMeshData();
+	CompileMeshDataMainMenu();
 }
 
 Scene::~Scene()
@@ -80,6 +117,7 @@ Scene::~Scene()
 
 	delete firstRoomBuffer;
 	delete secondRoomBuffer;
+	delete mainMenuRoomBuffer;
 }
 
 void Scene::LoadShaders()
@@ -156,15 +194,15 @@ void Scene::CompileMeshData()
 	meshes.push_back(playerCharacter.GetMeshData());
 }
 
-//void Scene::CompileMeshDataPauseMenu()
-//{
-//	// Fills the "meshes" vector with all the mesh data (primitive)
-//	tempMenuRoom->CompileMeshData();
-//	meshes.clear();
-//
-//	meshes = tempMenuRoom->GetMeshData();
-//	//meshes.push_back(playerCharacter.GetMeshData());
-//}
+void Scene::CompileMeshDataMainMenu()
+{
+	// Fills the "meshes" vector with all the mesh data (primitive)
+	mainMenuRoomBuffer->CompileMeshData();
+	meshes.clear();
+
+	meshes = mainMenuRoomBuffer->GetMeshData();
+	//meshes.push_back(playerCharacter.GetMeshData());
+}
 
 //=============================================================
 //	Everything that updates in a scene happens here. 
@@ -179,7 +217,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 
 
-	if (state == PLAYING) {
+	if (state == MAINMENU) {
+
+		CompileMeshDataMainMenu();
+	}
+	else if (state == PLAYING) {
 
 		Gravity();
 
@@ -213,11 +255,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 	else{
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
-
-		
-
-		//CompileMeshDataPauseMenu();
-		//CompileMeshData();
+		// Might want to handle mouse picking here
 	}
 }
 
@@ -240,6 +278,7 @@ void Scene::SwitchRoom()
 	delete firstRoomBuffer;
 
 	firstRoomBuffer = secondRoomBuffer;
+
 	if (roomNr == 0)
 	{
 		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
@@ -260,6 +299,15 @@ void Scene::SwitchRoom()
 	CompileMeshData();
 	this->isSwitched = true;
 	this->roomNr += 1;
+}
+
+void Scene::SwitchMainMenu() 
+{
+	if (state == MAINMENU)
+	{
+		CompileMeshDataMainMenu();
+		this->isSwitched = true;
+	}
 }
 
 //=============================================================
