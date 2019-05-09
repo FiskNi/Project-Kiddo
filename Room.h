@@ -51,8 +51,6 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
-
-
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> roomMeshes;
