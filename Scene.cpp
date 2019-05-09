@@ -26,6 +26,7 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 			//RESTART HERE
 			scene->ResetRoom();
+			scene->state = PLAYING;
 			std::cout << "Restarting level" << std::endl;
 		}
 
