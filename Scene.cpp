@@ -5,18 +5,17 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+		//SWITCHES ROOM BUT ACTUALLY RESETS
+		scene->SwitchRoom();
+	}
+
 	//IF PAUSED
 	if (scene->state == PAUSED) {
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 			//UNPAUSE
 			scene->state = PLAYING;
 			std::cout << "PLAYING" << std::endl;
-		}
-			
-
-		if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-			//SWITCHES ROOM BUT ACTUALLY RESETS
-			scene->SwitchRoom();
 		}
 
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
@@ -26,7 +25,7 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 		}
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 			//RESTART HERE
-			scene->SwitchRoom();
+			scene->ResetRoom();
 			std::cout << "Restarting level" << std::endl;
 		}
 
@@ -224,6 +223,15 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 void Scene::SetIsSwitched(bool isSwitched)
 {
 	this->isSwitched = isSwitched;
+}
+
+void Scene::ResetRoom()
+{
+	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
+	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+	{
+		firstRoomBuffer->GetRigids()[i].ResetPos();
+	}
 }
 
 void Scene::SwitchRoom()

@@ -96,6 +96,7 @@ public:
 	void SwitchRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void SetIsSwitched(bool isSwitched);
+	void ResetRoom();
 
 
 };
