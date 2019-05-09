@@ -579,8 +579,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 		case 1:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
-				roomMeshes.push_back(mesh);
+				//Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				//roomMeshes.push_back(mesh);
 			}
 			break;
 

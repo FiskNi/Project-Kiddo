@@ -58,7 +58,7 @@ Scene::Scene()
 	// Loads content | *Each function could return a bool incase of failure
 
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
-	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
+	Loader secondRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
 	//Loader startingRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
