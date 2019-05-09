@@ -14,6 +14,7 @@ private:
 public:
 
 	DirectionalLight();
+	DirectionalLight(glm::vec3 lightPos, glm::vec3 direction, float intensity);
 	~DirectionalLight();
 
 	glm::vec3 getPos() const;
