@@ -56,8 +56,8 @@ struct MeshVert
 struct LoaderMesh
 {
 	char name[256];
-	char materialName[256];
-	
+	unsigned int materialID;
+
 	float translation[3];
 	float rotation[3];
 	float scale[3];
