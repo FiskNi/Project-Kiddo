@@ -144,22 +144,6 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
 
 	// Hardcoded materials that will be moved
-	Material planeMat("Plane Material", materials.size());
-	planeMat.createAlbedo("Resources/Textures/brickwall.jpg");
-	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
-	materials.push_back(planeMat);
-
-	Material cubeMat("Plane Cube Material", materials.size());
-	cubeMat.createAlbedo("Resources/Textures/boxTexture.png");
-	materials.push_back(cubeMat);
-
-	Material playerMat("Player Material", materials.size());
-	playerMat.createAlbedo("Resources/Textures/broken.png");
-	materials.push_back(playerMat);
-
-	Material nodeMat("Node Material", materials.size());
-	nodeMat.createAlbedo("Resources/Textures/broken.png");
-	materials.push_back(nodeMat);
 
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{

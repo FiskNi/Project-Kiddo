@@ -43,6 +43,7 @@ public:
 	float getPointLightIntensity(int index) const { return pointLight[index].intensity; }
 	int getPointLightCount() const { return fileHeader.pointLightCount; }
 
+	unsigned int GetMaterialID(int meshIndex) const { return mesh[meshIndex].materialID; }
 	PhongMaterial GetMaterial(int index) const { return material[index]; }
 	int GetMaterialCount() const { return fileHeader.materialCount; }
 };
