@@ -73,7 +73,7 @@ void Material::createAlbedo(std::string path)
 		hasAlbedoMap = true;
 	}
 	else
-		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
+		std::cout << "Failed to load albedo. Reason: " << stbi_failure_reason() << std::endl;
 
 	stbi_image_free(data);
 }
@@ -107,7 +107,7 @@ void Material::createNormal(std::string path)
 		hasNormalMap = true;
 	}
 	else
-		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
+		std::cout << "Failed to load normal. Reason: " << stbi_failure_reason() << std::endl;
 
 	stbi_image_free(data);
 }

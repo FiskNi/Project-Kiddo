@@ -45,7 +45,7 @@ public:
 	void createAlbedo(std::string path);
 	void createNormal(std::string path);
 
-	unsigned int getMaterialID() const { return materialID; }
+	unsigned int GetMaterialID() const { return materialID; }
 
 	// For the renderer only
 	GLuint getAlbedo() const { return albedo; }
