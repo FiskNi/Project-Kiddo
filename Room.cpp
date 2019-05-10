@@ -571,7 +571,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[matID].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -584,28 +584,28 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 2:		// Static
 			{
-				StaticEntity levelEntity(level, i, materials[matID].getMaterialID());
+				StaticEntity levelEntity(level, i, matID);
 				statics.push_back(levelEntity);
 			}
 			break;
 
 		case 3:		// Rigid
 			{
-				RigidEntity cubeEntity(level, i, materials[matID].getMaterialID());
+				RigidEntity cubeEntity(level, i, matID);
 				rigids.push_back(cubeEntity);
 			}
 			break;
 
 		case 4:		// Bridge
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[matID].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
 				roomMeshes.push_back(mesh);
 			}
 			break;
 
 		case 5:		// DrawBridge
 			{
-				BridgeEntity bridgeEntity(level, i, materials[matID].getMaterialID());
+				BridgeEntity bridgeEntity(level, i, matID);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetExtendingBackwardZ();
 				bridgeEntity.SetExtendDistance(4.2f);
@@ -616,7 +616,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 6:		// Button
 			{
 				Button button;
-				button.SetMaterialID(materials[matID].getMaterialID());
+				button.SetMaterialID(matID);
 				button.scaleBB(2);
 				buttons.push_back(button);
 			}
@@ -625,7 +625,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 7:		// Presure Plate
 			{
 				PressurePlate pPlate;
-				pPlate.SetMaterialID(materials[matID].getMaterialID());
+				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
 				plates.push_back(pPlate);
@@ -637,7 +637,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[matID].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -654,7 +654,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 13:	// Box holder
 			{
-				boxHolder boxHolderEntity(level, i, materials[matID].getMaterialID(), materials[matID].getMaterialID());
+				boxHolder boxHolderEntity(level, i, matID, matID);
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
 			}
