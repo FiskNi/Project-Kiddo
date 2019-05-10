@@ -67,8 +67,7 @@ private:
 
 	// Rooms
 	bool currentBuffer;
-	Room* firstRoomBuffer;
-	Room* secondRoomBuffer;
+	Room* roomBuffer;
 	Room* mainMenuRoomBuffer;
 	int roomNr;
 	bool isSwitched;
@@ -81,8 +80,8 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const { return firstRoomBuffer->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return firstRoomBuffer->GetDirectionalLights(); }
+	std::vector<Light> GetPointLights() const { return roomBuffer->GetPointLights(); }
+	std::vector<DirectionalLight> GetDirectionalLights() const { return roomBuffer->GetDirectionalLights(); }
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
@@ -90,7 +89,7 @@ public:
 
 	//void SetState() { this->press(); }
 	int GetCurrentState() const { return state; };
-	Camera GetCamera() const { return *(firstRoomBuffer->GetCamera()); }
+	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
 
 	void SwitchRoom();
@@ -99,7 +98,7 @@ public:
 	void SetSwitched();
 	void ResetRoom();
 
-	void Upgrade() { this->firstRoomBuffer->Upgrade(&this->playerCharacter); }
+	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
 
 
 };

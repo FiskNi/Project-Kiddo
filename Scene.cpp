@@ -12,20 +12,13 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 
 	//IF PAUSED
-	if (scene->state == PAUSED) {
+	if (scene->state == PAUSED) 
+	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
 		{
 			//UNPAUSE
 			scene->state = PLAYING;
 			std::cout << "PLAYING" << std::endl;
-		}
-		if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-			for (int i = 0; i < scene->firstRoomBuffer->getButtons().size(); i++) {
-				if (!scene->firstRoomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->firstRoomBuffer->getButtons()[i])) 
-				{
-					scene->firstRoomBuffer->getButtons()[i].SetPressed(true);
-				}
-			}
 		}
 
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
@@ -72,6 +65,19 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			std::cout << "2 - Restart" << std::endl;
 			std::cout << "3 - Exit" << std::endl;
 		}
+
+		if (key == GLFW_KEY_E && action == GLFW_PRESS)
+		{
+			for (int i = 0; i < scene->roomBuffer->getButtons().size(); i++)
+			{
+				if (!scene->roomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->roomBuffer->getButtons()[i]))
+				{
+					scene->roomBuffer->getButtons()[i].SetPressed(true);
+				}
+			}
+		}
+
+		// EXTRA
 		if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
 			//UPGRADES BOXES
 			scene->Upgrade();
@@ -91,6 +97,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
 			scene->playerCharacter.SetCurrentItem(4);
 		}
+
+
 	}
 	else if (scene->state == MAINMENU) 
 	{
@@ -139,7 +147,7 @@ Scene::Scene()
 	currentBuffer = 0;
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
-	firstRoomBuffer = new Room(materials, &startingRoom);
+	roomBuffer = new Room(materials, &startingRoom);
 
 	//************** Mainmenu should be it's own class, not a room
 	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom);
@@ -151,9 +159,10 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	delete firstRoomBuffer;
-	delete secondRoomBuffer;
-	delete mainMenuRoomBuffer;
+	if (roomBuffer)
+		delete roomBuffer;
+	if (mainMenuRoomBuffer)
+		delete mainMenuRoomBuffer;
 }
 
 void Scene::LoadShaders()
@@ -216,8 +225,8 @@ void Scene::CompileMeshData()
 	// Compile the mesh data of the first room
 	meshes.clear();
 
-	firstRoomBuffer->CompileMeshData();
-	meshes = firstRoomBuffer->GetMeshData();
+	roomBuffer->CompileMeshData();
+	meshes = roomBuffer->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
 	// Compile character data
 	
@@ -266,17 +275,17 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// First update
 		playerCharacter.Update(deltaTime);
 
-		firstRoomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
+		roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Update the scene
-		for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+		for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 		{
-			firstRoomBuffer->GetRigids()[i].Update(deltaTime);
+			roomBuffer->GetRigids()[i].Update(deltaTime);
 		}
 
-		for (int i = 0; i < firstRoomBuffer->GetBridges().size(); i++)
+		for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
 		{
-			firstRoomBuffer->GetBridges()[i].Update(deltaTime);
+			roomBuffer->GetBridges()[i].Update(deltaTime);
 		}
 
 
@@ -297,15 +306,17 @@ void Scene::SetSwitched()
 void Scene::ResetRoom()
 {
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
-	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{
-		firstRoomBuffer->GetRigids()[i].ResetPos();
+		roomBuffer->GetRigids()[i].ResetPos();
 	}
 }
 
 void Scene::SwitchRoom()
 {
-	delete firstRoomBuffer;
+	if (roomBuffer)
+		delete roomBuffer;
+	roomBuffer = nullptr;
 
 	Loader* roomLoader;
 
@@ -332,7 +343,7 @@ void Scene::SwitchRoom()
 	}
 
 	LoadMaterials(roomLoader);
-	firstRoomBuffer = new Room(materials, roomLoader);
+	roomBuffer = new Room(materials, roomLoader);
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)
@@ -376,11 +387,11 @@ void Scene::Gravity()
 	const float gravity = -2.283;
 
 	// Entity boxes
-	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{	
-		if (!firstRoomBuffer->GetRigids()[i].IsGrounded() && !firstRoomBuffer->GetRigids()[i].GetBoxType() == 1)
+		if (!roomBuffer->GetRigids()[i].IsGrounded() && !roomBuffer->GetRigids()[i].GetBoxType() == 1)
 		{
-			firstRoomBuffer->GetRigids()[i].AddVelocityY(gravity);
+			roomBuffer->GetRigids()[i].AddVelocityY(gravity);
 		}
 	}
 
