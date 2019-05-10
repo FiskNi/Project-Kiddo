@@ -13,6 +13,9 @@ private:
 	PhongMaterial* material;
 	MeshVert* meshVert;
 	LoaderMesh* mesh;
+	DirLight* dirLight;
+	PointLight* pointLight;
+	
 
 public:
 	Loader(std::string fileName);
@@ -30,6 +33,16 @@ public:
 	int GetType(int index) const { return mesh[index].type; }
 	int GetLink(int index) const { return mesh[index].link; }
 	
+	float getDirLightPos(int index, int posIndex) const { return dirLight[index].position[posIndex]; }
+	float getDirLightIntensity(int index) const { return dirLight[index].intensity; }
+	float getDirLightRotation(int index, int rotIndex) const { return dirLight[index].rotation[rotIndex]; }
+	float getDirLightColor(int index, int colIndex) const { return dirLight[index].color[colIndex]; }
+	int getDirLightCount() const { return fileHeader.dirLightCount; }
+
+	float getPointLightPos(int index, int posIndex) const { return pointLight[index].position[posIndex]; }
+	float getPointLightIntensity(int index) const { return pointLight[index].intensity; }
+	int getPointLightCount() const { return fileHeader.pointLightCount; }
+
 	PhongMaterial GetMaterial(int index) const { return material[index]; }
 	int GetMaterialCount() const { return fileHeader.materialCount; }
 };

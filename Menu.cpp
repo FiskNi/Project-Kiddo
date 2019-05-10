@@ -11,28 +11,28 @@ Menu::~Menu() {
 
 }
 
-void Menu::CompileMenuMeshData() {
-	//// Defines const states here, check to see which room to load
-	//const int PAUSE = 2;
-
-	//// Check which state is active, and run loading accordingly
-	//if (state == PAUSE)
-	//{
-	//	// Hardcoded quad to print something to the screen
-	//	RigidEntity quad(0);
-	//	quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-	//	quad.SetMaterialID(materials[0].getMaterialID());
-	//	quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-	//	rigids.push_back(quad);
-
-	//	// Perhaps change position for the menu?
-	//	// Initialize camera (Default constructor)
-	//	roomCamera = new Camera;
-	//}
-
-	//// Compiles all the mesh data in the room for the renderer
-	//CompileMeshData();
-}
+//void Menu::CompileMainMenuMeshData() {
+//	//// Defines const states here, check to see which room to load
+//	//const int PAUSE = 2;
+//
+//	//// Check which state is active, and run loading accordingly
+//	//if (state == PAUSE)
+//	//{
+//	//	// Hardcoded quad to print something to the screen
+//	//	RigidEntity quad(0);
+//	//	quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
+//	//	quad.SetMaterialID(materials[0].getMaterialID());
+//	//	quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
+//	//	rigids.push_back(quad);
+//
+//	//	// Perhaps change position for the menu?
+//	//	// Initialize camera (Default constructor)
+//	//	roomCamera = new Camera;
+//	//}
+//
+//	//// Compiles all the mesh data in the room for the renderer
+//	//CompileMeshData();
+//}
 
 void Menu::CreatePauseOverlayTexture(std::string path)
 {

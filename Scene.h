@@ -47,7 +47,7 @@ private:
 	void LoadLevels();
 
 	void CompileMeshData();
-	//void CompileMeshDataPauseMenu();
+	void CompileMeshDataMainMenu();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -70,6 +70,7 @@ private:
 	bool currentBuffer;
 	Room* firstRoomBuffer;
 	Room* secondRoomBuffer;
+	Room* mainMenuRoomBuffer;
 	int roomNr;
 	bool isSwitched;
 
@@ -94,6 +95,7 @@ public:
 
 
 	void SwitchRoom();
+	void SwitchMainMenu();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void SetIsSwitched(bool isSwitched);
 	void ResetRoom();
