@@ -63,7 +63,7 @@ void Material::createAlbedo(std::string path)
 	const char* filePath = path.c_str();
 	// Flips the imported texture according to OpenGL UVs
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(filePath, &widht, &height, &colourChannels, 0);
+	unsigned char* data = stbi_load(filePath, &widht, &height, &colourChannels, 3);
 	if (data)
 	{
 		//Function arguments:  | Target | Mipmap | Image format | Width | Height | Legacy, need to be 0 | Format | Data type | Image data |
@@ -73,7 +73,7 @@ void Material::createAlbedo(std::string path)
 		hasAlbedoMap = true;
 	}
 	else
-		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
+		std::cout << "Failed to load albedo. Reason: " << stbi_failure_reason() << std::endl;
 
 	stbi_image_free(data);
 }
@@ -107,7 +107,7 @@ void Material::createNormal(std::string path)
 		hasNormalMap = true;
 	}
 	else
-		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
+		std::cout << "Failed to load normal. Reason: " << stbi_failure_reason() << std::endl;
 
 	stbi_image_free(data);
 }

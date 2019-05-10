@@ -157,14 +157,6 @@
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FragmentSM.glsl" />
-    <None Include="Fragment.glsl" />
-    <None Include="FragmentFS.glsl" />
-    <None Include="VertexShader.glsl" />
-    <None Include="VertexShaderFS.glsl" />
-    <None Include="VertexShaderSM.glsl" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="boxHolder.h" />
     <ClInclude Include="BridgeEntity.h" />
     <ClInclude Include="Button.h" />
@@ -203,6 +195,14 @@
     <ProjectReference Include="mehImporterLib\mehImporterLib.vcxproj">
       <Project>{f1d03895-20a0-4535-9776-1f3708d1d19e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fragment.glsl" />
+    <None Include="FragmentFS.glsl" />
+    <None Include="FragmentSM.glsl" />
+    <None Include="VertexShader.glsl" />
+    <None Include="VertexShaderFS.glsl" />
+    <None Include="VertexShaderSM.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

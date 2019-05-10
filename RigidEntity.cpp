@@ -15,7 +15,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 }
 
 
-RigidEntity::RigidEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : Entity(vertArr, nrOfVerticies, matID)
+RigidEntity::RigidEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : Entity(vertArr, vertexCount, matID)
 {
 	startPos = GetPosition();
 	savedPos = startPos;
@@ -144,7 +144,7 @@ void RigidEntity::Update(float deltaTime)
 	SetPosition(calculatedPosition);
 
 	// This has to be lower than the initial ground level or bad things happen 
-	if (GetPosition().y < -3.0f)
+	if (GetPosition().y < -9.0f)
 	{
 		ResetPos();
 	}

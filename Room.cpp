@@ -58,7 +58,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	for (int i = 0; i < rigids.size(); i++)
 		rigids[i].SetColliding(false);
 
-
 	BoxHolding(playerCharacter, renderWindow);
 
 	RigidGroundCollision(playerCharacter);
@@ -70,7 +69,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 	PlayerItemCollision(playerCharacter);
-
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -602,11 +600,12 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 	for (int i = 0; i < level->GetMeshCount(); i++)
 	{
 		//Custom attributes to be detected here before pushed into the appropriate category?
+		unsigned int matID = level->GetMaterialID(i);
 		switch (level->GetType(i))
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -619,28 +618,28 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 2:		// Static
 			{
-				StaticEntity levelEntity(level, i, materials[0].getMaterialID());
+				StaticEntity levelEntity(level, i, matID);
 				statics.push_back(levelEntity);
 			}
 			break;
 
 		case 3:		// Rigid
 			{
-				RigidEntity cubeEntity(level, i, materials[0].getMaterialID());
+				RigidEntity cubeEntity(level, i, matID);
 				rigids.push_back(cubeEntity);
 			}
 			break;
 
 		case 4:		// Bridge
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
 				roomMeshes.push_back(mesh);
 			}
 			break;
 
 		case 5:		// DrawBridge
 			{
-				BridgeEntity bridgeEntity(level, i, materials[2].getMaterialID());
+				BridgeEntity bridgeEntity(level, i, matID);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetExtendingBackwardZ();
 				bridgeEntity.SetExtendDistance(4.2f);
@@ -651,7 +650,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 6:		// Button
 			{
 				Button button;
-				button.SetMaterialID(materials[0].getMaterialID());
+				button.SetMaterialID(matID);
 				button.scaleBB(2);
 				buttons.push_back(button);
 			}
@@ -660,7 +659,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 7:		// Presure Plate
 			{
 				PressurePlate pPlate;
-				pPlate.SetMaterialID(materials[1].getMaterialID());
+				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
 				plates.push_back(pPlate);
@@ -672,7 +671,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -689,7 +688,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 13:	// Box holder
 			{
-				boxHolder boxHolderEntity(level, i, materials[0].getMaterialID(), materials[0].getMaterialID());
+				boxHolder boxHolderEntity(level, i, matID, matID);
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
 			}
@@ -719,7 +718,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
-	winNode.SetMaterialID(materials[3].getMaterialID());
+	winNode.SetMaterialID(materials[3].GetMaterialID());
 	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
 	nodes.push_back(winNode);
 }

@@ -11,6 +11,8 @@ Character::Character() : RigidEntity(1)
 
 	holdingObject = false;
 	entityID = -1;
+	inputVector = glm::vec3(0.0f);
+	respawnPos = glm::vec3(0.0f);
 }
 
 Character::~Character()
@@ -166,10 +168,15 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
 			float rotation = acos(cosRotation);
 
-			if(GetVelocityX() > 0)
-				SetRotation(0.0f, rotation, 0.0f);
+			if (GetVelocityX() > 0)
+				rotation;
 			else
-				SetRotation(0.0f, -rotation, 0.0f);
+				rotation = -rotation;
+
+			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
+			SetRotation(qRotation);
+
+			
 		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
