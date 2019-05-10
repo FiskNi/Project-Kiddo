@@ -1,8 +1,13 @@
 #include "Scene.h"
 
 
+void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) 
+	{
 		//SWITCHES ROOM BUT ACTUALLY RESETS
 		scene->SwitchRoom();
 	}
@@ -88,12 +93,9 @@ Scene::Scene()
 	// Loads content | *Each function could return a bool incase of failure
 
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
+	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1v3.meh");
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
-	Loader secondRoom("Resources/Assets/GameReady/Rooms/TestFile2.meh");
-	//Loader startingRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter();
@@ -282,17 +284,17 @@ void Scene::SwitchRoom()
 
 	if (roomNr == 0)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/TestFile2.meh");
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else if (roomNr == 1)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/TestFile2.meh");
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/TestFile2.meh");
+		Loader temp("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 		secondRoomBuffer = new Room(materials, &temp);
 	}
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
@@ -333,5 +335,4 @@ void Scene::Gravity()
 	{
 		playerCharacter.AddVelocityY(gravity);
 	}
-
 }
