@@ -2,7 +2,7 @@
 #include "Headers.h"
 #include "Mesh.h"
 #include "RigidEntity.h"
-
+#include "Item.h"
 
 //============================================================================
 //	- Character
@@ -14,6 +14,10 @@ class Character
 	: public RigidEntity
 {
 private:
+	const int cap = 5;
+	int currentItem = 0;
+	int nrOf = 0;
+	Item** items;
 	//ID, playerID = 1, Movable box = 2.
 	int entityID;
 	bool holdingObject;
@@ -39,5 +43,10 @@ public:
 	glm::vec3 GetInputVector() { return inputVector; }
 	glm::vec3 GetRespawnPos() { return respawnPos; }
 	
+	Item* GetCurrentItem() { return this->items[this->currentItem]; }
+	void PickUpItem(Item* item);
+	void SetCurrentItem(int i) { this->currentItem = i; }
+	Item* Upgrade();
+
 
 };

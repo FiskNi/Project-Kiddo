@@ -69,6 +69,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
+	PlayerItemCollision(playerCharacter);
 
 
 	// Game events
@@ -157,14 +158,24 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 //=============================================================
 void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 {
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-	{
-		for (int i = 0; i < buttons.size(); i++)
-		{
-			if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
-			{
-				buttons[i].setPressed(true);
-			}
+	//if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	//{
+	//	for (int i = 0; i < buttons.size(); i++)
+	//	{
+	//		if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
+	//		{
+	//			buttons[i].setPressed(true);
+	//		}
+	//	}
+	//}
+}
+
+void Room::PlayerItemCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < items.size(); i++) {
+		if (playerCharacter->CheckCollision(items[i])) {
+			playerCharacter->PickUpItem(&items[i]);
+			items[i].SetPickedUp(true);
 		}
 	}
 }
@@ -472,6 +483,24 @@ void Room::destroyRoom()
 }
 
 
+void Room::Upgrade(Character* playerCharacter)
+{
+	Item* temp = playerCharacter->GetCurrentItem();
+	if (temp != nullptr) {
+		for (int i = 0; i < rigids.size(); i++) {
+			if (playerCharacter->CheckInBound(rigids[i])) {
+				rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
+				//rigids[i].SetBoxType(1);
+				if (rigids[i].GetBoxType() == 1) {
+					std::cout << "box upgraded" << std::endl;
+				}
+				//playerCharacter->SetCurrentItem(nullptr);
+			}
+		}
+	}
+
+}
+
 //=============================================================
 //	Compiles mesh data for the renderer
 //=============================================================
@@ -519,6 +548,11 @@ void Room::CompileMeshData()
 	{
 		meshes.push_back(holders[i].GetMeshData());
 		meshes.push_back(holders[i].GetHolderMeshData());
+	}
+	for (int i = 0; i < items.size(); i++) {
+		if (!items[i].GetPickedUp()) {
+			meshes.push_back(items[i].GetMeshData());
+		}
 	}
 }
 
@@ -661,6 +695,9 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			}
 			break;
 
+		case 14:	//Item
+			{
+			}
 		default:
 			break;
 		}
@@ -668,6 +705,11 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 	
 
 	}
+	Item item;
+	item.SetItemType(1);
+	item.SetPosition(glm::vec3(0, 1, 0));
+	item.SetMaterialID(materials[1].getMaterialID());
+	items.push_back(item);
 }
 
 //=============================================================

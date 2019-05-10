@@ -17,6 +17,14 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			scene->state = PLAYING;
 			std::cout << "PLAYING" << std::endl;
 		}
+		if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+			for (int i = 0; i < scene->firstRoomBuffer->getButtons().size(); i++) {
+				if (!scene->firstRoomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->firstRoomBuffer->getButtons()[i])) {
+
+					scene->firstRoomBuffer->getButtons()[i].setPressed(true);
+				}
+			}
+		}
 
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 			//RESUMES GAME
@@ -58,6 +66,25 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			std::cout << "1 - Resume" << std::endl;
 			std::cout << "2 - Restart" << std::endl;
 			std::cout << "3 - Exit" << std::endl;
+		}
+		if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+			//UPGRADES BOXES
+			scene->Upgrade();
+		}
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(0);
+		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(1);
+		}
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(2);
+		}
+		if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(3);
+		}
+		if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(4);
 		}
 	}
 	else if (scene->state == MAINMENU) {
@@ -238,7 +265,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		firstRoomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Update the scene
-		//playerCharacter.Update(deltaTime);
+		playerCharacter.Update(deltaTime);
 		for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
 		{
 			firstRoomBuffer->GetRigids()[i].Update(deltaTime);
@@ -321,7 +348,7 @@ void Scene::Gravity()
 	// Entity boxes
 	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
 	{	
-		if (!firstRoomBuffer->GetRigids()[i].IsGrounded())
+		if (!firstRoomBuffer->GetRigids()[i].IsGrounded() && !firstRoomBuffer->GetRigids()[i].GetBoxType() == 1)
 		{
 			firstRoomBuffer->GetRigids()[i].AddVelocityY(gravity);
 		}

@@ -2,6 +2,13 @@
 
 Character::Character() : RigidEntity(1)
 {
+	items = new Item*[this->cap];
+	for (int i = 0; i < cap-1; i++) {
+		items[i] = nullptr;
+	}
+	items[4] = new Item();
+	items[4]->SetItemType(3);
+
 	holdingObject = false;
 	entityID = -1;
 }
@@ -174,6 +181,34 @@ glm::vec3 Character::Move(GLFWwindow* window)
 
 	inputVector = moveDir;
 	return glm::vec3(moveDir);
+}
+
+void Character::PickUpItem(Item * item)
+{
+	if (nrOf == cap) {
+		return;
+	}
+	else {
+		for (int i = 0; i < cap; i++) {
+			if (items[i] == nullptr) {
+				items[i] = item;
+				nrOf++;
+				std::cout << "Picked up item" << std::endl;
+				break;
+			}
+		}
+	}
+}
+
+Item * Character::Upgrade()
+{
+	if (items[currentItem] == nullptr) {
+		return nullptr;
+	}
+	else {
+		return items[currentItem];
+	}
+
 }
 
 

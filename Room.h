@@ -18,7 +18,7 @@
 #include "PressurePlate.h"
 #include "Button.h"
 #include "Menu.h"
-
+#include "Item.h"
 #include "boxHolder.h"
 //============================================================================
 //	- Rooms
@@ -52,6 +52,8 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
+	void PlayerItemCollision(Character* playerCharacter);
+
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> roomMeshes;
@@ -67,6 +69,7 @@ private:
 	std::vector<BoxHoldEntity> holdBoxes;
 	std::vector<PressurePlate> plates;
 	std::vector<Button> buttons;
+	std::vector<Item> items;
 
 	std::vector<boxHolder> holders;
 
@@ -101,7 +104,7 @@ public:
 	void destroyRoom();
 
 
-
+	void Upgrade(Character* playerCharacter);
 	void CompileMeshData();
 };
 

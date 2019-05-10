@@ -100,6 +100,8 @@ public:
 	void SetIsSwitched(bool isSwitched);
 	void ResetRoom();
 
+	void Upgrade() { this->firstRoomBuffer->Upgrade(&this->playerCharacter); }
+
 
 };
 

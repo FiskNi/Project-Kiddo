@@ -10,6 +10,18 @@
 class RigidEntity : public Entity
 {
 private:
+	enum BOXTYPE {
+		REGULAR = 0,
+		LIGHTWEIGHT = 1
+	};
+	enum ITEMTYPE {
+		FEATHER = 0,
+		BOMB = 1,
+		SNOWFLAKE = 2,
+		BOXCOMBINE = 3
+	};
+	BOXTYPE boxType = REGULAR;
+
 	glm::vec3 startPos;
 	glm::vec3 velocity;
 	glm::vec3 savedPos;
@@ -52,16 +64,21 @@ public:
 	void SetHeld(bool holding);
 	void SetStartPosition(glm::vec3 pos);
 	void SetSavedPosition(glm::vec3 pos) { savedPos = pos; }
+	void SetBoxType(int type) { 
+		this->boxType = (BOXTYPE)type;
+	}
 
 	glm::vec3 GetVelocity() const { return velocity; }
 	float GetVelocityX() const { return velocity.x; }
 	float GetVelocityY() const { return velocity.y; }
 	float GetVelocityZ() const { return velocity.z; }
 	glm::vec3 GetSavedPos() const { return savedPos; }
+	BOXTYPE GetBoxType() { return this->boxType; }
 
 	float GetGroundLevel() const { return groundLevel; }
 	bool IsColliding() const { return collision; }
 	bool IsGrounded() const { return grounded; }
 	bool IsHeld() const { return held; }
 
+	void Upgrade(ITEMTYPE item);
 };

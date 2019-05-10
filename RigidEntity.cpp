@@ -181,3 +181,11 @@ void RigidEntity::SetStartPosition(glm::vec3 pos)
 {
 	startPos = pos;
 }
+
+void RigidEntity::Upgrade(ITEMTYPE item)
+{
+	switch (item) {
+		case FEATHER: boxType = LIGHTWEIGHT;
+	}
+
+}
