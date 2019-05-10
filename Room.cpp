@@ -16,29 +16,6 @@ Room::Room(std::vector<Material> materials, Loader* aLoader)
 	CompileMeshData();
 }
 
-//Room::Room(std::vector<Material> materials, int state)
-//{
-//	// This is to initialise the Main Menu room scene
-//
-//	// Check which state is active, and run loading accordingly
-//	if (state == MAINMENU) 
-//	{
-//		// Hardcoded quad to print something to the screen
-//		RigidEntity quad(0);
-//		quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//		quad.SetMaterialID(materials[0].getMaterialID());
-//		quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//		rigids.push_back(quad);
-//
-//		// Perhaps change position for the menu?
-//		// Initialize camera (Default constructor)
-//		roomCamera = new Camera;
-//	}
-//
-//	// Compiles all the mesh data in the room for the renderer
-//	CompileMeshData();
-//}
-
 Room::~Room()
 {
 	delete roomCamera;

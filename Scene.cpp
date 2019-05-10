@@ -31,12 +31,11 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 		}
 
 		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-			//CLOSES WINDOW
-			//glfwSetWindowShouldClose(window, GL_TRUE);
-
+			// RETURNS TO MAIN MENU
+			scene->isLoading = true;
 			scene->state = MAINMENU;
-			//scene->SwitchRoom();
-			scene->SwitchMainMenu();
+			//scene->SwitchMainMenu();
+			//scene->isLoading = false;
 			std::cout << "Returning to Main Menu" << std::endl;
 			std::cout << "Loading..." << std::endl;
 			std::cout << "MAIN MENU" << std::endl;
@@ -51,7 +50,6 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 	// IF PLAYING
 	else if (scene->state == PLAYING) {
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-			//scene->CompileMeshDataPauseMenu();
 			scene->state = PAUSED;
 			std::cout << "PAUSED" << std::endl;
 			std::cout << "Press the numbers below to perform actions: " << std::endl;
@@ -64,9 +62,12 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 			//RESUMES GAME
+			scene->isLoading = true;
+			// GET SHADER AND RENDER LOADING
+			//scene->menuHandler.RenderLoading(scene->GetShader(2));
 			scene->state = PLAYING;
-			//scene->SwitchRoom();
-			scene->isSwitched = true;
+			/*scene->SwitchMainMenu();*/
+			//scene->isLoading = false;
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
 		}
@@ -90,6 +91,7 @@ Scene::Scene()
 	state = MAINMENU;
 	// Loads content | *Each function could return a bool incase of failure
 
+	// Starting Room should be the first level to be loaded, probably the bedroom
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
 	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
@@ -305,7 +307,13 @@ void Scene::SwitchMainMenu()
 {
 	if (state == MAINMENU)
 	{
-		CompileMeshDataMainMenu();
+		//this->isLoading = true;
+		this->isSwitched = true;
+		//CompileMeshDataMainMenu();
+	}
+	else
+	{
+		//this->isLoading = true;
 		this->isSwitched = true;
 	}
 }

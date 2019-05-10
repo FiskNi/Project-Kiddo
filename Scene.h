@@ -73,6 +73,9 @@ private:
 	Room* mainMenuRoomBuffer;
 	int roomNr;
 	bool isSwitched;
+	bool isLoading;
+
+	Menu menuHandler;
 
 	// Character
 	Character playerCharacter;
@@ -88,6 +91,8 @@ public:
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 	bool GetIsSwitched() const{ return isSwitched; }
+	bool GetIsLoading() const { return isLoading; }
+	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
 
 	//void SetState() { this->press(); }
 	int GetCurrentState() const { return state; };

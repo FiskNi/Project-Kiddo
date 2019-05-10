@@ -134,6 +134,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="ImGuiHandler.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="StaticEntity.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentSM.glsl" />
@@ -174,6 +176,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ImGuiHandler.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="MenuButton.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="Headers.h" />
@@ -198,6 +201,7 @@
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="StaticEntity.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="mehImporterLib\mehImporterLib.vcxproj">
