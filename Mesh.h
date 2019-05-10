@@ -25,6 +25,7 @@ private:
 public:
 	Mesh(Vertex* vertArr, unsigned int vertexCount);
 	Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID);
+	Mesh(Loader* inLoader, int index);
 	Mesh();
 	~Mesh();
 

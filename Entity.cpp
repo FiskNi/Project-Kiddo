@@ -72,8 +72,6 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entit
 	glm::quat eRotation = glm::quat(eRotationXYZ);
 	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
 
-	
-
 	glm::mat4 offsetCenterMat = glm::mat4(1.0f);
 	glm::mat4 translationMatrix = glm::translate(offsetCenterMat, ePosition);
 	glm::mat4 rotationMatrix = glm::mat4_cast(eRotation);

@@ -22,6 +22,23 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID)
 	ImportMesh(vertArr, vertexCount);
 }
 
+Mesh::Mesh(Loader* inLoader, int index)
+{
+	glm::vec3 ePosition = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
+	glm::vec3 eRotationXYZ = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
+	eRotationXYZ = glm::radians(eRotationXYZ);
+	glm::quat eRotation = glm::quat(eRotationXYZ);
+	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
+
+
+	this->position = ePosition;
+	this->rotation = eRotation;
+	this->scale = eScale;
+
+	this->materialID = inLoader->GetMaterialID(index);
+	ImportMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index));
+}
+
 Mesh::Mesh()
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);

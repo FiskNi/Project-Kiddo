@@ -41,6 +41,8 @@ public:
 
 	//float GetPointLightPos(int index, int posIndex) const { return pointLight[index].position[posIndex]; }
 	float* GetPointLightPos(int index) const { return pointLight[index].position; }
+	float* GetPointLightColor(int index) const { return pointLight[index].color; }
+
 	float GetPointLightIntensity(int index) const { return pointLight[index].intensity; }
 	int GetPointLightCount() const { return fileHeader.pointLightCount; }
 

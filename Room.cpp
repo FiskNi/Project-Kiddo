@@ -576,7 +576,7 @@ void Room::LoadLights(Loader* inLoader)
 	Loader lightLoad("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 	Light light(0.0f, 0.0f, 0.0f, 0.0f, 160, 8);
 	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
-	light.SetSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
+	light.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	pointLights.push_back(light);
 	pointLights.push_back(light);
@@ -591,8 +591,14 @@ void Room::LoadLights(Loader* inLoader)
 				inLoader->GetPointLightPos(i)[0],
 				inLoader->GetPointLightPos(i)[1],
 				inLoader->GetPointLightPos(i)[2]);
+		glm::vec3 color = glm::vec3(
+			inLoader->GetPointLightColor(i)[0],
+			inLoader->GetPointLightColor(i)[1],
+			inLoader->GetPointLightColor(i)[2]);
+
 		
 		pointLights[i].setLightPos(pos);
+		pointLights[i].SetDiffuse(color);
 		pointLights[i].setPower(inLoader->GetPointLightIntensity(i));
 	}
 
@@ -641,13 +647,13 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
 			}
 			break;
 		case 1:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -670,19 +676,22 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 4:		// Bridge
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
-				roomMeshes.push_back(mesh);
-			}
-			break;
-
-		case 5:		// DrawBridge
-			{
 				BridgeEntity bridgeEntity(level, i, matID);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetLinkID(level->GetMesh(i).link);
 				bridgeEntity.SetExtendingBackwardZ();
 				bridgeEntity.SetExtendDistance(4.2f);
 				bridges.push_back(bridgeEntity);
+				Mesh mesh(level, i);
+				roomMeshes.push_back(mesh);
+			}
+			break;
+
+		case 5:		// Box Holder
+			{
+				boxHolder boxHolderEntity(level, i, matID, matID);
+				boxHolderEntity.puntBox();
+				this->holders.push_back(boxHolderEntity);
 			}
 			break;
 
@@ -714,7 +723,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -731,9 +740,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 13:	// Box holder
 			{
-				boxHolder boxHolderEntity(level, i, matID, matID);
-				boxHolderEntity.puntBox();
-				this->holders.push_back(boxHolderEntity);
+
 			}
 			break;
 

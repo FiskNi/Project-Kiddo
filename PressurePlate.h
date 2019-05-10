@@ -15,7 +15,7 @@ public:
 	bool isPressed() { return pressed; }
 	int GetLinkID() { return linkID; }
 
-	void setPressed(bool tf) { pressed = tf; }
+	void setPressed(bool tf);
 	void SetLink(int id) { this->linkID = id; }
 
 };

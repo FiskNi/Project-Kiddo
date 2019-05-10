@@ -313,7 +313,7 @@ void Scene::SwitchRoom()
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level2v1.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1v4.meh");
 	}
 	else if (roomNr == 1)
 	{
