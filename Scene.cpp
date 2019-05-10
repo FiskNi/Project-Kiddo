@@ -313,7 +313,7 @@ void Scene::SwitchRoom()
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level2.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level2v1.meh");
 	}
 	else if (roomNr == 1)
 	{
@@ -327,9 +327,14 @@ void Scene::SwitchRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/BedRoomTest.meh");
 	}
+	else
+	{
+		roomNr = -1;
+	}
 
-	firstRoomBuffer = new Room(materials, roomLoader);
 	LoadMaterials(roomLoader);
+	firstRoomBuffer = new Room(materials, roomLoader);
+
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)

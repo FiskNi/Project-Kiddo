@@ -82,6 +82,12 @@ void GameEngine::Run()
 
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
+		if (mainScene.GetIsSwitched())
+		{
+			CompileRoomData();
+			mainScene.SetSwitched();
+		}
+
 		glfwPollEvents();
 
 		// Deltatime via ImGui
@@ -128,11 +134,6 @@ void GameEngine::Run()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		if (mainScene.GetIsSwitched())
-		{
-			CompileRoomData();
-			mainScene.SetSwitched();
-		}
 
 		glfwSwapBuffers(mainRenderer.getWindow());
 	}

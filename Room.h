@@ -37,7 +37,7 @@
 class Room
 {
 private:
-	void LoadLights();
+	void LoadLights(Loader* inLoader);
 	void LoadEntities(std::vector<Material> materials, Loader* level);
 	void LoadPuzzleNode(std::vector<Material> materials);
 

@@ -4,7 +4,7 @@
 
 Room::Room(std::vector<Material> materials, Loader* aLoader)
 {
-	LoadLights();
+	LoadLights(aLoader);
 	LoadEntities(materials, aLoader);
 	LoadPuzzleNode(materials);
 	isRoomCompleted = false;
@@ -571,12 +571,12 @@ void Room::CompileMeshData()
 //	Light initialization
 //	Loads and positions all the lights in the scene
 //=============================================================
-void Room::LoadLights()
+void Room::LoadLights(Loader* inLoader)
 {
 	Loader lightLoad("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 	Light light(0.0f, 0.0f, 0.0f, 0.0f, 160, 8);
-	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
-	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
+	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
+	light.SetSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
 	pointLights.push_back(light);
 	pointLights.push_back(light);
@@ -585,15 +585,39 @@ void Room::LoadLights()
 	pointLights.push_back(light);
 	pointLights.push_back(light);
 
-	for (int i = 0; i < lightLoad.getPointLightCount(); i++)
+	for (int i = 0; i < inLoader->GetPointLightCount(); i++)
 	{
-		pointLights[i].setLightPos(glm::vec3(lightLoad.getPointLightPos(i, 0),
-		lightLoad.getPointLightPos(i, 1), lightLoad.getPointLightPos(i, 2)));
-		pointLights[i].setPower(lightLoad.getPointLightIntensity(i));
+		glm::vec3 pos = glm::vec3(
+				inLoader->GetPointLightPos(i)[0],
+				inLoader->GetPointLightPos(i)[1],
+				inLoader->GetPointLightPos(i)[2]);
+		
+		pointLights[i].setLightPos(pos);
+		pointLights[i].setPower(inLoader->GetPointLightIntensity(i));
 	}
 
-	DirectionalLight light2;
-	dirLights.push_back(light2);
+	DirectionalLight dirLight;
+	dirLights.push_back(dirLight);
+
+	for (int i = 0; i < inLoader->GetDirLightCount(); i++)
+	{
+		glm::vec3 pos = glm::vec3(
+			inLoader->GetDirLightPos(i)[0],
+			inLoader->GetDirLightPos(i)[1],
+			inLoader->GetDirLightPos(i)[2]);
+		glm::vec3 color = glm::vec3(
+			inLoader->GetDirLightColor(i)[0],
+			inLoader->GetDirLightColor(i)[1],
+			inLoader->GetDirLightColor(i)[2]);
+
+
+		dirLights[i].SetPos(pos);
+		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i));
+		dirLights[i].SetDiffuse(color);
+	}
+
+
+
 }
 
 //=============================================================
