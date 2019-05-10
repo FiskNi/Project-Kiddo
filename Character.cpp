@@ -91,7 +91,7 @@ bool Character::CheckInBound(Entity collidingCube)
 glm::vec3 Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 1.5f;
+	const float moveSpeed = 2.0f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
@@ -104,7 +104,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
 		{
        		jumpSquat = true;
-			moveY = moveSpeed + 10.5;
+			moveY = moveSpeed;
 			SetGrounded(false);
 		}
 
@@ -113,7 +113,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
 				moveX = -moveSpeed / 5; 
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -127,7 +127,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if(jumpSquat && RigidEntity::IsGrounded())
 			{
 				moveX = moveSpeed / 5;
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -141,7 +141,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
 				moveZ = -moveSpeed / 5;
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -155,7 +155,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded())
 			{
 				moveZ = moveSpeed / 5;
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -180,15 +180,12 @@ glm::vec3 Character::Move(GLFWwindow* window)
 
 			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
 			SetRotation(qRotation);
-
-			
 		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
 		
-		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
-
 		moveDir *= moveSpeed;
+		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
 	}
 
 	inputVector = moveDir;

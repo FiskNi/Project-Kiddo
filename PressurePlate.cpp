@@ -1,8 +1,18 @@
 #include "PressurePlate.h"
 
 
-
-
-void PressurePlate::setPressed(bool tf)
+PressurePlate::PressurePlate(Loader* inLoader, unsigned int index, unsigned int matID) : StaticEntity(inLoader, index, matID)
 {
+	pressed = false;
+	linkID = -999;
+}
+
+void PressurePlate::setPressed(bool prssd)
+{
+	pressed = prssd;
+}
+
+void PressurePlate::SetLink(int id)
+{
+	linkID = id;
 }

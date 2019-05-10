@@ -21,9 +21,9 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 		if (key == GLFW_KEY_E && action == GLFW_PRESS) {
 			for (int i = 0; i < scene->firstRoomBuffer->getButtons().size(); i++) {
-				if (!scene->firstRoomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->firstRoomBuffer->getButtons()[i])) {
-
-					scene->firstRoomBuffer->getButtons()[i].setPressed(true);
+				if (!scene->firstRoomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->firstRoomBuffer->getButtons()[i])) 
+				{
+					scene->firstRoomBuffer->getButtons()[i].SetPressed(true);
 				}
 			}
 		}
@@ -126,9 +126,9 @@ Scene::Scene()
 	state = MAINMENU;
 
 	// Our entry room (first level)
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level2.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 
 	LoadShaders();
 	LoadMaterials(&startingRoom);
@@ -257,7 +257,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		Gravity();
 
 		// Player movement vector
-		glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
+		playerCharacter.Move(renderWindow);
 		if (!playerCharacter.IsColliding())
 		{
 			playerCharacter.AddVelocity(playerCharacter.GetInputVector());
@@ -269,7 +269,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		firstRoomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Update the scene
-		playerCharacter.Update(deltaTime);
 		for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
 		{
 			firstRoomBuffer->GetRigids()[i].Update(deltaTime);
@@ -317,15 +316,15 @@ void Scene::SwitchRoom()
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 	}
 	else if (roomNr == 2)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level2v1.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/BedRoomTest.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 	}
 	else
 	{
@@ -334,7 +333,6 @@ void Scene::SwitchRoom()
 
 	LoadMaterials(roomLoader);
 	firstRoomBuffer = new Room(materials, roomLoader);
-
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)

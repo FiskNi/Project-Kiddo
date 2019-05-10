@@ -169,16 +169,16 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 //=============================================================
 void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 {
-	//if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-	//{
-	//	for (int i = 0; i < buttons.size(); i++)
-	//	{
-	//		if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
-	//		{
-	//			buttons[i].setPressed(true);
-	//		}
-	//	}
-	//}
+	/*if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		for (int i = 0; i < buttons.size(); i++)
+		{
+			if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
+			{
+				buttons[i].SetPressed(true);
+			}
+		}
+	}*/
 }
 
 void Room::PlayerItemCollision(Character* playerCharacter)
@@ -439,7 +439,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 					else
 						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-					pushDir *= 2.0f;
+					pushDir *= 5.0f;
 
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
@@ -462,7 +462,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
 				else
 					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-				pushDir *= 2.0f;
+				pushDir *= 5.0f;
 
 				playerCharacter->AddVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
@@ -573,7 +573,6 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights(Loader* inLoader)
 {
-	Loader lightLoad("Resources/Assets/GameReady/Rooms/Level1v3.meh");
 	Light light(0.0f, 0.0f, 0.0f, 0.0f, 160, 8);
 	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -697,8 +696,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 6:		// Button
 			{
-				Button button;
-				button.SetPosition(level->GetMesh(i).translation);
+				Button button(level, i, matID);
 				button.SetLink(level->GetMesh(i).link);
 				button.SetMaterialID(matID);
 				button.scaleBB(2);
@@ -708,8 +706,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 7:		// Presure Plate
 			{
-				PressurePlate pPlate;
-				pPlate.SetPosition(level->GetMesh(i).translation);
+				PressurePlate pPlate(level, i, matID);
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
@@ -732,21 +729,13 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 11:	// Light
-
 			break;
 
 		case 12:	// Collectible
 			break;
 
-		case 13:	// Box holder
-			{
+		case 13:	//Item
 
-			}
-			break;
-
-		case 14:	//Item
-			{
-			}
 		default:
 			break;
 		}
@@ -754,6 +743,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 	
 
 	}
+
+
 	Item item;
 	item.SetItemType(1);
 	item.SetPosition(glm::vec3(0, 1, 0));

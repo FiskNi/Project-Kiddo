@@ -5,17 +5,16 @@ class PressurePlate : public StaticEntity
 {
 
 private:
-	bool pressed = false;
+	bool pressed;
 	int linkID;
 
 public:
-	PressurePlate() : StaticEntity(2) {};
+	PressurePlate(Loader * inLoader, unsigned int index, unsigned int matID);
 	~PressurePlate() {};
 
 	bool isPressed() { return pressed; }
 	int GetLinkID() { return linkID; }
 
 	void setPressed(bool tf);
-	void SetLink(int id) { this->linkID = id; }
-
+	void SetLink(int id);
 };

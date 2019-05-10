@@ -8,12 +8,12 @@ private:
 	int linkID = 0;
 
 public:
-	Button() : StaticEntity(2) {};
+	Button(Loader * inLoader, unsigned int index, unsigned int matID);
 	~Button() {};
 
 	bool isPressed() { return pressed; }
 	int GetLinkID() { return linkID; }
 
-	void setPressed(bool tf) { pressed = tf; }
-	void SetLink(int id) { this->linkID = id; }
+	void SetPressed(bool prssd);
+	void SetLink(int id);
 };
