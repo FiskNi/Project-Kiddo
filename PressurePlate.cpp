@@ -7,6 +7,12 @@ PressurePlate::PressurePlate(Loader* inLoader, unsigned int index, unsigned int 
 	linkID = -999;
 }
 
+PressurePlate::PressurePlate(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen) : StaticEntity(inLoader, index, matID, frozen)
+{
+	pressed = false;
+	linkID = -999;
+}
+
 void PressurePlate::setPressed(bool prssd)
 {
 	pressed = prssd;

@@ -36,7 +36,7 @@ public:
 	void SetRespawn(glm::vec3 pos) { respawnPos = pos; }
 
 	bool CheckInBound(Entity collidingCube);
-	glm::vec3 Move(GLFWwindow *window);
+	void Move(GLFWwindow *window);
 
 	bool IsHoldingObject() { return holdingObject; }
 	int GetEntityID() const { return entityID; }

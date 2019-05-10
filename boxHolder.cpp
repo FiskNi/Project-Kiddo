@@ -33,6 +33,18 @@ boxHolder::boxHolder(Loader* inLoader, unsigned int index, unsigned int holderMa
 	aMesh.setMaterial(holderMatID);
 }
 
+boxHolder::boxHolder(Loader * inLoader, unsigned int index, unsigned int holderMatID, unsigned int boxMatID, bool frozen) : StaticEntity(inLoader, index, boxMatID, frozen)
+{
+	this->visible = false;
+	this->aMesh.CreatePlateData();
+	origPos = GetPosition();
+	origBBPos = GetPositionBB();
+	setPositionBBOffset(origBBPos);
+
+	aMesh.SetPosition(origPos);
+	aMesh.setMaterial(holderMatID);
+}
+
 
 boxHolder::~boxHolder()
 {

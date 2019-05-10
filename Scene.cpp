@@ -134,9 +134,9 @@ Scene::Scene()
 	state = MAINMENU;
 
 	// Our entry room (first level)
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 
 	LoadShaders();
 	LoadMaterials(&startingRoom);
@@ -209,11 +209,6 @@ void Scene::LoadCharacter(Loader* inLoader)
 			playerCharacter.SetMaterialID(0);
 			playerCharacter.SetPosition(inLoader->GetMesh(i).translation);
 		}
-		else
-		{
-			playerCharacter.SetPosition(0.0f, 5.0f, 0.0f);
-			playerCharacter.SetMaterialID(0);
-		}
 	}
 
 
@@ -255,7 +250,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		setUserPointer = true;
 	}
 
-
 	if (state == MAINMENU) 
 	{
 		CompileMeshDataMainMenu();
@@ -272,11 +266,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			playerCharacter.AddVelocity(playerCharacter.GetInputVector());
 		}
 
-		// First update
+		// Character update
 		playerCharacter.Update(deltaTime);
-
-		roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
-
 		// Update the scene
 		for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 		{
@@ -288,11 +279,13 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			roomBuffer->GetBridges()[i].Update(deltaTime);
 		}
 
+		roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Compile render data for the renderer
 		CompileMeshData();
 	}
-	else{
+	else
+	{
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
 		// Might want to handle mouse picking here
 	}
@@ -305,7 +298,7 @@ void Scene::SetSwitched()
 
 void Scene::ResetRoom()
 {
-	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
+	playerCharacter.ResetPos();
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{
 		roomBuffer->GetRigids()[i].ResetPos();
@@ -323,19 +316,19 @@ void Scene::SwitchRoom()
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1v4.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelPads-n-Walls.meh");
 	}
 	else if (roomNr == 2)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 	}
 	else
 	{
@@ -353,12 +346,8 @@ void Scene::SwitchRoom()
 			playerCharacter.SetMaterialID(0);
 			playerCharacter.SetPosition(roomLoader->GetMesh(i).translation);
 		}
-		else
-		{
-			playerCharacter.SetPosition(0.0f, 5.0f, 0.0f);
-			playerCharacter.SetMaterialID(0);
-		}
 	}
+	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
 	playerCharacter.ResetPos();
 
 	CompileMeshData();
