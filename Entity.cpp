@@ -17,14 +17,10 @@ Entity::Entity(unsigned int i)
 	InitBoundingBox();
 }
 
-Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : entityMesh(vertArr, nrOfVerticies)
+Entity::Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : entityMesh(vertArr, vertexCount)
 {
 	// Created a bounding box based on the entityMesh 
 	InitBoundingBox();
-
-	position = glm::vec3(0.0f);
-	rotation = glm::vec3(0.0f);
-	scale = glm::vec3(0.0f);
 
 	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
 	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
@@ -35,7 +31,7 @@ Entity::Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) 
 		entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
 	}
 	InitBoundingBox();
-	entityMesh.setPosition(worldPosition);
+	entityMesh.SetPosition(worldPosition);
 
 
 	SetMaterialID(matID);
@@ -46,18 +42,24 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entit
 	// Created a bounding box based on the entityMesh 
 	name = inLoader->GetMesh(index).name;
 
-	position = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
-	rotation = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
-	scale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
+	glm::vec3 ePosition = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
 
-	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
-	{
-		//glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -position);
-		//entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
-	}
+
+	glm::vec3 eRotationXYZ = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
+	//eRotationXYZ = glm::radians(eRotationXYZ);
+	glm::quat eRotation = glm::quat(eRotationXYZ);
+
+
+	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
+
+
+
 	InitBoundingBox();
 
-	entityMesh.setPosition(position);
+	entityMesh.SetPosition(ePosition);
+	entityMesh.SetRotation(eRotationXYZ);
+	entityMesh.SetRotation(eRotation);
+	entityMesh.SetScale(eScale);
 
 	SetMaterialID(matID);
 }
@@ -185,43 +187,48 @@ void Entity::SetMaterialID(unsigned int id)
 
 void Entity::SetPosition(glm::vec3 newPos)
 {
-	entityMesh.setPosition(newPos);
+	entityMesh.SetPosition(newPos);
 
 }
 
 void Entity::SetPositionY(float y)
 {
-	entityMesh.setPositionY(y);
+	entityMesh.SetPositionY(y);
 }
 
 void Entity::OffsetPosition(glm::vec3 offset)
 {
-	entityMesh.setPosition(entityMesh.GetPosition() + offset);
+	entityMesh.SetPosition(entityMesh.GetPosition() + offset);
 }
 
 void Entity::OffsetPosition(float x, float y, float z)
 {
-	entityMesh.setPosition(entityMesh.GetPosition() + glm::vec3(x, y, z));
+	entityMesh.SetPosition(entityMesh.GetPosition() + glm::vec3(x, y, z));
 }
 
 void Entity::OffsetPositionX(float x)
 {
-	entityMesh.setPosition(glm::vec3(entityMesh.GetPosition().x + x, entityMesh.GetPosition().y, entityMesh.GetPosition().z));
+	entityMesh.SetPosition(glm::vec3(entityMesh.GetPosition().x + x, entityMesh.GetPosition().y, entityMesh.GetPosition().z));
 }
 
 void Entity::OffsetPositionY(float y)
 {
-	entityMesh.setPosition(glm::vec3(entityMesh.GetPosition().x, entityMesh.GetPosition().y + y, entityMesh.GetPosition().z));
+	entityMesh.SetPosition(glm::vec3(entityMesh.GetPosition().x, entityMesh.GetPosition().y + y, entityMesh.GetPosition().z));
 }
 
 void Entity::OffsetPositionZ(float z)
 {
-	entityMesh.setPosition(glm::vec3(entityMesh.GetPosition().x, entityMesh.GetPosition().y, entityMesh.GetPosition().z + z));
+	entityMesh.SetPosition(glm::vec3(entityMesh.GetPosition().x, entityMesh.GetPosition().y, entityMesh.GetPosition().z + z));
 }
 
 void Entity::SetRotation(float x, float y, float z)
 {
 	entityMesh.SetRotation(x, y, z);
+}
+
+void Entity::SetRotation(glm::quat newRot)
+{
+	entityMesh.SetRotation(newRot);
 }
 
 void Entity::setPositionBBOffset(glm::vec3 newPos)
@@ -252,9 +259,10 @@ void Entity::setBBY(float y)
 
 void Entity::SetScale(float x, float y, float z)
 {
-
+	entityMesh.SetScale(glm::vec3(x, y, z));
 }
 
-void Entity::SetScale(glm::vec3)
+void Entity::SetScale(glm::vec3 newSca)
 {
+	entityMesh.SetScale(newSca);
 }

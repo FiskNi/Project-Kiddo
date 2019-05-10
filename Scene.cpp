@@ -1,64 +1,14 @@
 #include "Scene.h"
 
 
-void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
-{
-	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
-
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		//SWITCHES ROOM BUT ACTUALLY RESETS
-		scene->SwitchRoom();
-	}
-
-	//IF PAUSED
-	if (scene->state == PAUSED) {
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-			//UNPAUSE
-			scene->state = PLAYING;
-			std::cout << "PLAYING" << std::endl;
-		}
-
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-			//RESUMES GAME
-			scene->state = PLAYING;
-			std::cout << "RESUME" << std::endl;
-		}
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-			//RESTART HERE
-			scene->ResetRoom();
-			scene->state = PLAYING;
-			std::cout << "Restarting level" << std::endl;
-		}
-
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-			//CLOSES WINDOW
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-
-
-	}
-	// IF PLAYING
-	else if (scene->state == PLAYING) {
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-			//scene->CompileMeshDataPauseMenu();
-			scene->state = PAUSED;
-			std::cout << "PAUSED" << std::endl;
-			std::cout << "Press the numbers below to perform actions: " << std::endl;
-			std::cout << "1 - Resume" << std::endl;
-			std::cout << "2 - Restart" << std::endl;
-			std::cout << "3 - Exit" << std::endl;
-		}
-	}
-}
 
 Scene::Scene()
 {
 
 	//state = 1;
 	// Loads content | *Each function could return a bool incase of failure
-
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v2.meh");
-	Loader secondRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
+	Loader secondRoom("Resources/Assets/GameReady/Rooms/TestFile2.meh");
 	//Loader startingRoom("Resources/Assets/GameReady/Rooms/TestFile.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
@@ -78,7 +28,6 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-
 	delete firstRoomBuffer;
 	delete secondRoomBuffer;
 }
@@ -112,13 +61,15 @@ void Scene::LoadMaterials(Loader* inLoader)
 	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
 	materials.push_back(planeMat);
 
+	Material playerMat("Player Material", materials.size());
+	playerMat.createAlbedo("Resources/Textures/broken.png");
+	materials.push_back(playerMat);
+
 	Material cubeMat("Plane Cube Material", materials.size());
 	cubeMat.createAlbedo("Resources/Textures/boxTexture.png");
 	materials.push_back(cubeMat);
 
-	Material playerMat("Player Material", materials.size());
-	playerMat.createAlbedo("Resources/Textures/broken.png");
-	materials.push_back(playerMat);
+
 
 	Material nodeMat("Node Material", materials.size());
 	nodeMat.createAlbedo("Resources/Textures/broken.png");
@@ -152,9 +103,9 @@ void Scene::CompileMeshData()
 
 	firstRoomBuffer->CompileMeshData();
 	meshes = firstRoomBuffer->GetMeshData();
-
-	// Compile character data
 	meshes.push_back(playerCharacter.GetMeshData());
+	// Compile character data
+	
 }
 
 //void Scene::CompileMeshDataPauseMenu()
@@ -215,7 +166,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	else{
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
 
-		
+
 
 		//CompileMeshDataPauseMenu();
 		//CompileMeshData();
@@ -243,17 +194,17 @@ void Scene::SwitchRoom()
 	firstRoomBuffer = secondRoomBuffer;
 	if (roomNr == 0)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		Loader temp("Resources/Assets/GameReady/Rooms/TestFile2.meh");
 		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else if (roomNr == 1)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		Loader temp("Resources/Assets/GameReady/Rooms/TestFile2.meh");
 		secondRoomBuffer = new Room(materials, &temp);
 	}
 	else
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
+		Loader temp("Resources/Assets/GameReady/Rooms/TestFile2.meh");
 		secondRoomBuffer = new Room(materials, &temp);
 	}
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
@@ -284,5 +235,55 @@ void Scene::Gravity()
 	if (!playerCharacter.IsGrounded())
 	{
 		playerCharacter.AddVelocityY(gravity);
+	}
+}
+
+void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
+
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+		//SWITCHES ROOM BUT ACTUALLY RESETS
+		scene->SwitchRoom();
+	}
+
+	//IF PAUSED
+	if (scene->state == PAUSED) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			//UNPAUSE
+			scene->state = PLAYING;
+			std::cout << "PLAYING" << std::endl;
+		}
+
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+			//RESUMES GAME
+			scene->state = PLAYING;
+			std::cout << "RESUME" << std::endl;
+		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+			//RESTART HERE
+			scene->ResetRoom();
+			scene->state = PLAYING;
+			std::cout << "Restarting level" << std::endl;
+		}
+
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			//CLOSES WINDOW
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+
+	}
+	// IF PLAYING
+	else if (scene->state == PLAYING) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+			//scene->CompileMeshDataPauseMenu();
+			scene->state = PAUSED;
+			std::cout << "PAUSED" << std::endl;
+			std::cout << "Press the numbers below to perform actions: " << std::endl;
+			std::cout << "1 - Resume" << std::endl;
+			std::cout << "2 - Restart" << std::endl;
+			std::cout << "3 - Exit" << std::endl;
+		}
 	}
 }

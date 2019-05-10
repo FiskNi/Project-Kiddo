@@ -15,7 +15,7 @@ private:
 
 public:
 	BridgeEntity(unsigned int i);
-	BridgeEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	BridgeEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID);
 	BridgeEntity(Loader* vertArr, unsigned int index, unsigned int matID);
 	~BridgeEntity();
 

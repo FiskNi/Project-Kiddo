@@ -117,12 +117,12 @@ void Renderer::prePassRender(Shader gShaderProgram,
 	{
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
 
-		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
-		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
-		startIndex += objects[i].getVertexCount();
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].GetVertexCount());
+		startIndex += objects[i].GetVertexCount();
 	}
 }
 
@@ -180,32 +180,32 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	for (int i = 0; i < objects.size(); i++)
 	{
 		// Per object uniforms
-		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), gShaderProgram.getShader());
+		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniform1ui(has_normal, materials[objects[i].getMaterialID()].hasNormal());
-		glUniform1ui(has_albedo, materials[objects[i].getMaterialID()].hasAlbedo());
+		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
+		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
-			materials[objects[i].getMaterialID()].getAlbedo(),
+			materials[objects[i].GetMaterialID()].getAlbedo(),
 			gShaderProgram.getShader(),
 			"diffuseTex", 0);
 
 		// Binds the normal texture from a material
-		if (materials[objects[i].getMaterialID()].hasNormal())
+		if (materials[objects[i].GetMaterialID()].hasNormal())
 		{
 			passTextureData(GL_TEXTURE1,
-				materials[objects[i].getMaterialID()].getNormal(),
+				materials[objects[i].GetMaterialID()].getNormal(),
 				gShaderProgram.getShader(),
 				"normalTex", 1);
 		}
 
-		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getAmbient()));
-		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getDiffuse()));
-		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getSpecular()));
-		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].getMaterialID()].getEmissive()));
+		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getAmbient()));
+		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getDiffuse()));
+		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getSpecular()));
+		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getEmissive()));
 
 		// Binds the shadowmap (handles by the renderer)
 		passTextureData(GL_TEXTURE2,
@@ -216,9 +216,9 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].getVertexCount());
+		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].GetVertexCount());
 
-		startIndex += objects[i].getVertexCount();
+		startIndex += objects[i].GetVertexCount();
 	}
 
 }
@@ -304,7 +304,8 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 //	From template - Needs explanation
 //	Has to do with the fullscreen quad
 //=============================================================
-int Renderer::CreateFrameBuffer() {
+int Renderer::CreateFrameBuffer() 
+{
 	int err = 0;
 	// =================== COLOUR BUFFER =======================================
 	// add "Attachments" to the framebuffer (textures to write to/read from)
@@ -400,14 +401,19 @@ void Renderer::SetViewport()
 //	Need to lookup quick matrix multiplication etc for rotation stuff
 //	and what not.
 //=============================================================
-void Renderer::CreateModelMatrix(glm::vec3 translation, glm::vec3 rotation, GLuint shaderProg)
+void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm::vec3 scale, GLuint shaderProg)
 {
 	MODEL_MAT = glm::mat4(1.0f);
 
-	glm::mat4 rotationMatrix = glm::rotate(MODEL_MAT, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
 
-	MODEL_MAT = translationMatrix * rotationMatrix;
+	glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
+
+
+	glm::mat4 scaleMatrix = glm::scale(MODEL_MAT, scale);
+
+
+	MODEL_MAT = translationMatrix * rotationMatrix * scaleMatrix;
 }
 
 //=============================================================

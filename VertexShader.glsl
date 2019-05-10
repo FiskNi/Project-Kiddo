@@ -37,3 +37,5 @@ void main()
 
 	vs_out.shadow_coord = SHADOW_MAT * model * vec4(vertex_position, 1.0); 
 }
+
+//

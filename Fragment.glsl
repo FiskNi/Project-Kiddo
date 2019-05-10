@@ -114,7 +114,7 @@ void main ()
 	vec3 pointLight = vec3(0.0f);
 	for(int i = 0; i < 6; ++i)
 	{
-		//pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
+		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
 	}
 
 
@@ -197,3 +197,4 @@ vec3 CalculateDirLight(DirectionalLight light, vec3 aNormal, vec3 viewDir)
 	return diffuse;
 }
 
+//

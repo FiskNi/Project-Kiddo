@@ -27,7 +27,7 @@ Room::Room(std::vector<Material> materials, int state)
 		// Hardcoded quad to print something to the screen
 		RigidEntity quad(0);
 		quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-		quad.SetMaterialID(materials[0].getMaterialID());
+		quad.SetMaterialID(materials[0].GetMaterialID());
 		quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
 		rigids.push_back(quad);
 
@@ -531,22 +531,22 @@ void Room::LoadLights()
 	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
-	light.setLightPos(glm::vec3(1118.0f, 2.0f, -3.0f));
+	light.setLightPos(glm::vec3(8.0f, 2.0f, -3.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(1118.0f, 2.0f, 2.0f));
+	light.setLightPos(glm::vec3(8.0f, 2.0f, 2.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(1118.0f, 2.0f, 7.0f));
+	light.setLightPos(glm::vec3(8.0f, 2.0f, 7.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-1118.0f, 2.0f, -3.0f));
+	light.setLightPos(glm::vec3(-8.0f, 2.0f, -3.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-1118.0f, 2.0f, 2.0f));
+	light.setLightPos(glm::vec3(-8.0f, 2.0f, 2.0f));
 	pointLights.push_back(light);
 
-	light.setLightPos(glm::vec3(-1118.0f, 2.0f, 7.0f));
+	light.setLightPos(glm::vec3(-8.0f, 2.0f, 7.0f));
 	pointLights.push_back(light);
 
 	DirectionalLight light2;
@@ -573,7 +573,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].GetMaterialID());
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -586,28 +586,28 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 2:		// Static
 			{
-				StaticEntity levelEntity(level, i, materials[1].getMaterialID());
+				StaticEntity levelEntity(level, i, materials[1].GetMaterialID());
 				statics.push_back(levelEntity);
 			}
 			break;
 
 		case 3:		// Rigid
 			{
-				RigidEntity cubeEntity(level, i, materials[1].getMaterialID());
+				RigidEntity cubeEntity(level, i, materials[1].GetMaterialID());
 				rigids.push_back(cubeEntity);
 			}
 			break;
 
 		case 4:		// Bridge
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].GetMaterialID());
 				roomMeshes.push_back(mesh);
 			}
 			break;
 
 		case 5:		// DrawBridge
 			{
-				BridgeEntity bridgeEntity(level, i, materials[2].getMaterialID());
+				BridgeEntity bridgeEntity(level, i, materials[2].GetMaterialID());
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetExtendingBackwardZ();
 				bridgeEntity.SetExtendDistance(4.2f);
@@ -618,7 +618,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 6:		// Button
 			{
 				Button button;
-				button.SetMaterialID(materials[1].getMaterialID());
+				button.SetMaterialID(materials[1].GetMaterialID());
 				button.scaleBB(2);
 				buttons.push_back(button);
 			}
@@ -627,7 +627,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 7:		// Presure Plate
 			{
 				PressurePlate pPlate;
-				pPlate.SetMaterialID(materials[1].getMaterialID());
+				pPlate.SetMaterialID(materials[1].GetMaterialID());
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
 				plates.push_back(pPlate);
@@ -639,7 +639,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].getMaterialID());
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[1].GetMaterialID());
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -655,7 +655,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 13:	// Box holder
 			{
-				boxHolder boxHolderEntity(level, i, materials[1].getMaterialID(), materials[1].getMaterialID());
+				boxHolder boxHolderEntity(level, i, materials[1].GetMaterialID(), materials[1].GetMaterialID());
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
 			}
@@ -677,7 +677,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
-	winNode.SetMaterialID(materials[3].getMaterialID());
+	winNode.SetMaterialID(materials[3].GetMaterialID());
 	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
 	nodes.push_back(winNode);
 }

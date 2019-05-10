@@ -13,36 +13,37 @@ class Mesh
 {
 private:
 	glm::vec3 position;
-	glm::vec3 rotation;
+	glm::vec3 rotationEulerXYZ;
+	glm::quat rotation;
 	glm::vec3 scale;
 
-	int nrOfVerticies;
+	int vertexCount;
 	std::vector<vertexPolygon> vertices;
 
 	unsigned int materialID;
 
 public:
-	Mesh(Vertex* vertArr, unsigned int nrOfVerticies);
-	Mesh(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int materialID);
+	Mesh(Vertex* vertArr, unsigned int vertexCount);
+	Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID);
 	Mesh();
 	~Mesh();
 
 	void CreateCubeData();
 	void CreatePlaneData();
 	void CreatePlateData();
-	void ImportMesh(Vertex* verticies, int nrOfVerticies);
+	void ImportMesh(Vertex* verticies, int vertexCount);
 
 	void CalculateTangents();
 
 	void setMaterial(unsigned int texID);
 
-	void setPosition(glm::vec3 newPos);
-	void setPosition(float x, float y, float z);
-	void setPositionX(float x);
-	void setPositionY(float y);
-	void setPositionZ(float z);
+	void SetPosition(glm::vec3 newPos);
+	void SetPosition(float x, float y, float z);
+	void SetPositionX(float x);
+	void SetPositionY(float y);
+	void SetPositionZ(float z);
 
-	void SetRotation(glm::vec3 newRot);
+	void SetRotation(glm::quat newRot);
 	void SetRotation(float x, float y, float z);
 	void SetRotationX(float x);
 	void SetRotationY(float y);
@@ -51,16 +52,15 @@ public:
 	void SetScale(glm::vec3 newSca);
 	void SetScale(float x, float y, float z);
 
-
-	unsigned int getMaterialID() const;
-	glm::vec3 GetPosition() const;
-	glm::vec3 GetRotation() const;
-
-	std::vector<vertexPolygon> GetVertices();
 	std::vector<vertexPolygon>& ModifyVertices();
-	unsigned int GetVertexCount() const { return nrOfVerticies; }
 
-	int getVertexCount() const;
+	unsigned int GetMaterialID() const { return materialID; }
+	glm::vec3 GetPosition() const { return position; }
+	glm::quat GetRotation() const { return rotation; }
+	glm::vec3 GetScale() const { return scale; }
+
+	std::vector<vertexPolygon> GetVertices() { return vertices; }
+	int GetVertexCount() const { return vertexCount; }
 };
 
 
