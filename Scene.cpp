@@ -35,14 +35,12 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			std::cout << "Restarting level" << std::endl;
 		}
 
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
-		{
-			//CLOSES WINDOW
-			//glfwSetWindowShouldClose(window, GL_TRUE);
-
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			// RETURNS TO MAIN MENU
+			scene->isLoading = true;
 			scene->state = MAINMENU;
-			//scene->SwitchRoom();
-			scene->SwitchMainMenu();
+			//scene->SwitchMainMenu();
+			//scene->isLoading = false;
 			std::cout << "Returning to Main Menu" << std::endl;
 			std::cout << "Loading..." << std::endl;
 			std::cout << "MAIN MENU" << std::endl;
@@ -53,11 +51,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 	}
 	// IF PLAYING
-	else if (scene->state == PLAYING) 
-	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
-		{
-			//scene->CompileMeshDataPauseMenu();
+	else if (scene->state == PLAYING) {
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 			scene->state = PAUSED;
 			std::cout << "PAUSED" << std::endl;
 			std::cout << "Press the numbers below to perform actions: " << std::endl;
@@ -106,9 +101,12 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
 		{
 			//RESUMES GAME
+			scene->isLoading = true;
+			// GET SHADER AND RENDER LOADING
+			//scene->menuHandler.RenderLoading(scene->GetShader(2));
 			scene->state = PLAYING;
-			//scene->SwitchRoom();
-			scene->isSwitched = true;
+			/*scene->SwitchMainMenu();*/
+			//scene->isLoading = false;
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
 		}
@@ -362,7 +360,13 @@ void Scene::SwitchMainMenu()
 {
 	if (state == MAINMENU)
 	{
-		CompileMeshDataMainMenu();
+		//this->isLoading = true;
+		this->isSwitched = true;
+		//CompileMeshDataMainMenu();
+	}
+	else
+	{
+		//this->isLoading = true;
 		this->isSwitched = true;
 	}
 }

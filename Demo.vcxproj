@@ -157,6 +157,7 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="StaticEntity.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boxHolder.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="StaticEntity.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="mehImporterLib\mehImporterLib.vcxproj">
