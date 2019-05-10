@@ -15,7 +15,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 }
 
 
-RigidEntity::RigidEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : Entity(vertArr, nrOfVerticies, matID)
+RigidEntity::RigidEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : Entity(vertArr, vertexCount, matID)
 {
 	startPos = GetPosition();
 	savedPos = startPos;
@@ -24,6 +24,10 @@ RigidEntity::RigidEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned i
 	grounded = false;
 	groundLevel = 0.0f;
 	held = false;
+}
+
+RigidEntity::RigidEntity(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
+{
 }
 
 RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID) : Entity(inLoader, index, matID)
@@ -144,7 +148,7 @@ void RigidEntity::Update(float deltaTime)
 	SetPosition(calculatedPosition);
 
 	// This has to be lower than the initial ground level or bad things happen 
-	if (GetPosition().y < -3.0f)
+	if (GetPosition().y < -9.0f)
 	{
 		ResetPos();
 	}
@@ -180,4 +184,17 @@ void RigidEntity::SetHeld(bool holding)
 void RigidEntity::SetStartPosition(glm::vec3 pos)
 {
 	startPos = pos;
+}
+
+void RigidEntity::Upgrade(ITEMTYPE item)
+{
+	switch (item) {
+		case FEATHER: boxType = LIGHTWEIGHT;
+	}
+
+}
+
+void RigidEntity::SetStartPosition(float xyz[])
+{
+	SetPosition(glm::vec3(xyz[0], xyz[1], xyz[2]));
 }

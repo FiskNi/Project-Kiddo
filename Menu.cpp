@@ -157,7 +157,7 @@ void Menu::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 		{
-			Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
+			Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].GetMaterialID());
 			menuMeshes.push_back(mesh);
 		}
 		break;

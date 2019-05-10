@@ -162,12 +162,12 @@ void Light::setLightPos(glm::vec3 lightPos)
 	this->lightPos = lightPos;
 }
 
-void Light::setDiffuse(glm::vec3 diffuse)
+void Light::SetDiffuse(glm::vec3 diffuse)
 {
 	this->diffuse = diffuse;
 }
 
-void Light::setSpecular(glm::vec3 specular)
+void Light::SetSpecular(glm::vec3 specular)
 {
 	this->specular = specular;
 }
@@ -189,7 +189,7 @@ void Light::setPower(float power)
 	this->power = power;
 }
 
-void Light::sendToShader(Shader shader, int index)
+void Light::SendToShader(Shader shader, int index)
 {
 	glUseProgram(shader.getShader());
 

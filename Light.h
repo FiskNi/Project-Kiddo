@@ -42,15 +42,15 @@ public:
 
 	glm::vec3 getLightPos();
 	void setLightPos(glm::vec3 lightPos);
-	void setDiffuse(glm::vec3 diffuse);
-	void setSpecular(glm::vec3 specular);
+	void SetDiffuse(glm::vec3 diffuse);
+	void SetSpecular(glm::vec3 specular);
 	void setAttenuation(float constant, float linear, float quadratic);
 	void setRange(float range);
 	void setPower(float power);
 
 	//Use this function to send the specific pointLight to the specific shader.
 	//Putting it at "index" location in pointLight uniform.
-	void sendToShader(Shader shader, int index);
+	void SendToShader(Shader shader, int index);
 
 };
 

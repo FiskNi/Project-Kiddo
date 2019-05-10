@@ -1,29 +1,34 @@
 #include "Scene.h"
 
 
-void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) 
+	{
 		//SWITCHES ROOM BUT ACTUALLY RESETS
 		scene->SwitchRoom();
 	}
 
 	//IF PAUSED
-	if (scene->state == PAUSED) {
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+	if (scene->state == PAUSED) 
+	{
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+		{
 			//UNPAUSE
 			scene->state = PLAYING;
 			std::cout << "PLAYING" << std::endl;
 		}
 
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
+		{
 			//RESUMES GAME
 			scene->state = PLAYING;
 			std::cout << "RESUME" << std::endl;
 		}
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
+		{
 			//RESTART HERE
 			scene->ResetRoom();
 			scene->state = PLAYING;
@@ -44,8 +49,6 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			//std::cout << "2 - Settings" << std::endl;
 			std::cout << "3 - Exit" << std::endl;
 		}
-
-
 	}
 	// IF PLAYING
 	else if (scene->state == PLAYING) {
@@ -57,10 +60,46 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			std::cout << "2 - Restart" << std::endl;
 			std::cout << "3 - Exit" << std::endl;
 		}
-	}
-	else if (scene->state == MAINMENU) {
 
+		if (key == GLFW_KEY_E && action == GLFW_PRESS)
+		{
+			for (int i = 0; i < scene->roomBuffer->getButtons().size(); i++)
+			{
+				if (!scene->roomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->roomBuffer->getButtons()[i]))
+				{
+					scene->roomBuffer->getButtons()[i].SetPressed(true);
+				}
+			}
+		}
+
+		// EXTRA
+		if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+			//UPGRADES BOXES
+			scene->Upgrade();
+		}
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(0);
+		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(1);
+		}
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(2);
+		}
+		if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(3);
+		}
+		if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+			scene->playerCharacter.SetCurrentItem(4);
+		}
+
+
+	}
+	else if (scene->state == MAINMENU) 
+	{
+
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
+		{
 			//RESUMES GAME
 			scene->isLoading = true;
 			// GET SHADER AND RENDER LOADING
@@ -71,14 +110,17 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
 		}
-		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+
+		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
+		//{
 		//	//RESTART HERE
 		//	scene->ResetRoom();
 		//	scene->state = PLAYING;
 		//	std::cout << "Restarting level" << std::endl;
 		//}
 
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
+		{
 			//CLOSES WINDOW
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
@@ -87,39 +129,38 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 
 Scene::Scene()
 {
-
 	state = MAINMENU;
-	// Loads content | *Each function could return a bool incase of failure
 
-	// Starting Room should be the first level to be loaded, probably the bedroom
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1CulledFixed.meh");
+	// Our entry room (first level)
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 
 	LoadShaders();
 	LoadMaterials(&startingRoom);
-	LoadCharacter();
-	LoadLevels();
+	LoadCharacter(&startingRoom);
 
 	this->isSwitched = false;
+	roomNr = 0;
 	currentBuffer = 0;
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
-	firstRoomBuffer = new Room(materials, &startingRoom);
-	secondRoomBuffer = new Room(materials, &secondRoom);
+	roomBuffer = new Room(materials, &startingRoom);
+
+	//************** Mainmenu should be it's own class, not a room
 	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
-	//CompileMeshData();
+	// CompileMeshData();
 	CompileMeshDataMainMenu();
 }
 
 Scene::~Scene()
 {
-
-	delete firstRoomBuffer;
-	delete secondRoomBuffer;
-	delete mainMenuRoomBuffer;
+	if (roomBuffer)
+		delete roomBuffer;
+	if (mainMenuRoomBuffer)
+		delete mainMenuRoomBuffer;
 }
 
 void Scene::LoadShaders()
@@ -146,23 +187,7 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
 
 	// Hardcoded materials that will be moved
-	Material planeMat("Plane Material", materials.size());
-	planeMat.createAlbedo("Resources/Textures/brickwall.jpg");
-	planeMat.createNormal("Resources/Textures/brickwall_normal.jpg");
-	materials.push_back(planeMat);
-
-	Material cubeMat("Plane Cube Material", materials.size());
-	cubeMat.createAlbedo("Resources/Textures/boxTexture.png");
-	materials.push_back(cubeMat);
-
-	Material playerMat("Player Material", materials.size());
-	playerMat.createAlbedo("Resources/Textures/broken.png");
-	materials.push_back(playerMat);
-
-	Material nodeMat("Node Material", materials.size());
-	nodeMat.createAlbedo("Resources/Textures/broken.png");
-	materials.push_back(nodeMat);
-
+	materials.clear();
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
 		Material fillMat(inLoader->GetMaterial(i), materials.size());
@@ -171,17 +196,26 @@ void Scene::LoadMaterials(Loader* inLoader)
 
 }
 
-void Scene::LoadCharacter()
+void Scene::LoadCharacter(Loader* inLoader)
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
-	playerCharacter.SetMaterialID(2);
-	playerCharacter.OffsetPositionX(-3.0f);
-	playerCharacter.OffsetPositionY(3.0f);
-	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
-}
+	
+	for (int i = 0; i < inLoader->GetMeshCount(); i++)
+	{
+		if (inLoader->GetType(i) == 8)
+		{
+			playerCharacter.SetMaterialID(0);
+			playerCharacter.SetPosition(inLoader->GetMesh(i).translation);
+		}
+		else
+		{
+			playerCharacter.SetPosition(0.0f, 5.0f, 0.0f);
+			playerCharacter.SetMaterialID(0);
+		}
+	}
 
-void Scene::LoadLevels()
-{
+
+	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
 }
 
 void Scene::CompileMeshData()
@@ -189,11 +223,11 @@ void Scene::CompileMeshData()
 	// Compile the mesh data of the first room
 	meshes.clear();
 
-	firstRoomBuffer->CompileMeshData();
-	meshes = firstRoomBuffer->GetMeshData();
-
-	// Compile character data
+	roomBuffer->CompileMeshData();
+	meshes = roomBuffer->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
+	// Compile character data
+	
 }
 
 void Scene::CompileMeshDataMainMenu()
@@ -212,23 +246,25 @@ void Scene::CompileMeshDataMainMenu()
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
-	if (!setUserPointer) {
+	if (!setUserPointer) 
+	{
 		glfwSetWindowUserPointer(renderWindow, this);
 		glfwSetKeyCallback(renderWindow, key_callback);
 		setUserPointer = true;
 	}
 
 
-	if (state == MAINMENU) {
-
+	if (state == MAINMENU) 
+	{
 		CompileMeshDataMainMenu();
 	}
-	else if (state == PLAYING) {
+	else if (state == PLAYING) 
+	{
 
 		Gravity();
 
 		// Player movement vector
-		glm::vec3 playerMoveVector = playerCharacter.Move(renderWindow);
+		playerCharacter.Move(renderWindow);
 		if (!playerCharacter.IsColliding())
 		{
 			playerCharacter.AddVelocity(playerCharacter.GetInputVector());
@@ -237,18 +273,17 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// First update
 		playerCharacter.Update(deltaTime);
 
-		firstRoomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
+		roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
 
 		// Update the scene
-		//playerCharacter.Update(deltaTime);
-		for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+		for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 		{
-			firstRoomBuffer->GetRigids()[i].Update(deltaTime);
+			roomBuffer->GetRigids()[i].Update(deltaTime);
 		}
 
-		for (int i = 0; i < firstRoomBuffer->GetBridges().size(); i++)
+		for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
 		{
-			firstRoomBuffer->GetBridges()[i].Update(deltaTime);
+			roomBuffer->GetBridges()[i].Update(deltaTime);
 		}
 
 
@@ -261,46 +296,75 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 }
 
-void Scene::SetIsSwitched(bool isSwitched)
+void Scene::SetSwitched()
 {
-	this->isSwitched = isSwitched;
+	this->isSwitched = false;
 }
 
 void Scene::ResetRoom()
 {
 	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
-	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{
-		firstRoomBuffer->GetRigids()[i].ResetPos();
+		roomBuffer->GetRigids()[i].ResetPos();
 	}
 }
 
 void Scene::SwitchRoom()
 {
-	delete firstRoomBuffer;
+	if (roomBuffer)
+		delete roomBuffer;
+	roomBuffer = nullptr;
 
-	firstRoomBuffer = secondRoomBuffer;
+	Loader* roomLoader;
 
+	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
-		secondRoomBuffer = new Room(materials, &temp);
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1v4.meh");
 	}
 	else if (roomNr == 1)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
-		secondRoomBuffer = new Room(materials, &temp);
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+	}
+	else if (roomNr == 2)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
+	}
+	else if (roomNr == 3)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level3v3.meh");
 	}
 	else
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v2.meh");
-		secondRoomBuffer = new Room(materials, &temp);
+		roomNr = -1;
 	}
-	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
+
+	LoadMaterials(roomLoader);
+	roomBuffer = new Room(materials, roomLoader);
+
+	// Set player position and reset it
+	for (int i = 0; i < roomLoader->GetMeshCount(); i++)
+	{
+		if (roomLoader->GetType(i) == 8)
+		{
+			playerCharacter.SetMaterialID(0);
+			playerCharacter.SetPosition(roomLoader->GetMesh(i).translation);
+		}
+		else
+		{
+			playerCharacter.SetPosition(0.0f, 5.0f, 0.0f);
+			playerCharacter.SetMaterialID(0);
+		}
+	}
+	playerCharacter.ResetPos();
 
 	CompileMeshData();
 	this->isSwitched = true;
 	this->roomNr += 1;
+
+
+	delete roomLoader;
 }
 
 void Scene::SwitchMainMenu() 
@@ -327,11 +391,11 @@ void Scene::Gravity()
 	const float gravity = -2.283;
 
 	// Entity boxes
-	for (int i = 0; i < firstRoomBuffer->GetRigids().size(); i++)
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{	
-		if (!firstRoomBuffer->GetRigids()[i].IsGrounded())
+		if (!roomBuffer->GetRigids()[i].IsGrounded() && !roomBuffer->GetRigids()[i].GetBoxType() == 1)
 		{
-			firstRoomBuffer->GetRigids()[i].AddVelocityY(gravity);
+			roomBuffer->GetRigids()[i].AddVelocityY(gravity);
 		}
 	}
 

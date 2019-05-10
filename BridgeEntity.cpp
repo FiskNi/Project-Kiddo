@@ -12,7 +12,7 @@ BridgeEntity::BridgeEntity(unsigned int i) : StaticEntity (i)
 	linkID = -999;
 }
 
-BridgeEntity::BridgeEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID) : StaticEntity(vertArr, nrOfVerticies, matID)
+BridgeEntity::BridgeEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : StaticEntity(vertArr, vertexCount, matID)
 {
 	restPosition = GetPosition();
 	extendDistance = 2.0f;
@@ -30,6 +30,11 @@ BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int ma
 	extended = false;
 	extending = false;
 	linkID = -999;
+}
+
+BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : StaticEntity(inLoader, index, matID, frozen)
+{
+
 }
 
 BridgeEntity::~BridgeEntity()
@@ -69,6 +74,11 @@ void BridgeEntity::SetExtendingForwardZ()
 void BridgeEntity::SetExtendingBackwardZ()
 {
 	extendDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+}
+
+void BridgeEntity::SetLinkID(int id)
+{
+	linkID = id;
 }
 
 bool BridgeEntity::CheckLinkID(int id)

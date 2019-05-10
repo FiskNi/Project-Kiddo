@@ -1,25 +1,52 @@
 #include "Mesh.h" 
 
-Mesh::Mesh(Vertex* vertArr, unsigned int nrOfVerticies)
+Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation = glm::quat(rotationEulerXYZ);
+	this->scale = glm::vec3(1.0f);
 
-	ImportMesh(vertArr, nrOfVerticies);
+	this->materialID = 0;
+	ImportMesh(vertArr, vertexCount);
 }
 
-Mesh::Mesh(Vertex * vertArr, unsigned int nrOfVerticies, unsigned int materialID)
+Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID)
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation = glm::quat(rotationEulerXYZ);
+	this->scale = glm::vec3(1.0f);
+
 	this->materialID = materialID;
-	ImportMesh(vertArr, nrOfVerticies);
+	ImportMesh(vertArr, vertexCount);
+}
+
+Mesh::Mesh(Loader* inLoader, int index)
+{
+	glm::vec3 ePosition = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
+	glm::vec3 eRotationXYZ = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
+	eRotationXYZ = glm::radians(eRotationXYZ);
+	glm::quat eRotation = glm::quat(eRotationXYZ);
+	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
+
+
+	this->position = ePosition;
+	this->rotation = eRotation;
+	this->scale = eScale;
+
+	this->materialID = inLoader->GetMaterialID(index);
+	ImportMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index));
 }
 
 Mesh::Mesh()
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation = glm::quat(rotationEulerXYZ);
+	this->scale = glm::vec3(1.0f);
+
+	this->materialID = 0;
 }
 
 Mesh::~Mesh()
@@ -185,6 +212,7 @@ void Mesh::CreateCubeData()
 	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
 	vertices.push_back(cubeVertex);
 
+	vertexCount = (int)vertices.size();
 	CalculateTangents();
 }
 
@@ -222,6 +250,7 @@ void Mesh::CreatePlaneData()
 	planeVertex.uv = glm::vec2(0.0f, 5.0f);
 	vertices.push_back(planeVertex);
 
+	vertexCount = (int)vertices.size();
 	CalculateTangents();
 }
 
@@ -380,13 +409,14 @@ void Mesh::CreatePlateData()
 	cubeVertex.normals = glm::vec3(0.0f, 1.0f, 0.0f);
 	vertices.push_back(cubeVertex);
 
+	vertexCount = (int)vertices.size();
 	CalculateTangents();
 }
 
 void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 {
 
-	this->nrOfVerticies = vertexCount;
+	this->vertexCount = vertexCount;
 	for (int i = 0; i < vertexCount; i++)
 	{
 		Vertex vertexData = vertArr[i];
@@ -401,6 +431,8 @@ void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 		vertices.reserve(vertexCount);
 		vertices.push_back(newVertex);
 	}
+
+	//CalculateTangents();
 
 }
 
@@ -446,6 +478,10 @@ void Mesh::CalculateTangents()
 
 		tangent = glm::normalize(tangent);
 
+		//vertices[i].normals = normal;
+		//vertices[i + 1].normals = normal;
+		//vertices[i + 2].normals = normal;
+
 		vertices[i].tangent = tangent;
 		vertices[i + 1].tangent = tangent;
 		vertices[i + 2].tangent = tangent;
@@ -464,69 +500,34 @@ void Mesh::setMaterial(unsigned int id)
 	this->materialID = id;
 }
 
-unsigned int Mesh::getMaterialID() const
-{
-	return this->materialID;
-}
-
-glm::vec3 Mesh::GetPosition() const
-{
-	return this->position;
-}
-
-glm::vec3 Mesh::GetRotation() const
-{
-	return this->rotation;
-}
-
-void Mesh::setPosition(glm::vec3 newPos)
+void Mesh::SetPosition(glm::vec3 newPos)
 {
 	position = newPos;
 }
 
-void Mesh::setPosition(float x, float y, float z)
+void Mesh::SetPosition(float x, float y, float z)
 {
 	position = glm::vec3(x, y, z);
 }
 
-void Mesh::setPositionX(float x)
+void Mesh::SetPositionX(float x)
 {
 	position.x = x;
 }
 
-void Mesh::setPositionY(float y)
+void Mesh::SetPositionY(float y)
 {
 	position.y = y;
 }
 
-void Mesh::setPositionZ(float z)
+void Mesh::SetPositionZ(float z)
 {
 	position.z = z;
 }
 
-void Mesh::SetRotation(glm::vec3 newRot)
+void Mesh::SetRotation(glm::quat newRot)
 {
 	rotation = newRot;
-}
-
-void Mesh::SetRotation(float x, float y, float z)
-{
-	rotation = glm::vec3(x, y, z);
-}
-
-void Mesh::SetRotationX(float x)
-{
-	rotation.x = x;
-}
-
-void Mesh::SetRotationY(float y)
-{
-	rotation.y = y;
-}
-
-void Mesh::SetRotationZ(float z)
-{
-	rotation.z = z;
 }
 
 void Mesh::SetScale(glm::vec3 newSca)
@@ -539,17 +540,7 @@ void Mesh::SetScale(float x, float y, float z)
 	scale = glm::vec3(x, y, z);
 }
 
-std::vector<vertexPolygon> Mesh::GetVertices()
-{
-	return vertices;
-}
-
 std::vector<vertexPolygon>& Mesh::ModifyVertices()
 {
 	return vertices;
-}
-
-int Mesh::getVertexCount() const
-{
-	return vertices.size();
 }

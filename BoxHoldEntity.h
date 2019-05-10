@@ -13,7 +13,7 @@ public:
 	~BoxHoldEntity() {};
 
 	// S E T T E R S
-	void setPosition(vec3 pos) { this->pos = pos; }
+	void SetPosition(vec3 pos) { this->pos = pos; }
 	void setHold(bool tf) { this->holdsBox = tf; }
 	//G E T T E R S 
 	vec3 getPosition() const{ return this->pos; }

@@ -25,11 +25,7 @@ class Entity
 {
 private:
 	Mesh entityMesh;
-
 	string name;
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
 
 	// The center is a vector to a location in the world 
 	glm::vec3 boundingBoxCenter;
@@ -39,7 +35,8 @@ private:
 
 public:
 	Entity(unsigned int i);
-	Entity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID);
+	Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	Entity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Entity();
 
@@ -51,6 +48,8 @@ public:
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
+	void SetPosition(float xyz[]);
+	void SetPosition(float x, float y, float z);
 	void SetPositionY(float y);
 
 
@@ -61,13 +60,14 @@ public:
 	void OffsetPositionZ(float z);
 
 	void SetRotation(float x, float y, float z);
-	void SetRotation(glm::vec3);
+	void SetRotation(glm::vec3 newRot);
+	void SetRotation(glm::quat newRot);
 	void SetRotationX(float x);
 	void SetRotationY(float y);
 	void SetRotationZ(float z);
 
 	void SetScale(float x, float y, float z);
-	void SetScale(glm::vec3);
+	void SetScale(glm::vec3 newSca);
 	void SetScaleX(float x);
 	void SetScaleY(float y);
 	void SetScaleZ(float z);

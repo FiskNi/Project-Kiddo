@@ -15,8 +15,9 @@ private:
 
 public:
 	BridgeEntity(unsigned int i);
-	BridgeEntity(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int matID);
+	BridgeEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID);
 	BridgeEntity(Loader* vertArr, unsigned int index, unsigned int matID);
+	BridgeEntity(Loader* vertArr, unsigned int index, unsigned int matID, bool frozen);
 	~BridgeEntity();
 
 	void SetRestPosition(glm::vec3 position);
@@ -26,8 +27,10 @@ public:
 	void SetExtendingBackwardX();
 	void SetExtendingForwardZ();
 	void SetExtendingBackwardZ();
+	void SetLinkID(int id);
 
 	bool CheckLinkID(int id);
+	int GetLinkID() { return linkID; }
 
 	void Extend();
 	void Retract();

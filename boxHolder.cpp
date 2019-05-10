@@ -9,7 +9,7 @@ boxHolder::boxHolder(unsigned int i) : StaticEntity (i)
 	setPositionBBOffset(GetPositionBB());
 }
 
-boxHolder::boxHolder(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int holderMatID, unsigned int boxMatID) : StaticEntity (vertArr, nrOfVerticies,boxMatID)
+boxHolder::boxHolder(Vertex* vertArr, unsigned int vertexCount, unsigned int holderMatID, unsigned int boxMatID) : StaticEntity (vertArr, vertexCount,boxMatID)
 {
 	this->visible = false;
 	this->aMesh.CreatePlateData();
@@ -17,7 +17,7 @@ boxHolder::boxHolder(Vertex* vertArr, unsigned int nrOfVerticies, unsigned int h
 	origBBPos = GetPositionBB();
 	setPositionBBOffset(origBBPos);
 
-	aMesh.setPosition(origPos);
+	aMesh.SetPosition(origPos);
 	aMesh.setMaterial(holderMatID);
 }
 
@@ -29,7 +29,7 @@ boxHolder::boxHolder(Loader* inLoader, unsigned int index, unsigned int holderMa
 	origBBPos = GetPositionBB();
 	setPositionBBOffset(origBBPos);
 
-	aMesh.setPosition(origPos);
+	aMesh.SetPosition(origPos);
 	aMesh.setMaterial(holderMatID);
 }
 
@@ -59,7 +59,7 @@ void boxHolder::SetBoxHolderPosition(glm::vec3 pos)
 	SetPosition(pos);
 	setPositionBBOffset(glm::vec3(0, 0, 0));
 	setPositionBBOffset(GetPositionBB());
-	aMesh.setPosition(origPos);
+	aMesh.SetPosition(origPos);
 }
 
 Mesh boxHolder::GetHolderMeshData()
