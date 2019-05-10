@@ -3,11 +3,11 @@
 Character::Character() : RigidEntity(1)
 {
 	items = new Item*[this->cap];
-	for (int i = 0; i < cap-1; i++) {
+	for (int i = 0; i < cap; i++) {
 		items[i] = nullptr;
 	}
-	items[4] = new Item();
-	items[4]->SetItemType(3);
+	//items[4] = new Item();
+	//items[4]->SetItemType(3);
 
 	holdingObject = false;
 	entityID = -1;
@@ -17,7 +17,12 @@ Character::Character() : RigidEntity(1)
 
 Character::~Character()
 {
-
+//	for (int i = 0; i < cap; i++) {
+//		if (items[i] != nullptr) {
+//			delete items[i];
+//		}
+//	}
+////	delete[] items;
 }
 
 void Character::SetHoldingObject(bool holding)

@@ -47,6 +47,11 @@ public:
 	void PickUpItem(Item* item);
 	void SetCurrentItem(int i) { this->currentItem = i; }
 	Item* Upgrade();
+	void ItemUsed() {
+		delete items[this->currentItem];
+		items[this->currentItem] = nullptr;
+		nrOf--;
+	}
 
 
 };

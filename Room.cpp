@@ -488,11 +488,11 @@ void Room::Upgrade(Character* playerCharacter)
 		for (int i = 0; i < rigids.size(); i++) {
 			if (playerCharacter->CheckInBound(rigids[i])) {
 				rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
-				//rigids[i].SetBoxType(1);
 				if (rigids[i].GetBoxType() == 1) {
 					std::cout << "box upgraded" << std::endl;
 				}
-				//playerCharacter->SetCurrentItem(nullptr);
+				//playerCharacter->ItemUsed();
+
 			}
 		}
 	}
@@ -707,7 +707,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 	Item item;
 	item.SetItemType(1);
 	item.SetPosition(glm::vec3(0, 1, 0));
-	item.SetMaterialID(materials[1].getMaterialID());
+	item.SetMaterialID(materials[1].GetMaterialID());
 	items.push_back(item);
 }
 
