@@ -32,6 +32,11 @@ BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int ma
 	linkID = -999;
 }
 
+BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : StaticEntity(inLoader, index, matID, frozen)
+{
+
+}
+
 BridgeEntity::~BridgeEntity()
 {
 }
@@ -69,6 +74,11 @@ void BridgeEntity::SetExtendingForwardZ()
 void BridgeEntity::SetExtendingBackwardZ()
 {
 	extendDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+}
+
+void BridgeEntity::SetLinkID(int id)
+{
+	linkID = id;
 }
 
 bool BridgeEntity::CheckLinkID(int id)

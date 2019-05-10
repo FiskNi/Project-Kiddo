@@ -71,7 +71,7 @@ void main ()
 	}
 	else
 	{
-		diffuse = vec4(matAmbient, 1.0f);
+		diffuse = vec4(matDiffuse, 1.0f);
 	}
 	
 	// hasNormalMap
@@ -112,7 +112,7 @@ void main ()
 	}
 
 	vec3 pointLight = vec3(0.0f);
-	for(int i = 0; i < 2; ++i)
+	for(int i = 0; i < NR_P_LIGHTS; ++i)
 	{
 		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
 	}

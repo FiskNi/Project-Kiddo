@@ -409,7 +409,6 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm:
 
 	glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
 
-
 	glm::mat4 scaleMatrix = glm::scale(MODEL_MAT, scale);
 
 

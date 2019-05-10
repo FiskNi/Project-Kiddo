@@ -65,7 +65,7 @@ private:
 	std::vector<StaticEntity> statics;
 	std::vector<BridgeEntity> bridges;
 	std::vector<BoxHoldEntity> holdBoxes;
-	std::vector<PressurePlate> plates;
+	std::vector<PressurePlate> pressurePlates;
 	std::vector<Button> buttons;
 
 	std::vector<boxHolder> holders;

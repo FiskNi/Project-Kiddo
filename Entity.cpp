@@ -37,30 +37,72 @@ Entity::Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : 
 	SetMaterialID(matID);
 }
 
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
+{
+	// Created a bounding box based on the entityMesh 
+	name = inLoader->GetMesh(index).name;
+
+
+	InitBoundingBox();
+	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
+	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
+	glm::vec3 worldPosition = boundingBoxCenter;
+	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	{
+		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), -boundingBoxCenter);
+		entityMesh.ModifyVertices()[i].position = glm::vec3(translationMatrix * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+	}
+	InitBoundingBox();
+
+
+	entityMesh.SetPosition(worldPosition);
+
+
+	SetMaterialID(matID);
+}
+
 Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
 {
 	// Created a bounding box based on the entityMesh 
 	name = inLoader->GetMesh(index).name;
 
 	glm::vec3 ePosition = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
-
-
 	glm::vec3 eRotationXYZ = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
-	//eRotationXYZ = glm::radians(eRotationXYZ);
+	eRotationXYZ = glm::radians(eRotationXYZ);
 	glm::quat eRotation = glm::quat(eRotationXYZ);
-
-
 	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
 
+	
+
+	glm::mat4 offsetCenterMat = glm::mat4(1.0f);
+	glm::mat4 translationMatrix = glm::translate(offsetCenterMat, ePosition);
+	glm::mat4 rotationMatrix = glm::mat4_cast(eRotation);
+	glm::mat4 scaleMatrix = glm::scale(offsetCenterMat, eScale);
 
 
 	InitBoundingBox();
+	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
+	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
+	offsetCenterMat = rotationMatrix * scaleMatrix;
+	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	{
+		entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+	}
+	InitBoundingBox();
 
-	entityMesh.SetPosition(ePosition);
-	entityMesh.SetRotation(eRotationXYZ);
-	entityMesh.SetRotation(eRotation);
-	entityMesh.SetScale(eScale);
+	offsetCenterMat = glm::inverse(offsetCenterMat);
+	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	{
+		entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+	}
 
+
+
+	//boundingBoxCenter = ePosition;
+
+	SetPosition(ePosition);
+	SetRotation(eRotation);
+	SetScale(eScale);
 	SetMaterialID(matID);
 }
 
@@ -136,7 +178,6 @@ bool Entity::CheckHolderCollision(Entity collidingCube)
 		glm::vec3 size;
 	};
 
-
 	AABB thisBoundingBox;
 
 	thisBoundingBox.position = GetPositionBB();
@@ -188,7 +229,16 @@ void Entity::SetMaterialID(unsigned int id)
 void Entity::SetPosition(glm::vec3 newPos)
 {
 	entityMesh.SetPosition(newPos);
+}
 
+void Entity::SetPosition(float xyz[])
+{
+	entityMesh.SetPosition(glm::vec3(xyz[0], xyz[1], xyz[2]));
+}
+
+void Entity::SetPosition(float x, float y, float z)
+{
+	entityMesh.SetPosition(glm::vec3(x, y, z));
 }
 
 void Entity::SetPositionY(float y)
@@ -223,7 +273,9 @@ void Entity::OffsetPositionZ(float z)
 
 void Entity::SetRotation(float x, float y, float z)
 {
-	entityMesh.SetRotation(x, y, z);
+	glm::vec3 rot = glm::vec3(x, y, z);
+	glm::quat nRot = glm::quat(rot);
+	entityMesh.SetRotation(nRot);
 }
 
 void Entity::SetRotation(glm::quat newRot)

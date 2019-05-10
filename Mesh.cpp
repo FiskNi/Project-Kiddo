@@ -3,6 +3,7 @@
 Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->rotation = glm::quat(rotationEulerXYZ);
 	this->scale = glm::vec3(1.0f);
 
@@ -10,7 +11,7 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 	ImportMesh(vertArr, vertexCount);
 }
 
-Mesh::Mesh(Vertex * vertArr, unsigned int vertexCount, unsigned int materialID)
+Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID)
 {
 	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -510,26 +511,6 @@ void Mesh::SetPositionZ(float z)
 void Mesh::SetRotation(glm::quat newRot)
 {
 	rotation = newRot;
-}
-
-void Mesh::SetRotation(float x, float y, float z)
-{
-	rotationEulerXYZ = glm::vec3(x, y, z);
-}
-
-void Mesh::SetRotationX(float x)
-{
-	rotationEulerXYZ.x = x;
-}
-
-void Mesh::SetRotationY(float y)
-{
-	rotationEulerXYZ.y = y;
-}
-
-void Mesh::SetRotationZ(float z)
-{
-	rotationEulerXYZ.z = z;
 }
 
 void Mesh::SetScale(glm::vec3 newSca)

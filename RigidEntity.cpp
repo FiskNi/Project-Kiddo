@@ -26,6 +26,10 @@ RigidEntity::RigidEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int
 	held = false;
 }
 
+RigidEntity::RigidEntity(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
+{
+}
+
 RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID) : Entity(inLoader, index, matID)
 {
 	startPos = GetPosition();
@@ -180,4 +184,9 @@ void RigidEntity::SetHeld(bool holding)
 void RigidEntity::SetStartPosition(glm::vec3 pos)
 {
 	startPos = pos;
+}
+
+void RigidEntity::SetStartPosition(float xyz[])
+{
+	SetPosition(glm::vec3(xyz[0], xyz[1], xyz[2]));
 }

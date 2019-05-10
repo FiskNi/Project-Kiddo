@@ -43,8 +43,7 @@ private:
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
-	void LoadCharacter();
-	void LoadLevels();
+	void LoadCharacter(Loader* inLoader);
 
 	void CompileMeshData();
 	void CompileMeshDataMainMenu();
@@ -97,7 +96,7 @@ public:
 	void SwitchRoom();
 	void SwitchMainMenu();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
-	void SetIsSwitched(bool isSwitched);
+	void SetSwitched();
 	void ResetRoom();
 
 

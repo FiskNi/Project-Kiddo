@@ -44,10 +44,6 @@ public:
 	void SetPositionZ(float z);
 
 	void SetRotation(glm::quat newRot);
-	void SetRotation(float x, float y, float z);
-	void SetRotationX(float x);
-	void SetRotationY(float y);
-	void SetRotationZ(float z);
 
 	void SetScale(glm::vec3 newSca);
 	void SetScale(float x, float y, float z);

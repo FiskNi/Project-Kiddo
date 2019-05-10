@@ -9,8 +9,8 @@ Material::Material(char* name, unsigned int id)
 	albedo = 0;
 	normal = 0;
 
-	hasAlbedoMap = 0;
-	hasNormalMap = 0;
+	hasAlbedoMap = false;
+	hasNormalMap = false;
 
 	this->ambient = glm::vec3(0);
 	this->diffuse = glm::vec3(0);
@@ -24,7 +24,10 @@ Material::Material(PhongMaterial material, unsigned int id)
 	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;
-	hasNormalMap = 0;
+
+	hasAlbedoMap = false;
+	hasNormalMap = false;
+
 	for (int i = 0; i < 3; i++)
 		this->ambient[i] = material.ambient[i];
 	for (int i = 0; i < 3; i++)
@@ -34,6 +37,8 @@ Material::Material(PhongMaterial material, unsigned int id)
 	for (int i = 0; i < 3; i++)
 		this->emissive[i] = material.emissive[i];
 	this->opacity = material.opacity;
+
+
 
 	createAlbedo(material.albedo);
 	createNormal(material.normal);

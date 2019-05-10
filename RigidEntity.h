@@ -23,6 +23,7 @@ private:
 public:
 	RigidEntity(unsigned int i);
 	RigidEntity(Vertex * vertArr, unsigned int vertexCount, unsigned int matID);
+	RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~RigidEntity();
 
@@ -51,6 +52,7 @@ public:
 	void GroundLevel(float y);
 	void SetHeld(bool holding);
 	void SetStartPosition(glm::vec3 pos);
+	void SetStartPosition(float xyz[]);
 	void SetSavedPosition(glm::vec3 pos) { savedPos = pos; }
 
 	glm::vec3 GetVelocity() const { return velocity; }

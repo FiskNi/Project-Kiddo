@@ -71,32 +71,45 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
-	/*if (plates[0].isPressed())
+	for (int i = 0; i < pressurePlates.size(); i++)
 	{
-		bridges[0].Extend();		
-	}
-	else
-	{
-		bridges[0].Retract();
+		if (pressurePlates[i].isPressed())
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
+					bridges[j].Extend();
+			}
+		}
+		else
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
+					bridges[j].Retract();
+			}
+		}
 	}
 
-	if (plates[1].isPressed())
+	for (int i = 0; i < buttons.size(); i++)
 	{
-		bridges[1].Extend();
+		if (buttons[i].isPressed())
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+					bridges[j].Extend();
+			}
+		}
+		else
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+					bridges[j].Retract();
+			}
+		}
 	}
-	else
-	{
-		bridges[1].Retract();
-	}
-
-	if (buttons[0].isPressed())
-	{
-		bridges[2].Extend();
-	}
-	else
-	{
-		bridges[2].Retract();
-	}*/
 
 }
 
@@ -128,20 +141,20 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 void Room::BoxPlateCollision(Character* playerCharacter)
 {
 	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
-	for (int i = 0; i < plates.size(); i++) 
+	for (int i = 0; i < pressurePlates.size(); i++) 
 	{
-		plates[i].setPressed(false);
+		pressurePlates[i].setPressed(false);
 		for (int j = 0; j < rigids.size(); j++)
 		{
-			if (!plates[i].isPressed() && rigids[j].CheckCollision(plates[i]) && plates[i].CheckInsideCollision(rigids[j]))
+			if (!pressurePlates[i].isPressed() && rigids[j].CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(rigids[j]))
 			{
-				plates[i].setPressed(true);
+				pressurePlates[i].setPressed(true);
 			}
 		}
 
-		if (!plates[i].isPressed() && playerCharacter->CheckCollision(plates[i]) && plates[i].CheckInsideCollision(*playerCharacter))
+		if (!pressurePlates[i].isPressed() && playerCharacter->CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(*playerCharacter))
 		{
-			plates[i].setPressed(true);
+			pressurePlates[i].setPressed(true);
 		}
 
 	}
@@ -503,9 +516,9 @@ void Room::CompileMeshData()
 		meshes.push_back(bridges[i].GetMeshData());
 	}
 
-	for (int i = 0; i < plates.size(); i++) 
+	for (int i = 0; i < pressurePlates.size(); i++) 
 	{
-		meshes.push_back(plates[i].GetMeshData());
+		meshes.push_back(pressurePlates[i].GetMeshData());
 	}
 
 	for (int i = 0; i < buttons.size(); i++) 
@@ -531,21 +544,20 @@ void Room::LoadLights()
 	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
 
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+
 	for (int i = 0; i < lightLoad.getPointLightCount(); i++)
 	{
-		light.setLightPos(glm::vec3(lightLoad.getPointLightPos(i, 0),
-			lightLoad.getPointLightPos(i, 1), lightLoad.getPointLightPos(i, 2)));
-		light.setPower(lightLoad.getPointLightIntensity(i));
-
-		pointLights.push_back(light);
+		pointLights[i].setLightPos(glm::vec3(lightLoad.getPointLightPos(i, 0),
+		lightLoad.getPointLightPos(i, 1), lightLoad.getPointLightPos(i, 2)));
+		pointLights[i].setPower(lightLoad.getPointLightIntensity(i));
 	}
 
-	/*DirectionalLight light2(glm::vec3(lightLoad.getDirLightPos(0, 0),
-		lightLoad.getDirLightPos(0, 1), lightLoad.getDirLightPos(0, 2)),
-		glm::vec3(lightLoad.getDirLightRotation(0, 0),
-			lightLoad.getDirLightRotation(0, 1),
-			lightLoad.getDirLightRotation(0, 2)),
-		lightLoad.getDirLightIntensity(0));*/
 	DirectionalLight light2;
 	dirLights.push_back(light2);
 }
@@ -577,8 +589,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 		case 1:		// Mesh
 			{
-				//Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
-				//roomMeshes.push_back(mesh);
+				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				roomMeshes.push_back(mesh);
 			}
 			break;
 
@@ -592,6 +604,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 3:		// Rigid
 			{
 				RigidEntity cubeEntity(level, i, matID);
+				cubeEntity.OffsetPositionY(3.0f);
+				cubeEntity.SetStartPosition(cubeEntity.GetPosition());
 				rigids.push_back(cubeEntity);
 			}
 			break;
@@ -607,6 +621,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				BridgeEntity bridgeEntity(level, i, matID);
 				// Needs to be looked over, might need values from maya
+				bridgeEntity.SetLinkID(level->GetMesh(i).linkID);
 				bridgeEntity.SetExtendingBackwardZ();
 				bridgeEntity.SetExtendDistance(4.2f);
 				bridges.push_back(bridgeEntity);
@@ -616,6 +631,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 6:		// Button
 			{
 				Button button;
+				button.SetPosition(level->GetMesh(i).translation);
+				button.SetLink(level->GetMesh(i).linkID);
 				button.SetMaterialID(matID);
 				button.scaleBB(2);
 				buttons.push_back(button);
@@ -625,10 +642,12 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		case 7:		// Presure Plate
 			{
 				PressurePlate pPlate;
+				pPlate.SetPosition(level->GetMesh(i).translation);
+				pPlate.SetLink(level->GetMesh(i).linkID);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
-				plates.push_back(pPlate);
+				pressurePlates.push_back(pPlate);
 			}
 			break;
 
@@ -676,7 +695,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
-	winNode.SetMaterialID(materials[3].GetMaterialID());
+	winNode.SetMaterialID(materials[0].GetMaterialID());
 	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
 	nodes.push_back(winNode);
 }

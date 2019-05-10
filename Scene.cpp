@@ -5,7 +5,6 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
-
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) 
 	{
 		//SWITCHES ROOM BUT ACTUALLY RESETS
@@ -97,25 +96,25 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 Scene::Scene()
 {
-
 	state = MAINMENU;
-	// Loads content | *Each function could return a bool incase of failure
 
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-	Loader secondRoom("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	// Our entry room (first level)
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level2.meh");
+
 	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 
 	LoadShaders();
 	LoadMaterials(&startingRoom);
-	LoadCharacter();
-	LoadLevels();
+	LoadCharacter(&startingRoom);
 
 	this->isSwitched = false;
+	roomNr = 0;
 	currentBuffer = 0;
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
 	firstRoomBuffer = new Room(materials, &startingRoom);
-	secondRoomBuffer = new Room(materials, &secondRoom);
+
+	//************** Mainmenu should be it's own class, not a room
 	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
@@ -154,7 +153,7 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
 
 	// Hardcoded materials that will be moved
-
+	materials.clear();
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
 		Material fillMat(inLoader->GetMaterial(i), materials.size());
@@ -163,17 +162,26 @@ void Scene::LoadMaterials(Loader* inLoader)
 
 }
 
-void Scene::LoadCharacter()
+void Scene::LoadCharacter(Loader* inLoader)
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
-	playerCharacter.SetMaterialID(1);
-	playerCharacter.OffsetPositionX(-3.0f);
-	playerCharacter.OffsetPositionY(3.0f);
-	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
-}
+	
+	for (int i = 0; i < inLoader->GetMeshCount(); i++)
+	{
+		if (inLoader->GetType(i) == 8)
+		{
+			playerCharacter.SetMaterialID(0);
+			playerCharacter.SetPosition(inLoader->GetMesh(i).translation);
+		}
+		else
+		{
+			playerCharacter.SetPosition(0.0f, 5.0f, 0.0f);
+			playerCharacter.SetMaterialID(0);
+		}
+	}
 
-void Scene::LoadLevels()
-{
+
+	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
 }
 
 void Scene::CompileMeshData()
@@ -214,7 +222,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	if (state == MAINMENU) 
 	{
-
 		CompileMeshDataMainMenu();
 	}
 	else if (state == PLAYING) 
@@ -256,9 +263,9 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 }
 
-void Scene::SetIsSwitched(bool isSwitched)
+void Scene::SetSwitched()
 {
-	this->isSwitched = isSwitched;
+	this->isSwitched = false;
 }
 
 void Scene::ResetRoom()
@@ -274,28 +281,51 @@ void Scene::SwitchRoom()
 {
 	delete firstRoomBuffer;
 
-	firstRoomBuffer = secondRoomBuffer;
+	Loader* roomLoader;
 
+	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-		secondRoomBuffer = new Room(materials, &temp);
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level2.meh");
 	}
 	else if (roomNr == 1)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-		secondRoomBuffer = new Room(materials, &temp);
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
 	}
-	else
+	else if (roomNr == 2)
 	{
-		Loader temp("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-		secondRoomBuffer = new Room(materials, &temp);
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level2v1.meh");
 	}
-	playerCharacter.SetPosition(playerCharacter.GetRespawnPos());
+	else if (roomNr == 3)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+	}
+
+	firstRoomBuffer = new Room(materials, roomLoader);
+	LoadMaterials(roomLoader);
+
+	// Set player position and reset it
+	for (int i = 0; i < roomLoader->GetMeshCount(); i++)
+	{
+		if (roomLoader->GetType(i) == 8)
+		{
+			playerCharacter.SetMaterialID(0);
+			playerCharacter.SetPosition(roomLoader->GetMesh(i).translation);
+		}
+		else
+		{
+			playerCharacter.SetPosition(0.0f, 5.0f, 0.0f);
+			playerCharacter.SetMaterialID(0);
+		}
+	}
+	playerCharacter.ResetPos();
 
 	CompileMeshData();
 	this->isSwitched = true;
 	this->roomNr += 1;
+
+
+	delete roomLoader;
 }
 
 void Scene::SwitchMainMenu() 
