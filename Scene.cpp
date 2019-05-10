@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 
-void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
@@ -51,8 +51,6 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			//std::cout << "2 - Settings" << std::endl;
 			std::cout << "3 - Exit" << std::endl;
 		}
-
-
 	}
 	// IF PLAYING
 	else if (scene->state == PLAYING) 
@@ -80,6 +78,7 @@ void Scene::key_callback(GLFWwindow * window, int key, int scancode, int action,
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
 		}
+
 		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
 		//{
 		//	//RESTART HERE
@@ -120,7 +119,7 @@ Scene::Scene()
 	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom);
 
 	// Compiles all the meshdata of the scene for the renderer
-	//CompileMeshData();
+	// CompileMeshData();
 	CompileMeshDataMainMenu();
 }
 
@@ -167,8 +166,6 @@ void Scene::LoadMaterials(Loader* inLoader)
 	Material cubeMat("Plane Cube Material", materials.size());
 	cubeMat.createAlbedo("Resources/Textures/boxTexture.png");
 	materials.push_back(cubeMat);
-
-
 
 	Material nodeMat("Node Material", materials.size());
 	nodeMat.createAlbedo("Resources/Textures/broken.png");
