@@ -325,7 +325,7 @@ void Scene::SwitchRoom()
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level1[Culled]Fixed.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/BedRoomTest.meh");
 	}
 
 	firstRoomBuffer = new Room(materials, roomLoader);

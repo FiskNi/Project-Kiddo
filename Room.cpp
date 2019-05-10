@@ -655,7 +655,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				BridgeEntity bridgeEntity(level, i, matID);
 				// Needs to be looked over, might need values from maya
-				bridgeEntity.SetLinkID(level->GetMesh(i).linkID);
+				bridgeEntity.SetLinkID(level->GetMesh(i).link);
 				bridgeEntity.SetExtendingBackwardZ();
 				bridgeEntity.SetExtendDistance(4.2f);
 				bridges.push_back(bridgeEntity);
@@ -666,7 +666,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				Button button;
 				button.SetPosition(level->GetMesh(i).translation);
-				button.SetLink(level->GetMesh(i).linkID);
+				button.SetLink(level->GetMesh(i).link);
 				button.SetMaterialID(matID);
 				button.scaleBB(2);
 				buttons.push_back(button);
@@ -677,7 +677,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				PressurePlate pPlate;
 				pPlate.SetPosition(level->GetMesh(i).translation);
-				pPlate.SetLink(level->GetMesh(i).linkID);
+				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
