@@ -58,7 +58,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	for (int i = 0; i < rigids.size(); i++)
 		rigids[i].SetColliding(false);
 
-
 	BoxHolding(playerCharacter, renderWindow);
 
 	RigidGroundCollision(playerCharacter);
@@ -69,7 +68,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
-
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -678,7 +676,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
-	winNode.SetMaterialID(materials[3].getMaterialID());
+	winNode.SetMaterialID(materials[3].GetMaterialID());
 	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
 	nodes.push_back(winNode);
 }

@@ -61,7 +61,7 @@ int ShadowMap::CreateFrameBufferSM()
 */
 void ShadowMap::CreateShadowMatrixData(glm::vec3 lightPos, GLuint shaderProg)
 {
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 20.0f); //An orthographic matrix
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-20.0f, 20.0f, -20.0f, 20.0f, 0.001f, 50.0f); //An orthographic matrix
 	glm::mat4 depthViewMatrix = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //View from the light position towards origo
 	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
 
