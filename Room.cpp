@@ -687,8 +687,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				BridgeEntity bridgeEntity(level, i, matID, true);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetLinkID(level->GetMesh(i).link);
-				bridgeEntity.SetExtendingBackwardZ();
-				bridgeEntity.SetExtendDistance(4.2f);
+				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
+				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
 				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
