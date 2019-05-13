@@ -186,7 +186,7 @@ int Room::inBoundCheck(Character playerCharacter)
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
-	const float maxDiff = 1.0f; // Max ground height difference
+	const float maxDiff = 0.5f; // Max ground height difference
 
 	 //Rigid entites ground collision
 	for (int i = 0; i < rigids.size(); i++)
@@ -412,17 +412,30 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
 
-					// Lock to 1 axis
-					if (abs(pushDir.x) >= abs(pushDir.z))
-						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-					else
-						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-					pushDir *= 5.0f;
+					pushDir.y = 0.0f;
+					pushDir *= 3.0f;
 
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
 		}
+		for (int j = 0; j < bridges.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(bridges[j]))
+			{
+				if (abs(bridges[j].GetHitboxTop() - rigids[i].GetHitboxBottom()) >= 0.5f)
+				{
+					glm::vec3 pushDir = bridges[i].GetPosition() - rigids[i].GetPosition();
+					pushDir = normalize(pushDir);
+
+					pushDir.y = 0.0f;
+					pushDir *= 3.0f;
+
+					rigids[i].SetPosition(rigids[i].GetSavedPos());
+				}
+			}
+		}
+
 	}
 
 
@@ -433,20 +446,39 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 			if (abs(statics[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
+
 				pushDir = normalize(pushDir);
 
-				// Lock to 1 axis
-				if (abs(pushDir.x) >= abs(pushDir.z))
-					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-				else
-					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-				pushDir *= 5.0f;
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
 
-				playerCharacter->AddVelocity(-pushDir);
+				playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
 			}
 		}
 	}
+
+	for (int i = 0; i < bridges.size(); ++i)
+	{
+		if (playerCharacter->CheckCollision(bridges[i]))
+		{
+			if (abs(bridges[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
+			{
+				glm::vec3 pushDir = bridges[i].GetPosition() - playerCharacter->GetPosition();
+				pushDir = normalize(pushDir);
+
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
+
+				playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
+			}
+		}
+	}
+
+
 
 }
 
@@ -455,11 +487,11 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 	for (int i = 0; i < bridges.size(); i++)
 	{
 		// Template for the updates, this can be replaced by whatever event
-		if (bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_H) == GLFW_PRESS)
+		if (glfwGetKey(renderWindow, GLFW_KEY_H) == GLFW_PRESS)
 		{
 			bridges[i].Extend();
 		}
-		else if(bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
+		else if(glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
 		{
 			bridges[i].Retract();
 		}
@@ -551,9 +583,10 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights(Loader* inLoader)
 {
-	Light light(0.0f, 0.0f, 0.0f, 0.0f, 160, 8);
+	Light light(0.0f, 0.0f, 0.0f, 0.0f, 200, 9);
+
 	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
-	light.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
+	light.SetSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	pointLights.push_back(light);
 	pointLights.push_back(light);
@@ -576,7 +609,7 @@ void Room::LoadLights(Loader* inLoader)
 		
 		pointLights[i].setLightPos(pos);
 		pointLights[i].SetDiffuse(color);
-		pointLights[i].setPower(inLoader->GetPointLightIntensity(i));
+		pointLights[i].setPower(inLoader->GetPointLightIntensity(i) * 0.1f);
 	}
 
 	DirectionalLight dirLight;
@@ -595,11 +628,9 @@ void Room::LoadLights(Loader* inLoader)
 
 
 		dirLights[i].SetPos(pos);
-		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i));
+		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i) * 0.1f);
 		dirLights[i].SetDiffuse(color);
 	}
-
-
 
 }
 
@@ -637,14 +668,14 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 2:		// Static
 			{
-				StaticEntity levelEntity(level, i, matID);
+				StaticEntity levelEntity(level, i, matID, true);
 				statics.push_back(levelEntity);
 			}
 			break;
 
 		case 3:		// Rigid
 			{
-				RigidEntity cubeEntity(level, i, matID);
+				RigidEntity cubeEntity(level, i, matID, true);
 				cubeEntity.OffsetPositionY(3.0f);
 				cubeEntity.SetStartPosition(cubeEntity.GetPosition());
 				rigids.push_back(cubeEntity);
@@ -653,7 +684,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 4:		// Bridge
 			{
-				BridgeEntity bridgeEntity(level, i, matID);
+				BridgeEntity bridgeEntity(level, i, matID, true);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetLinkID(level->GetMesh(i).link);
 				bridgeEntity.SetExtendingBackwardZ();
@@ -666,7 +697,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 5:		// Box Holder
 			{
-				boxHolder boxHolderEntity(level, i, matID, matID);
+				boxHolder boxHolderEntity(level, i, matID, matID, true);
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
 			}
@@ -674,7 +705,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 6:		// Button
 			{
-				Button button(level, i, matID);
+				Button button(level, i, matID, true);
 				button.SetLink(level->GetMesh(i).link);
 				button.SetMaterialID(matID);
 				button.scaleBB(2);
@@ -684,7 +715,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 7:		// Presure Plate
 			{
-				PressurePlate pPlate(level, i, matID);
+				PressurePlate pPlate(level, i, matID, true);
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
@@ -717,9 +748,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		default:
 			break;
 		}
-
-	
-
 	}
 
 

@@ -54,7 +54,6 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool fr
 	}
 	InitBoundingBox();
 
-
 	entityMesh.SetPosition(worldPosition);
 
 

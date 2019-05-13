@@ -145,6 +145,7 @@ void RigidEntity::Update(float deltaTime)
 
 	// Move this entity 
 	savedPos = GetPosition();
+
 	SetPosition(calculatedPosition);
 
 	// This has to be lower than the initial ground level or bad things happen 

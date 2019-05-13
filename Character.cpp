@@ -88,10 +88,10 @@ bool Character::CheckInBound(Entity collidingCube)
 //	Calculates a movement vector based on input
 //	Could be adapted into a keyboard callback
 //=============================================================
-glm::vec3 Character::Move(GLFWwindow* window)
+void Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 2.0f;
+	const float moveSpeed = 2.5f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
@@ -189,7 +189,6 @@ glm::vec3 Character::Move(GLFWwindow* window)
 	}
 
 	inputVector = moveDir;
-	return glm::vec3(moveDir);
 }
 
 void Character::PickUpItem(Item * item)

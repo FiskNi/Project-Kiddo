@@ -9,6 +9,7 @@ private:
 
 public:
 	Button(Loader * inLoader, unsigned int index, unsigned int matID);
+	Button(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen);
 	~Button() {};
 
 	bool isPressed() { return pressed; }

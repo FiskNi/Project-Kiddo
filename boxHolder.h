@@ -16,6 +16,7 @@ public:
 	boxHolder(unsigned int i);
 	boxHolder(Vertex * vertArr, unsigned int vertexCount, unsigned int holderMatID, unsigned int boxMatID);
 	boxHolder(Loader* inLoader, unsigned int index, unsigned int holderMatID, unsigned int boxMatID);
+	boxHolder(Loader* inLoader, unsigned int index, unsigned int holderMatID, unsigned int boxMatID, bool frozen);
 	~boxHolder();
 
 	void puntBox();
