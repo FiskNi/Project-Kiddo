@@ -1,30 +1,6 @@
 #include "GameEngine.h"
 
-void GameEngine::roomSwitched()
-{
-	meshCount = mainScene.GetMeshData().size();
-	vertexCount = 0;
-	for (int i = 0; i < meshCount; i++)
-	{
-		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
-	}
-	// Allocated memory
-	mainSceneVertexData = new vertexPolygon[vertexCount];
 
-	int vertexIndex = 0;
-	for (int i = 0; i < meshCount; i++)
-	{
-		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
-		for (int j = 0; j < meshVtxCount; j++)
-		{
-			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
-			vertexIndex++;
-		}
-	}
-	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
-
-	mainScene.SetIsSwitched(false);
-}
 
 GameEngine::GameEngine()
 {
@@ -61,15 +37,28 @@ GameEngine::~GameEngine()
 		delete mainSceneVertexData;
 }
 
-void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
+void GameEngine::CompileRoomData()
 {
-	//if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-	//	if (mainScene.getState() == enum STATE PAUSED) {
-	//		mainScene.setState(enum STATE PLAYING);
-	//	}
-	//	else mainScene.setState(enum STATE PAUSED);
-	//}
-	
+	meshCount = mainScene.GetMeshData().size();
+	vertexCount = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+	}
+	// Allocated memory
+	mainSceneVertexData = new vertexPolygon[vertexCount];
+
+	int vertexIndex = 0;
+	for (int i = 0; i < meshCount; i++)
+	{
+		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < meshVtxCount; j++)
+		{
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 }
 
 //=============================================================
@@ -77,8 +66,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 //=============================================================
 void GameEngine::Run()
 {
-	// Keyboard callback reference, should be changed when if keyboard callbacks are added
-	glfwSetKeyCallback(mainRenderer.getWindow(), keyboard);
+	// Unlimit fps
 	glfwSwapInterval(0);
 
 	// If this becomes true the program will have failed in someway or been manually shut down
@@ -94,11 +82,13 @@ void GameEngine::Run()
 
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
+		if (mainScene.GetIsSwitched())
+		{
+			CompileRoomData();
+			mainScene.SetSwitched();
+		}
+
 		glfwPollEvents();
-		//if (GLFW_PRESS == glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_ESCAPE))
-		//{
-		//	glfwSetWindowShouldClose(mainRenderer.getWindow(), 1);
-		//}
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
@@ -126,9 +116,14 @@ void GameEngine::Run()
 			mainScene.GetDirectionalLights(), 
 			mainScene.GetMaterials());
 
-		// Render a textured full screen quad if game is paused (DOES NOT WORK PROPERLY RN AND TEXTURE HAS MEMORY LEAKS)
+		// Render a textured full screen quad if game is paused
 		if (mainScene.GetCurrentState() == PAUSED) {
 			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+		}
+		else if(mainScene.GetIsLoading() == true){
+			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
+			mainScene.SwitchMainMenu();
+			mainScene.SetIsLoading(false);
 		}
 		else {
 			// Render a second pass for the fullscreen quad
@@ -144,10 +139,6 @@ void GameEngine::Run()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		if (mainScene.GetIsSwitched())
-		{
-			roomSwitched();
-		}
 
 		glfwSwapBuffers(mainRenderer.getWindow());
 	}

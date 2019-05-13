@@ -4,7 +4,7 @@
 
 Room::Room(std::vector<Material> materials, Loader* aLoader)
 {
-	LoadLights();
+	LoadLights(aLoader);
 	LoadEntities(materials, aLoader);
 	LoadPuzzleNode(materials);
 	isRoomCompleted = false;
@@ -16,32 +16,10 @@ Room::Room(std::vector<Material> materials, Loader* aLoader)
 	CompileMeshData();
 }
 
-//Room::Room(std::vector<Material> materials, int state)
-//{
-//	// This is to initialise the Main Menu room scene
-//
-//	// Check which state is active, and run loading accordingly
-//	if (state == MAINMENU) 
-//	{
-//		// Hardcoded quad to print something to the screen
-//		RigidEntity quad(0);
-//		quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//		quad.SetMaterialID(materials[0].getMaterialID());
-//		quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//		rigids.push_back(quad);
-//
-//		// Perhaps change position for the menu?
-//		// Initialize camera (Default constructor)
-//		roomCamera = new Camera;
-//	}
-//
-//	// Compiles all the mesh data in the room for the renderer
-//	CompileMeshData();
-//}
-
 Room::~Room()
 {
-	delete roomCamera;
+	if (roomCamera)
+		delete roomCamera;
 }
 
 //=============================================================
@@ -68,35 +46,49 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
+	PlayerItemCollision(playerCharacter);
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
-	/*if (plates[0].isPressed())
+	for (int i = 0; i < pressurePlates.size(); i++)
 	{
-		bridges[0].Extend();		
-	}
-	else
-	{
-		bridges[0].Retract();
+		if (pressurePlates[i].isPressed())
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
+					bridges[j].Extend();
+			}
+		}
+		else
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
+					bridges[j].Retract();
+			}
+		}
 	}
 
-	if (plates[1].isPressed())
+	for (int i = 0; i < buttons.size(); i++)
 	{
-		bridges[1].Extend();
+		if (buttons[i].isPressed())
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+					bridges[j].Extend();
+			}
+		}
+		else
+		{
+			for (int j = 0; j < bridges.size(); j++)
+			{
+				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+					bridges[j].Retract();
+			}
+		}
 	}
-	else
-	{
-		bridges[1].Retract();
-	}
-
-	if (buttons[0].isPressed())
-	{
-		bridges[2].Extend();
-	}
-	else
-	{
-		bridges[2].Retract();
-	}*/
 
 }
 
@@ -128,20 +120,20 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 void Room::BoxPlateCollision(Character* playerCharacter)
 {
 	//CHANGE COLLISION TO NOT JUST BE TOUCH BUT OVERALL ON TOP OF 
-	for (int i = 0; i < plates.size(); i++) 
+	for (int i = 0; i < pressurePlates.size(); i++) 
 	{
-		plates[i].setPressed(false);
+		pressurePlates[i].setPressed(false);
 		for (int j = 0; j < rigids.size(); j++)
 		{
-			if (!plates[i].isPressed() && rigids[j].CheckCollision(plates[i]) && plates[i].CheckInsideCollision(rigids[j]))
+			if (!pressurePlates[i].isPressed() && rigids[j].CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(rigids[j]))
 			{
-				plates[i].setPressed(true);
+				pressurePlates[i].setPressed(true);
 			}
 		}
 
-		if (!plates[i].isPressed() && playerCharacter->CheckCollision(plates[i]) && plates[i].CheckInsideCollision(*playerCharacter))
+		if (!pressurePlates[i].isPressed() && playerCharacter->CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(*playerCharacter))
 		{
-			plates[i].setPressed(true);
+			pressurePlates[i].setPressed(true);
 		}
 
 	}
@@ -155,14 +147,24 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 //=============================================================
 void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 {
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	/*if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
 		for (int i = 0; i < buttons.size(); i++)
 		{
 			if (!buttons[i].isPressed() && playerCharacter->CheckCollision(buttons[i]))
 			{
-				buttons[i].setPressed(true);
+				buttons[i].SetPressed(true);
 			}
+		}
+	}*/
+}
+
+void Room::PlayerItemCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < items.size(); i++) {
+		if (playerCharacter->CheckCollision(items[i])) {
+			playerCharacter->PickUpItem(&items[i]);
+			items[i].SetPickedUp(true);
 		}
 	}
 }
@@ -184,7 +186,7 @@ int Room::inBoundCheck(Character playerCharacter)
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
-	const float maxDiff = 1.0f; // Max ground height difference
+	const float maxDiff = 0.5f; // Max ground height difference
 
 	 //Rigid entites ground collision
 	for (int i = 0; i < rigids.size(); i++)
@@ -410,17 +412,30 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
 
-					// Lock to 1 axis
-					if (abs(pushDir.x) >= abs(pushDir.z))
-						pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-					else
-						pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-					pushDir *= 2.0f;
+					pushDir.y = 0.0f;
+					pushDir *= 3.0f;
 
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
 		}
+		for (int j = 0; j < bridges.size(); ++j)
+		{
+			if (rigids[i].CheckCollision(bridges[j]))
+			{
+				if (abs(bridges[j].GetHitboxTop() - rigids[i].GetHitboxBottom()) >= 0.5f)
+				{
+					glm::vec3 pushDir = bridges[i].GetPosition() - rigids[i].GetPosition();
+					pushDir = normalize(pushDir);
+
+					pushDir.y = 0.0f;
+					pushDir *= 3.0f;
+
+					rigids[i].SetPosition(rigids[i].GetSavedPos());
+				}
+			}
+		}
+
 	}
 
 
@@ -431,20 +446,39 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 			if (abs(statics[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
+
 				pushDir = normalize(pushDir);
 
-				// Lock to 1 axis
-				if (abs(pushDir.x) >= abs(pushDir.z))
-					pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-				else
-					pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-				pushDir *= 2.0f;
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
 
-				playerCharacter->AddVelocity(-pushDir);
+				playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
 			}
 		}
 	}
+
+	for (int i = 0; i < bridges.size(); ++i)
+	{
+		if (playerCharacter->CheckCollision(bridges[i]))
+		{
+			if (abs(bridges[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
+			{
+				glm::vec3 pushDir = bridges[i].GetPosition() - playerCharacter->GetPosition();
+				pushDir = normalize(pushDir);
+
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
+
+				playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
+			}
+		}
+	}
+
+
 
 }
 
@@ -453,11 +487,11 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 	for (int i = 0; i < bridges.size(); i++)
 	{
 		// Template for the updates, this can be replaced by whatever event
-		if (bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_H) == GLFW_PRESS)
+		if (glfwGetKey(renderWindow, GLFW_KEY_H) == GLFW_PRESS)
 		{
 			bridges[i].Extend();
 		}
-		else if(bridges[i].CheckLinkID(-999) && glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
+		else if(glfwGetKey(renderWindow, GLFW_KEY_N) == GLFW_PRESS)
 		{
 			bridges[i].Retract();
 		}
@@ -469,6 +503,24 @@ void Room::destroyRoom()
 	delete roomCamera;
 }
 
+
+void Room::Upgrade(Character* playerCharacter)
+{
+	Item* temp = playerCharacter->GetCurrentItem();
+	if (temp != nullptr) {
+		for (int i = 0; i < rigids.size(); i++) {
+			if (playerCharacter->CheckInBound(rigids[i])) {
+				rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
+				if (rigids[i].GetBoxType() == 1) {
+					std::cout << "box upgraded" << std::endl;
+				}
+				//playerCharacter->ItemUsed();
+
+			}
+		}
+	}
+
+}
 
 //=============================================================
 //	Compiles mesh data for the renderer
@@ -503,9 +555,9 @@ void Room::CompileMeshData()
 		meshes.push_back(bridges[i].GetMeshData());
 	}
 
-	for (int i = 0; i < plates.size(); i++) 
+	for (int i = 0; i < pressurePlates.size(); i++) 
 	{
-		meshes.push_back(plates[i].GetMeshData());
+		meshes.push_back(pressurePlates[i].GetMeshData());
 	}
 
 	for (int i = 0; i < buttons.size(); i++) 
@@ -518,36 +570,68 @@ void Room::CompileMeshData()
 		meshes.push_back(holders[i].GetMeshData());
 		meshes.push_back(holders[i].GetHolderMeshData());
 	}
+	for (int i = 0; i < items.size(); i++) {
+		if (!items[i].GetPickedUp()) {
+			meshes.push_back(items[i].GetMeshData());
+		}
+	}
 }
 
 //=============================================================
 //	Light initialization
 //	Loads and positions all the lights in the scene
 //=============================================================
-void Room::LoadLights()
+void Room::LoadLights(Loader* inLoader)
 {
-	Loader lightLoad("Resources/Assets/GameReady/Rooms/Level1v3.meh");
-	Light light(0.0f, 0.0f, 0.0f, 0.0f, 160, 8);
-	light.setDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
-	light.setSpecular(glm::vec3(0.0f, 0.2f, 0.8f));
+	Light light(0.0f, 0.0f, 0.0f, 0.0f, 200, 9);
 
-	for (int i = 0; i < lightLoad.getPointLightCount(); i++)
+	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
+	light.SetSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+	pointLights.push_back(light);
+
+	for (int i = 0; i < inLoader->GetPointLightCount(); i++)
 	{
-		light.setLightPos(glm::vec3(lightLoad.getPointLightPos(i, 0),
-			lightLoad.getPointLightPos(i, 1), lightLoad.getPointLightPos(i, 2)));
-		light.setPower(lightLoad.getPointLightIntensity(i));
+		glm::vec3 pos = glm::vec3(
+				inLoader->GetPointLightPos(i)[0],
+				inLoader->GetPointLightPos(i)[1],
+				inLoader->GetPointLightPos(i)[2]);
+		glm::vec3 color = glm::vec3(
+			inLoader->GetPointLightColor(i)[0],
+			inLoader->GetPointLightColor(i)[1],
+			inLoader->GetPointLightColor(i)[2]);
 
-		pointLights.push_back(light);
+		
+		pointLights[i].setLightPos(pos);
+		pointLights[i].SetDiffuse(color);
+		pointLights[i].setPower(inLoader->GetPointLightIntensity(i) * 0.1f);
 	}
 
-	/*DirectionalLight light2(glm::vec3(lightLoad.getDirLightPos(0, 0),
-		lightLoad.getDirLightPos(0, 1), lightLoad.getDirLightPos(0, 2)),
-		glm::vec3(lightLoad.getDirLightRotation(0, 0),
-			lightLoad.getDirLightRotation(0, 1),
-			lightLoad.getDirLightRotation(0, 2)),
-		lightLoad.getDirLightIntensity(0));*/
-	DirectionalLight light2;
-	dirLights.push_back(light2);
+	DirectionalLight dirLight;
+	dirLights.push_back(dirLight);
+
+	for (int i = 0; i < inLoader->GetDirLightCount(); i++)
+	{
+		glm::vec3 pos = glm::vec3(
+			inLoader->GetDirLightPos(i)[0],
+			inLoader->GetDirLightPos(i)[1],
+			inLoader->GetDirLightPos(i)[2]);
+		glm::vec3 color = glm::vec3(
+			inLoader->GetDirLightColor(i)[0],
+			inLoader->GetDirLightColor(i)[1],
+			inLoader->GetDirLightColor(i)[2]);
+
+
+		dirLights[i].SetPos(pos);
+		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i) * 0.1f);
+		dirLights[i].SetDiffuse(color);
+	}
+
 }
 
 //=============================================================
@@ -571,51 +655,58 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
 			}
 			break;
 		case 1:		// Mesh
 			{
-				//Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].getMaterialID());
-				//roomMeshes.push_back(mesh);
+				Mesh mesh(level, i);
+				roomMeshes.push_back(mesh);
 			}
 			break;
 
 		case 2:		// Static
 			{
-				StaticEntity levelEntity(level, i, matID);
+				StaticEntity levelEntity(level, i, matID, true);
 				statics.push_back(levelEntity);
 			}
 			break;
 
 		case 3:		// Rigid
 			{
-				RigidEntity cubeEntity(level, i, matID);
+				RigidEntity cubeEntity(level, i, matID, true);
+				cubeEntity.OffsetPositionY(3.0f);
+				cubeEntity.SetStartPosition(cubeEntity.GetPosition());
 				rigids.push_back(cubeEntity);
 			}
 			break;
 
 		case 4:		// Bridge
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				BridgeEntity bridgeEntity(level, i, matID, true);
+				// Needs to be looked over, might need values from maya
+				bridgeEntity.SetLinkID(level->GetMesh(i).link);
+				bridgeEntity.SetExtendingBackwardZ();
+				bridgeEntity.SetExtendDistance(4.2f);
+				bridges.push_back(bridgeEntity);
+				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
 			}
 			break;
 
-		case 5:		// DrawBridge
+		case 5:		// Box Holder
 			{
-				BridgeEntity bridgeEntity(level, i, matID);
-				// Needs to be looked over, might need values from maya
-				bridgeEntity.SetExtendingBackwardZ();
-				bridgeEntity.SetExtendDistance(4.2f);
-				bridges.push_back(bridgeEntity);
+				boxHolder boxHolderEntity(level, i, matID, matID, true);
+				boxHolderEntity.puntBox();
+				this->holders.push_back(boxHolderEntity);
 			}
 			break;
 
 		case 6:		// Button
 			{
-				Button button;
+				Button button(level, i, matID, true);
+				button.SetLink(level->GetMesh(i).link);
 				button.SetMaterialID(matID);
 				button.scaleBB(2);
 				buttons.push_back(button);
@@ -624,11 +715,12 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 7:		// Presure Plate
 			{
-				PressurePlate pPlate;
+				PressurePlate pPlate(level, i, matID, true);
+				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
-				plates.push_back(pPlate);
+				pressurePlates.push_back(pPlate);
 			}
 			break;
 
@@ -637,7 +729,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), matID);
+				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
 			}
 			break;
@@ -646,27 +738,24 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 11:	// Light
-
 			break;
 
 		case 12:	// Collectible
 			break;
 
-		case 13:	// Box holder
-			{
-				boxHolder boxHolderEntity(level, i, matID, matID);
-				boxHolderEntity.puntBox();
-				this->holders.push_back(boxHolderEntity);
-			}
-			break;
+		case 13:	//Item
 
 		default:
 			break;
 		}
-
-	
-
 	}
+
+
+	Item item;
+	item.SetItemType(1);
+	item.SetPosition(glm::vec3(0, 1, 0));
+	item.SetMaterialID(materials[1].GetMaterialID());
+	items.push_back(item);
 }
 
 //=============================================================
@@ -676,7 +765,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 void Room::LoadPuzzleNode(std::vector<Material> materials)
 {
 	puzzleNode winNode;
-	winNode.SetMaterialID(materials[3].GetMaterialID());
+	winNode.SetMaterialID(materials[0].GetMaterialID());
 	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
 	nodes.push_back(winNode);
 }

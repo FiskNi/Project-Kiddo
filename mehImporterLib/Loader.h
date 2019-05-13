@@ -33,17 +33,23 @@ public:
 	int GetType(int index) const { return mesh[index].type; }
 	int GetLink(int index) const { return mesh[index].link; }
 	
-	float getDirLightPos(int index, int posIndex) const { return dirLight[index].position[posIndex]; }
-	float getDirLightIntensity(int index) const { return dirLight[index].intensity; }
-	float getDirLightRotation(int index, int rotIndex) const { return dirLight[index].rotation[rotIndex]; }
-	float getDirLightColor(int index, int colIndex) const { return dirLight[index].color[colIndex]; }
-	int getDirLightCount() const { return fileHeader.dirLightCount; }
+	float* GetDirLightPos(int index) const { return dirLight[index].position; }
+	float GetDirLightIntensity(int index) const { return dirLight[index].intensity; }
+	float* GetDirLightRotation(int index) const { return dirLight[index].rotation; }
+	float* GetDirLightColor(int index) const { return dirLight[index].color; }
+	int GetDirLightCount() const { return fileHeader.dirLightCount; }
 
-	float getPointLightPos(int index, int posIndex) const { return pointLight[index].position[posIndex]; }
-	float getPointLightIntensity(int index) const { return pointLight[index].intensity; }
-	int getPointLightCount() const { return fileHeader.pointLightCount; }
+	//float GetPointLightPos(int index, int posIndex) const { return pointLight[index].position[posIndex]; }
+	float* GetPointLightPos(int index) const { return pointLight[index].position; }
+	float* GetPointLightColor(int index) const { return pointLight[index].color; }
+
+	float GetPointLightIntensity(int index) const { return pointLight[index].intensity; }
+	int GetPointLightCount() const { return fileHeader.pointLightCount; }
 
 	unsigned int GetMaterialID(int meshIndex) const { return mesh[meshIndex].materialID; }
 	PhongMaterial GetMaterial(int index) const { return material[index]; }
 	int GetMaterialCount() const { return fileHeader.materialCount; }
+
+	int GetMeshGroupCount() const { return fileHeader.groupCount; }
+	MeshGroup GetMeshGroup(int index) const { return meshGroup[index]; }
 };

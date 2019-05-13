@@ -115,7 +115,7 @@ void Renderer::prePassRender(Shader gShaderProgram,
 	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
+		shadowMap.CreateShadowMatrixData(dirLightArr[0].GetPos(), gShaderProgram.getShader());
 
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
@@ -155,7 +155,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	glUseProgram(gShaderProgram.getShader());
 
 	// Shadowmap ViewProjection matrix
-	shadowMap.CreateShadowMatrixData(dirLightArr[0].getPos(), gShaderProgram.getShader());
+	shadowMap.CreateShadowMatrixData(dirLightArr[0].GetPos(), gShaderProgram.getShader());
 
 	// Per shader uniforms
 	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
@@ -163,11 +163,11 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.GetPosition()));
 
-	dirLightArr[0].sendToShader(gShaderProgram);
+	dirLightArr[0].SendToShader(gShaderProgram);
 	//Sending all the lights to shader.
 	for (int i = 0; i < nr_P_LIGHTS; i++)
 	{
-		lightArr[i].sendToShader(gShaderProgram, i);
+		lightArr[i].SendToShader(gShaderProgram, i);
 	}
 
 	// Main render queue
@@ -408,7 +408,6 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm:
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
 
 	glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
-
 
 	glm::mat4 scaleMatrix = glm::scale(MODEL_MAT, scale);
 

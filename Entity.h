@@ -27,11 +27,6 @@ private:
 	Mesh entityMesh;
 	string name;
 
-	/*glm::vec3 position;
-	glm::vec3 rotation;
-	glm::quat rotation;
-	glm::vec3 scale;*/
-
 	// The center is a vector to a location in the world 
 	glm::vec3 boundingBoxCenter;
 	// The size is the half-size in each direction measured from the center 
@@ -41,6 +36,7 @@ private:
 public:
 	Entity(unsigned int i);
 	Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID);
+	Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	Entity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Entity();
 
@@ -52,6 +48,8 @@ public:
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
+	void SetPosition(float xyz[]);
+	void SetPosition(float x, float y, float z);
 	void SetPositionY(float y);
 
 

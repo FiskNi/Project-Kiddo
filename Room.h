@@ -17,8 +17,7 @@
 #include "BoxHoldEntity.h"
 #include "PressurePlate.h"
 #include "Button.h"
-#include "Menu.h"
-
+#include "Item.h"
 #include "boxHolder.h"
 //============================================================================
 //	- Rooms
@@ -37,7 +36,7 @@
 class Room
 {
 private:
-	void LoadLights();
+	void LoadLights(Loader* inLoader);
 	void LoadEntities(std::vector<Material> materials, Loader* level);
 	void LoadPuzzleNode(std::vector<Material> materials);
 
@@ -52,6 +51,8 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 
+	void PlayerItemCollision(Character* playerCharacter);
+
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> roomMeshes;
@@ -65,8 +66,9 @@ private:
 	std::vector<StaticEntity> statics;
 	std::vector<BridgeEntity> bridges;
 	std::vector<BoxHoldEntity> holdBoxes;
-	std::vector<PressurePlate> plates;
+	std::vector<PressurePlate> pressurePlates;
 	std::vector<Button> buttons;
+	std::vector<Item> items;
 
 	std::vector<boxHolder> holders;
 
@@ -80,7 +82,6 @@ private:
 
 public:
 	Room(std::vector<Material> materials, Loader* aLoader);
-	//Room(std::vector<Material> materials, int state);
 	~Room();
 
 	std::vector<Light>& GetPointLights() { return pointLights; }
@@ -101,7 +102,7 @@ public:
 	void destroyRoom();
 
 
-
+	void Upgrade(Character* playerCharacter);
 	void CompileMeshData();
 };
 

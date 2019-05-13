@@ -8,8 +8,8 @@ DirectionalLight::DirectionalLight()
 	this->specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
 	// Light strength
-	float str = 0.8f;
-	diffuse *= str;
+	strength = 0.8f;
+	diffuse *= strength;
 }
 
 DirectionalLight::DirectionalLight(glm::vec3 lightPos, glm::vec3 direction, float intensity)
@@ -18,45 +18,51 @@ DirectionalLight::DirectionalLight(glm::vec3 lightPos, glm::vec3 direction, floa
 	this->direction = direction;
 	this->diffuse = glm::vec3(1.0f, 0.82f, 0.6f);
 	this->specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	float str = intensity;
-	diffuse *= str;
+	strength = intensity;
+	diffuse *= strength;
 }
 
 DirectionalLight::~DirectionalLight()
 {
 }
 
-glm::vec3 DirectionalLight::getPos() const
+glm::vec3 DirectionalLight::GetPos() const
 {
 	return this->lightPos;
 }
 
-glm::vec3 DirectionalLight::getDirection() const
+glm::vec3 DirectionalLight::GetDirection() const
 { 
 	return this->direction;
 }
 
-void DirectionalLight::setPos(glm::vec3 lightPos)
+void DirectionalLight::SetPos(glm::vec3 lightPos)
 {
 	this->lightPos = lightPos;
+	this->direction = lightPos;
 }
 
-void DirectionalLight::setDirection(glm::vec3 direction)
+void DirectionalLight::SetDirection(glm::vec3 direction)
 {
 	this->direction = direction;
 }
 
-void DirectionalLight::setDiffuse(glm::vec3 diffuse)
+void DirectionalLight::SetStrength(float str)
+{
+	strength = str;
+}
+
+void DirectionalLight::SetDiffuse(glm::vec3 diffuse)
 {
 	this->diffuse = diffuse;
 }
 
-void DirectionalLight::setSpecular(glm::vec3 spec)
+void DirectionalLight::SetSpecular(glm::vec3 spec)
 {
 	this->specular = spec;
 }
 
-void DirectionalLight::sendToShader(Shader shader)
+void DirectionalLight::SendToShader(Shader shader)
 {
 	string name = "dirLight.pos";
 	glUniform3fv(glGetUniformLocation(shader.getShader(), name.c_str()), 1, glm::value_ptr(this->lightPos));

@@ -2,6 +2,13 @@
 
 Character::Character() : RigidEntity(1)
 {
+	items = new Item*[this->cap];
+	for (int i = 0; i < cap; i++) {
+		items[i] = nullptr;
+	}
+	//items[4] = new Item();
+	//items[4]->SetItemType(3);
+
 	holdingObject = false;
 	entityID = -1;
 	inputVector = glm::vec3(0.0f);
@@ -10,7 +17,12 @@ Character::Character() : RigidEntity(1)
 
 Character::~Character()
 {
-
+//	for (int i = 0; i < cap; i++) {
+//		if (items[i] != nullptr) {
+//			delete items[i];
+//		}
+//	}
+////	delete[] items;
 }
 
 void Character::SetHoldingObject(bool holding)
@@ -76,10 +88,10 @@ bool Character::CheckInBound(Entity collidingCube)
 //	Calculates a movement vector based on input
 //	Could be adapted into a keyboard callback
 //=============================================================
-glm::vec3 Character::Move(GLFWwindow* window)
+void Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 1.5f;
+	const float moveSpeed = 2.5f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
@@ -92,7 +104,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
 		{
        		jumpSquat = true;
-			moveY = moveSpeed + 10.5;
+			moveY = moveSpeed;
 			SetGrounded(false);
 		}
 
@@ -101,7 +113,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
 				moveX = -moveSpeed / 5; 
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -115,7 +127,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if(jumpSquat && RigidEntity::IsGrounded())
 			{
 				moveX = moveSpeed / 5;
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -129,7 +141,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded()) 
 			{
 				moveZ = -moveSpeed / 5;
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -143,7 +155,7 @@ glm::vec3 Character::Move(GLFWwindow* window)
 			if (jumpSquat && RigidEntity::IsGrounded())
 			{
 				moveZ = moveSpeed / 5;
-				moveY = moveSpeed + 10.5;
+				moveY = moveSpeed;
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
@@ -168,19 +180,43 @@ glm::vec3 Character::Move(GLFWwindow* window)
 
 			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
 			SetRotation(qRotation);
-
-			
 		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
 		
-		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
-
 		moveDir *= moveSpeed;
+		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
 	}
 
 	inputVector = moveDir;
-	return glm::vec3(moveDir);
+}
+
+void Character::PickUpItem(Item * item)
+{
+	if (nrOf == cap) {
+		return;
+	}
+	else {
+		for (int i = 0; i < cap; i++) {
+			if (items[i] == nullptr) {
+				items[i] = item;
+				nrOf++;
+				std::cout << "Picked up item" << std::endl;
+				break;
+			}
+		}
+	}
+}
+
+Item * Character::Upgrade()
+{
+	if (items[currentItem] == nullptr) {
+		return nullptr;
+	}
+	else {
+		return items[currentItem];
+	}
+
 }
 
 
