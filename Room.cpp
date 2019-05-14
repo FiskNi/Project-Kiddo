@@ -570,11 +570,13 @@ void Room::CompileMeshData()
 		meshes.push_back(holders[i].GetMeshData());
 		meshes.push_back(holders[i].GetHolderMeshData());
 	}
+
 	for (int i = 0; i < items.size(); i++) {
 		if (!items[i].GetPickedUp()) {
 			meshes.push_back(items[i].GetMeshData());
 		}
 	}
+
 }
 
 //=============================================================
@@ -744,11 +746,14 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 13:	//Item
+			break;
 
 		default:
 			break;
 		}
 	}
+
+
 
 
 	Item item;

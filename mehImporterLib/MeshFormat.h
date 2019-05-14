@@ -80,7 +80,8 @@ struct DirLight
 	float intensity;
 };
 
-struct PointLight {
+struct PointLight 
+{
 	float position[3];
 	float color[3];
 	float intensity;
