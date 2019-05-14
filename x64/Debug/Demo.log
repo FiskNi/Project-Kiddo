@@ -1,6 +1,27 @@
 ﻿  BridgeEntity.cpp
+  Button.cpp
+  Camera.cpp
+  Character.cpp
+  DirectionalLight.cpp
+  Entity.cpp
   GameEngine.cpp
+  Item.cpp
+  Light.cpp
+  Material.cpp
+  Menu.cpp
+  Mesh.cpp
+  PressurePlate.cpp
+  Renderer.cpp
+  RigidEntity.cpp
   Room.cpp
   Scene.cpp
+  Shader.cpp
+  ShadowMap.cpp
+  StaticEntity.cpp
+  Generating Code...
+  Compiling...
+  Text.cpp
+  boxHolder.cpp
+  puzzleNode.cpp
   Generating Code...
   Demo.vcxproj -> C:\Users\BTH computer\Desktop\NewProject\Project-Kiddo\x64\Debug\Demo.exe
