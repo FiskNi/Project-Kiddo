@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "BoxHoldEntity.h"
 #include "Headers.h"
+
 //============================================================================
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
@@ -34,11 +35,6 @@ class Scene
 {
 private:
 	bool setUserPointer = false;
-	/*enum GAMESTATE {
-		PAUSED,
-		PLAYING,
-		MAINMENU
-	};*/
 	GAMESTATE state = PLAYING;
 
 	void LoadShaders();
@@ -77,7 +73,13 @@ private:
 
 	// Character
 	Character playerCharacter;
+
+	//Key_callback
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	//Private functions for key_callback
+	void _CheckPressedButtons();
+	void _CheckPressedBombs();
 
 public:
 	Scene();

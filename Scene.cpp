@@ -11,7 +11,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		scene->SwitchRoom();
 	}
 
-	//IF PAUSED
+	// IF PAUSED
 	if (scene->state == PAUSED) 
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
@@ -63,13 +63,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 		if (key == GLFW_KEY_E && action == GLFW_PRESS)
 		{
-			for (int i = 0; i < scene->roomBuffer->getButtons().size(); i++)
-			{
-				if (!scene->roomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->roomBuffer->getButtons()[i]))
-				{
-					scene->roomBuffer->getButtons()[i].SetPressed(true);
-				}
-			}
+			scene->_CheckPressedButtons();
+			scene->_CheckPressedBombs();
 		}
 
 		// EXTRA
@@ -95,6 +90,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 
 	}
+	//IF MAINMENU
 	else if (scene->state == MAINMENU) 
 	{
 
@@ -127,14 +123,36 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 }
 
+void Scene::_CheckPressedButtons()
+{
+	for (int i = 0; i < roomBuffer->getButtons().size(); i++)
+	{
+		if (!roomBuffer->getButtons()[i].isPressed() && playerCharacter.CheckCollision(roomBuffer->getButtons()[i]))
+		{
+			roomBuffer->getButtons()[i].SetPressed(true);
+		}
+	}
+}
+
+void Scene::_CheckPressedBombs()
+{
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++) {
+		if (roomBuffer->GetRigids()[i].GetBoxType() == EXPLOSIVE) {
+			if (playerCharacter.CheckInBound(roomBuffer->GetRigids()[i])) {
+				roomBuffer->GetRigids()[i].BombTimer();
+			}
+		}
+	}
+}
+
 Scene::Scene()
 {
 	state = MAINMENU;
 
 	// Our entry room (first level)
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 
 	LoadShaders();
 	LoadMaterials(&startingRoom);
@@ -254,7 +272,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 	else if (state == PLAYING) 
 	{
-
+		if (roomBuffer->GetRoomCompleted()) {
+			this->roomNr++;
+			this->roomBuffer->SetRoomCompleted(false);
+			this->SwitchRoom();
+		}
 		Gravity();
 
 		// Player movement vector
@@ -314,23 +336,24 @@ void Scene::SwitchRoom()
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelPads-n-Walls.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
 	}
 	else if (roomNr == 2)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	}
 	else
 	{
-		roomNr = -1;
+		roomNr = 0;
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	}
 
 	LoadMaterials(roomLoader);
@@ -349,8 +372,9 @@ void Scene::SwitchRoom()
 	playerCharacter.ResetPos();
 
 	CompileMeshData();
+	this->ResetRoom();
 	this->isSwitched = true;
-	this->roomNr += 1;
+	//this->roomNr += 1;
 
 
 	delete roomLoader;
@@ -382,7 +406,7 @@ void Scene::Gravity()
 	// Entity boxes
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{	
-		if (!roomBuffer->GetRigids()[i].IsGrounded() && !roomBuffer->GetRigids()[i].GetBoxType() == 1)
+		if (!roomBuffer->GetRigids()[i].IsGrounded() && !roomBuffer->GetRigids()[i].GetBoxType() == LIGHTWEIGHT)
 		{
 			roomBuffer->GetRigids()[i].AddVelocityY(gravity);
 		}

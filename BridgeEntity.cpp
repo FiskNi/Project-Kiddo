@@ -61,6 +61,34 @@ void BridgeEntity::SetExtendDistance(float d)
 	extendDistance = d;
 }
 
+void BridgeEntity::SetExtendingDir(int dir)
+{
+	switch (dir)
+	{
+	case 1: //Positive x
+		extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
+		break;
+	case 2: //Negative x
+		extendDirection = glm::vec3(-1.0f, 0.0f, 0.0f);
+		break;
+	case 3: //Positive z
+		extendDirection = glm::vec3(0.0f, 0.0f, 1.0f);
+		break;
+	case 4: //Negative z
+		extendDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+		break;
+	case 5: //Positive y
+		extendDirection = glm::vec3(0.0f, 1.0f, 0.0f);
+		break;
+	case 6: //Negative y
+		extendDirection = glm::vec3(0.0f, -1.0f, 0.0f);
+		break;
+	default:
+		std::cout << "Direction parameter was incorrect" << std::endl;
+		break;
+	}
+}
+
 void BridgeEntity::SetExtendingForwardX()
 {
 	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);

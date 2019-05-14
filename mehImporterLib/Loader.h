@@ -49,4 +49,7 @@ public:
 	unsigned int GetMaterialID(int meshIndex) const { return mesh[meshIndex].materialID; }
 	PhongMaterial GetMaterial(int index) const { return material[index]; }
 	int GetMaterialCount() const { return fileHeader.materialCount; }
+
+	int GetMeshGroupCount() const { return fileHeader.groupCount; }
+	MeshGroup GetMeshGroup(int index) const { return meshGroup[index]; }
 };

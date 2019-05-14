@@ -6,13 +6,13 @@ class Item : public RigidEntity
 {
 private:
 
-	int type;
+	ITEMTYPE type = NONE;
 	bool pickedUp = false;
 public:
 	Item(unsigned int i = 1) : RigidEntity(i) {};
 	~Item() {};
 
-	void SetItemType(int type) { this->type = type; }
+	void SetItemType(ITEMTYPE type) { this->type = type; }
 	void SetPickedUp(bool tf) {
 		if (tf) {
 			this->SetPosition(glm::vec3(0, -30, 0));
@@ -21,6 +21,6 @@ public:
 	}
 
 	bool GetPickedUp() { return this->pickedUp; }
-	int GetItemType() { return this->type; }
+	ITEMTYPE GetItemType() { return this->type; }
 
 };

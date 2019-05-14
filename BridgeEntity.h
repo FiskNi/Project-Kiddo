@@ -23,6 +23,7 @@ public:
 	void SetRestPosition(glm::vec3 position);
 	void SetRestPosition(float x, float y, float z);
 	void SetExtendDistance(float d);
+	void SetExtendingDir(int dir);
 	void SetExtendingForwardX();
 	void SetExtendingBackwardX();
 	void SetExtendingForwardZ();
