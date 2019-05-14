@@ -11,7 +11,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		scene->SwitchRoom();
 	}
 
-	//IF PAUSED
+	// IF PAUSED
 	if (scene->state == PAUSED) 
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
@@ -90,6 +90,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 
 	}
+	//IF MAINMENU
 	else if (scene->state == MAINMENU) 
 	{
 
@@ -371,6 +372,7 @@ void Scene::SwitchRoom()
 	playerCharacter.ResetPos();
 
 	CompileMeshData();
+	this->ResetRoom();
 	this->isSwitched = true;
 	//this->roomNr += 1;
 

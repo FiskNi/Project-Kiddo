@@ -2,9 +2,14 @@
 
 Character::Character() : RigidEntity(1)
 {
-	items = new Item*[this->cap];
-	for (int i = 0; i < cap; i++) {
+	items = new Item*[this->itemCap];
+	for (int i = 0; i < itemCap; i++) {
 		items[i] = new Item();
+	}
+	
+	collected = new Collectible*[this->collCap];
+	for (int i = 0; i < collCap; i++) {
+		collected[i] = new Collectible();
 	}
 
 	holdingObject = false;
@@ -199,6 +204,13 @@ void Character::PickUpItem(Item * item)
 	//		}
 	//	}
 	//}
+}
+
+void Character::PickUpCollectible(Collectible * coll)
+{
+	if (!this->collected[coll->GetIndex()]->GetCollected()) {
+		this->collected[coll->GetIndex()]->SetCollected(true);
+	}
 }
 
 Item * Character::Upgrade()

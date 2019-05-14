@@ -20,6 +20,7 @@
 #include "Item.h"
 #include "boxHolder.h"
 #include "Door.h"
+#include "Collectible.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -39,8 +40,6 @@ class Room
 private:
 	void LoadLights(Loader* inLoader);
 	void LoadEntities(std::vector<Material> materials, Loader* level);
-	void LoadPuzzleNode(std::vector<Material> materials);
-
 	void PlayerRigidCollision(Character* playerCharacter);
 	int inBoundCheck(Character playerCharacter);
 	void RigidRigidCollision();
@@ -52,6 +51,7 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
+	void PlayerCollectibleCollision(Character* playerCharacter);
 
 	void PlayerItemCollision(Character* playerCharacter);
 
@@ -72,11 +72,12 @@ private:
 	std::vector<Button> buttons;
 	std::vector<Item> items;
 	std::vector<Door> doors;
+	std::vector<Collectible> collectibles;
 
 	std::vector<boxHolder> holders;
 
 	// PuzzleNodes
-	std::vector<puzzleNode> nodes;
+	//std::vector<puzzleNode> nodes;
 
 	// Camera
 	Camera* roomCamera;
@@ -92,7 +93,7 @@ public:
 	std::vector<RigidEntity>& GetRigids() { return rigids; }
 	std::vector<StaticEntity>& GetStatics() { return statics; }
 	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
-	std::vector<puzzleNode>& GetNodes() { return nodes; }
+	//std::vector<puzzleNode>& GetNodes() { return nodes; }
 	std::vector<BridgeEntity>& GetBridges() { return bridges; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
