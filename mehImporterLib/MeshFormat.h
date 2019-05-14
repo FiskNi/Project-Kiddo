@@ -70,6 +70,7 @@ struct LoaderMesh
 	int link;
 	int dir;
 	float dist;
+	int collect;
 
 	int vertexCount;
 };
