@@ -251,9 +251,6 @@
     <ClInclude Include="Item.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCombiner.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
     <ClInclude Include="Door.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>

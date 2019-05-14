@@ -585,9 +585,9 @@ void Room::CompileMeshData()
 			meshes.push_back(items[i].GetMeshData());
 		}
 	}
-	//for (int i = 0; i < doors.size(); i++) {
-	//	meshes.push_back(doors[i].GetMeshData());
-	//}
+	for (int i = 0; i < doors.size(); i++) {
+		meshes.push_back(doors[i].GetMeshData());
+	}
 }
 
 //=============================================================
@@ -742,11 +742,11 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 9:		// Door
 			{
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
-				//door.SetPosition(glm::vec3(-40, 0.5, 5));
-/*				Door door(level, i, materials[3].GetMaterialID());
-				doors.push_back(door)*/;
+				//Mesh mesh(level, i);
+				//roomMeshes.push_back(mesh);
+				Door door(level, i, materials[3].GetMaterialID());
+				door.SetPosition(glm::vec3(-40, 0.5, 5));
+				doors.push_back(door);
 			}
 			break;
 

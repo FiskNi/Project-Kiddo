@@ -161,7 +161,6 @@
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoxCombiner.h" />
     <ClInclude Include="boxHolder.h" />
     <ClInclude Include="BridgeEntity.h" />
     <ClInclude Include="Button.h" />

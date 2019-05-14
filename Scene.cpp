@@ -339,7 +339,7 @@ void Scene::SwitchRoom()
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
 	}
 	else if (roomNr == 2)
 	{
