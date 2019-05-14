@@ -3,7 +3,7 @@
 #include "Mesh.h"
 #include "RigidEntity.h"
 #include "Item.h"
-
+#include "Collectible.h"
 //============================================================================
 //	- Character
 //	The character as can be seen derives from a rigid entity.
@@ -14,10 +14,13 @@ class Character
 	: public RigidEntity
 {
 private:
-	const int cap = 4;
+	const int itemCap = 4;
+	const int collCap = 8;
+
 	int currentItem = 0;
 	int nrOf = 0;
 	Item** items;
+	Collectible** collected;
 	//ID, playerID = 1, Movable box = 2.
 	int entityID;
 	bool holdingObject;
@@ -45,6 +48,7 @@ public:
 	
 	Item* GetCurrentItem() { return this->items[this->currentItem]; }
 	void PickUpItem(Item* item);
+	void PickUpCollectible(Collectible* coll);
 	void SetCurrentItem(int i) { this->currentItem = i; }
 	Item* Upgrade();
 	void ItemUsed() {
