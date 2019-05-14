@@ -6,7 +6,6 @@ Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEng
 {
 	LoadLights(aLoader);
 	LoadEntities(materials, aLoader);
-	LoadPuzzleNode(materials);
 	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
@@ -49,6 +48,8 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 	PlayerItemCollision(playerCharacter);
+	PlayerDoorCollision(playerCharacter);
+	PlayerCollectibleCollision(playerCharacter);
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -160,6 +161,25 @@ void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 			}
 		}
 	}*/
+}
+
+void Room::PlayerDoorCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < doors.size(); i++) {
+		if (playerCharacter->CheckCollision(doors[i])) {
+			isRoomCompleted = true;
+		}
+	}
+}
+
+void Room::PlayerCollectibleCollision(Character * playerCharacter)
+{
+	for (int i = 0; i < collectibles.size(); i++) {
+		if (playerCharacter->CheckCollision(collectibles[i])) {
+			playerCharacter->PickUpCollectible(&collectibles[i]);
+			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
+		}
+	}
 }
 
 void Room::PlayerItemCollision(Character* playerCharacter)
@@ -384,19 +404,19 @@ void Room::RigidRigidCollision()
 //=============================================================
 void Room::RigidNodeCollision()
 {
-	if (isRoomCompleted != true) {
-		for (int i = 0; i < rigids.size(); i++)
-		{
-			if (nodes[0].CheckCollision(rigids[i]))
-			{
-				for (int j = 0; j < rigids.size(); ++j)
-				{
-					cout << "Solved" << endl;
-					isRoomCompleted = true;
-				}
-			}
-		}
-	}
+	//if (isRoomCompleted != true) {
+	//	for (int i = 0; i < rigids.size(); i++)
+	//	{
+	//		if (nodes[0].CheckCollision(rigids[i]))
+	//		{
+	//			for (int j = 0; j < rigids.size(); ++j)
+	//			{
+	//				cout << "Solved" << endl;
+	//				isRoomCompleted = true;
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 //=============================================================
@@ -548,10 +568,10 @@ void Room::CompileMeshData()
 		meshes.push_back(statics[i].GetMeshData());
 	}
 
-	for (int i = 0; i < nodes.size(); i++)
-	{
-		meshes.push_back(nodes[i].GetMeshData());
-	}
+	//for (int i = 0; i < nodes.size(); i++)
+	//{
+	//	meshes.push_back(nodes[i].GetMeshData());
+	//}
 
 	for (int i = 0; i < bridges.size(); i++)
 	{
@@ -574,9 +594,14 @@ void Room::CompileMeshData()
 		meshes.push_back(holders[i].GetHolderMeshData());
 	}
 	for (int i = 0; i < items.size(); i++) {
-		if (!items[i].GetPickedUp()) {
-			meshes.push_back(items[i].GetMeshData());
-		}
+
+		meshes.push_back(items[i].GetMeshData());
+	}
+	for (int i = 0; i < doors.size(); i++) {
+		meshes.push_back(doors[i].GetMeshData());
+	}
+	for (int i = 0; i < collectibles.size(); i++) {
+		meshes.push_back(collectibles[i].GetMeshData());
 	}
 }
 
@@ -658,8 +683,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
+			Mesh mesh(level, i);
+			roomMeshes.push_back(mesh);
 			}
 			break;
 		case 1:		// Mesh
@@ -693,8 +718,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
 				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
 			}
 			break;
 
@@ -728,12 +751,16 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 8:		// Character
+
 			break;
 
 		case 9:		// Door
 			{
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
+				//Mesh mesh(level, i);
+				//roomMeshes.push_back(mesh);
+				Door door(level, i, matID);
+				//door.SetPosition(glm::vec3(-40, 0.5, 5));
+				doors.push_back(door);
 			}
 			break;
 
@@ -744,32 +771,37 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 12:	// Collectible
+		{
+
+			Collectible coll;
+			coll.SetMaterialID(matID);
+			collectibles.push_back(coll);
+		}
 			break;
 
 		case 13:	//Item
+		{
+			Item item;
+			//Need to look over how to import itemtype :)
+			//item.SetItemType()
+			item.SetMaterialID(matID);
+			items.push_back(item);
+		}
 
 		default:
 			break;
 		}
 	}
 
+	Collectible coll;
+	coll.SetPosition(glm::vec3(-15, 0.5, -5));
+	coll.SetIndex(0);
+	coll.SetMaterialID(materials[1].GetMaterialID());
+	collectibles.push_back(coll);
+	//Item item;
+	//item.SetItemType(BOMB);
+	//item.SetPosition(glm::vec3(-15, 0.5, -5));
+	//item.SetMaterialID(materials[1].GetMaterialID());
+	//items.push_back(item);
 
-	Item item;
-	item.SetItemType(BOMB);
-	item.SetPosition(glm::vec3(-15, 0.5, -5));
-	item.SetMaterialID(materials[1].GetMaterialID());
-	items.push_back(item);
 }
-
-//=============================================================
-//	Puzzle node initialization
-//	Loads and positions all the puzzle nodes in the scene
-//=============================================================
-void Room::LoadPuzzleNode(std::vector<Material> materials)
-{
-	puzzleNode winNode;
-	winNode.SetMaterialID(materials[0].GetMaterialID());
-	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
-	nodes.push_back(winNode);
-}
-

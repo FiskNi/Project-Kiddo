@@ -37,11 +37,6 @@ class Scene
 {
 private:
 	bool setUserPointer = false;
-	/*enum GAMESTATE {
-		PAUSED,
-		PLAYING,
-		MAINMENU
-	};*/
 	GAMESTATE state = PLAYING;
 
 	void LoadShaders();

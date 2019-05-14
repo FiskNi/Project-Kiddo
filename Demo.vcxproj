@@ -166,7 +166,9 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Collectible.h" />
     <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="Door.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ImGuiHandler.h" />
     <ClInclude Include="Item.h" />
