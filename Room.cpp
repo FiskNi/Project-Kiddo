@@ -47,6 +47,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 	PlayerItemCollision(playerCharacter);
+	PlayerDoorCollision(playerCharacter);
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -157,6 +158,15 @@ void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 			}
 		}
 	}*/
+}
+
+void Room::PlayerDoorCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < doors.size(); i++) {
+		if (playerCharacter->CheckCollision(doors[i])) {
+			isRoomCompleted = true;
+		}
+	}
 }
 
 void Room::PlayerItemCollision(Character* playerCharacter)
@@ -575,6 +585,9 @@ void Room::CompileMeshData()
 			meshes.push_back(items[i].GetMeshData());
 		}
 	}
+	//for (int i = 0; i < doors.size(); i++) {
+	//	meshes.push_back(doors[i].GetMeshData());
+	//}
 }
 
 //=============================================================
@@ -731,6 +744,9 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
+				//door.SetPosition(glm::vec3(-40, 0.5, 5));
+/*				Door door(level, i, materials[3].GetMaterialID());
+				doors.push_back(door)*/;
 			}
 			break;
 

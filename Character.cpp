@@ -186,19 +186,19 @@ void Character::Move(GLFWwindow* window)
 
 void Character::PickUpItem(Item * item)
 {
-	if (nrOf == cap) {
-		return;
-	}
-	else {
-		for (int i = 0; i < cap; i++) {
-			if (items[i]->GetItemType() == NONE) {
-				items[i]->SetItemType(item->GetItemType());
-				nrOf++;
-				std::cout << "Picked up item" << std::endl;
-				break;
-			}
-		}
-	}
+	//if (nrOf == cap) {
+	//	return;
+	//}
+	//else {
+	//	for (int i = 0; i < cap; i++) {
+	//		if (items[i]->GetItemType() == NONE) {
+	//			items[i]->SetItemType(item->GetItemType());
+	//			nrOf++;
+	//			std::cout << "Picked up item" << std::endl;
+	//			break;
+	//		}
+	//	}
+	//}
 }
 
 Item * Character::Upgrade()

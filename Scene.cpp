@@ -271,7 +271,11 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 	else if (state == PLAYING) 
 	{
-
+		if (roomBuffer->GetRoomCompleted()) {
+			this->roomNr++;
+			this->roomBuffer->SetRoomCompleted(false);
+			this->SwitchRoom();
+		}
 		Gravity();
 
 		// Player movement vector
@@ -335,7 +339,7 @@ void Scene::SwitchRoom()
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 	}
 	else if (roomNr == 2)
 	{

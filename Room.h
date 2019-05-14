@@ -19,6 +19,7 @@
 #include "Button.h"
 #include "Item.h"
 #include "boxHolder.h"
+#include "Door.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -50,6 +51,7 @@ private:
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
+	void PlayerDoorCollision(Character* playerCharacter);
 
 	void PlayerItemCollision(Character* playerCharacter);
 
@@ -69,6 +71,7 @@ private:
 	std::vector<PressurePlate> pressurePlates;
 	std::vector<Button> buttons;
 	std::vector<Item> items;
+	std::vector<Door> doors;
 
 	std::vector<boxHolder> holders;
 
@@ -78,7 +81,7 @@ private:
 	// Camera
 	Camera* roomCamera;
 
-	bool isRoomCompleted;
+	bool isRoomCompleted = false;
 
 public:
 	Room(std::vector<Material> materials, Loader* aLoader);
@@ -94,6 +97,9 @@ public:
 	std::vector<Mesh> GetMeshData() const { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
+	bool GetRoomCompleted() { return this->isRoomCompleted; }
+
+	void SetRoomCompleted(bool tf) { this->isRoomCompleted = tf; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
