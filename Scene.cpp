@@ -7,8 +7,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) 
 	{
-		//SWITCHES ROOM BUT ACTUALLY RESETS
-		scene->SwitchRoom();
+		if (scene->roomBuffer)
+			scene->roomBuffer->SetRoomCompleted(true);
 	}
 
 	// IF PAUSED
@@ -30,6 +30,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
 		{
 			//RESTART HERE
+			scene->state = PAUSED;
 			scene->ResetRoom();
 			scene->state = PLAYING;
 			std::cout << "Restarting level" << std::endl;
@@ -51,8 +52,10 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 	}
 	// IF PLAYING
-	else if (scene->state == PLAYING) {
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+	else if (scene->state == PLAYING) 
+	{
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+		{
 			scene->state = PAUSED;
 			std::cout << "PAUSED" << std::endl;
 			std::cout << "Press the numbers below to perform actions: " << std::endl;
@@ -68,27 +71,19 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 
 		// EXTRA
-		if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
-			//UPGRADES BOXES
+		if (key == GLFW_KEY_Q && action == GLFW_PRESS) 
 			scene->Upgrade();
-		}
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
 			scene->playerCharacter.SetCurrentItem(0);
-		}
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
 			scene->playerCharacter.SetCurrentItem(1);
-		}
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-			scene->playerCharacter.SetCurrentItem(2);
-		}
-		if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-			scene->playerCharacter.SetCurrentItem(3);
-		}
-		if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
+			scene->playerCharacter.SetCurrentItem(2);		
+		if (key == GLFW_KEY_4 && action == GLFW_PRESS) 
+			scene->playerCharacter.SetCurrentItem(3);		
+		if (key == GLFW_KEY_5 && action == GLFW_PRESS) 
 			scene->playerCharacter.SetCurrentItem(4);
-		}
-
-
+		
 	}
 	//IF MAINMENU
 	else if (scene->state == MAINMENU) 
@@ -99,21 +94,10 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			//RESUMES GAME
 			scene->isLoading = true;
 			// GET SHADER AND RENDER LOADING
-			//scene->menuHandler.RenderLoading(scene->GetShader(2));
 			scene->state = PLAYING;
-			/*scene->SwitchMainMenu();*/
-			//scene->isLoading = false;
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
 		}
-
-		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
-		//{
-		//	//RESTART HERE
-		//	scene->ResetRoom();
-		//	scene->state = PLAYING;
-		//	std::cout << "Restarting level" << std::endl;
-		//}
 
 		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
 		{
@@ -130,19 +114,17 @@ void Scene::_CheckPressedButtons()
 		if (!roomBuffer->getButtons()[i].isPressed() && playerCharacter.CheckCollision(roomBuffer->getButtons()[i]))
 		{
 			roomBuffer->getButtons()[i].SetPressed(true);
+			// ADD SOUND PLAY
 		}
 	}
 }
 
 void Scene::_CheckPressedBombs()
 {
-	for (int i = 0; i < roomBuffer->GetRigids().size(); i++) {
-		if (roomBuffer->GetRigids()[i].GetBoxType() == EXPLOSIVE) {
-			if (playerCharacter.CheckInBound(roomBuffer->GetRigids()[i])) {
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++) 
+		if (roomBuffer->GetRigids()[i].GetBoxType() == EXPLOSIVE) 
+			if (playerCharacter.CheckInBound(roomBuffer->GetRigids()[i])) 
 				roomBuffer->GetRigids()[i].BombTimer();
-			}
-		}
-	}
 }
 
 Scene::Scene()
@@ -163,7 +145,7 @@ Scene::Scene()
 	currentBuffer = 0;
 
 	audioEngine = irrklang::createIrrKlangDevice();
-	audioEngine->play2D("irrKlang/media/ophelia.mp3", true);
+	//audioEngine->play2D("irrKlang/media/bell.wav", true);
 
 	// Initializes startingroom. Existing materials is needed for all the entities.
 	roomBuffer = new Room(materials, &startingRoom, audioEngine);
@@ -184,7 +166,7 @@ Scene::~Scene()
 	if (mainMenuRoomBuffer)
 		delete mainMenuRoomBuffer;
 
-	audioEngine->drop();
+	//audioEngine->drop();
 }
 
 void Scene::LoadShaders()
@@ -278,37 +260,43 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 	else if (state == PLAYING) 
 	{
-		if (roomBuffer->GetRoomCompleted()) {
-			this->roomNr++;
-			this->roomBuffer->SetRoomCompleted(false);
-			this->SwitchRoom();
-		}
-		Gravity();
-
-		// Player movement vector
-		playerCharacter.Move(renderWindow);
-		if (!playerCharacter.IsColliding())
+		// Check room completion
+		// Could add extra functions here (loadingscreen or whatever)
+		if (roomBuffer->GetRoomCompleted())
 		{
-			playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+			if (isLoading)
+				SwitchRoom();
+			else
+				isLoading = true;
 		}
-
-		// Character update
-		playerCharacter.Update(deltaTime);
-		// Update the scene
-		for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
+		else
 		{
-			roomBuffer->GetRigids()[i].Update(deltaTime);
-		}
+			Gravity();
+			// Player movement vector
+			playerCharacter.Move(renderWindow);
+			if (!playerCharacter.IsColliding())
+			{
+				playerCharacter.AddVelocity(playerCharacter.GetInputVector());
+			}
 
-		for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
-		{
-			roomBuffer->GetBridges()[i].Update(deltaTime);
-		}
+			// Character update
+			playerCharacter.Update(deltaTime);
+			// Update the scene
+			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
+			{
+				roomBuffer->GetRigids()[i].Update(deltaTime);
+			}
 
-		roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
+			for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
+			{
+				roomBuffer->GetBridges()[i].Update(deltaTime);
+			}
 
-		// Compile render data for the renderer
-		CompileMeshData();
+			roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
+
+			// Compile render data for the renderer
+			CompileMeshData();
+		}	
 	}
 	else
 	{
@@ -325,6 +313,8 @@ void Scene::SetSwitched()
 void Scene::ResetRoom()
 {
 	playerCharacter.ResetPos();
+
+	// This should be a function in the room that can reset all the relevant data (bridge positions and button states)
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{
 		roomBuffer->GetRigids()[i].ResetPos();
@@ -343,24 +333,28 @@ void Scene::SwitchRoom()
 	if (roomNr == 0)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
-		
+		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		// ADD SOUND PLAY
 	}
 	else if (roomNr == 2)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		// ADD SOUND PLAY
 	}
 	else if (roomNr == 3)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		// ADD SOUND PLAY
 	}
 	else
 	{
 		roomNr = 0;
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		// ADD SOUND PLAY
 	}
 
 	LoadMaterials(roomLoader);
@@ -379,27 +373,11 @@ void Scene::SwitchRoom()
 	playerCharacter.ResetPos();
 
 	CompileMeshData();
-	this->ResetRoom();
-	this->isSwitched = true;
-	//this->roomNr += 1;
+	isSwitched = true;
+	roomNr++;
 
-
+	isLoading = false;
 	delete roomLoader;
-}
-
-void Scene::SwitchMainMenu() 
-{
-	if (state == MAINMENU)
-	{
-		//this->isLoading = true;
-		this->isSwitched = true;
-		//CompileMeshDataMainMenu();
-	}
-	else
-	{
-		//this->isLoading = true;
-		this->isSwitched = true;
-	}
 }
 
 //=============================================================

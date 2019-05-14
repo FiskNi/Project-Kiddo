@@ -102,9 +102,7 @@ public:
 	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
-
 	void SwitchRoom();
-	void SwitchMainMenu();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void SetSwitched();
 	void ResetRoom();
