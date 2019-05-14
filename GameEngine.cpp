@@ -4,6 +4,17 @@
 
 GameEngine::GameEngine()
 {
+
+	// Supreme edition loading screen that shows up too late (should play before the scene loads stuff)
+	mainRenderer.CreateFrameBuffer();
+	mainRenderer.SetViewport();
+	mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+	mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
+	glUniform1i(3, false);  // Boolean for the shadowmap toggle
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glfwSwapBuffers(mainRenderer.getWindow());
+
+
 	// Load vertex data for the main scene
 	// Could possibly be handled inside the scene or inside the renderer
 	// Not dynamic (in constructor) but creates one large render buffer rather than
