@@ -5,7 +5,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
-	if (key == GLFW_KEY_N && action == GLFW_PRESS) 
+	if (key == GLFW_KEY_N && action == GLFW_PRESS && scene->state != MAINMENU) 
 	{
 		if (scene->roomBuffer)
 			scene->roomBuffer->SetRoomCompleted(true);
@@ -92,13 +92,11 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
 		{
 			//RESUMES GAME
-			scene->isLoading = true;
-			// GET SHADER AND RENDER LOADING
-			scene->state = PLAYING;
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
+			// Bad stuff, needs to be changed but works very temporarily
+			scene->roomBuffer->SetRoomCompleted(true);
 		}
-
 		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
 		{
 			//CLOSES WINDOW
@@ -133,30 +131,27 @@ Scene::Scene()
 
 	// Our entry room (first level)
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
-
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
-
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter(&startingRoom);
 
-	this->isSwitched = false;
+	// Initializes startingroom. Existing materials is needed for all the entities.
+	roomBuffer = new Room(materials, &startingRoom, audioEngine);
+
 	roomNr = 0;
-	currentBuffer = 0;
+	isSwitched = false;
+	isLoading = false;
 
 	audioEngine = irrklang::createIrrKlangDevice();
 	//audioEngine->play2D("irrKlang/media/bell.wav", true);
 
-	// Initializes startingroom. Existing materials is needed for all the entities.
-	roomBuffer = new Room(materials, &startingRoom, audioEngine);
-
-	//************** Mainmenu should be it's own class, not a room
+	// Needs to be changed, Main menu should be it's own class, not a room
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom, audioEngine);
 
 	// Compiles all the meshdata of the scene for the renderer
 	// CompileMeshData();
 	CompileMeshDataMainMenu();
-
 }
 
 Scene::~Scene()
@@ -238,7 +233,6 @@ void Scene::CompileMeshDataMainMenu()
 	meshes.clear();
 
 	meshes = mainMenuRoomBuffer->GetMeshData();
-	//meshes.push_back(playerCharacter.GetMeshData());
 }
 
 //=============================================================
@@ -256,7 +250,18 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 	if (state == MAINMENU) 
 	{
-		CompileMeshDataMainMenu();
+		if (roomBuffer->GetRoomCompleted())
+		{		
+			if (isLoading)
+				SwitchRoom();
+			else
+				isLoading = true;
+			state = PLAYING;
+		}
+		else
+		{
+			CompileMeshDataMainMenu();
+		}
 	}
 	else if (state == PLAYING) 
 	{

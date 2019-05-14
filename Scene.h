@@ -64,7 +64,6 @@ private:
 	std::vector<Material> materials;
 
 	// Rooms
-	bool currentBuffer;
 	Room* roomBuffer;
 	Room* mainMenuRoomBuffer;
 	int roomNr;

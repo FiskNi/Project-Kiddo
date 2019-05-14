@@ -2,7 +2,6 @@
 
 void Camera::reCalcCamVecs()
 {
-
 	glm::vec3 face;
 	face.x = cos(glm::radians(this->camYaw)) * cos(glm::radians(this->camPitch));
 	face.y = sin(glm::radians(this->camPitch));
@@ -22,14 +21,14 @@ Camera::Camera()
 	this->camPitch = -36.5f;
 	this->camRight = glm::vec3(1.0f, 0.0f, 0.0f);
 
-	this->face = glm::vec3(0.0f, 0.0f, -1.0f);
+	this->face = glm::vec3(0.0f, 0.0f, -10.0f);
 	this->mSpeed = 3.5f;
 	this->sensitivity = 0.15f;
 
 	this->width = WIDTH;
 	this->height = HEIGHT;
 
-	this->nearPlane = 0.1f;
+	this->nearPlane = 0.0001f;
 	this->farPlane = 200.0f;
 
 

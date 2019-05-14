@@ -69,7 +69,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>glew\include;$(IncludePath)</IncludePath>
-    <LibraryPath>glew\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>glew\lib\Release\x64;irrKlang\bin\Release\x64;irrKlang\bin\Debug\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>glew-1.11.0\include;$(IncludePath)</IncludePath>
