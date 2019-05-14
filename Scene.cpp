@@ -337,6 +337,7 @@ void Scene::SwitchRoom()
 	if (roomNr == 0)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		
 	}
 	else if (roomNr == 1)
 	{

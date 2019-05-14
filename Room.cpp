@@ -60,7 +60,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) && !bridges[j].GetExtending())
 				{
 					bridges[j].Extend();
-					cout << "test" << endl;
 				}
 			}
 		}
@@ -68,8 +67,10 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[j].GetExtending() && bridges[j].GetExtended())
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[j].GetExtending())
+				{
 					bridges[j].Retract();
+				}
 			}
 		}
 	}
@@ -81,7 +82,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 			for (int j = 0; j < bridges.size(); j++)
 			{
 				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()) && bridges[j].GetExtending() && bridges[j].GetExtended())
+				{
 					bridges[j].Extend();
+				}
 			}
 		}
 		else
@@ -89,7 +92,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 			for (int j = 0; j < bridges.size(); j++)
 			{
 				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()) && bridges[j].GetExtending() && bridges[j].GetExtended())
+				{
 					bridges[j].Retract();
+				}
 			}
 		}
 	}
