@@ -2,7 +2,7 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader* aLoader)
+Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 {
 	LoadLights(aLoader);
 	LoadEntities(materials, aLoader);
@@ -14,6 +14,8 @@ Room::Room(std::vector<Material> materials, Loader* aLoader)
 
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
+
+	this->audioEngine = audioEngine;
 }
 
 Room::~Room()
@@ -58,6 +60,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 			{
 				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
 					bridges[j].Extend();
+			
 			}
 		}
 		else

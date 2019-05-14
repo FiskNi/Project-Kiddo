@@ -161,15 +161,19 @@ Scene::Scene()
 	roomNr = 0;
 	currentBuffer = 0;
 
+	audioEngine = irrklang::createIrrKlangDevice();
+	audioEngine->play2D("irrKlang/media/ophelia.mp3", true);
+
 	// Initializes startingroom. Existing materials is needed for all the entities.
-	roomBuffer = new Room(materials, &startingRoom);
+	roomBuffer = new Room(materials, &startingRoom, audioEngine);
 
 	//************** Mainmenu should be it's own class, not a room
-	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom);
+	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom, audioEngine);
 
 	// Compiles all the meshdata of the scene for the renderer
 	// CompileMeshData();
 	CompileMeshDataMainMenu();
+
 }
 
 Scene::~Scene()
@@ -178,6 +182,8 @@ Scene::~Scene()
 		delete roomBuffer;
 	if (mainMenuRoomBuffer)
 		delete mainMenuRoomBuffer;
+
+	audioEngine->drop();
 }
 
 void Scene::LoadShaders()
@@ -351,7 +357,7 @@ void Scene::SwitchRoom()
 	}
 
 	LoadMaterials(roomLoader);
-	roomBuffer = new Room(materials, roomLoader);
+	roomBuffer = new Room(materials, roomLoader, audioEngine);
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)
