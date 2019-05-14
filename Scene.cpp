@@ -351,7 +351,8 @@ void Scene::SwitchRoom()
 	}
 	else
 	{
-		roomNr = -1;
+		roomNr = 0;
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	}
 
 	LoadMaterials(roomLoader);
@@ -371,7 +372,7 @@ void Scene::SwitchRoom()
 
 	CompileMeshData();
 	this->isSwitched = true;
-	this->roomNr += 1;
+	//this->roomNr += 1;
 
 
 	delete roomLoader;

@@ -581,9 +581,10 @@ void Room::CompileMeshData()
 		meshes.push_back(holders[i].GetHolderMeshData());
 	}
 	for (int i = 0; i < items.size(); i++) {
-		if (!items[i].GetPickedUp()) {
-			meshes.push_back(items[i].GetMeshData());
-		}
+		//if (!items[i].GetPickedUp()) {
+		//	meshes.push_back(items[i].GetMeshData());
+		//}
+		meshes.push_back(items[i].GetMeshData());
 	}
 	for (int i = 0; i < doors.size(); i++) {
 		meshes.push_back(doors[i].GetMeshData());
@@ -744,7 +745,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				//Mesh mesh(level, i);
 				//roomMeshes.push_back(mesh);
-				Door door(level, i, materials[3].GetMaterialID());
+				Door door(level, i, matID);
 				door.SetPosition(glm::vec3(-40, 0.5, 5));
 				doors.push_back(door);
 			}
@@ -761,17 +762,22 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 13:	//Item
 
+
 		default:
 			break;
 		}
 	}
 
 
-	Item item;
-	item.SetItemType(BOMB);
-	item.SetPosition(glm::vec3(-15, 0.5, -5));
-	item.SetMaterialID(materials[1].GetMaterialID());
-	items.push_back(item);
+	//Item item;
+	//item.SetItemType(BOMB);
+	//item.SetPosition(glm::vec3(-15, 0.5, -5));
+	//item.SetMaterialID(materials[1].GetMaterialID());
+	//items.push_back(item);
+
+	//Door door(level, 1, materials[1].GetMaterialID());
+	//door.SetPosition(glm::vec3(-40, 0.5, 5));
+	//doors.push_back(door);
 }
 
 //=============================================================
