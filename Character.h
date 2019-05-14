@@ -14,7 +14,7 @@ class Character
 	: public RigidEntity
 {
 private:
-	const int cap = 5;
+	const int cap = 4;
 	int currentItem = 0;
 	int nrOf = 0;
 	Item** items;

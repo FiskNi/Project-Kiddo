@@ -63,13 +63,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 		if (key == GLFW_KEY_E && action == GLFW_PRESS)
 		{
-			for (int i = 0; i < scene->roomBuffer->getButtons().size(); i++)
-			{
-				if (!scene->roomBuffer->getButtons()[i].isPressed() && scene->playerCharacter.CheckCollision(scene->roomBuffer->getButtons()[i]))
-				{
-					scene->roomBuffer->getButtons()[i].SetPressed(true);
-				}
-			}
+			scene->_CheckPressedButtons();
+			scene->_CheckPressedBombs();
 		}
 
 		// EXTRA
@@ -123,6 +118,28 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			//CLOSES WINDOW
 			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+	}
+}
+
+void Scene::_CheckPressedButtons()
+{
+	for (int i = 0; i < roomBuffer->getButtons().size(); i++)
+	{
+		if (!roomBuffer->getButtons()[i].isPressed() && playerCharacter.CheckCollision(roomBuffer->getButtons()[i]))
+		{
+			roomBuffer->getButtons()[i].SetPressed(true);
+		}
+	}
+}
+
+void Scene::_CheckPressedBombs()
+{
+	for (int i = 0; i < roomBuffer->GetRigids().size(); i++) {
+		if (roomBuffer->GetRigids()[i].GetBoxType() == EXPLOSIVE) {
+			if (playerCharacter.CheckInBound(roomBuffer->GetRigids()[i])) {
+				roomBuffer->GetRigids()[i].BombTimer();
+			}
 		}
 	}
 }
@@ -382,7 +399,7 @@ void Scene::Gravity()
 	// Entity boxes
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{	
-		if (!roomBuffer->GetRigids()[i].IsGrounded() && !roomBuffer->GetRigids()[i].GetBoxType() == 1)
+		if (!roomBuffer->GetRigids()[i].IsGrounded() && !roomBuffer->GetRigids()[i].GetBoxType() == LIGHTWEIGHT)
 		{
 			roomBuffer->GetRigids()[i].AddVelocityY(gravity);
 		}

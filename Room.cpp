@@ -752,8 +752,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 
 	Item item;
-	item.SetItemType(1);
-	item.SetPosition(glm::vec3(0, 1, 0));
+	item.SetItemType(BOMB);
+	item.SetPosition(glm::vec3(-15, 0.5, -5));
 	item.SetMaterialID(materials[1].GetMaterialID());
 	items.push_back(item);
 }

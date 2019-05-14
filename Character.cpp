@@ -4,10 +4,8 @@ Character::Character() : RigidEntity(1)
 {
 	items = new Item*[this->cap];
 	for (int i = 0; i < cap; i++) {
-		items[i] = nullptr;
+		items[i] = new Item();
 	}
-	//items[4] = new Item();
-	//items[4]->SetItemType(3);
 
 	holdingObject = false;
 	entityID = -1;
@@ -17,12 +15,7 @@ Character::Character() : RigidEntity(1)
 
 Character::~Character()
 {
-//	for (int i = 0; i < cap; i++) {
-//		if (items[i] != nullptr) {
-//			delete items[i];
-//		}
-//	}
-////	delete[] items;
+	
 }
 
 void Character::SetHoldingObject(bool holding)
@@ -198,8 +191,8 @@ void Character::PickUpItem(Item * item)
 	}
 	else {
 		for (int i = 0; i < cap; i++) {
-			if (items[i] == nullptr) {
-				items[i] = item;
+			if (items[i]->GetItemType() == NONE) {
+				items[i]->SetItemType(item->GetItemType());
 				nrOf++;
 				std::cout << "Picked up item" << std::endl;
 				break;

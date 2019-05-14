@@ -122,7 +122,7 @@ void RigidEntity::Update(float deltaTime)
 
 	// Constant global friction 
 	const float friction = 0.8f;
-	if (grounded)
+	if (grounded && this->boxType != ICEBLOCK)
 		velocity *= friction;
 
 	if (fabsf(velocity.x) < 0.001f)
@@ -160,6 +160,7 @@ void RigidEntity::ResetPos()
 {
 	SetPosition(startPos);
 	SetVelocity(0.0f, 1.0f, 1.0f);
+	this->boxType = REGULAR;
 }
 
 void RigidEntity::SetColliding(bool colliding)
@@ -191,7 +192,13 @@ void RigidEntity::Upgrade(ITEMTYPE item)
 {
 	switch (item) {
 		case FEATHER: boxType = LIGHTWEIGHT;
+
+		case BOMB: boxType = EXPLOSIVE;
+
+		case SNOWFLAKE: boxType = ICEBLOCK;
 	}
+
+	std::cout << "Box upgraded to: " << this->boxType << std::endl;
 
 }
 

@@ -10,16 +10,6 @@
 class RigidEntity : public Entity
 {
 private:
-	enum BOXTYPE {
-		REGULAR = 0,
-		LIGHTWEIGHT = 1
-	};
-	enum ITEMTYPE {
-		FEATHER = 0,
-		BOMB = 1,
-		SNOWFLAKE = 2,
-		BOXCOMBINE = 3
-	};
 	BOXTYPE boxType = REGULAR;
 
 	glm::vec3 startPos;
@@ -66,8 +56,9 @@ public:
 	void SetStartPosition(glm::vec3 pos);
 	void SetStartPosition(float xyz[]);
 	void SetSavedPosition(glm::vec3 pos) { savedPos = pos; }
-	void SetBoxType(int type) { 
+	void SetBoxType(ITEMTYPE type) { 
 		this->boxType = (BOXTYPE)type;
+		std::cout << "Box upgraded to: " << this->boxType << std::endl;
 	}
 
 	glm::vec3 GetVelocity() const { return velocity; }
@@ -83,4 +74,5 @@ public:
 	bool IsHeld() const { return held; }
 
 	void Upgrade(ITEMTYPE item);
+	void BombTimer() {};
 };
