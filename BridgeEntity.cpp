@@ -89,26 +89,6 @@ void BridgeEntity::SetExtendingDir(int dir)
 	}
 }
 
-void BridgeEntity::SetExtendingForwardX()
-{
-	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
-}
-
-void BridgeEntity::SetExtendingBackwardX()
-{
-	extendDirection = glm::vec3(-1.0f, 0.0f, 0.0f);
-}
-
-void BridgeEntity::SetExtendingForwardZ()
-{
-	extendDirection = glm::vec3(0.0f, 0.0f, 1.0f);
-}
-
-void BridgeEntity::SetExtendingBackwardZ()
-{
-	extendDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-}
-
 void BridgeEntity::SetLinkID(int id)
 {
 	linkID = id;
@@ -165,6 +145,18 @@ void BridgeEntity::Update(float deltaTime)
 
 			if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
 				if ((restPosition + (extendDirection * extendDistance)).z < GetPosition().z)
+					SetPosition(calculatedPosition);
+				else
+					extended = true;
+
+			if (extendDirection == glm::vec3(0.0f, 1.0f, 0.0f))
+				if ((restPosition + (extendDirection * extendDistance)).y < GetPosition().y)
+					SetPosition(calculatedPosition);
+				else
+					extended = true;
+		
+			if (extendDirection == glm::vec3(0.0f, -1.0f, 0.0f))
+				if ((restPosition + (extendDirection * extendDistance)).y < GetPosition().y)
 					SetPosition(calculatedPosition);
 				else
 					extended = true;

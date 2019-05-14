@@ -680,8 +680,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 		case 0:		// Mesh
 			{
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
+			Mesh mesh(level, i);
+			roomMeshes.push_back(mesh);
 			}
 			break;
 		case 1:		// Mesh
@@ -715,8 +715,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
 				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
 			}
 			break;
 
@@ -750,6 +748,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 8:		// Character
+
 			break;
 
 		case 9:		// Door
@@ -757,7 +756,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				//Mesh mesh(level, i);
 				//roomMeshes.push_back(mesh);
 				Door door(level, i, matID);
-				door.SetPosition(glm::vec3(-40, 0.5, 5));
+				//door.SetPosition(glm::vec3(-40, 0.5, 5));
 				doors.push_back(door);
 			}
 			break;

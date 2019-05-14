@@ -24,10 +24,6 @@ public:
 	void SetRestPosition(float x, float y, float z);
 	void SetExtendDistance(float d);
 	void SetExtendingDir(int dir);
-	void SetExtendingForwardX();
-	void SetExtendingBackwardX();
-	void SetExtendingForwardZ();
-	void SetExtendingBackwardZ();
 	void SetLinkID(int id);
 
 	bool CheckLinkID(int id);
