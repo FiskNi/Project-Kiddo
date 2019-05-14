@@ -113,6 +113,8 @@ RootNode
 3
   # Attribute dist: 
 5.5300002098
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 0 Header  --------------------
@@ -396,6 +398,8 @@ RootNode
 1
   # Attribute dist: 
 5.7560000420
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 1 Header  --------------------
@@ -679,6 +683,8 @@ RootNode
 1
   # Attribute dist: 
 8.1000003815
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 2 Header  --------------------
@@ -962,6 +968,8 @@ RootNode
 2
   # Attribute dist: 
 6.0029997826
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 3 Header  --------------------
@@ -1245,6 +1253,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 4788
     //^ Mesh 4 Header  --------------------
@@ -34792,6 +34802,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 72
     //^ Mesh 5 Header  --------------------
@@ -35327,6 +35339,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 1044
     //^ Mesh 6 Header  --------------------
@@ -42666,6 +42680,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 1044
     //^ Mesh 7 Header  --------------------
@@ -50005,6 +50021,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 90
     //^ Mesh 8 Header  --------------------
@@ -50666,6 +50684,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 276
     //^ Mesh 9 Header  --------------------
@@ -52629,6 +52649,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 1626
     //^ Mesh 10 Header  --------------------
@@ -64042,6 +64064,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 276
     //^ Mesh 11 Header  --------------------
@@ -66005,6 +66029,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 90
     //^ Mesh 12 Header  --------------------
@@ -66666,6 +66692,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 90
     //^ Mesh 13 Header  --------------------
@@ -67327,6 +67355,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 276
     //^ Mesh 14 Header  --------------------
@@ -69290,6 +69320,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 276
     //^ Mesh 15 Header  --------------------
@@ -71253,6 +71285,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 90
     //^ Mesh 16 Header  --------------------
@@ -71914,6 +71948,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 17 Header  --------------------
@@ -72197,6 +72233,8 @@ RootNode
 3
   # Attribute dist: 
 1.9010000229
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 18 Header  --------------------
@@ -72480,6 +72518,8 @@ RootNode
 4
   # Attribute dist: 
 1.9340000153
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 19 Header  --------------------
@@ -72763,6 +72803,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 90
     //^ Mesh 20 Header  --------------------
@@ -73424,6 +73466,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 276
     //^ Mesh 21 Header  --------------------
@@ -75387,6 +75431,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 108
     //^ Mesh 22 Header  --------------------
@@ -76174,6 +76220,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 108
     //^ Mesh 23 Header  --------------------
@@ -76961,6 +77009,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 108
     //^ Mesh 24 Header  --------------------
@@ -77748,6 +77798,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 108
     //^ Mesh 25 Header  --------------------
@@ -78535,6 +78587,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 108
     //^ Mesh 26 Header  --------------------
@@ -79322,6 +79376,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 18
     //^ Mesh 27 Header  --------------------
@@ -79479,6 +79535,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 24
     //^ Mesh 28 Header  --------------------
@@ -79678,6 +79736,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 108
     //^ Mesh 29 Header  --------------------
@@ -80465,6 +80525,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 30 Header  --------------------
@@ -80748,6 +80810,8 @@ RootNode
 0
   # Attribute dist: 
 0.0000000000
+  # Attribute collect: 
+0
   # Vertex count: 
 36
     //^ Mesh 31 Header  --------------------
