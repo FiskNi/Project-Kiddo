@@ -33,6 +33,7 @@ public:
 	void Retract();
 	void Update(float deltaTime);
 	
+	bool getExtended() { return extending; }
 	bool GetExtending() { return this->extending; }
 	bool GetExtended() { return this->extended; }
 

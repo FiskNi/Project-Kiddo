@@ -84,8 +84,10 @@ private:
 
 	bool isRoomCompleted = false;
 
+	irrklang::ISoundEngine* audioEngine;
+
 public:
-	Room(std::vector<Material> materials, Loader* aLoader);
+	Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine);
 	~Room();
 
 	std::vector<Light>& GetPointLights() { return pointLights; }

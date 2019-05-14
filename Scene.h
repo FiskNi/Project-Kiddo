@@ -11,6 +11,8 @@
 #include "BoxHoldEntity.h"
 #include "Headers.h"
 
+
+
 //============================================================================
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
@@ -80,6 +82,8 @@ private:
 	//Private functions for key_callback
 	void _CheckPressedButtons();
 	void _CheckPressedBombs();
+
+	irrklang::ISoundEngine* audioEngine;
 
 public:
 	Scene();
