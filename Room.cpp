@@ -57,15 +57,18 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) && !bridges[j].GetExtending())
+				{
 					bridges[j].Extend();
+					cout << "test" << endl;
+				}
 			}
 		}
 		else
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
+				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[j].GetExtending() && bridges[j].GetExtended())
 					bridges[j].Retract();
 			}
 		}
@@ -77,7 +80,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()) && bridges[j].GetExtending() && bridges[j].GetExtended())
 					bridges[j].Extend();
 			}
 		}
@@ -85,7 +88,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()) && bridges[j].GetExtending() && bridges[j].GetExtended())
 					bridges[j].Retract();
 			}
 		}
@@ -717,8 +720,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
 				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
 			}
 			break;
 
