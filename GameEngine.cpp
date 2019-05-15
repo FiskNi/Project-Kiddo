@@ -143,6 +143,7 @@ void GameEngine::Run()
 		else if (mainScene.GetExit())
 		{
 			menuIsRunning = true;
+			mainScene.Exited();
 		}
 
 		// Deltatime via ImGui
@@ -166,7 +167,6 @@ void GameEngine::Run()
 		}
 		else if (menuIsRunning == false && mainScene.GetRoomLoaded())
 		{
-			menuIsRunning = mainScene.GetExit();
 			// Main updates to a scene
 			// Includes all interactions in the game world
 			mainScene.Update(mainRenderer.getWindow(), deltaTime);

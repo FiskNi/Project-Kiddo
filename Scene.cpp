@@ -37,8 +37,12 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 			// RETURNS TO MAIN MENU
+			delete scene->roomBuffer;
+			scene->roomBuffer = nullptr;
+			scene->roomLoaded = false;
+			scene->isLoading = true;
 			scene->exittoMenu = true;
-			scene->state = PAUSED;
+			scene->state = PLAYING;
 
 			std::cout << "Returning to Main Menu" << std::endl;
 			std::cout << "Loading..." << std::endl;
@@ -211,8 +215,8 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		setUserPointer = true;
 	}
 
-	if (!exittoMenu)
-	{
+	if (!exittoMenu && state == PLAYING)
+	{ 
 		// Check room completion
 		// Could add extra functions here (loadingscreen or whatever)
 		if (roomBuffer->GetRoomCompleted())
@@ -267,6 +271,11 @@ void Scene::ResetRoom()
 	{
 		roomBuffer->GetRigids()[i].ResetPos();
 	}
+}
+
+void Scene::Exited()
+{
+	exittoMenu = false;
 }
 
 void Scene::LoadRoom()

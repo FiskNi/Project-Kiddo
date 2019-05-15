@@ -825,11 +825,11 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		}
 	}
 
-	Collectible coll;
+	/*Collectible coll;
 	coll.SetPosition(glm::vec3(-15, 0.5, -5));
 	coll.SetIndex(0);
 	coll.SetMaterialID(materials[1].GetMaterialID());
-	collectibles.push_back(coll);
+	collectibles.push_back(coll);*/
 	//Item item;
 	//item.SetItemType(BOMB);
 	//item.SetPosition(glm::vec3(-15, 0.5, -5));

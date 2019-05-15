@@ -104,9 +104,9 @@ public:
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
 	void LoadRoom();
-	//bool GetExit() const { return exittoMenu; }
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void ResetRoom();
+	void Exited();
 
 	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
 };
