@@ -327,10 +327,10 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 	glUseProgram(gShaderProgram.getShader());
 
 
-	// Per shader uniforms
-	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
-	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
-	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.GetPosition()));
+	//// Per shader uniforms
+	//glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+	//glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
+	//glUniform3fv(cam_pos, 1, glm::value_ptr(camera.GetPosition()));
 
 
 	// Main render queue

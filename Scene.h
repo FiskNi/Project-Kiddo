@@ -45,7 +45,6 @@ private:
 	void LoadCharacter(Loader* inLoader);
 
 	void CompileMeshData();
-	void CompileMeshDataMainMenu();
 
 	//void CompileMainMenuData();
 	
@@ -71,8 +70,9 @@ private:
 	Room* roomBuffer;
 	//Room* mainMenuRoomBuffer;
 	int roomNr;
-	bool isSwitched;
-	bool isLoading = false;
+	bool isLoading;
+	bool exittoMenu;
+	bool roomLoaded;
 
 	Menu menuHandler;
 
@@ -97,22 +97,17 @@ public:
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
-	bool GetIsSwitched() const{ return isSwitched; }
 	bool GetIsLoading() const { return isLoading; }
-	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
-
-	//void SetState() { this->press(); }
-	int GetCurrentState() const { return state; };
+	bool GetExit() const { return exittoMenu; }
+	bool GetRoomLoaded() const { return roomLoaded; }
+	int GetCurrentState() const { return state; }
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
-	void SwitchRoom();
-	void SwitchMainMenu();
+	void LoadRoom();
+	//bool GetExit() const { return exittoMenu; }
 	void Update(GLFWwindow* renderWindow, float deltaTime);
-	void SetSwitched();
 	void ResetRoom();
 
 	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
-
-
 };
 

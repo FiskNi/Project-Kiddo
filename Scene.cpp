@@ -30,7 +30,6 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
 		{
 			//RESTART HERE
-			//scene->state = PAUSED;
 			scene->ResetRoom();
 			scene->state = PLAYING;
 			std::cout << "Restarting level" << std::endl;
@@ -38,8 +37,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 			// RETURNS TO MAIN MENU
-			scene->isLoading = true;
-			scene->state = MAINMENU;
+			scene->exittoMenu = true;
+			scene->state = PAUSED;
 
 			std::cout << "Returning to Main Menu" << std::endl;
 			std::cout << "Loading..." << std::endl;
@@ -81,33 +80,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_4 && action == GLFW_PRESS) 
 			scene->playerCharacter.SetCurrentItem(3);		
 		if (key == GLFW_KEY_5 && action == GLFW_PRESS) 
-			scene->playerCharacter.SetCurrentItem(4);
-		
-	}
-	//IF MAINMENU
-	else if (scene->state == MAINMENU) 
-	{
-
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
-		{
-			//RESUMES GAME
-			scene->isLoading = true;
-			scene->state = PLAYING;
-
-			std::cout << "START GAME/RESUME" << std::endl;
-			std::cout << "Loading takes time!" << std::endl;
-			// Bad stuff, needs to be changed but works very temporarily
-			//scene->roomBuffer->SetRoomCompleted(true);
-		}
-		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
-		//{
-		//	//RESTART HERE
-		//}
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
-		{
-			//CLOSES WINDOW
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
+			scene->playerCharacter.SetCurrentItem(4);	
 	}
 }
 
@@ -133,7 +106,7 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
-	state = MAINMENU;
+	state = PLAYING;
 
 	// Our entry room (first level)
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
@@ -145,27 +118,19 @@ Scene::Scene()
 	roomBuffer = new Room(materials, &startingRoom, audioEngine);
 
 	roomNr = 0;
-	isSwitched = false;
 	isLoading = false;
+	exittoMenu = false;
+	roomLoaded = false;
 
 	audioEngine = irrklang::createIrrKlangDevice();
 	//audioEngine->play2D("irrKlang/media/bell.wav", true);
-
-	// Needs to be changed, Main menu should be it's own class, not a room
-	/*Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
-	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom, audioEngine);*/
-
-	// Compiles all the meshdata of the scene for the renderer
-	// CompileMeshData();
-	//CompileMeshDataMainMenu();
+	CompileMeshData();
 }
 
 Scene::~Scene()
 {
 	if (roomBuffer)
 		delete roomBuffer;
-	/*if (mainMenuRoomBuffer)
-		delete mainMenuRoomBuffer;*/
 
 	//audioEngine->drop();
 }
@@ -219,7 +184,6 @@ void Scene::LoadCharacter(Loader* inLoader)
 		}
 	}
 
-
 	playerCharacter.SetStartPosition(playerCharacter.GetPosition());
 }
 
@@ -235,39 +199,6 @@ void Scene::CompileMeshData()
 	
 }
 
-void Scene::CompileMeshDataMainMenu()
-{
-	//// Fills the "meshes" vector with all the mesh data (primitive)
-	//mainMenuRoomBuffer->CompileMeshData();
-	//meshes.clear();
-
-	//meshes = mainMenuRoomBuffer->GetMeshData();
-}
-
-//void Scene::CompileMainMenuData()
-//{
-//	int meshCount = GetMeshData().size();
-//	int vertexCount = 0;
-//	for (int i = 0; i < meshCount; i++)
-//	{
-//		vertexCount += menuHandler.GetVertexCount();
-//	}
-//	// Allocated memory
-//	mainSceneVertexData = new vertexPolygon[vertexCount];
-//
-//	int vertexIndex = 0;
-//	for (int i = 0; i < meshCount; i++)
-//	{
-//		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
-//		for (int j = 0; j < meshVtxCount; j++)
-//		{
-//			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
-//			vertexIndex++;
-//		}
-//	}
-//	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
-//}
-
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
@@ -281,32 +212,16 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		setUserPointer = true;
 	}
 
-	if (state == MAINMENU) 
-	{
-		// NO, DON'T SWITCH ROOM HERE IF IT'S LOADING BECAUSE START WILL SWITCH ROOM EVERY TIME >:(
-		/*if (roomBuffer->GetRoomCompleted())
-		{		
-			if (isLoading)
-				SwitchRoom();
-			else
-				isLoading = true;
-			state = PLAYING;
-		}
-		else
-		{*/
-			CompileMeshDataMainMenu();
-		//}
-	}
-	else if (state == PLAYING) 
+	if (!exittoMenu)
 	{
 		// Check room completion
 		// Could add extra functions here (loadingscreen or whatever)
 		if (roomBuffer->GetRoomCompleted())
 		{
-			//if (isLoading)
-				SwitchRoom();
-			//else
-				//isLoading = true;
+			if (isLoading)
+				roomLoaded = false;
+			else
+				isLoading = true;
 		}
 		else
 		{
@@ -344,11 +259,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	}
 }
 
-void Scene::SetSwitched()
-{
-	this->isSwitched = false;
-}
-
 void Scene::ResetRoom()
 {
 	playerCharacter.ResetPos();
@@ -360,7 +270,7 @@ void Scene::ResetRoom()
 	}
 }
 
-void Scene::SwitchRoom()
+void Scene::LoadRoom()
 {
 	if (roomBuffer)
 		delete roomBuffer;
@@ -412,29 +322,12 @@ void Scene::SwitchRoom()
 	playerCharacter.ResetPos();
 
 	CompileMeshData();
-	isSwitched = true;
 	roomNr++;
 
 	isLoading = false;
+	roomLoaded = true;
 	delete roomLoader;
 }
-
-
-void Scene::SwitchMainMenu()
-{
-	if (state == MAINMENU)
-	{
-		//this->isLoading = true;
-		this->isSwitched = true;
-		//CompileMeshDataMainMenu();
-	}
-	else
-	{
-		//this->isLoading = true;
-		this->isSwitched = true;
-	}
-}
-
 
 //=============================================================
 //	Applies basic gravity to the player and rooms
