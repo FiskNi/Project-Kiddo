@@ -152,20 +152,20 @@ Scene::Scene()
 	//audioEngine->play2D("irrKlang/media/bell.wav", true);
 
 	// Needs to be changed, Main menu should be it's own class, not a room
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
-	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom, audioEngine);
+	/*Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+	mainMenuRoomBuffer = new Room(materials, &mainMenuRoom, audioEngine);*/
 
 	// Compiles all the meshdata of the scene for the renderer
 	// CompileMeshData();
-	CompileMeshDataMainMenu();
+	//CompileMeshDataMainMenu();
 }
 
 Scene::~Scene()
 {
 	if (roomBuffer)
 		delete roomBuffer;
-	if (mainMenuRoomBuffer)
-		delete mainMenuRoomBuffer;
+	/*if (mainMenuRoomBuffer)
+		delete mainMenuRoomBuffer;*/
 
 	//audioEngine->drop();
 }
@@ -237,11 +237,11 @@ void Scene::CompileMeshData()
 
 void Scene::CompileMeshDataMainMenu()
 {
-	// Fills the "meshes" vector with all the mesh data (primitive)
-	mainMenuRoomBuffer->CompileMeshData();
-	meshes.clear();
+	//// Fills the "meshes" vector with all the mesh data (primitive)
+	//mainMenuRoomBuffer->CompileMeshData();
+	//meshes.clear();
 
-	meshes = mainMenuRoomBuffer->GetMeshData();
+	//meshes = mainMenuRoomBuffer->GetMeshData();
 }
 
 //void Scene::CompileMainMenuData()
@@ -371,28 +371,28 @@ void Scene::SwitchRoom()
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 2)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 		// ADD SOUND PLAY
 	}
 	else
 	{
 		roomNr = 0;
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
 		// ADD SOUND PLAY
 	}
 

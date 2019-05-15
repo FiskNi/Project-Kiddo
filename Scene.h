@@ -69,7 +69,7 @@ private:
 
 	// Rooms
 	Room* roomBuffer;
-	Room* mainMenuRoomBuffer;
+	//Room* mainMenuRoomBuffer;
 	int roomNr;
 	bool isSwitched;
 	bool isLoading = false;
