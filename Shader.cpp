@@ -185,17 +185,20 @@ void Shader::CreateFSShaders()
 //=============================================================
 void Shader::CreateFullScreenQuad()
 {
-	struct Pos2UV {
+	struct Pos2UV 
+	{
 		float x, y;
 		float u, v;
 	};
-	Pos2UV myQuad[6] = {
-		-1,-1, 0, 0,	// TOP		LEFT
-		-1,+1, 0, 1,	// BOTTOM	LEFT
-		+1,+1, 1, 1,	// BOTTOM	RIGHT
-		-1,-1, 0, 0,	// TOP		LEFT
-		+1,+1, 1, 1,	// BOTTOM	RIGHT
-		+1,-1, 1, 0,	// TOP		RIGHT
+
+	Pos2UV myQuad[6] = 
+	{
+		-1, -1, 0, 0,	// TOP		LEFT
+		-1, +1, 0, 1,	// BOTTOM	LEFT
+		+1, +1, 1, 1,	// BOTTOM	RIGHT
+		-1, -1, 0, 0,	// TOP		LEFT
+		+1, +1, 1, 1,	// BOTTOM	RIGHT
+		+1, -1, 1, 0,	// TOP		RIGHT
 	};
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 

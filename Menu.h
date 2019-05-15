@@ -13,11 +13,6 @@
 //#define PLAYING 1
 //#define PAUSE 2
 
-enum GAMESTATE {
-	PAUSED,
-	PLAYING,
-	MAINMENU
-};
 
 class Menu {
 private:

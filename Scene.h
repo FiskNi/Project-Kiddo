@@ -10,6 +10,9 @@
 #include "Camera.h"
 #include "BoxHoldEntity.h"
 #include "Headers.h"
+
+
+
 //============================================================================
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
@@ -44,7 +47,7 @@ private:
 	void CompileMeshData();
 	void CompileMeshDataMainMenu();
 
-	void CompileMainMenuData();
+	//void CompileMainMenuData();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -65,7 +68,6 @@ private:
 	std::vector<Material> materials;
 
 	// Rooms
-	bool currentBuffer;
 	Room* roomBuffer;
 	Room* mainMenuRoomBuffer;
 	int roomNr;
@@ -76,7 +78,15 @@ private:
 
 	// Character
 	Character playerCharacter;
+
+	//Key_callback
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	//Private functions for key_callback
+	void _CheckPressedButtons();
+	void _CheckPressedBombs();
+
+	irrklang::ISoundEngine* audioEngine;
 
 public:
 	Scene();
@@ -94,7 +104,6 @@ public:
 	//void SetState() { this->press(); }
 	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
-
 
 	void SwitchRoom();
 	void SwitchMainMenu();
