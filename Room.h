@@ -19,6 +19,8 @@
 #include "Button.h"
 #include "Item.h"
 #include "boxHolder.h"
+#include "MeshGroupClass.h"
+
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -53,6 +55,11 @@ private:
 
 	void PlayerItemCollision(Character* playerCharacter);
 
+	bool FindParent(Mesh * childMesh);
+	bool FindParent(MeshGroupClass * childMeshGroup);
+	void SetAllParents();
+	std::vector <float> GetParentOffset(Mesh * childMesh);
+	std::vector <float> GetParentOffset(MeshGroupClass * childGroup);
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> roomMeshes;
@@ -69,8 +76,10 @@ private:
 	std::vector<PressurePlate> pressurePlates;
 	std::vector<Button> buttons;
 	std::vector<Item> items;
-
 	std::vector<boxHolder> holders;
+
+	//MeshGroups
+	std::vector<MeshGroupClass> meshGroups;
 
 	// PuzzleNodes
 	std::vector<puzzleNode> nodes;
@@ -79,6 +88,7 @@ private:
 	Camera* roomCamera;
 
 	bool isRoomCompleted;
+	bool firstCall;
 
 public:
 	Room(std::vector<Material> materials, Loader* aLoader);

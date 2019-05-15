@@ -132,9 +132,9 @@ Scene::Scene()
 	state = MAINMENU;
 
 	// Our entry room (first level)
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/HeirTestDone.meh");
 
-	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
+	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/HeirTestDone.meh");
 
 	LoadShaders();
 	LoadMaterials(&startingRoom);

@@ -26,6 +26,7 @@ class Entity
 private:
 	Mesh entityMesh;
 	string name;
+	string pName;
 
 	// The center is a vector to a location in the world 
 	glm::vec3 boundingBoxCenter;
@@ -91,5 +92,7 @@ public:
 
 	float GetHitboxBottomOffsetBB() const { return GetHitboxOffset().y - boundingBoxSize.y; }
 	float GetHitboxTopOffsetBB() const { return GetHitboxOffset().y + boundingBoxSize.y; }
+
+
 
 };

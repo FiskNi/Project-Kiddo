@@ -52,4 +52,5 @@ public:
 
 	int GetMeshGroupCount() const { return fileHeader.groupCount; }
 	MeshGroup GetMeshGroup(int index) const { return meshGroup[index]; }
+	float * GetParentsOffset(char* parentName);
 };
