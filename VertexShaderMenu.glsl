@@ -24,14 +24,14 @@ out VS_OUT
 
 void main() 
 {	
-	vs_out.position = vec3(model * vec4(vertex_position, 1.0));
+	vs_out.position = vertex_position, 1.0;
 	//vs_out.position = vec3(proj * view * model * vec4(vertex_position, 1.0f));
 
 	vs_out.uv = vec2(vertex_uv.x, vertex_uv.y);
 
-//	vs_out.normal = transpose(inverse(mat3(model))) * vertex_normal;
-//	vs_out.tangent = transpose(inverse(mat3(model))) * vertex_tangent;
-//	vs_out.bitangent = transpose(inverse(mat3(model))) * vertex_bitangent;
+	//	vs_out.normal = transpose(inverse(mat3(model))) * vertex_normal;
+	//	vs_out.tangent = transpose(inverse(mat3(model))) * vertex_tangent;
+	//	vs_out.bitangent = transpose(inverse(mat3(model))) * vertex_bitangent;
 
 	// The way matrices are applied here is important to print it to the screen in 2D space
 	gl_Position = vec4(vertex_position, 1.0f); // proj * view * model * 
