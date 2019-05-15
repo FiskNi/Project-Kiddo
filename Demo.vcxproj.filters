@@ -144,6 +144,12 @@
     <ClCompile Include="MeshGroupClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MenuButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -251,6 +257,18 @@
     <ClInclude Include="MeshGroupClass.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Collectible.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Fragment.glsl">
@@ -269,6 +287,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="VertexShaderSM.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderMenu.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentMenu.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

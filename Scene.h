@@ -10,6 +10,9 @@
 #include "Camera.h"
 #include "BoxHoldEntity.h"
 #include "Headers.h"
+
+
+
 //============================================================================
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
@@ -34,19 +37,16 @@ class Scene
 {
 private:
 	bool setUserPointer = false;
-	/*enum GAMESTATE {
-		PAUSED,
-		PLAYING,
-		MAINMENU
-	};*/
-	GAMESTATE state = PLAYING;
+
+	GAMESTATE state = MAINMENU;
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
 	void LoadCharacter(Loader* inLoader);
 
 	void CompileMeshData();
-	void CompileMeshDataMainMenu();
+
+	//void CompileMainMenuData();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -57,6 +57,7 @@ private:
 	Shader basicShader;
 	Shader fsqShader;
 	Shader shadowmapShader;
+	Shader mainMenuShader;
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -66,18 +67,26 @@ private:
 	std::vector<Material> materials;
 
 	// Rooms
-	bool currentBuffer;
 	Room* roomBuffer;
-	Room* mainMenuRoomBuffer;
+	//Room* mainMenuRoomBuffer;
 	int roomNr;
-	bool isSwitched;
 	bool isLoading;
+	bool exittoMenu;
+	bool roomLoaded;
 
 	Menu menuHandler;
 
 	// Character
 	Character playerCharacter;
+
+	//Key_callback
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	//Private functions for key_callback
+	void _CheckPressedButtons();
+	void _CheckPressedBombs();
+
+	irrklang::ISoundEngine* audioEngine;
 
 public:
 	Scene();
@@ -88,23 +97,17 @@ public:
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
-	bool GetIsSwitched() const{ return isSwitched; }
 	bool GetIsLoading() const { return isLoading; }
-	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
-
-	//void SetState() { this->press(); }
-	int GetCurrentState() const { return state; };
+	bool GetExit() const { return exittoMenu; }
+	bool GetRoomLoaded() const { return roomLoaded; }
+	int GetCurrentState() const { return state; }
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
-
-	void SwitchRoom();
-	void SwitchMainMenu();
+	void LoadRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
-	void SetSwitched();
 	void ResetRoom();
+	void Exited();
 
 	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
-
-
 };
 

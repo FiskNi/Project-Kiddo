@@ -25,6 +25,8 @@
 
 #include "mehImporterLib/Loader.h"
 
+#include "irrKlang/include/irrKlang.h"
+
 // Include FreeType for fonts and text
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -32,6 +34,7 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "glfw3.lib")
+#pragma comment(lib, "irrKlang.lib") 
 
 #define WIDTH 1920
 #define HEIGHT 1080
@@ -49,4 +52,23 @@ struct vertexPolygon
 	glm::vec3 normals;
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
+};
+
+enum BOXTYPE {
+	LIGHTWEIGHT = 0,
+	EXPLOSIVE = 1,
+	ICEBLOCK = 2,
+	REGULAR = 3
+
+};
+enum ITEMTYPE {
+	FEATHER = 0,
+	BOMB = 1,
+	SNOWFLAKE = 2,
+	NONE = 3
+};
+enum GAMESTATE {
+	PAUSED,
+	PLAYING,
+	MAINMENU
 };

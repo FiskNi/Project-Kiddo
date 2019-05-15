@@ -4,6 +4,17 @@
 
 GameEngine::GameEngine()
 {
+
+	// Supreme edition loading screen that shows up too late (should play before the scene loads stuff)
+	mainRenderer.CreateFrameBuffer();
+	mainRenderer.SetViewport();
+	//mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+	mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
+	glUniform1i(3, false);  // Boolean for the shadowmap toggle
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glfwSwapBuffers(mainRenderer.getWindow());
+
+
 	// Load vertex data for the main scene
 	// Could possibly be handled inside the scene or inside the renderer
 	// Not dynamic (in constructor) but creates one large render buffer rather than
@@ -29,12 +40,18 @@ GameEngine::GameEngine()
 		}
 	}
 	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+
+
+
+	menuIsRunning = true;
 }
 
 GameEngine::~GameEngine()
 {
 	if (mainSceneVertexData)
 		delete mainSceneVertexData;
+	if (mainMenuVertexData)
+		delete mainMenuVertexData;
 }
 
 void GameEngine::CompileRoomData()
@@ -61,6 +78,36 @@ void GameEngine::CompileRoomData()
 	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 }
 
+void GameEngine::CompileMainMenuData()
+{
+	//meshCount = mainScene.GetMeshData().size();
+	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
+	int vtxCountButtons = mainMenu.GetVertexCountTotal();
+	//std::cout << vtxCountButtons << std::endl;
+	//std::cout << mainMenu.GetVertexCountTotal() << std::endl;
+	//for (int i = 0; i < nrOfMenuButtons; i++)
+	//{
+	//	vertexCount += mainMenu.GetVertexCountTotal();
+	//}
+	// Allocated memory
+	//mainSceneVertexData = new vertexPolygon[vertexCount];
+
+	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+	int vertexIndex = 0;
+	for (int i = 0; i < nrOfMenuButtons; i++)
+	{
+		int buttonVtxCount = mainMenu.GetMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < buttonVtxCount; j++)
+		{
+			//mainMenuVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			mainMenuVertexData[vertexIndex] = mainMenu.GetButtonVertices(i)[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileMenuVertexData(vtxCountButtons, mainMenuVertexData);
+}
+
 //=============================================================
 //	Main engine loop
 //=============================================================
@@ -76,71 +123,126 @@ void GameEngine::Run()
 	static bool renderDepth = false;
 	ImGuiInit();
 
+	// Compile Main Menu vertex data (is this really the best spot? no idea rn)
+	CompileMainMenuData();
+
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
 
+
+
+
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
-		if (mainScene.GetIsSwitched())
-		{
-			CompileRoomData();
-			mainScene.SetSwitched();
-		}
-
 		glfwPollEvents();
+		if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
+		{
+			menuIsRunning = false;
+		}
+		else if (mainScene.GetExit())
+		{
+			menuIsRunning = true;
+			mainScene.Exited();
+		}
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
+		if (deltaTime > 1.0f)
+			deltaTime = 0.0f;
 
-		// Main updates to a scene
-		// Includes all interactions in the game world
-		mainScene.Update(mainRenderer.getWindow(), deltaTime);
 
-		// PrePass render for Shadow mapping 
-		mainRenderer.prePassRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
-		mainRenderer.SetViewport();	//resets the viewport
+		if (menuIsRunning == true)
+		{
+			// RENDER CALL FOR MAIN MENU HERE
 
-		// First render pass
-		mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+			CompileMainMenuData();	// TEMP GETS SCENE CAMERA
+			Camera temp;
 
-		// Update ImGui content
-		UpdateImGui(renderDepth);
+			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), temp, gClearColour, mainMenu.GetButtonTexture());
 
-		// ---- Main render call --- ///
-		mainRenderer.Render(mainScene.GetShader(0), 
-			mainScene.GetMeshData(), 
-			mainScene.GetCamera(), 
-			gClearColour, 
-			mainScene.GetPointLights(), 
-			mainScene.GetDirectionalLights(), 
-			mainScene.GetMaterials());
-
-		// Render a textured full screen quad if game is paused
-		if (mainScene.GetCurrentState() == PAUSED) {
-			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glfwSwapBuffers(mainRenderer.getWindow());
 		}
-		else if(mainScene.GetIsLoading() == true){
+		else if (menuIsRunning == false && mainScene.GetRoomLoaded())
+		{
+			// Main updates to a scene
+			// Includes all interactions in the game world
+			mainScene.Update(mainRenderer.getWindow(), deltaTime);
+
+			// PrePass render for Shadow mapping 
+			mainRenderer.prePassRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
+			mainRenderer.SetViewport();	//resets the viewport
+			// First render pass
+			mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+			
+			if (!mainScene.GetCurrentState() == PAUSED)
+			{
+				// ---- Main render call --- ///
+				mainRenderer.Render(mainScene.GetShader(0),
+					mainScene.GetMeshData(),
+					mainScene.GetCamera(),
+					gClearColour,
+					mainScene.GetPointLights(),
+					mainScene.GetDirectionalLights(),
+					mainScene.GetMaterials());
+
+				// Render a second pass for the fullscreen quad
+				// Important for rendering the scene
+				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
+				// Draw call for fsq and imgui
+				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				UpdateImGui(renderDepth);
+				ImGui::Render();
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				glfwSwapBuffers(mainRenderer.getWindow());
+			}
+			else
+			{
+				// Pause screen draw call
+				mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				glfwSwapBuffers(mainRenderer.getWindow());
+				// Pause screen draw call
+			}		
+		}
+		else if(!mainScene.GetRoomLoaded())
+		{	
+			// Loading screen draw call
 			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
-			mainScene.SwitchMainMenu();
-			mainScene.SetIsLoading(false);
-		}
-		else {
-			// Render a second pass for the fullscreen quad
-			mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
+
+			// Draw call for fsq and imgui
+			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			UpdateImGui(renderDepth);
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			glfwSwapBuffers(mainRenderer.getWindow());
+			// Draw call for fsq and imgui
+
+			// Heavy loading work
+			mainScene.LoadRoom();
+			CompileRoomData();
 		}
 	
+
+
 		// Draw fullscreen quad
 		// Could be moved to the renderer
-		glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		//glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		// Render ImGui
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//// Render ImGui
+		//// Update ImGui content
+		//UpdateImGui(renderDepth);
+		//ImGui::Render();
+		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-		glfwSwapBuffers(mainRenderer.getWindow());
+		//glfwSwapBuffers(mainRenderer.getWindow());
 	}
 
 	// SHUTDOWN

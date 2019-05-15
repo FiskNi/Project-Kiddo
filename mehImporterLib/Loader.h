@@ -15,7 +15,12 @@ private:
 	LoaderMesh* mesh;
 	DirLight* dirLight;
 	PointLight* pointLight;
-	
+
+	Joint* joints;
+	Animation* animations;
+	KeyFrame* keyFrames;
+	Transform* transforms;
+
 
 public:
 	Loader(std::string fileName);

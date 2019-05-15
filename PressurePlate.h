@@ -18,4 +18,5 @@ public:
 
 	void setPressed(bool tf);
 	void SetLink(int id);
+	bool CheckLinkID(int id);
 };

@@ -2,11 +2,10 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader* aLoader)
+Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 {
 	LoadLights(aLoader);
 	LoadEntities(materials, aLoader);
-	LoadPuzzleNode(materials);
 	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
@@ -16,6 +15,8 @@ Room::Room(std::vector<Material> materials, Loader* aLoader)
 
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
+
+	this->audioEngine = audioEngine;
 }
 
 Room::~Room()
@@ -49,29 +50,65 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 	PlayerItemCollision(playerCharacter);
+	PlayerDoorCollision(playerCharacter);
+	PlayerCollectibleCollision(playerCharacter);
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
+
+	// Convoluted super deluxe solution for handling no more than 2 pressure plates linking to the same bridge
 	for (int i = 0; i < pressurePlates.size(); i++)
 	{
 		if (pressurePlates[i].isPressed())
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
-					bridges[j].Extend();
+				if ( !bridges[j].GetExtending() && bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) )
+				{
+					if (!bridges[j].GetExtending() && !bridges[j].GetExtended())
+						// ADD SOUND PLAY
+					bridges[j].Extend();			
+				}
 			}
 		}
 		else
 		{
-			for (int j = 0; j < bridges.size(); j++)
+			bool matchingid = false;
+			// Check for other pressureplates connecting to the same bridge
+			for (int j = 0; j < pressurePlates.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
-					bridges[j].Retract();
+				if (pressurePlates[j].CheckLinkID(pressurePlates[i].GetLinkID()) && i != j)
+				{				
+					// Matching pressure plate found
+					matchingid = true;
+					if (!pressurePlates[j].isPressed())
+					{
+						// It's not pressed so it's safe to retract the bridge
+						for (int p = 0; p < bridges.size(); p++)
+						{
+							if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[p].CheckLinkID(pressurePlates[j].GetLinkID()))
+							{
+								bridges[p].Retract();
+							}
+						}
+					}	
+				}
+			}
+			if (!matchingid)
+			{
+				// No matching pressure plate so it's safe to retract bridge
+				for (int p = 0; p < bridges.size(); p++)
+				{
+					if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()))
+					{
+						bridges[p].Retract();
+					}
+				}
 			}
 		}
 	}
 
+	// Buttons linking to bridge
 	for (int i = 0; i < buttons.size(); i++)
 	{
 		if (buttons[i].isPressed())
@@ -79,15 +116,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 			for (int j = 0; j < bridges.size(); j++)
 			{
 				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+				{
 					bridges[j].Extend();
-			}
-		}
-		else
-		{
-			for (int j = 0; j < bridges.size(); j++)
-			{
-				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
-					bridges[j].Retract();
+				}
 			}
 		}
 	}
@@ -130,12 +161,15 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 			if (!pressurePlates[i].isPressed() && rigids[j].CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(rigids[j]))
 			{
 				pressurePlates[i].setPressed(true);
+				// PLAY SOUND
+
 			}
 		}
 
 		if (!pressurePlates[i].isPressed() && playerCharacter->CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(*playerCharacter))
 		{
 			pressurePlates[i].setPressed(true);
+			// PLAY SOUND
 		}
 
 	}
@@ -159,6 +193,25 @@ void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 			}
 		}
 	}*/
+}
+
+void Room::PlayerDoorCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < doors.size(); i++) {
+		if (playerCharacter->CheckCollision(doors[i])) {
+			isRoomCompleted = true;
+		}
+	}
+}
+
+void Room::PlayerCollectibleCollision(Character * playerCharacter)
+{
+	for (int i = 0; i < collectibles.size(); i++) {
+		if (playerCharacter->CheckCollision(collectibles[i])) {
+			playerCharacter->PickUpCollectible(&collectibles[i]);
+			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
+		}
+	}
 }
 
 void Room::PlayerItemCollision(Character* playerCharacter)
@@ -770,19 +823,19 @@ void Room::RigidRigidCollision()
 //=============================================================
 void Room::RigidNodeCollision()
 {
-	if (isRoomCompleted != true) {
-		for (int i = 0; i < rigids.size(); i++)
-		{
-			if (nodes[0].CheckCollision(rigids[i]))
-			{
-				for (int j = 0; j < rigids.size(); ++j)
-				{
-					cout << "Solved" << endl;
-					isRoomCompleted = true;
-				}
-			}
-		}
-	}
+	//if (isRoomCompleted != true) {
+	//	for (int i = 0; i < rigids.size(); i++)
+	//	{
+	//		if (nodes[0].CheckCollision(rigids[i]))
+	//		{
+	//			for (int j = 0; j < rigids.size(); ++j)
+	//			{
+	//				cout << "Solved" << endl;
+	//				isRoomCompleted = true;
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 //=============================================================
@@ -934,10 +987,10 @@ void Room::CompileMeshData()
 		meshes.push_back(statics[i].GetMeshData());
 	}
 
-	for (int i = 0; i < nodes.size(); i++)
-	{
-		meshes.push_back(nodes[i].GetMeshData());
-	}
+	//for (int i = 0; i < nodes.size(); i++)
+	//{
+	//	meshes.push_back(nodes[i].GetMeshData());
+	//}
 
 	for (int i = 0; i < bridges.size(); i++)
 	{
@@ -959,11 +1012,18 @@ void Room::CompileMeshData()
 		meshes.push_back(holders[i].GetMeshData());
 		meshes.push_back(holders[i].GetHolderMeshData());
 	}
+
 	for (int i = 0; i < items.size(); i++) {
-		if (!items[i].GetPickedUp()) {
-			//meshes.push_back(items[i].GetMeshData());
-		}
+
+		meshes.push_back(items[i].GetMeshData());
 	}
+	for (int i = 0; i < doors.size(); i++) {
+		meshes.push_back(doors[i].GetMeshData());
+	}
+	for (int i = 0; i < collectibles.size(); i++) {
+		meshes.push_back(collectibles[i].GetMeshData());
+	}
+
 	//Applying all parent data on the child mesh
 
 	if (firstCall == true)
@@ -1104,11 +1164,9 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				BridgeEntity bridgeEntity(level, i, matID, true);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetLinkID(level->GetMesh(i).link);
-				bridgeEntity.SetExtendingBackwardZ();
-				bridgeEntity.SetExtendDistance(4.2f);
+				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
+				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
 			}
 			break;
 
@@ -1142,12 +1200,16 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 8:		// Character
+
 			break;
 
 		case 9:		// Door
 			{
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
+				//Mesh mesh(level, i);
+				//roomMeshes.push_back(mesh);
+				Door door(level, i, matID);
+				//door.SetPosition(glm::vec3(-40, 0.5, 5));
+				doors.push_back(door);
 			}
 			break;
 
@@ -1158,9 +1220,22 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 12:	// Collectible
+		{
+
+			Collectible coll;
+			coll.SetMaterialID(matID);
+			collectibles.push_back(coll);
+		}
 			break;
 
 		case 13:	//Item
+		{
+			Item item;
+			//Need to look over how to import itemtype :)
+			//item.SetItemType()
+			item.SetMaterialID(matID);
+			items.push_back(item);
+		}
 
 		default:
 			break;
@@ -1172,41 +1247,17 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		MeshGroupClass group(level, i);
 		meshGroups.push_back(group);
 	}
+	/*Collectible coll;
+	coll.SetPosition(glm::vec3(-15, 0.5, -5));
+	coll.SetIndex(0);
+	coll.SetMaterialID(materials[1].GetMaterialID());
+	collectibles.push_back(coll);*/
+	//Item item;
+	//item.SetItemType(BOMB);
+	//item.SetPosition(glm::vec3(-15, 0.5, -5));
+	//item.SetMaterialID(materials[1].GetMaterialID());
+	//items.push_back(item);
 
 	//Finding and setting parents so that things can be moved properly later.
 	SetAllParents();
-
-	//if (tempMesh.isChild == true)
-	//{
-	//	if (tempMesh.parentType != -1)
-	//	{
-	//		pName = tempMesh.parentName;
-	//		float * parentOffset = inLoader->GetParentsOffset((char*)&pName);
-
-	//		for (int i = 0; i < 9; i++)
-	//		{
-	//			cout << parentOffset[i] << endl;
-	//		}
-	//	}
-	//}
-
-
-	Item item;
-	item.SetItemType(1);
-	item.SetPosition(glm::vec3(0, 1, 0));
-	item.SetMaterialID(materials[1].GetMaterialID());
-	items.push_back(item);
 }
-
-//=============================================================
-//	Puzzle node initialization
-//	Loads and positions all the puzzle nodes in the scene
-//=============================================================
-void Room::LoadPuzzleNode(std::vector<Material> materials)
-{
-	puzzleNode winNode;
-	winNode.SetMaterialID(materials[0].GetMaterialID());
-	winNode.SetPosition(glm::vec3(-5.0f, -0.4f, -9.0f));
-	nodes.push_back(winNode);
-}
-

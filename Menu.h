@@ -7,24 +7,33 @@
 
 #include "Mesh.h"
 #include "Material.h"
+#include "MenuButton.h"
 //#include "Renderer.h"
 
 //#define PLAYING 1
 //#define PAUSE 2
 
-enum GAMESTATE {
-	PAUSED,
-	PLAYING,
-	MAINMENU
-};
 
 class Menu {
 private:
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
 
+	GLuint buttonTextureBase;
+
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> menuMeshes;
+
+	std::vector<MenuButton> menuButtons;
+	//std::vector<ButtonVtx> buttonVertices;
+
+	int nrOfMenuButtons;
+	const float BUTTON_OFFSET = 0.05f;
+	const float buttonHeight = 0.3f;
+
+	int vertexCountTotal;
+
+	bool isMenuRunning;
 
 	Camera* menuCamera;
 
@@ -32,20 +41,31 @@ public:
 	Menu();
 	~Menu();
 
-	//void CreateMainMenu();
+	void CreateMainMenu();
 
 	//void CompileMainMenuMeshData();
-	void CreatePauseOverlayTexture(std::string path);
-	void CreateLoadingTexture(std::string path);
+	void CreateMenuTexture(std::string path, GLuint *texture);
 
-	void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
+	//void CreateMenuQuad();
 
-	void CompileMeshData();
+	//void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
 
-	void LoadEntities(std::vector<Material> materials, Loader * level);
+	//void CompileMeshData();
+
+	//void LoadEntities(std::vector<Material> materials, Loader * level);
 
 	//void RenderLoading(Shader gShaderProgram);
 
-	GLuint GetPauseOverlay() { return pauseOverlayTexture; }
-	GLuint GetLoadingTexture() { return loadingTexture; }
+	GLuint GetPauseOverlay() const { return pauseOverlayTexture; }
+	GLuint GetLoadingTexture() const { return loadingTexture; }
+	GLuint GetButtonTexture() const { return buttonTextureBase; }
+	int GetVertexCountTotal() const { return vertexCountTotal; }
+	std::vector<ButtonVtx> GetButtonVertices(int idx) const { return menuButtons[idx].GetButtonVertices(); }
+	std::vector<MenuButton> GetMenuButtons() const { return menuButtons; }
+	float GetCurrentOffset() const { return nrOfMenuButtons * (buttonHeight + BUTTON_OFFSET); }
+	int GetNrOfMenuButtons() const { return nrOfMenuButtons; }
+
+	bool GetIsMenuRunning() const { return isMenuRunning; }
+	void SetIsMenuRunning(bool tf) { this->isMenuRunning = tf; }
+	
 };

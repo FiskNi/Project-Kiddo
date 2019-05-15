@@ -22,3 +22,11 @@ void PressurePlate::SetLink(int id)
 {
 	linkID = id;
 }
+
+bool PressurePlate::CheckLinkID(int id)
+{
+	if (id == linkID)
+		return true;
+
+	return false;
+}
