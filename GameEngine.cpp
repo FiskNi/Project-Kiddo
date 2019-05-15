@@ -79,14 +79,15 @@ void GameEngine::CompileMainMenuData()
 	//meshCount = mainScene.GetMeshData().size();
 	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
 	int vtxCountButtons = mainMenu.GetVertexCountTotal();
-	std::cout << vtxCountButtons << std::endl;
-	std::cout << mainMenu.GetVertexCountTotal() << std::endl;
+	//std::cout << vtxCountButtons << std::endl;
+	//std::cout << mainMenu.GetVertexCountTotal() << std::endl;
 	//for (int i = 0; i < nrOfMenuButtons; i++)
 	//{
 	//	vertexCount += mainMenu.GetVertexCountTotal();
 	//}
 	// Allocated memory
 	//mainSceneVertexData = new vertexPolygon[vertexCount];
+
 	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
 
 	int vertexIndex = 0;
@@ -178,7 +179,7 @@ void GameEngine::Run()
 		}
 		if (mainScene.GetCurrentState() == MAINMENU && mainScene.GetIsLoading() == false) {
 			// RENDER CALL FOR MAIN MENU HERE
-			CompileMainMenuData();
+			//CompileMainMenuData();
 																					// TEMP GETS SCENE CAMERA
 			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), mainScene.GetCamera(), gClearColour, mainMenu.GetButtonTexture());
 		}

@@ -108,6 +108,10 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			//CLOSES WINDOW
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
+
+		/*if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+			std::cout << "BOOTY" << std::endl;
+		}*/
 	}
 }
 

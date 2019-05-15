@@ -40,7 +40,7 @@ out vec4 fragment_color;
 // this is a uniform value, the very same value for ALL pixel shader executions
 //layout(location = 9) uniform vec3 camPos;
 //layout(location = 10) uniform bool hasNormalmap;
-layout(location = 11) uniform bool hasAlbedoMap;
+//layout(location = 11) uniform bool hasAlbedoMap;
 
 // Texture inputs 
 //uniform sampler2D shadowMap;
@@ -61,17 +61,17 @@ layout(location = 15) uniform vec3 matEmissive;
 
 void main () 
 {
-	vec4 diffuse = vec4(0);
+	//vec4 diffuse = vec4(0);
 //	vec3 normal = normalize(fsInput.normal);
 //	
 //
 //	if (hasAlbedoMap)
 //	{
-//		diffuse = texture(diffuseTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
+		vec4 diffuse = texture(diffuseTex, vec2(fsInput.uv.s, 1 - fsInput.uv.t));
 //	}
 //	else
 //	{
-//		diffuse = vec4(matDiffuse, 1.0f);
+		//diffuse = vec4(matDiffuse, 1.0f);
 //	}
 //	
 //	// hasNormalMap
@@ -120,7 +120,8 @@ void main ()
 //
 	//vec4 finalColor = clamp(vec4(ambientLight + directionalLight + pointLight, 1.0f), 0.0f,  1.0f);
 	//fragment_color = finalColor;
-	fragment_color = vec4(fsInput.uv, 0.0f, 1.0f);
+	fragment_color = vec4(diffuse, 1.0f);
+	//fragment_color = vec4(fsInput.uv, 0.0f, 1.0f);
 
 
 	// Example depth calculation

@@ -28,8 +28,8 @@ private:
 	//std::vector<ButtonVtx> buttonVertices;
 
 	int nrOfMenuButtons;
-	const float BUTTON_OFFSET = 0.1f;
-	const float buttonHeight = 0.5f;
+	const float BUTTON_OFFSET = 0.05f;
+	const float buttonHeight = 0.3f;
 
 	int vertexCountTotal;
 
