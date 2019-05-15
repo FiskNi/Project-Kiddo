@@ -24,10 +24,6 @@ public:
 	void SetRestPosition(float x, float y, float z);
 	void SetExtendDistance(float d);
 	void SetExtendingDir(int dir);
-	void SetExtendingForwardX();
-	void SetExtendingBackwardX();
-	void SetExtendingForwardZ();
-	void SetExtendingBackwardZ();
 	void SetLinkID(int id);
 
 	bool CheckLinkID(int id);
@@ -37,7 +33,8 @@ public:
 	void Retract();
 	void Update(float deltaTime);
 	
-	bool getExtended() { return extended; }
+	bool GetExtending() { return this->extending; }
+	bool GetExtended() { return this->extended; }
 
 };
 

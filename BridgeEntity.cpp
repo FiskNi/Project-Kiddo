@@ -89,26 +89,6 @@ void BridgeEntity::SetExtendingDir(int dir)
 	}
 }
 
-void BridgeEntity::SetExtendingForwardX()
-{
-	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
-}
-
-void BridgeEntity::SetExtendingBackwardX()
-{
-	extendDirection = glm::vec3(-1.0f, 0.0f, 0.0f);
-}
-
-void BridgeEntity::SetExtendingForwardZ()
-{
-	extendDirection = glm::vec3(0.0f, 0.0f, 1.0f);
-}
-
-void BridgeEntity::SetExtendingBackwardZ()
-{
-	extendDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-}
-
 void BridgeEntity::SetLinkID(int id)
 {
 	linkID = id;
@@ -124,11 +104,13 @@ bool BridgeEntity::CheckLinkID(int id)
 
 void BridgeEntity::Extend()
 {
-	extending = true;
+	if (!extending)
+		extending = true;
 }
 
 void BridgeEntity::Retract()
 {
+	extended = false;
 	extending = false;
 }
 
@@ -146,31 +128,81 @@ void BridgeEntity::Update(float deltaTime)
 			glm::vec3 extendStop = restPosition + extendDirection * extendDistance;
 
 			if (extendDirection == glm::vec3(1.0f, 0.0f, 0.0f))
+			{
 				if ((restPosition + (extendDirection * extendDistance)).x > GetPosition().x)
+				{
 					SetPosition(calculatedPosition);
+				}
 				else
+				{
 					extended = true;
-
+					extending = false;
+				}
+			}
 			if (extendDirection == glm::vec3(-1.0f, 0.0f, 0.0f))
+			{
 				if ((restPosition + (extendDirection * extendDistance)).x < GetPosition().x)
+				{
 					SetPosition(calculatedPosition);
+				}
 				else
+				{
 					extended = true;
-
+					extending = false;
+				}
+			}
 			if (extendDirection == glm::vec3(0.0f, 0.0f, 1.0f))
+			{
 				if ((restPosition + (extendDirection * extendDistance)).z > GetPosition().z)
+				{
 					SetPosition(calculatedPosition);
+				}
 				else
+				{
 					extended = true;
-
+					extending = false;
+				}
+			}
 			if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
+			{
 				if ((restPosition + (extendDirection * extendDistance)).z < GetPosition().z)
+				{
 					SetPosition(calculatedPosition);
+				}
 				else
+				{
 					extended = true;
+					extending = false;
+				}
+			}
+
+			if (extendDirection == glm::vec3(0.0f, 1.0f, 0.0f))
+			{
+				if ((restPosition + (extendDirection * extendDistance)).y < GetPosition().y)
+				{
+					SetPosition(calculatedPosition);
+				}
+				else
+				{
+					extended = true;
+					extending = false;
+				}
+			}	
+			if (extendDirection == glm::vec3(0.0f, -1.0f, 0.0f))
+			{
+				if ((restPosition + (extendDirection * extendDistance)).y < GetPosition().y)
+				{
+					SetPosition(calculatedPosition);
+				}
+				else
+				{
+					extended = true;
+					extending = false;
+				}
+			}
 		}
-	}	
-	else
+	}
+	else if (!extended)
 	{
 		SetPosition(restPosition);
 		extended = false;

@@ -11,6 +11,8 @@
 #include "BoxHoldEntity.h"
 #include "Headers.h"
 
+
+
 //============================================================================
 //	- Scenes
 //	A scene can be seen as an entire "Level". Compare to public game-engines such as Unity or Unreal.
@@ -62,7 +64,6 @@ private:
 	std::vector<Material> materials;
 
 	// Rooms
-	bool currentBuffer;
 	Room* roomBuffer;
 	Room* mainMenuRoomBuffer;
 	int roomNr;
@@ -81,6 +82,8 @@ private:
 	void _CheckPressedButtons();
 	void _CheckPressedBombs();
 
+	irrklang::ISoundEngine* audioEngine;
+
 public:
 	Scene();
 	~Scene();
@@ -98,9 +101,7 @@ public:
 	int GetCurrentState() const { return state; };
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
-
 	void SwitchRoom();
-	void SwitchMainMenu();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
 	void SetSwitched();
 	void ResetRoom();

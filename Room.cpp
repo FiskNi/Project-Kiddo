@@ -2,7 +2,7 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader* aLoader)
+Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 {
 	LoadLights(aLoader);
 	LoadEntities(materials, aLoader);
@@ -13,6 +13,8 @@ Room::Room(std::vector<Material> materials, Loader* aLoader)
 
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
+
+	this->audioEngine = audioEngine;
 }
 
 Room::~Room()
@@ -51,26 +53,60 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
+
+	// Convoluted super deluxe solution for handling no more than 2 pressure plates linking to the same bridge
 	for (int i = 0; i < pressurePlates.size(); i++)
 	{
 		if (pressurePlates[i].isPressed())
 		{
 			for (int j = 0; j < bridges.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
-					bridges[j].Extend();
+				if ( !bridges[j].GetExtending() && bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()) )
+				{
+					if (!bridges[j].GetExtending() && !bridges[j].GetExtended())
+						// ADD SOUND PLAY
+					bridges[j].Extend();			
+				}
 			}
 		}
 		else
 		{
-			for (int j = 0; j < bridges.size(); j++)
+			bool matchingid = false;
+			// Check for other pressureplates connecting to the same bridge
+			for (int j = 0; j < pressurePlates.size(); j++)
 			{
-				if (bridges[j].CheckLinkID(pressurePlates[i].GetLinkID()))
-					bridges[j].Retract();
+				if (pressurePlates[j].CheckLinkID(pressurePlates[i].GetLinkID()) && i != j)
+				{				
+					// Matching pressure plate found
+					matchingid = true;
+					if (!pressurePlates[j].isPressed())
+					{
+						// It's not pressed so it's safe to retract the bridge
+						for (int p = 0; p < bridges.size(); p++)
+						{
+							if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[p].CheckLinkID(pressurePlates[j].GetLinkID()))
+							{
+								bridges[p].Retract();
+							}
+						}
+					}	
+				}
+			}
+			if (!matchingid)
+			{
+				// No matching pressure plate so it's safe to retract bridge
+				for (int p = 0; p < bridges.size(); p++)
+				{
+					if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()))
+					{
+						bridges[p].Retract();
+					}
+				}
 			}
 		}
 	}
 
+	// Buttons linking to bridge
 	for (int i = 0; i < buttons.size(); i++)
 	{
 		if (buttons[i].isPressed())
@@ -78,15 +114,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 			for (int j = 0; j < bridges.size(); j++)
 			{
 				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
+				{
 					bridges[j].Extend();
-			}
-		}
-		else
-		{
-			for (int j = 0; j < bridges.size(); j++)
-			{
-				if (bridges[j].CheckLinkID(buttons[i].GetLinkID()))
-					bridges[j].Retract();
+				}
 			}
 		}
 	}
@@ -129,12 +159,15 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 			if (!pressurePlates[i].isPressed() && rigids[j].CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(rigids[j]))
 			{
 				pressurePlates[i].setPressed(true);
+				// PLAY SOUND
+
 			}
 		}
 
 		if (!pressurePlates[i].isPressed() && playerCharacter->CheckCollision(pressurePlates[i]) && pressurePlates[i].CheckInsideCollision(*playerCharacter))
 		{
 			pressurePlates[i].setPressed(true);
+			// PLAY SOUND
 		}
 
 	}
@@ -590,6 +623,7 @@ void Room::CompileMeshData()
 		meshes.push_back(holders[i].GetMeshData());
 		meshes.push_back(holders[i].GetHolderMeshData());
 	}
+
 	for (int i = 0; i < items.size(); i++) {
 
 		meshes.push_back(items[i].GetMeshData());
@@ -600,6 +634,7 @@ void Room::CompileMeshData()
 	for (int i = 0; i < collectibles.size(); i++) {
 		meshes.push_back(collectibles[i].GetMeshData());
 	}
+
 }
 
 //=============================================================
@@ -715,8 +750,6 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
 				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
 			}
 			break;
 
@@ -750,6 +783,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			break;
 
 		case 8:		// Character
+
 			break;
 
 		case 9:		// Door
@@ -757,7 +791,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				//Mesh mesh(level, i);
 				//roomMeshes.push_back(mesh);
 				Door door(level, i, matID);
-				door.SetPosition(glm::vec3(-40, 0.5, 5));
+				//door.SetPosition(glm::vec3(-40, 0.5, 5));
 				doors.push_back(door);
 			}
 			break;

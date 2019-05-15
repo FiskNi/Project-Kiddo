@@ -403,14 +403,12 @@ void Renderer::SetViewport()
 //=============================================================
 void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm::vec3 scale, GLuint shaderProg)
 {
+	// This calculation assumes the vertice position (not the vec3 position) are in their global 0 position
 	MODEL_MAT = glm::mat4(1.0f);
 
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
-
 	glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
-
 	glm::mat4 scaleMatrix = glm::scale(MODEL_MAT, scale);
-
 
 	MODEL_MAT = translationMatrix * rotationMatrix * scaleMatrix;
 }

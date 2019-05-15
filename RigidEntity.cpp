@@ -6,9 +6,8 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 {
 	startPos = glm::vec3(0.0f, 5.0f, 0.0f);
 	savedPos = startPos;
-	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
+	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	collision = false;
-
 	grounded = false;
 	groundLevel = 0.0f;
 	held = false;
@@ -19,7 +18,7 @@ RigidEntity::RigidEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int
 {
 	startPos = GetPosition();
 	savedPos = startPos;
-	velocity = glm::vec3(0.0f, 10.0f, 0.0f);
+	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	collision = false;
 	grounded = false;
 	groundLevel = 0.0f;
@@ -28,6 +27,13 @@ RigidEntity::RigidEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int
 
 RigidEntity::RigidEntity(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
 {
+	startPos = GetPosition();
+	savedPos = startPos;
+	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+	collision = false;
+	grounded = false;
+	groundLevel = 0.0f;
+	held = false;
 }
 
 RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID) : Entity(inLoader, index, matID)

@@ -70,6 +70,7 @@ struct LoaderMesh
 	int link;
 	int dir;
 	float dist;
+	int collect;
 
 	int vertexCount;
 };
@@ -82,7 +83,8 @@ struct DirLight
 	float intensity;
 };
 
-struct PointLight {
+struct PointLight 
+{
 	float position[3];
 	float color[3];
 	float intensity;
