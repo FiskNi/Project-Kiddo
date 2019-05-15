@@ -35,6 +35,8 @@ GameEngine::~GameEngine()
 {
 	if (mainSceneVertexData)
 		delete mainSceneVertexData;
+	if (mainMenuVertexData)
+		delete mainMenuVertexData;
 }
 
 void GameEngine::CompileRoomData()
@@ -61,6 +63,35 @@ void GameEngine::CompileRoomData()
 	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 }
 
+void GameEngine::CompileMainMenuData()
+{
+	//meshCount = mainScene.GetMeshData().size();
+	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
+	int vtxCountButtons = mainMenu.GetVertexCountTotal();
+	std::cout << vtxCountButtons << std::endl;
+	std::cout << mainMenu.GetVertexCountTotal() << std::endl;
+	//for (int i = 0; i < nrOfMenuButtons; i++)
+	//{
+	//	vertexCount += mainMenu.GetVertexCountTotal();
+	//}
+	// Allocated memory
+	//mainSceneVertexData = new vertexPolygon[vertexCount];
+	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+	int vertexIndex = 0;
+	for (int i = 0; i < nrOfMenuButtons; i++)
+	{
+		int buttonVtxCount = mainMenu.GetMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < buttonVtxCount; j++)
+		{
+			//mainMenuVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			mainMenuVertexData[vertexIndex] = mainMenu.GetButtonVertices(i)[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileMenuVertexData(vtxCountButtons, mainMenuVertexData);
+}
+
 //=============================================================
 //	Main engine loop
 //=============================================================
@@ -76,6 +107,9 @@ void GameEngine::Run()
 	static bool renderDepth = false;
 	ImGuiInit();
 
+	// Compile Main Menu vertex data (is this really the best spot? no idea rn)
+	CompileMainMenuData();
+
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
@@ -87,6 +121,10 @@ void GameEngine::Run()
 			CompileRoomData();
 			mainScene.SetSwitched();
 		}
+		/*else if (mainScene.GetCurrentState() == MAINMENU && mainScene.GetIsSwitched()) {
+			CompileMainMenuData();
+			mainScene.SetSwitched();
+		}*/
 
 		glfwPollEvents();
 
@@ -120,14 +158,21 @@ void GameEngine::Run()
 		if (mainScene.GetCurrentState() == PAUSED) {
 			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
 		}
-		else if(mainScene.GetIsLoading() == true){
-			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
-			mainScene.SwitchMainMenu();
-			mainScene.SetIsLoading(false);
-		}
 		else {
 			// Render a second pass for the fullscreen quad
 			mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
+		}
+		if (mainScene.GetCurrentState() == MAINMENU && mainScene.GetIsLoading() == false) {
+			// RENDER CALL FOR MAIN MENU HERE
+			CompileMainMenuData();
+																					// TEMP GETS SCENE CAMERA
+			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), mainScene.GetCamera(), gClearColour, mainMenu.GetButtonTexture());
+		}
+		// Render loading screen, then switch between main menu and game, and then set isLoading to false once it has finished loading
+		if(mainScene.GetIsLoading() == true){
+			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
+			mainScene.SwitchMainMenu();
+			mainScene.SetIsLoading(false);
 		}
 	
 		// Draw fullscreen quad

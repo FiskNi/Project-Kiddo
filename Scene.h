@@ -34,12 +34,8 @@ class Scene
 {
 private:
 	bool setUserPointer = false;
-	/*enum GAMESTATE {
-		PAUSED,
-		PLAYING,
-		MAINMENU
-	};*/
-	GAMESTATE state = PLAYING;
+
+	GAMESTATE state = MAINMENU;
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -47,6 +43,8 @@ private:
 
 	void CompileMeshData();
 	void CompileMeshDataMainMenu();
+
+	void CompileMainMenuData();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -57,6 +55,7 @@ private:
 	Shader basicShader;
 	Shader fsqShader;
 	Shader shadowmapShader;
+	Shader mainMenuShader;
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -71,7 +70,7 @@ private:
 	Room* mainMenuRoomBuffer;
 	int roomNr;
 	bool isSwitched;
-	bool isLoading;
+	bool isLoading = false;
 
 	Menu menuHandler;
 

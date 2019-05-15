@@ -7,6 +7,7 @@
 
 #include "Mesh.h"
 #include "Material.h"
+#include "MenuButton.h"
 //#include "Renderer.h"
 
 //#define PLAYING 1
@@ -23,8 +24,19 @@ private:
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
 
+	GLuint buttonTextureBase;
+
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> menuMeshes;
+
+	std::vector<MenuButton> menuButtons;
+	//std::vector<ButtonVtx> buttonVertices;
+
+	int nrOfMenuButtons;
+	const float BUTTON_OFFSET = 0.1f;
+	const float buttonHeight = 0.5f;
+
+	int vertexCountTotal;
 
 	Camera* menuCamera;
 
@@ -32,11 +44,12 @@ public:
 	Menu();
 	~Menu();
 
-	//void CreateMainMenu();
+	void CreateMainMenu();
 
 	//void CompileMainMenuMeshData();
-	void CreatePauseOverlayTexture(std::string path);
-	void CreateLoadingTexture(std::string path);
+	void CreateMenuTexture(std::string path, GLuint *texture);
+
+	//void CreateMenuQuad();
 
 	void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
 
@@ -46,6 +59,15 @@ public:
 
 	//void RenderLoading(Shader gShaderProgram);
 
-	GLuint GetPauseOverlay() { return pauseOverlayTexture; }
-	GLuint GetLoadingTexture() { return loadingTexture; }
+	GLuint GetPauseOverlay() const { return pauseOverlayTexture; }
+	GLuint GetLoadingTexture() const { return loadingTexture; }
+	GLuint GetButtonTexture() const { return buttonTextureBase; }
+	int GetVertexCountTotal() const { return vertexCountTotal; }
+	std::vector<ButtonVtx> GetButtonVertices(int idx) const { return menuButtons[idx].GetButtonVertices(); }
+	std::vector<MenuButton> GetMenuButtons() const { return menuButtons; }
+	float GetCurrentOffset() const { return nrOfMenuButtons * (buttonHeight + BUTTON_OFFSET); }
+	int GetNrOfMenuButtons() const { return nrOfMenuButtons; }
+
+
+	
 };

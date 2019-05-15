@@ -141,6 +141,9 @@
     <ClCompile Include="Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MenuButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -245,6 +248,9 @@
     <ClInclude Include="Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MenuButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Fragment.glsl">
@@ -263,6 +269,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="VertexShaderSM.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderMenu.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentMenu.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

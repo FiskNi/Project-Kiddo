@@ -39,8 +39,7 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			// RETURNS TO MAIN MENU
 			scene->isLoading = true;
 			scene->state = MAINMENU;
-			//scene->SwitchMainMenu();
-			//scene->isLoading = false;
+
 			std::cout << "Returning to Main Menu" << std::endl;
 			std::cout << "Loading..." << std::endl;
 			std::cout << "MAIN MENU" << std::endl;
@@ -102,11 +101,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		{
 			//RESUMES GAME
 			scene->isLoading = true;
-			// GET SHADER AND RENDER LOADING
-			//scene->menuHandler.RenderLoading(scene->GetShader(2));
 			scene->state = PLAYING;
-			/*scene->SwitchMainMenu();*/
-			//scene->isLoading = false;
+
 			std::cout << "START GAME/RESUME" << std::endl;
 			std::cout << "Loading takes time!" << std::endl;
 		}
@@ -133,7 +129,7 @@ Scene::Scene()
 
 	// Our entry room (first level)
 	Loader startingRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
-
+	// Main Menu room, menu "background"
 	Loader mainMenuRoom("Resources/Assets/GameReady/Rooms/LevelBridgeBuilder.meh");
 
 	LoadShaders();
@@ -178,6 +174,9 @@ void Scene::LoadShaders()
 	fsqShader.CreateFSShaders();
 	fsqShader.CreateFullScreenQuad();
 	shaders.push_back(fsqShader);
+
+	mainMenuShader.CreateShader("VertexShaderMenu.glsl", "FragmentMenu.glsl");
+	shaders.push_back(mainMenuShader);
 }
 
 void Scene::LoadMaterials(Loader* inLoader)
@@ -234,6 +233,30 @@ void Scene::CompileMeshDataMainMenu()
 	meshes = mainMenuRoomBuffer->GetMeshData();
 	//meshes.push_back(playerCharacter.GetMeshData());
 }
+
+//void Scene::CompileMainMenuData()
+//{
+//	int meshCount = GetMeshData().size();
+//	int vertexCount = 0;
+//	for (int i = 0; i < meshCount; i++)
+//	{
+//		vertexCount += menuHandler.GetVertexCount();
+//	}
+//	// Allocated memory
+//	mainSceneVertexData = new vertexPolygon[vertexCount];
+//
+//	int vertexIndex = 0;
+//	for (int i = 0; i < meshCount; i++)
+//	{
+//		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+//		for (int j = 0; j < meshVtxCount; j++)
+//		{
+//			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+//			vertexIndex++;
+//		}
+//	}
+//	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+//}
 
 //=============================================================
 //	Everything that updates in a scene happens here. 

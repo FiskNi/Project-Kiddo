@@ -300,6 +300,134 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 	);
 }
 
+//= ============================================================
+//	Render pass for the main menu ( eventually pause menu as well )
+//=============================================================
+void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> objects, Camera camera, float gClearColour[3], GLuint texture )
+{
+	// Position in shader
+	int view_matrix = 5;
+	int projection_matrix = 6;
+	int model_matrix = 7;
+	//int shadow_matrix = 8;
+	int cam_pos = 9;
+	int has_normal = 10;
+	int has_albedo = 11;
+	int ambient = 12;
+	int diffuse = 13;
+	int specular = 14;
+	int emissive = 15;
+
+	// set the color TO BE used (this does not clear the screen right away)
+	//glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	// use the color to clear the color buffer (clear the color buffer only)
+	//glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
+
+	// tell opengl we want to use the gShaderProgram
+	glUseProgram(gShaderProgram.getShader());
+
+
+	// Per shader uniforms
+	glUniformMatrix4fv(view_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+	glUniformMatrix4fv(projection_matrix, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));
+	glUniform3fv(cam_pos, 1, glm::value_ptr(camera.GetPosition()));
+
+
+	// Main render queue
+	// Currently the render swaps buffer for every object which could become slow further on
+	// If possible the rendercalls could be improved
+
+	glBindVertexArray(gVertexAttributeMenu);
+
+	unsigned int startIndex = 0;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		/*// Per object uniforms
+		//CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
+		//glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		//glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
+		//glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
+
+		// Binds the VAO of an object to be renderer. Could become slow further on.
+
+		// Binds the albedo texture from a material
+		//passTextureData(GL_TEXTURE0,
+		//	materials[objects[i].GetMaterialID()].getAlbedo(),
+		//	gShaderProgram.getShader(),
+		//	"diffuseTex", 0);
+
+		//// Binds the normal texture from a material
+		//if (materials[objects[i].GetMaterialID()].hasNormal())
+		//{
+		//	passTextureData(GL_TEXTURE1,
+		//		materials[objects[i].GetMaterialID()].getNormal(),
+		//		gShaderProgram.getShader(),
+		//		"normalTex", 1);
+		//}
+
+		//glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getAmbient()));
+		//glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getDiffuse()));
+		//glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getSpecular()));
+		//glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getEmissive()));
+
+		*/
+		// Draw call
+		// As the buffer is swapped for each object the drawcall currently always starts at index 0
+		// This is what could be improved with one large buffer and then advance the start index for each object
+		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetSize() );
+
+		startIndex += objects[i].GetVertexCount();
+	}
+
+}
+
+//=============================================================
+//	Creates a vertexbuffer from the menu data to be rendered
+//=============================================================
+void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
+{
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttributeMenu);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttributeMenu);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBufferMenu);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMenu);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(ButtonVtx), vertices, GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,							// location in shader
+		3,							// how many elements of type (see next argument)
+		GL_FLOAT,					// type of each element
+		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(ButtonVtx),		// distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(ButtonVtx),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+}
+
 //=============================================================
 //	From template - Needs explanation
 //	Has to do with the fullscreen quad
