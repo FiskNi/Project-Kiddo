@@ -319,9 +319,9 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 	int emissive = 15;
 
 	// set the color TO BE used (this does not clear the screen right away)
-	//glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
-	//glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
+	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
@@ -342,7 +342,7 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 	unsigned int startIndex = 0;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		/*// Per object uniforms
+		// Per object uniforms
 		//CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		//glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
 		//glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
@@ -350,11 +350,8 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 
-		// Binds the albedo texture from a material
-		//passTextureData(GL_TEXTURE0,
-		//	materials[objects[i].GetMaterialID()].getAlbedo(),
-		//	gShaderProgram.getShader(),
-		//	"diffuseTex", 0);
+		//Binds the albedo texture from a material
+		passTextureData(GL_TEXTURE0, texture, gShaderProgram.getShader(), "diffuseTex", 0);
 
 		//// Binds the normal texture from a material
 		//if (materials[objects[i].GetMaterialID()].hasNormal())
@@ -370,7 +367,7 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 		//glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getSpecular()));
 		//glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getEmissive()));
 
-		*/
+		
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
