@@ -319,9 +319,9 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 	int emissive = 15;
 
 	// set the color TO BE used (this does not clear the screen right away)
-	//glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
-	//glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
+	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());

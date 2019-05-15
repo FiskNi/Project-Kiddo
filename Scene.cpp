@@ -284,6 +284,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 	if (state == MAINMENU) 
 	{
 		// NO, DON'T SWITCH ROOM HERE IF IT'S LOADING BECAUSE START WILL SWITCH ROOM EVERY TIME >:(
+		// Start is supposed to work like Resume, but from the Main Menu.
 		/*if (roomBuffer->GetRoomCompleted())
 		{		
 			if (isLoading)

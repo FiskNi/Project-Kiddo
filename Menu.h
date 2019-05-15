@@ -33,6 +33,8 @@ private:
 
 	int vertexCountTotal;
 
+	bool isMenuRunning;
+
 	Camera* menuCamera;
 
 public:
@@ -46,11 +48,11 @@ public:
 
 	//void CreateMenuQuad();
 
-	void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
+	//void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
 
-	void CompileMeshData();
+	//void CompileMeshData();
 
-	void LoadEntities(std::vector<Material> materials, Loader * level);
+	//void LoadEntities(std::vector<Material> materials, Loader * level);
 
 	//void RenderLoading(Shader gShaderProgram);
 
@@ -63,6 +65,7 @@ public:
 	float GetCurrentOffset() const { return nrOfMenuButtons * (buttonHeight + BUTTON_OFFSET); }
 	int GetNrOfMenuButtons() const { return nrOfMenuButtons; }
 
-
+	bool GetIsMenuRunning() const { return isMenuRunning; }
+	void SetIsMenuRunning(bool tf) { this->isMenuRunning = tf; }
 	
 };

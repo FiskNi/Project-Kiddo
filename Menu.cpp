@@ -6,6 +6,7 @@ Menu::Menu()
 	//pauseOverlayTexture = 0;
 	vertexCountTotal = 0;
 	nrOfMenuButtons = 0;
+	isMenuRunning = true;
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/SmallMushRooms.png", &buttonTextureBase);
