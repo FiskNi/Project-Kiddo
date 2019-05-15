@@ -1,6 +1,6 @@
 #include "MenuButton.h"
 
-MenuButton::MenuButton(float offset = 0, int textureID = 0) 
+MenuButton::MenuButton(float offset, int textureID) 
 {
 	this->offset = offset;
 	this->textureID = textureID;	// Is this correct?
@@ -20,12 +20,12 @@ void MenuButton::CreateButtonQuad()
 {
 	// Add an offset to the y coordinate in order to offset upcoming buttons once the shape has been defined
 	ButtonVtx buttVtxTemp[6] = {
-		-0.5f,(-0.5f + offset),0.0f,    0.0f, 0.0f,	// TOP		LEFT
-		-0.5f,(+0.5f + offset),0.0f,	0.0f, 1.0f,	// BOTTOM	LEFT
-		+0.5f,(+0.5f + offset),0.0f,	1.0f, 1.0f,	// BOTTOM	RIGHT
-		-0.5f,(-0.5f + offset),0.0f,	0.0f, 0.0f,	// TOP		LEFT
-		+0.5f,(+0.5f + offset),0.0f,	1.0f, 1.0f,	// BOTTOM	RIGHT
-		+0.5f,(-0.5f + offset),0.0f,	1.0f, 0.0f,	// TOP		RIGHT
+		-0.3f,(0.2f - offset),0.0f,    0.0f, 0.0f,	// TOP		LEFT
+		-0.3f,(+0.5f - offset),0.0f,	0.0f, 1.0f,	// BOTTOM	LEFT
+		+0.3f,(+0.5f - offset),0.0f,	1.0f, 1.0f,	// BOTTOM	RIGHT
+		-0.3f,(0.2f - offset),0.0f,	0.0f, 0.0f,	// TOP		LEFT
+		+0.3f,(+0.5f - offset),0.0f,	1.0f, 1.0f,	// BOTTOM	RIGHT
+		+0.3f,(0.2f - offset),0.0f,	1.0f, 0.0f,	// TOP		RIGHT
 	};
 
 	for (int i = 0; i < 6; i++) {

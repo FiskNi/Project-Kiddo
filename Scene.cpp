@@ -5,29 +5,29 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
 	Scene* scene = (Scene*)glfwGetWindowUserPointer(window);
 
-	if (key == GLFW_KEY_N && action == GLFW_PRESS && scene->state != MAINMENU) 
+	if (key == GLFW_KEY_N && action == GLFW_PRESS && scene->state != MAINMENU)
 	{
 		if (scene->roomBuffer)
 			scene->roomBuffer->SetRoomCompleted(true);
 	}
 
 	// IF PAUSED
-	if (scene->state == PAUSED) 
+	if (scene->state == PAUSED)
 	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
 			//UNPAUSE
 			scene->state = PLAYING;
 			std::cout << "PLAYING" << std::endl;
 		}
 
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		{
 			//RESUMES GAME
 			scene->state = PLAYING;
 			std::cout << "RESUME" << std::endl;
 		}
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 		{
 			//RESTART HERE
 			scene->ResetRoom();
@@ -50,9 +50,9 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 	}
 	// IF PLAYING
-	else if (scene->state == PLAYING) 
+	else if (scene->state == PLAYING)
 	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
 			scene->state = PAUSED;
 			std::cout << "PAUSED" << std::endl;
@@ -69,18 +69,18 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 
 		// EXTRA
-		if (key == GLFW_KEY_Q && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_Q && action == GLFW_PRESS)
 			scene->Upgrade();
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 			scene->playerCharacter.SetCurrentItem(0);
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 			scene->playerCharacter.SetCurrentItem(1);
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
-			scene->playerCharacter.SetCurrentItem(2);		
-		if (key == GLFW_KEY_4 && action == GLFW_PRESS) 
-			scene->playerCharacter.SetCurrentItem(3);		
-		if (key == GLFW_KEY_5 && action == GLFW_PRESS) 
-			scene->playerCharacter.SetCurrentItem(4);	
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+			scene->playerCharacter.SetCurrentItem(2);
+		if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+			scene->playerCharacter.SetCurrentItem(3);
+		if (key == GLFW_KEY_5 && action == GLFW_PRESS)
+			scene->playerCharacter.SetCurrentItem(4);
 	}
 }
 
@@ -196,7 +196,6 @@ void Scene::CompileMeshData()
 	meshes = roomBuffer->GetMeshData();
 	meshes.push_back(playerCharacter.GetMeshData());
 	// Compile character data
-	
 }
 
 //=============================================================

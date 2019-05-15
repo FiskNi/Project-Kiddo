@@ -83,14 +83,15 @@ void GameEngine::CompileMainMenuData()
 	//meshCount = mainScene.GetMeshData().size();
 	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
 	int vtxCountButtons = mainMenu.GetVertexCountTotal();
-	std::cout << vtxCountButtons << std::endl;
-	std::cout << mainMenu.GetVertexCountTotal() << std::endl;
+	//std::cout << vtxCountButtons << std::endl;
+	//std::cout << mainMenu.GetVertexCountTotal() << std::endl;
 	//for (int i = 0; i < nrOfMenuButtons; i++)
 	//{
 	//	vertexCount += mainMenu.GetVertexCountTotal();
 	//}
 	// Allocated memory
 	//mainSceneVertexData = new vertexPolygon[vertexCount];
+
 	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
 
 	int vertexIndex = 0;
@@ -135,9 +136,13 @@ void GameEngine::Run()
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS || mainScene.GetExit())
+		if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
 		{
 			menuIsRunning = false;
+		}
+		else if (mainScene.GetExit())
+		{
+			menuIsRunning = true;
 		}
 
 		// Deltatime via ImGui

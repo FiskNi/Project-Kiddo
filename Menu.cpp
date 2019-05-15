@@ -6,9 +6,10 @@ Menu::Menu()
 	//pauseOverlayTexture = 0;
 	vertexCountTotal = 0;
 	nrOfMenuButtons = 0;
+	isMenuRunning = true;
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
-	CreateMenuTexture("Resources/Textures/SmallMushRooms.png", &buttonTextureBase);
+	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
 
 	CreateMainMenu();
 }
@@ -41,12 +42,14 @@ Menu::~Menu()
 //	//CompileMeshData();
 //}
 
-void Menu::CreateMainMenu() 
+void Menu::CreateMainMenu()
 {
-	MenuButton newButton(GetCurrentOffset(), 0);
-	vertexCountTotal += newButton.GetVertexCount();
-	menuButtons.push_back(newButton);
-	nrOfMenuButtons++;
+	for (int i = 0; i < 3; i++) {
+		MenuButton newButton(GetCurrentOffset(), 0);
+		vertexCountTotal += newButton.GetVertexCount();
+		menuButtons.push_back(newButton);
+		nrOfMenuButtons++;
+	}
 }
 
 // =============================================================
