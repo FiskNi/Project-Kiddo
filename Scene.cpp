@@ -297,7 +297,7 @@ void Scene::LoadRoom()
 	// Additional hardcoded roomfunctions may be applied here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)

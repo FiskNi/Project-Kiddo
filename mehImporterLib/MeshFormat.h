@@ -57,24 +57,6 @@ struct MeshVert
 	Vertex* vertices;
 };
 
-
-//struct MeshSkeleton
-//{
-//	Joint* joints;
-//	Animation* animations;
-//};
-//
-//struct MeshKeyFrame
-//{
-//	KeyFrame* keyFrames;
-//};
-//
-//struct MeshTransform
-//{
-//	Transform* transforms;
-//};
-
-
 struct Skeleton
 {
 	char name[NAME_SIZE_L];

@@ -45,7 +45,6 @@ Loader::Loader(std::string fileName)
 		{
 			binFile.read((char*)&this->meshGroup[i], sizeof(MeshGroup));
 		}
-		MeshGroup a = meshGroup[1];
 		for (int i = 0; i < fileHeader.meshCount; i++)
 		{
 
@@ -83,6 +82,7 @@ Loader::Loader(std::string fileName)
 					// 3.4.2 Keyframes
 					std::cout << "Writing keyframe " << k << "..." << std::endl;
 					binFile.read((char*)&keyFrames[k], sizeof(KeyFrame));
+
 					this->transforms = new Transform[keyFrames[k].transformCount];
 
 					for (int t = 0; t < keyFrames[k].transformCount; t++)

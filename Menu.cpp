@@ -64,9 +64,7 @@ Menu::Menu()
 
 Menu::~Menu() 
 {
-
 }
-
 
 void Menu::CreateMainMenu()
 {
@@ -78,7 +76,7 @@ void Menu::CreateMainMenu()
 	}
 }
 
-void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
+void Menu::MenuUpdate(GLFWwindow* renderWindow, float deltaTime)
 {
 	if (!setUserPointer)
 	{
