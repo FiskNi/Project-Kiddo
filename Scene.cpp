@@ -110,25 +110,23 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
-	state = PLAYING;
-
-	// Our entry room (first level)
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 	LoadShaders();
-	LoadMaterials(&startingRoom);
-	LoadCharacter(&startingRoom);
-
-	// Initializes startingroom. Existing materials is needed for all the entities.
-	roomBuffer = new Room(materials, &startingRoom, audioEngine);
-
+	roomBuffer = nullptr;
 	roomNr = 0;
 	isLoading = false;
 	exittoMenu = false;
 	roomLoaded = false;
 
+	// If no audiodevice exists this will initiate as NULL, make sure to check that this was successful
+	// when trying to play audio
 	audioEngine = irrklang::createIrrKlangDevice();
-	//audioEngine->play2D("irrKlang/media/bell.wav", true);
-	CompileMeshData();
+	if (audioEngine)
+		audioEngine->play2D("irrKlang/media/bell.wav", false);
+	else
+		std::cout << "Failed to create audio device, none connected?" << std::endl;
+
+	// This is the initial state the game will be in when the update loop starts running
+	state = PLAYING;
 }
 
 Scene::~Scene()
@@ -278,6 +276,9 @@ void Scene::Exited()
 	exittoMenu = false;
 }
 
+//=============================================================
+//	Loads room data
+//=============================================================
 void Scene::LoadRoom()
 {
 	if (roomBuffer)
@@ -287,6 +288,8 @@ void Scene::LoadRoom()
 	Loader* roomLoader;
 
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
+	// roomNr refers to the order of the levels appreance. 
+	// Additional hardcoded roomfunctions may be applied here.
 	if (roomNr == 0)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");

@@ -78,7 +78,10 @@ void Material::createAlbedo(std::string path)
 		hasAlbedoMap = true;
 	}
 	else
-		std::cout << "Failed to load albedo. Reason: " << stbi_failure_reason() << std::endl;
+	{
+		std::cout << "Failed to load albedo for material "" << name << "". Reason: " << stbi_failure_reason();
+		std::cout << ". No material applied or file missing?" << std::endl;
+	}
 
 	stbi_image_free(data);
 }
@@ -112,7 +115,10 @@ void Material::createNormal(std::string path)
 		hasNormalMap = true;
 	}
 	else
-		std::cout << "Failed to load normal. Reason: " << stbi_failure_reason() << std::endl;
+	{
+		std::cout << "Failed to load normal for material " << name << ". Reason: " << stbi_failure_reason();
+		std::cout << "No material applied or file missing?" << std::endl;
+	}
 
 	stbi_image_free(data);
 }
