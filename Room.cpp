@@ -173,12 +173,6 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 	}
 }
 
-//=============================================================
-//	Checks all rigid collisions with the ground, includes the player.
-//	This loops trough all the rigids and all the statics in the scene.
-//	Afterwards does a collision check and applies the highest ground level found.
-//	The actual action on collison happens in the rigid entity class.
-//=============================================================
 void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 {
 	/*if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
@@ -360,8 +354,7 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 	for (int i = 0; i < rigids.size(); ++i)
 	{
 		if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
-		{
-			
+		{		
 			// Push direction vector
 			glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
 			pushDir = glm::normalize(pushDir);

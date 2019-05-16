@@ -176,7 +176,6 @@ void Scene::LoadMaterials(Loader* inLoader)
 void Scene::LoadCharacter(Loader* inLoader)
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
-	
 	for (int i = 0; i < inLoader->GetMeshCount(); i++)
 	{
 		if (inLoader->GetType(i) == 8)
@@ -263,7 +262,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 void Scene::ResetRoom()
 {
 	playerCharacter.ResetPos();
-
 	// This should be a function in the room that can reset all the relevant data (bridge positions and button states)
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 	{
