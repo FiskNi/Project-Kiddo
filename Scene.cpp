@@ -202,6 +202,15 @@ void Scene::CompileMeshData()
 	// Compile character data
 }
 
+//void Scene::CompileMeshDataMainMenu()
+//{
+//	//// Fills the "meshes" vector with all the mesh data (primitive)
+//	//mainMenuRoomBuffer->CompileMeshData();
+//	//meshes.clear();
+//
+//	//meshes = mainMenuRoomBuffer->GetMeshData();
+//}
+
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.

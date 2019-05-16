@@ -34,7 +34,7 @@ void main()
 	//	vs_out.bitangent = transpose(inverse(mat3(model))) * vertex_bitangent;
 
 	// The way matrices are applied here is important to print it to the screen in 2D space
-	gl_Position = vec4(vertex_position, 1.0f); // proj * view * model * 
+	gl_Position = view* proj * vec4(vertex_position, 1.0f); // proj * view * model * 
 
 	//vs_out.shadow_coord = SHADOW_MAT * model * vec4(vertex_position, 1.0); 
 }

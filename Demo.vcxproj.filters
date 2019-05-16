@@ -141,6 +141,9 @@
     <ClCompile Include="Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MeshGroupClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="MenuButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="Text.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshGroupClass.h">
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Header Files\Entities</Filter>
