@@ -40,8 +40,8 @@ Entity::Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : 
 Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
 {
 	// Created a bounding box based on the entityMesh 
-	name = inLoader->GetMesh(index).name;
-
+	LoaderMesh tempMesh = inLoader->GetMesh(index);
+	name = tempMesh.name;
 
 	InitBoundingBox();
 	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
