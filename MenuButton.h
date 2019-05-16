@@ -25,12 +25,16 @@ private:
 	//glm::vec3 rotation;
 	//glm::vec3 scale;
 
-	//glm::vec3 boundingBoxCenter;
+	glm::vec3 boundingBoxCenter;
 	//glm::vec3 boundingBoxSize;
+	glm::vec3 cornerMin;
+	glm::vec3 cornerMax;
+
 public:
 	MenuButton(float offset, int textureID);
 	~MenuButton();
 	void CreateButtonQuad();
+	void CalculateBoundingBox();
 
 	std::vector<ButtonVtx> GetButtonVertices() const { return buttonVertices; }
 	glm::vec3 GetVertexPosition(int idx) const { return glm::vec3(buttonVertices[idx].vtxPos[0], buttonVertices[idx].vtxPos[1], buttonVertices[idx].vtxPos[2]); }

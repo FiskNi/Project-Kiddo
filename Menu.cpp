@@ -1,5 +1,53 @@
 #include "Menu.h"
 
+void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
+
+	// IF PAUSED
+
+	if (menu->state == MAINMENU)
+	{
+
+		//if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
+		//{
+		//	//RESUMES GAME
+		//	menu->isLoading = true;
+		//	menu->state = PLAYING;
+		//
+		//	std::cout << "START GAME/RESUME" << std::endl;
+		//	std::cout << "Loading takes time!" << std::endl;
+		//	// Bad stuff, needs to be changed but works very temporarily
+		//	//scene->roomBuffer->SetRoomCompleted(true);
+		//}
+		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
+		//{
+		//	//RESTART HERE
+		//}
+		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
+		{
+			//CLOSES WINDOW
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+		/*if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+			std::cout << "BOOTY" << std::endl;
+		}*/
+	}
+
+}
+
+void Menu::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		//std::cout << "CLICK CLICK BITCH" << std::endl;
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+		std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
+	}
+}
 
 Menu::Menu() 
 {
@@ -19,28 +67,6 @@ Menu::~Menu()
 
 }
 
-//void Menu::CompileMainMenuMeshData() {
-//	//// Defines const states here, check to see which room to load
-//	//const int PAUSE = 2;
-//
-//	//// Check which state is active, and run loading accordingly
-//	//if (state == PAUSE)
-//	//{
-//	//	// Hardcoded quad to print something to the screen
-//	//	RigidEntity quad(0);
-//	//	quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//	//	quad.SetMaterialID(materials[0].getMaterialID());
-//	//	quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//	//	rigids.push_back(quad);
-//
-//	//	// Perhaps change position for the menu?
-//	//	// Initialize camera (Default constructor)
-//	//	roomCamera = new Camera;
-//	//}
-//
-//	//// Compiles all the mesh data in the room for the renderer
-//	//CompileMeshData();
-//}
 
 void Menu::CreateMainMenu()
 {
@@ -49,6 +75,17 @@ void Menu::CreateMainMenu()
 		vertexCountTotal += newButton.GetVertexCount();
 		menuButtons.push_back(newButton);
 		nrOfMenuButtons++;
+	}
+}
+
+void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
+{
+	if (!setUserPointer)
+	{
+		glfwSetWindowUserPointer(renderWindow, this);
+		glfwSetKeyCallback(renderWindow, key_callback);
+		glfwSetMouseButtonCallback(renderWindow, mouse_button_callback);
+		setUserPointer = true;
 	}
 }
 
@@ -86,33 +123,6 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 	stbi_image_free(data);
 }
 
-
-//=============================================================
-//	MENU BUTTON QUADS ARE NOW CREATED IN MENU BUTTON
-//=============================================================
-//void Menu::CreateMenuQuad()
-//{
-//	// Height of one button
-//	float buttonHeight = 0.5f;
-//	// calculates the offset for this menu button
-//	float ofs = nrOfMenuButtons * (buttonHeight + BUTTON_OFFSET);
-//	// Add an offset to the y coordinate in order to offset upcoming buttons once the shape has been defined
-//	MenuButton mButton = {
-//		-0.5,(-0.5 + ofs),0.0,	0.0, 0.0,	//0.5, 0.5, 0.5,	// TOP		LEFT
-//		-0.5,(+0.5 + ofs),0.0,	0.0, 1.0,	//0.5, 0.5, 0.5,	// BOTTOM	LEFT
-//		+0.5,(+0.5 + ofs),0.0,	1.0, 1.0,	//0.5, 0.5, 0.5,	// BOTTOM	RIGHT
-//		-0.5,(-0.5 + ofs),0.0,	0.0, 0.0,	//0.5, 0.5, 0.5,	// TOP		LEFT
-//		+0.5,(+0.5 + ofs),0.0,	1.0, 1.0,	//0.5, 0.5, 0.5,	// BOTTOM	RIGHT
-//		+0.5,(-0.5 + ofs),0.0,	1.0, 0.0,	//0.5, 0.5, 0.5,	// TOP		RIGHT
-//	};
-//
-//	menuButtons.push_back(mButton);
-//
-//	//vertexCount = (int)menuButtons.size();
-//
-//	nrOfMenuButtons++;
-//
-//};
 
 //void Menu::CreateMainMenuRoom(std::vector<Material> materials, Loader* aLoader, int state)
 //{

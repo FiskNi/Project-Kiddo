@@ -16,35 +16,47 @@
 
 class Menu {
 private:
+	bool setUserPointer = false;
+
+	GAMESTATE state = MAINMENU;
+
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
-
+	// Make this an array of textures?
 	GLuint buttonTextureBase;
 
-	std::vector<Mesh> meshes;
-	std::vector<Mesh> menuMeshes;
+	// Mesh vectors if we want a 3D scene to the menu
+	//std::vector<Mesh> meshes;
+	//std::vector<Mesh> menuMeshes;
 
+	// Menu Button objects
 	std::vector<MenuButton> menuButtons;
-	//std::vector<ButtonVtx> buttonVertices;
 
+	// These are used to calculate the offset which is sent into the MenuButton constructor (Maybe only send in nr of buttons and calc in MenuButton?)
 	int nrOfMenuButtons;
 	const float BUTTON_OFFSET = 0.05f;
 	const float buttonHeight = 0.3f;
 
+	// The total number of vertices for the menu
 	int vertexCountTotal;
 
 	bool isMenuRunning;
+	bool isLoading;
 
-	Camera* menuCamera;
+	// camera for the menu, if we want a 3D scene
+	//Camera* menuCamera;
 
 public:
 	Menu();
 	~Menu();
 
-	void CreateMainMenu();
+	static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
+	static void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
 
-	//void CompileMainMenuMeshData();
+	void CreateMainMenu();
+	void MenuUpdate(GLFWwindow* renderWindow, float deltaTime);
 	void CreateMenuTexture(std::string path, GLuint *texture);
+
 
 	//void CreateMenuQuad();
 
@@ -62,10 +74,17 @@ public:
 	int GetVertexCountTotal() const { return vertexCountTotal; }
 	std::vector<ButtonVtx> GetButtonVertices(int idx) const { return menuButtons[idx].GetButtonVertices(); }
 	std::vector<MenuButton> GetMenuButtons() const { return menuButtons; }
-	float GetCurrentOffset() const { return nrOfMenuButtons * (buttonHeight + BUTTON_OFFSET); }
+	float GetCurrentOffset() const { return (nrOfMenuButtons-1) * (buttonHeight + BUTTON_OFFSET); }
 	int GetNrOfMenuButtons() const { return nrOfMenuButtons; }
 
 	bool GetIsMenuRunning() const { return isMenuRunning; }
 	void SetIsMenuRunning(bool tf) { this->isMenuRunning = tf; }
+
+	GAMESTATE GetCurrentState() const { return state; }
+	void SetState(GAMESTATE newState) { this->state = newState; }
+
+	bool GetIsLoading() const { return isLoading; }
+	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
 	
 };
+

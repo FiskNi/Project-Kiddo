@@ -248,30 +248,6 @@ void Scene::CompileMeshDataMainMenu()
 	//meshes = mainMenuRoomBuffer->GetMeshData();
 }
 
-//void Scene::CompileMainMenuData()
-//{
-//	int meshCount = GetMeshData().size();
-//	int vertexCount = 0;
-//	for (int i = 0; i < meshCount; i++)
-//	{
-//		vertexCount += menuHandler.GetVertexCount();
-//	}
-//	// Allocated memory
-//	mainSceneVertexData = new vertexPolygon[vertexCount];
-//
-//	int vertexIndex = 0;
-//	for (int i = 0; i < meshCount; i++)
-//	{
-//		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
-//		for (int j = 0; j < meshVtxCount; j++)
-//		{
-//			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
-//			vertexIndex++;
-//		}
-//	}
-//	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
-//}
-
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
@@ -284,6 +260,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		glfwSetKeyCallback(renderWindow, key_callback);
 		setUserPointer = true;
 	}
+
 
 	if (state == MAINMENU) 
 	{

@@ -179,7 +179,7 @@ void GameEngine::Run()
 		}
 		if (mainScene.GetCurrentState() == MAINMENU && mainScene.GetIsLoading() == false) {
 			// RENDER CALL FOR MAIN MENU HERE
-			//CompileMainMenuData();
+			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 																					// TEMP GETS SCENE CAMERA
 			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), mainScene.GetCamera(), gClearColour, mainMenu.GetButtonTexture());
 		}
