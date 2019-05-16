@@ -289,7 +289,7 @@ void Scene::LoadRoom()
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)
@@ -310,7 +310,7 @@ void Scene::LoadRoom()
 	else
 	{
 		roomNr = 0;
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 

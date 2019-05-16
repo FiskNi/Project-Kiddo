@@ -702,8 +702,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 {
 
 	//==========
-	// Entity loading will be changed to take in custom attributes and base what is loaded into the room on these
-	// Will need to move the Loader up from this location to properly take in materials as well
+	// Entity loading will be changed to take in custom attributes and base    what is loaded into the room on these
+	// Will need to move the Loader up from this location to properly take in  materials as well
 	// The pipeline needs to be looked over in general to determine how things will load and be created
 	//==========
 
