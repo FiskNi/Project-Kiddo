@@ -45,12 +45,12 @@ out vec4 fragment_color;
 // Texture inputs 
 //uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
-//uniform sampler2D normalTex;
+uniform sampler2D backgroundTex;
 
-layout(location = 12) uniform vec3 matAmbient;
-layout(location = 13) uniform vec3 matDiffuse;
-layout(location = 14) uniform vec3 matSpecular;
-layout(location = 15) uniform vec3 matEmissive;
+//layout(location = 12) uniform vec3 matAmbient;
+//layout(location = 13) uniform vec3 matDiffuse;
+//layout(location = 14) uniform vec3 matSpecular;
+//layout(location = 15) uniform vec3 matEmissive;
 
 //#define NR_P_LIGHTS 6
 //uniform PointLight pointLights[NR_P_LIGHTS];

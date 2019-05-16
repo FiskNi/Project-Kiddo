@@ -1,63 +1,18 @@
 #include "Menu.h"
 
-void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
-
-	// IF PAUSED
-
-	//if (menu->state == MAINMENU)
-	//{
-
-		//if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
-		//{
-		//	//RESUMES GAME
-		//	menu->isLoading = true;
-		//	menu->state = PLAYING;
-		//
-		//	std::cout << "START GAME/RESUME" << std::endl;
-		//	std::cout << "Loading takes time!" << std::endl;
-		//	// Bad stuff, needs to be changed but works very temporarily
-		//	//scene->roomBuffer->SetRoomCompleted(true);
-		//}
-		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
-		//{
-		//	//RESTART HERE
-		//}
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
-		{
-			//CLOSES WINDOW
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-
-		/*if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			std::cout << "BOOTY" << std::endl;
-		}*/
-	//}
-
-}
-
-void Menu::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		//std::cout << "CLICK CLICK BITCH" << std::endl;
-		double x, y;
-		glfwGetCursorPos(window, &x, &y);
-		std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
-	}
-}
 
 Menu::Menu() 
 {
-	//pauseOverlayTexture = 0;
 	vertexCountTotal = 0;
 	nrOfMenuButtons = 0;
 	isMenuRunning = true;
+	isButtonHit = false;
+
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
+
+	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
 	CreateMainMenu();
 }
@@ -67,25 +22,54 @@ Menu::~Menu()
 
 }
 
-
+// ========================================================================
+//	Creates the buttons for the main menu, this also send in the offset for a "stacked" menu
+// ========================================================================
 void Menu::CreateMainMenu()
 {
 	for (int i = 0; i < 3; i++) {
-		MenuButton newButton(GetCurrentOffset(), 0);
+		buttonTextures.push_back(buttonTextureBase);
+		MenuButton newButton(GetCurrentOffset(), i);
 		vertexCountTotal += newButton.GetVertexCount();
 		menuButtons.push_back(newButton);
 		nrOfMenuButtons++;
 	}
 }
 
+// ========================================================================
+//	Updates the menu and checks for what to do whenever a menu button has been clicked
+// ========================================================================
 void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 {
-	if (!setUserPointer)
+
+	// ****KEY CALLBACK DOES NOT WORK FOR MENU, please do not attempt to re-implement Key callback in Menu****
+	glfwPollEvents();
+	if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
 	{
-		glfwSetWindowUserPointer(renderWindow, this);
-		glfwSetKeyCallback(renderWindow, key_callback);
-		glfwSetMouseButtonCallback(renderWindow, mouse_button_callback);
-		setUserPointer = true;
+		// Gets the clicked cursor position and checks for collision with any of the buttons
+		double x, y;
+		glfwGetCursorPos(renderWindow, &x, &y);
+		std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
+		CheckCollision(x, y);
+		printMouseClickOnce = true;
+	}
+	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+		printMouseClickOnce = false;
+	}
+
+
+	if (isButtonHit == true) {
+		if (currentButtonHit == 0) {
+			// START GAME
+		}
+		else if (currentButtonHit == 1) {
+			// SETTINGS? CREDITS? HOW TO PLAY?
+		}
+		else if (currentButtonHit == 2) {
+			// EXIT
+			glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+		}
+		isButtonHit = false;
 	}
 }
 
@@ -121,6 +105,39 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 	else
 		std::cout << "Failed to load texture. Reason: " << stbi_failure_reason() << std::endl;
 	stbi_image_free(data);
+}
+
+// ========================================================================
+//	Checks collision between the clicked mouse cursor and the buttons
+// ========================================================================
+void Menu::CheckCollision(float x, float y) 
+{
+	for (int i = 0; i < nrOfMenuButtons; i++) {
+		if (menuButtons[i].CheckInsideCollision(x, y) == true) {
+			std::cout << "Hit Button nr " << i << std::endl;
+			currentButtonHit = i;
+			isButtonHit = true;
+			return;
+		}
+	}
+}
+
+void Menu::CreateBackgroundQuad() {
+
+	ButtonVtx bgQuad[6] =
+	{
+		-1, -1,	0,		0, 0,	// TOP		LEFT
+		-1, +1,	0,		0, 1,	// BOTTOM	LEFT
+		+1, +1,	0,		1, 1,	// BOTTOM	RIGHT
+		-1, -1,	0,		0, 0,	// TOP		LEFT
+		+1, +1,	0,		1, 1,	// BOTTOM	RIGHT
+		+1, -1,	0,		1, 0,	// TOP		RIGHT
+	};
+
+	for (int i = 0; i < 6; i++) {
+		//backgroundQuad[i] = myQuad[i];
+		backgroundQuad.push_back(bgQuad[i]);
+	}
 }
 
 

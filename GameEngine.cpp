@@ -95,12 +95,17 @@ void GameEngine::CompileMainMenuData()
 	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
 
 	int vertexIndex = 0;
+	//for (int k = 0; k < 6; k++)
+	//{
+	//	mainMenuVertexData[vertexIndex] = mainMenu.GetBackgroundVertices(k);
+	//	vertexIndex++;
+	//}
+
 	for (int i = 0; i < nrOfMenuButtons; i++)
 	{
 		int buttonVtxCount = mainMenu.GetMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
 		for (int j = 0; j < buttonVtxCount; j++)
 		{
-			//mainMenuVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
 			mainMenuVertexData[vertexIndex] = mainMenu.GetButtonVertices(i)[j];
 			vertexIndex++;
 		}
@@ -158,7 +163,7 @@ void GameEngine::Run()
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 			Camera temp;
 
-			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), temp, gClearColour, mainMenu.GetButtonTexture());
+			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetButtonTextures());
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
