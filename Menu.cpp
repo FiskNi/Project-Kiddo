@@ -6,8 +6,8 @@ void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, i
 
 	// IF PAUSED
 
-	if (menu->state == MAINMENU)
-	{
+	//if (menu->state == MAINMENU)
+	//{
 
 		//if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
 		//{
@@ -33,7 +33,7 @@ void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, i
 		/*if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
 			std::cout << "BOOTY" << std::endl;
 		}*/
-	}
+	//}
 
 }
 

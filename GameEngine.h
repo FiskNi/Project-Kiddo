@@ -48,6 +48,7 @@ private:
 	Menu mainMenu;
 	ButtonVtx* mainMenuVertexData;
 	void CompileMainMenuData();
+	bool menuIsRunning;
 
 public:
 	GameEngine();

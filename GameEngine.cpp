@@ -8,7 +8,7 @@ GameEngine::GameEngine()
 	// Supreme edition loading screen that shows up too late (should play before the scene loads stuff)
 	mainRenderer.CreateFrameBuffer();
 	mainRenderer.SetViewport();
-	mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+	//mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
 	mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
 	glUniform1i(3, false);  // Boolean for the shadowmap toggle
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -40,6 +40,10 @@ GameEngine::GameEngine()
 		}
 	}
 	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+
+
+
+	menuIsRunning = true;
 }
 
 GameEngine::~GameEngine()
@@ -126,81 +130,118 @@ void GameEngine::Run()
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
 
+
+
+
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
-		if (mainScene.GetIsSwitched())
-		{
-			CompileRoomData();
-			mainScene.SetSwitched();
-		}
-		/*else if (mainScene.GetCurrentState() == MAINMENU && mainScene.GetIsSwitched()) {
-			CompileMainMenuData();
-			mainScene.SetSwitched();
-		}*/
-
 		glfwPollEvents();
+		if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
+		{
+			menuIsRunning = false;
+		}
+		else if (mainScene.GetExit())
+		{
+			menuIsRunning = true;
+			mainScene.Exited();
+		}
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
 		if (deltaTime > 1.0f)
 			deltaTime = 0.0f;
 
-		// Main updates to a scene
-		// Includes all interactions in the game world
-		mainScene.Update(mainRenderer.getWindow(), deltaTime);
 
-		// PrePass render for Shadow mapping 
-		mainRenderer.prePassRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
-		mainRenderer.SetViewport();	//resets the viewport
-
-		// First render pass
-		mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
-
-		// Update ImGui content
-		UpdateImGui(renderDepth);
-
-		// ---- Main render call --- ///
-		mainRenderer.Render(mainScene.GetShader(0), 
-			mainScene.GetMeshData(), 
-			mainScene.GetCamera(), 
-			gClearColour, 
-			mainScene.GetPointLights(), 
-			mainScene.GetDirectionalLights(), 
-			mainScene.GetMaterials());
-
-		// Render a textured full screen quad if game is paused
-		if (mainScene.GetCurrentState() == PAUSED)
+		if (menuIsRunning == true)
 		{
-			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
-		}
-		else {
-			// Render a second pass for the fullscreen quad
-			mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
-		}
-		if (mainScene.GetCurrentState() == MAINMENU && mainScene.GetIsLoading() == false) {
 			// RENDER CALL FOR MAIN MENU HERE
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
-																					// TEMP GETS SCENE CAMERA
-			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), mainScene.GetCamera(), gClearColour, mainMenu.GetButtonTexture());
+			Camera temp;
+
+			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), temp, gClearColour, mainMenu.GetButtonTexture());
+
+			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glfwSwapBuffers(mainRenderer.getWindow());
 		}
-		// Render loading screen, then switch between main menu and game, and then set isLoading to false once it has finished loading
-		if(mainScene.GetIsLoading() == true){
+		else if (menuIsRunning == false && mainScene.GetRoomLoaded())
+		{
+			// Main updates to a scene
+			// Includes all interactions in the game world
+			mainScene.Update(mainRenderer.getWindow(), deltaTime);
+
+			// PrePass render for Shadow mapping 
+			mainRenderer.prePassRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
+			mainRenderer.SetViewport();	//resets the viewport
+			// First render pass
+			mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+			
+			if (!mainScene.GetCurrentState() == PAUSED)
+			{
+				// ---- Main render call --- ///
+				mainRenderer.Render(mainScene.GetShader(0),
+					mainScene.GetMeshData(),
+					mainScene.GetCamera(),
+					gClearColour,
+					mainScene.GetPointLights(),
+					mainScene.GetDirectionalLights(),
+					mainScene.GetMaterials());
+
+				// Render a second pass for the fullscreen quad
+				// Important for rendering the scene
+				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
+				// Draw call for fsq and imgui
+				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				UpdateImGui(renderDepth);
+				ImGui::Render();
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				glfwSwapBuffers(mainRenderer.getWindow());
+			}
+			else
+			{
+				// Pause screen draw call
+				mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+				glfwSwapBuffers(mainRenderer.getWindow());
+				// Pause screen draw call
+			}		
+		}
+		else if(!mainScene.GetRoomLoaded())
+		{	
+			// Loading screen draw call
 			mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetLoadingTexture());
-			mainScene.SwitchMainMenu();
-			mainScene.SetIsLoading(false);
+
+			// Draw call for fsq and imgui
+			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			UpdateImGui(renderDepth);
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			glfwSwapBuffers(mainRenderer.getWindow());
+			// Draw call for fsq and imgui
+
+			// Heavy loading work
+			mainScene.LoadRoom();
+			CompileRoomData();
 		}
 	
+
+
 		// Draw fullscreen quad
 		// Could be moved to the renderer
-		glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		//glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		// Render ImGui
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//// Render ImGui
+		//// Update ImGui content
+		//UpdateImGui(renderDepth);
+		//ImGui::Render();
+		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-		glfwSwapBuffers(mainRenderer.getWindow());
+		//glfwSwapBuffers(mainRenderer.getWindow());
 	}
 
 	// SHUTDOWN

@@ -5,6 +5,18 @@ Loader::Loader(std::string fileName)
 {
 	this->fileName = fileName;
 
+	this->meshGroup = nullptr;
+	this->material = nullptr;
+	this->meshVert = nullptr;
+	this->mesh = nullptr;
+	this->dirLight = nullptr;
+	this->pointLight = nullptr;
+	this->joints = nullptr;
+	this->animations = nullptr;
+	this->keyFrames = nullptr;
+	this->transforms = nullptr;
+
+
 	// =========================================
 	// Create input stream variable for the file,
 	// Open the file as binary
@@ -45,7 +57,7 @@ Loader::Loader(std::string fileName)
 		{
 			binFile.read((char*)&this->meshGroup[i], sizeof(MeshGroup));
 		}
-
+		MeshGroup a = meshGroup[1];
 		for (int i = 0; i < fileHeader.meshCount; i++)
 		{
 
@@ -60,6 +72,40 @@ Loader::Loader(std::string fileName)
 				binFile.read((char*)&this->meshVert[i].vertices[j], sizeof(Vertex));
 			}
 
+			this->joints = new Joint[mesh[i].skeletons.jointCount];
+			this->animations = new Animation[mesh[i].skeletons.aniCount];
+			
+			
+
+			// 3.3 Joints
+			for (int j = 0; j < mesh[i].skeletons.jointCount; j++)
+			{
+				std::cout << "Writing joint " << j << "..." << std::endl;
+				binFile.read((char*)&joints[j], sizeof(Joint) * mesh[i].skeletons.jointCount);
+			}
+
+			for (int a = 0; a < mesh[i].skeletons.aniCount; a++)
+			{
+				// 3.4.1 Animations
+				std::cout << "Writing animation " << a << "..." << std::endl;
+				binFile.read((char*)&animations[a], sizeof(Animation));
+				this->keyFrames = new KeyFrame[animations[a].keyframeCount];
+
+				for (int k = 0; k < animations[a].keyframeCount; k++)
+				{
+					// 3.4.2 Keyframes
+					std::cout << "Writing keyframe " << k << "..." << std::endl;
+					binFile.read((char*)&keyFrames[k], sizeof(KeyFrame));
+					this->transforms = new Transform[keyFrames[k].transformCount];
+
+					for (int t = 0; t < keyFrames[k].transformCount; t++)
+					{
+						// 3.4.3 Transforms
+						std::cout << "Writing keyTransform " << t << "..." << std::endl;
+						binFile.read((char*)&transforms[t], sizeof(Transform));
+					}
+				}
+			}
 		}
 
 		for (int i = 0; i < fileHeader.materialCount; i++)
@@ -114,4 +160,6 @@ Loader::~Loader()
 	delete[] this->mesh;
 	delete[] this->material;
 }
+
+
 

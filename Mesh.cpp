@@ -7,6 +7,8 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 	this->rotation = glm::quat(rotationEulerXYZ);
 	this->scale = glm::vec3(1.0f);
 
+	isChild = false;
+
 	this->materialID = 0;
 	ImportMesh(vertArr, vertexCount);
 }
@@ -17,6 +19,8 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID)
 	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->rotation = glm::quat(rotationEulerXYZ);
 	this->scale = glm::vec3(1.0f);
+
+	isChild = false;
 
 	this->materialID = materialID;
 	ImportMesh(vertArr, vertexCount);
@@ -30,10 +34,26 @@ Mesh::Mesh(Loader* inLoader, int index)
 	glm::quat eRotation = glm::quat(eRotationXYZ);
 	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
 
+	name = inLoader->GetMesh(index).name;
+	if (inLoader->GetMesh(index).isChild == true && inLoader->GetMesh(index).parentType != -1)
+	{
+		pName = inLoader->GetMesh(index).parentName;
+		isChild = true;
+	}
+	else
+	{
+		pName = "NO PARENT FOUND";
+		isChild = false;
+	}
 
 	this->position = ePosition;
 	this->rotation = eRotation;
 	this->scale = eScale;
+
+	parentType = inLoader->GetMesh(index).parentType;
+
+	myParent = nullptr;
+	myGroupParent = nullptr;
 
 	this->materialID = inLoader->GetMaterialID(index);
 	ImportMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index));
@@ -45,6 +65,8 @@ Mesh::Mesh()
 	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->rotation = glm::quat(rotationEulerXYZ);
 	this->scale = glm::vec3(1.0f);
+
+	isChild = false;
 
 	this->materialID = 0;
 }
@@ -544,3 +566,14 @@ std::vector<vertexPolygon>& Mesh::ModifyVertices()
 {
 	return vertices;
 }
+
+void Mesh::SetMeshParent(Mesh * parent)
+{
+	this->myParent = parent;
+}
+
+void Mesh::SetGroupParent(MeshGroupClass * parent)
+{
+	myGroupParent = parent;
+}
+
