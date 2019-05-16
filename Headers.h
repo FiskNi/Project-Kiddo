@@ -38,9 +38,10 @@
 
 #define WIDTH 1920
 #define HEIGHT 1080
+#define MAXBONES 64
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
-
-#define nr_P_LIGHTS 6
+#define POINTLIGHTS 6
+#define NAME_SIZE 256
 
 using namespace std;
 

@@ -36,7 +36,6 @@ private:
 
 public:
 	Entity(unsigned int i);
-	Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID);
 	Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	Entity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Entity();

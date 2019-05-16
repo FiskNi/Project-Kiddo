@@ -12,6 +12,43 @@
 #ifndef MESH_H
 #define MESH_H
 
+struct SkeletonD
+{
+	struct JointD
+	{
+		string name;
+		int parentIndex = -1;
+		glm::mat4 invBindPose;
+	};
+
+	struct AnimationD
+	{
+		struct KeyFrameD
+		{
+			int id = 0;
+			// global transform per joint (could be used if no interpolation is needed!
+			vector<glm::vec3>	global_joints_T;
+			vector<glm::quat>	global_joints_R;
+			vector<glm::vec3>	global_joints_S;
+
+			// local transform, good for interpolation and then making a final global.
+			vector<glm::vec3>	local_joints_T;
+			vector<glm::quat>	local_joints_R;
+			vector<glm::vec3>	local_joints_S;
+		};
+		string name;
+		int keyframeFirst;
+		int keyframeLast;
+		float duration;
+		float rate;
+		vector<KeyFrameD> keyframes;
+	};
+
+	string name;
+	vector<JointD> joints;
+	vector<AnimationD> animations;
+};
+
 class MeshGroupClass;
 
 class Mesh
@@ -34,12 +71,12 @@ private:
 
 	Mesh * myParent;
 	MeshGroupClass * myGroupParent;
+	SkeletonD skeleton;
 
 	unsigned int materialID;
 
 public:
 	Mesh(Vertex* vertArr, unsigned int vertexCount);
-	Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID);
 	Mesh(Loader* inLoader, int index);
 	Mesh();
 	~Mesh();
@@ -78,10 +115,11 @@ public:
 	void SetMeshParent(Mesh *parent);
 	void SetGroupParent(MeshGroupClass * parent);
 
-	Mesh * GetMeshParent() { return myParent; }
-	MeshGroupClass * GetGroupParent() { return myGroupParent; }
+	Mesh* GetMeshParent() { return myParent; }
+	MeshGroupClass* GetGroupParent() { return myGroupParent; }
 
 	std::vector<vertexPolygon> GetVertices() { return vertices; }
+	SkeletonD GetSkeleton() { return skeleton; }
 	int GetVertexCount() const { return vertexCount; }
 };
 

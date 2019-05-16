@@ -24,7 +24,6 @@ private:
 
 public:
 	RigidEntity(unsigned int i);
-	RigidEntity(Vertex * vertArr, unsigned int vertexCount, unsigned int matID);
 	RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~RigidEntity();

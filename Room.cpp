@@ -162,7 +162,6 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 			{
 				pressurePlates[i].setPressed(true);
 				// PLAY SOUND
-
 			}
 		}
 
@@ -171,7 +170,6 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 			pressurePlates[i].setPressed(true);
 			// PLAY SOUND
 		}
-
 	}
 }
 

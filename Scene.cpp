@@ -125,7 +125,7 @@ Scene::Scene()
 	else
 		std::cout << "Failed to create audio device, none connected?" << std::endl;
 
-	// This is the initial state the game will be in when the update loop starts running
+	// This is the initial state the scene will be in when the update loop starts running
 	state = PLAYING;
 }
 
@@ -141,19 +141,17 @@ void Scene::LoadShaders()
 {
 	// Loads shaders from file
 	basicShader.CreateShader("VertexShader.glsl", "Fragment.glsl");
-	shaders.push_back(basicShader);
-
 	shadowmapShader.CreateShader("VertexShaderSM.glsl", "FragmentSM.glsl");
-	shaders.push_back(shadowmapShader);
-
+	mainMenuShader.CreateShader("VertexShaderMenu.glsl", "FragmentMenu.glsl");
 	// Initialize fullscreen quad vertices
 	// Right now the fullscreen quad is coded into the shader handler.
 	// Could be moved and better organized
 	fsqShader.CreateFSShaders();
 	fsqShader.CreateFullScreenQuad();
+	
+	shaders.push_back(basicShader);
+	shaders.push_back(shadowmapShader);
 	shaders.push_back(fsqShader);
-
-	mainMenuShader.CreateShader("VertexShaderMenu.glsl", "FragmentMenu.glsl");
 	shaders.push_back(mainMenuShader);
 }
 
@@ -290,7 +288,7 @@ void Scene::LoadRoom()
 	// Additional hardcoded roomfunctions may be applied here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)

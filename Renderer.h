@@ -79,7 +79,10 @@ public:
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();
+
 	void CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm::vec3 scale, GLuint shaderProg);
+	void computeMatrixPaletteByTime(float anim_time, Mesh* mesh);
+
 	void passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg, GLchar* uniformName, int index);
 
 };

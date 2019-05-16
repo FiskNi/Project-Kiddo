@@ -130,9 +130,6 @@ void GameEngine::Run()
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
 
-
-
-
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
@@ -151,11 +148,9 @@ void GameEngine::Run()
 		if (deltaTime > 1.0f)
 			deltaTime = 0.0f;
 
-
 		if (menuIsRunning == true)
 		{
 			// RENDER CALL FOR MAIN MENU HERE
-
 			CompileMainMenuData();	// TEMP GETS SCENE CAMERA
 			Camera temp;
 

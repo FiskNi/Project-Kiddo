@@ -2,10 +2,10 @@
 
 Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 {
-	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotation = glm::quat(rotationEulerXYZ);
-	this->scale = glm::vec3(1.0f);
+	this->position			= glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotationEulerXYZ	= glm::vec3(0.0f, 0.0f, 0.0f);
+	this->rotation			= glm::quat(rotationEulerXYZ);
+	this->scale				= glm::vec3(1.0f);
 
 	isChild = false;
 
@@ -13,26 +13,13 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 	ImportMesh(vertArr, vertexCount);
 }
 
-Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID)
-{
-	this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotationEulerXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotation = glm::quat(rotationEulerXYZ);
-	this->scale = glm::vec3(1.0f);
-
-	isChild = false;
-
-	this->materialID = materialID;
-	ImportMesh(vertArr, vertexCount);
-}
-
 Mesh::Mesh(Loader* inLoader, int index)
 {
-	glm::vec3 ePosition = glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
-	glm::vec3 eRotationXYZ = glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
-	eRotationXYZ = glm::radians(eRotationXYZ);
-	glm::quat eRotation = glm::quat(eRotationXYZ);
-	glm::vec3 eScale = glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
+	glm::vec3 ePosition		= glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
+	glm::vec3 eRotationXYZ	= glm::vec3(inLoader->GetMesh(index).rotation[0], inLoader->GetMesh(index).rotation[1], inLoader->GetMesh(index).rotation[2]);
+	eRotationXYZ			= glm::radians(eRotationXYZ);
+	glm::quat eRotation		= glm::quat(eRotationXYZ);
+	glm::vec3 eScale		= glm::vec3(inLoader->GetMesh(index).scale[0], inLoader->GetMesh(index).scale[1], inLoader->GetMesh(index).scale[2]);
 
 	name = inLoader->GetMesh(index).name;
 	if (inLoader->GetMesh(index).isChild == true && inLoader->GetMesh(index).parentType != -1)
@@ -56,6 +43,51 @@ Mesh::Mesh(Loader* inLoader, int index)
 	myGroupParent = nullptr;
 
 	this->materialID = inLoader->GetMaterialID(index);
+
+	for (int j = 0; j < inLoader->GetSkeleton(index).jointCount; j++)
+	{
+		SkeletonD::JointD newJoint;
+		Joint& jointRef = inLoader->GetJoint(j);
+
+		newJoint.name = jointRef.name;
+		newJoint.invBindPose = glm::make_mat4(jointRef.invBindPose);
+		newJoint.parentIndex = jointRef.parentIndex;
+
+		this->skeleton.joints.push_back(newJoint);
+	}
+
+	for (int a = 0; a < inLoader->GetSkeleton(index).aniCount; a++)
+	{
+		SkeletonD::AnimationD newAni;
+		Animation& aniRef = inLoader->GetAnimation(a);
+
+		newAni.name				= aniRef.name;
+		newAni.keyframeFirst	= aniRef.keyframeFirst;
+		newAni.keyframeLast		= aniRef.keyframeLast;
+		newAni.duration			= aniRef.duration;
+		newAni.rate				= aniRef.rate;
+		for (int k = 0; k < aniRef.keyframeCount; k++)
+		{
+			SkeletonD::AnimationD::KeyFrameD newKey;
+			KeyFrame& keyRef = inLoader->GetKeyFrame(k);
+			newKey.id = keyRef.id;
+
+			for (int t = 0; t < keyRef.transformCount; t++)
+			{
+				Transform& ref = inLoader->GetTransform(t);
+				glm::vec3 newT = glm::make_vec3(ref.transform);
+				glm::quat newR = glm::make_vec4(ref.rotate);
+				glm::vec3 newS = glm::make_vec3(ref.scale);
+				newKey.local_joints_R.push_back(newT);
+				newKey.local_joints_R.push_back(newR);
+				newKey.local_joints_R.push_back(newS);
+			}
+			newAni.keyframes.push_back(newKey);
+		}
+		skeleton.animations.push_back(newAni);
+	}
+
+
 	ImportMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index));
 }
 

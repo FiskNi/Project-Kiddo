@@ -3,7 +3,7 @@
 //These pragma commands can be used to ENSURE that the struct is the exact size it should be.
 //I've yet to run into the issues that sizeof(>>InsertStruct<<) is inaccurate but according to one of my sources it could happen.
 #include <vector>
-#define NAME_SIZE 256
+#define NAME_SIZE_L 256
 
 struct MehHeader
 {
@@ -16,14 +16,14 @@ struct MehHeader
 
 struct MeshGroup
 {
-	char groupName[NAME_SIZE];
+	char groupName[NAME_SIZE_L];
 	
 	float translation[3];
 	float rotation[3];
 	float scale[3];
 
 	bool isChild;
-	char parentName[NAME_SIZE];
+	char parentName[NAME_SIZE_L];
 	int parentType;
 };
 
@@ -41,15 +41,15 @@ struct Vertex
 
 struct PhongMaterial
 {
-	char name[NAME_SIZE];
+	char name[NAME_SIZE_L];
 	float ambient[3];
 	float diffuse[3];
 	float specular[3];
 	float emissive[3];
 	float opacity;
 
-	char albedo[NAME_SIZE];
-	char normal[NAME_SIZE];
+	char albedo[NAME_SIZE_L];
+	char normal[NAME_SIZE_L];
 };
 
 struct MeshVert
@@ -57,16 +57,34 @@ struct MeshVert
 	Vertex* vertices;
 };
 
+
+//struct MeshSkeleton
+//{
+//	Joint* joints;
+//	Animation* animations;
+//};
+//
+//struct MeshKeyFrame
+//{
+//	KeyFrame* keyFrames;
+//};
+//
+//struct MeshTransform
+//{
+//	Transform* transforms;
+//};
+
+
 struct Skeleton
 {
-	char name[NAME_SIZE];
+	char name[NAME_SIZE_L];
 	int jointCount;
 	int aniCount;
 };
 
 struct LoaderMesh
 {
-	char name[NAME_SIZE];
+	char name[NAME_SIZE_L];
 	unsigned int materialID;
 
 	float translation[3];
@@ -74,7 +92,7 @@ struct LoaderMesh
 	float scale[3];
 
 	bool isChild;
-	char parentName[NAME_SIZE];
+	char parentName[NAME_SIZE_L];
 	int parentType;
 
 	int type;
@@ -85,19 +103,19 @@ struct LoaderMesh
 
 	int vertexCount;
 
-	Skeleton skeletons;
+	Skeleton skeleton;
 };
 
 struct Joint
 {
-	char name[NAME_SIZE];
+	char name[NAME_SIZE_L];
 	int parentIndex;
 	float invBindPose[16];
 };
 
 struct Animation
 {
-	char name[NAME_SIZE];
+	char name[NAME_SIZE_L];
 	int keyframeFirst;
 	int keyframeLast;
 	float duration;

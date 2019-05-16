@@ -1,5 +1,4 @@
 #include "Loader.h"
-
 //#include <string>
 Loader::Loader(std::string fileName)
 {
@@ -32,17 +31,6 @@ Loader::Loader(std::string fileName)
 	}
 	else
 	{
-		//==========================================
-		// Read the exact size of mehHeader AKA size
-		// of Int for now which = 4 bytes.
-		// Each time we read the sizeof a struct we're 
-		// really reading the size of all it contains
-		// so if it has 2 ints that'd be 8 bytes.
-		//==========================================
-
-
-		//std::cout << things << std::endl;
-
 		//Mesh
 		binFile.read((char*)&this->fileHeader, sizeof(MehHeader));
 
@@ -72,23 +60,22 @@ Loader::Loader(std::string fileName)
 				binFile.read((char*)&this->meshVert[i].vertices[j], sizeof(Vertex));
 			}
 
-			this->joints = new Joint[mesh[i].skeletons.jointCount];
-			this->animations = new Animation[mesh[i].skeletons.aniCount];
+			this->joints = new Joint[mesh[i].skeleton.jointCount];
+			this->animations = new Animation[mesh[i].skeleton.aniCount];
 			
-			
-
 			// 3.3 Joints
-			for (int j = 0; j < mesh[i].skeletons.jointCount; j++)
+			for (int j = 0; j < mesh[i].skeleton.jointCount; j++)
 			{
 				std::cout << "Writing joint " << j << "..." << std::endl;
-				binFile.read((char*)&joints[j], sizeof(Joint) * mesh[i].skeletons.jointCount);
+				binFile.read((char*)&joints[j], sizeof(Joint) * mesh[i].skeleton.jointCount);
 			}
 
-			for (int a = 0; a < mesh[i].skeletons.aniCount; a++)
+			for (int a = 0; a < mesh[i].skeleton.aniCount; a++)
 			{
 				// 3.4.1 Animations
 				std::cout << "Writing animation " << a << "..." << std::endl;
 				binFile.read((char*)&animations[a], sizeof(Animation));
+
 				this->keyFrames = new KeyFrame[animations[a].keyframeCount];
 
 				for (int k = 0; k < animations[a].keyframeCount; k++)

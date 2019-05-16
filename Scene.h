@@ -54,6 +54,8 @@ private:
 
 	// Shaders
 	std::vector<Shader> shaders;
+	// This should be created temporarily in the LoadShader funtion
+	// Probably move the CreateShader function inside shaders into the constructor instead as well
 	Shader basicShader;
 	Shader fsqShader;
 	Shader shadowmapShader;
