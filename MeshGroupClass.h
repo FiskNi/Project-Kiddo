@@ -3,7 +3,7 @@
 //#include "Mesh.h"
 #ifndef MESHGROUPCLASS_H
 #define MESHGROUPCLASS_H
-
+#include "Headers.h"
 class Mesh;
 
 class MeshGroupClass
@@ -19,6 +19,7 @@ private:
 
 	//-1 is No Parent, 0 is mesh, 1 is group
 	int parentType;
+	glm::vec3 parentPosOffset;
 
 	Mesh * myMeshParent;
 	MeshGroupClass * myGroupParent;
@@ -44,6 +45,9 @@ public:
 	int GetParentType() { return parentType; }
 	Mesh * GetMeshParent() { return myMeshParent; }
 	MeshGroupClass * GetGroupParent() { return myGroupParent; }
+
+	glm::vec3 GetParentPosOffset() const { return parentPosOffset; }
+	void SetParentPosOffset(glm::vec3 offset);
 
 
 };

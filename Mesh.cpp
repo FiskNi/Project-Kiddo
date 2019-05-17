@@ -8,6 +8,8 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 	this->scale = glm::vec3(1.0f);
 
 	isChild = false;
+	parentPosOffset = glm::vec3(0, 0, 0);
+	parentSizeOffset = glm::vec3(1, 1, 1);
 
 	this->materialID = 0;
 	ImportMesh(vertArr, vertexCount);
@@ -21,6 +23,8 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount, unsigned int materialID)
 	this->scale = glm::vec3(1.0f);
 
 	isChild = false;
+	parentPosOffset = glm::vec3(0, 0, 0);
+	parentSizeOffset = glm::vec3(1, 1, 1);
 
 	this->materialID = materialID;
 	ImportMesh(vertArr, vertexCount);
@@ -46,6 +50,9 @@ Mesh::Mesh(Loader* inLoader, int index)
 		isChild = false;
 	}
 
+	parentPosOffset = glm::vec3(0, 0, 0);
+	parentSizeOffset = glm::vec3(1, 1, 1);
+
 	this->position = ePosition;
 	this->rotation = eRotation;
 	this->scale = eScale;
@@ -67,6 +74,8 @@ Mesh::Mesh()
 	this->scale = glm::vec3(1.0f);
 
 	isChild = false;
+	parentPosOffset = glm::vec3(0, 0, 0);
+	parentSizeOffset = glm::vec3(1, 1, 1);
 
 	this->materialID = 0;
 }
@@ -575,5 +584,15 @@ void Mesh::SetMeshParent(Mesh * parent)
 void Mesh::SetGroupParent(MeshGroupClass * parent)
 {
 	myGroupParent = parent;
+}
+
+void Mesh::SetParentPosOffset(glm::vec3 offset)
+{
+	this->parentPosOffset = offset;
+}
+
+void Mesh::SetParentSizeOffset(glm::vec3 offset)
+{
+	parentSizeOffset = offset;
 }
 

@@ -113,7 +113,7 @@ Scene::Scene()
 	state = PLAYING;
 
 	// Our entry room (first level)
-	Loader startingRoom("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+	Loader startingRoom("Resources/Assets/GameReady/Rooms/OssianOrder.meh");
 	LoadShaders();
 	LoadMaterials(&startingRoom);
 	LoadCharacter(&startingRoom);

@@ -37,7 +37,7 @@ Entity::Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : 
 	SetMaterialID(matID);
 }
 
-Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader, index)
 {
 	// Created a bounding box based on the entityMesh 
 	LoaderMesh tempMesh = inLoader->GetMesh(index);
@@ -60,7 +60,7 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool fr
 	SetMaterialID(matID);
 }
 
-Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entityMesh(inLoader, index)
 {
 	// Created a bounding box based on the entityMesh 
 	name = inLoader->GetMesh(index).name;

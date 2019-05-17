@@ -156,7 +156,7 @@ void GameEngine::Run()
 		{
 			// RENDER CALL FOR MAIN MENU HERE
 
-			CompileMainMenuData();	// TEMP GETS SCENE CAMERA
+			
 			Camera temp;
 
 			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), temp, gClearColour, mainMenu.GetButtonTexture());
