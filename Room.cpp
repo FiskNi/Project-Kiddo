@@ -778,7 +778,7 @@ void Room::updateChildren()
 	{
 		if (meshGroups[i].GetIsChild() == true)
 		{
-			pressurePlates[i].SetPosition(pressurePlates[i].GetPosition() + updateChild(&meshGroups[i]));
+			meshGroups[i].SetPosition(meshGroups[i].GetGroupPosition() + updateChild(&meshGroups[i]));
 		}
 	}
 
