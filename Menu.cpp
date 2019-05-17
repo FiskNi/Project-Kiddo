@@ -3,14 +3,18 @@
 
 Menu::Menu() 
 {
-	vertexCountTotal = 0;
-	nrOfMenuButtons = 0;
+	vertexCountMainTotal = 0;
+	vertexCountPauseTotal = 0;
+	nrOfMainButtons = 0;
+	nrOfPauseButtons = 0;
 	isMenuRunning = true;
 	isButtonHit = false;
+	updateState = MAINMENU;
 
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
+	CreateMenuTexture("Resources/Textures/PauseButtonTEMP.png", &pauseButtonTexture);
 
 	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
@@ -27,12 +31,21 @@ Menu::~Menu()
 // ========================================================================
 void Menu::CreateMainMenu()
 {
+	buttonTextures.push_back(buttonTextureBase);
+	pauseButtonTextures.push_back(pauseButtonTexture);
+
 	for (int i = 0; i < 3; i++) {
-		buttonTextures.push_back(buttonTextureBase);
-		MenuButton newButton(GetCurrentOffset(), i);
-		vertexCountTotal += newButton.GetVertexCount();
-		menuButtons.push_back(newButton);
-		nrOfMenuButtons++;
+		MenuButton newButton(GetCurrentOffset(), 0);
+		vertexCountMainTotal += newButton.GetVertexCount();
+		mainButtons.push_back(newButton);
+		nrOfMainButtons++;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		MenuButton newPauseButton(GetCurrentOffsetPause(), 0);
+		vertexCountPauseTotal += newPauseButton.GetVertexCount();
+		pauseButtons.push_back(newPauseButton);
+		nrOfPauseButtons++;
 	}
 }
 
@@ -58,19 +71,44 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		printMouseClickOnce = false;
 	}
 
-
-	if (isButtonHit == true) {
-		if (currentButtonHit == 0) {
-			// START GAME			// This is handled in GameEngine by getting the last clicked button
+	if (activeMenu == MAINACTIVE) {
+		if (isButtonHit == true) {
+			if (currentButtonHit == 0) {
+				// START GAME			// This is handled in GameEngine by getting the last clicked button
+				updateState = PLAYING;
+			}
+			else if (currentButtonHit == 1) {
+				// SETTINGS? CREDITS? HOW TO PLAY?
+			}
+			else if (currentButtonHit == 2) {
+				// EXIT
+				glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+			}
+			isButtonHit = false;
 		}
-		else if (currentButtonHit == 1) {
-			// SETTINGS? CREDITS? HOW TO PLAY?
+	}
+	else if (activeMenu == PAUSEACTIVE) {
+		if (isButtonHit == true) {
+			if (currentButtonHit == 0) {
+				// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
+				// This shuts the entire window currently as a backup for testing
+				glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+			}
+			else if (currentButtonHit == 1) {
+				// RESUME GAME			// CHANGE STATE IN SCENE, let gameengine know it needs to change state
+				std::cout << "CLICKED BUTTON " << currentButtonHit << std::endl;
+				//updateState = PLAYING;
+			}
+			else if (currentButtonHit == 2) {
+				// RESTART
+				//updateState = PLAYING;
+			}
+			else if (currentButtonHit == 3) {
+				// EXIT TO MAIN MENU
+				updateState = MAINMENU;
+			}
+			isButtonHit = false;
 		}
-		else if (currentButtonHit == 2) {
-			// EXIT
-			glfwSetWindowShouldClose(renderWindow, GL_TRUE);
-		}
-		isButtonHit = false;
 	}
 }
 
@@ -113,12 +151,24 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 // ========================================================================
 void Menu::CheckCollision(float x, float y) 
 {
-	for (int i = 0; i < nrOfMenuButtons; i++) {
-		if (menuButtons[i].CheckInsideCollision(x, y) == true) {
-			std::cout << "Hit Button nr " << i << std::endl;
-			currentButtonHit = i;
-			isButtonHit = true;
-			return;
+	if (activeMenu == PAUSEACTIVE) {
+		for (int i = 0; i < nrOfPauseButtons; i++) {
+			if (pauseButtons[i].CheckInsideCollision(x, y) == true) {
+				std::cout << "Hit Button nr " << i << std::endl;
+				currentButtonHit = i;
+				isButtonHit = true;
+				return;
+			}
+		}
+	}
+	else {
+		for (int i = 0; i < nrOfMainButtons; i++) {
+			if (mainButtons[i].CheckInsideCollision(x, y) == true) {
+				std::cout << "Hit Button nr " << i << std::endl;
+				currentButtonHit = i;
+				isButtonHit = true;
+				return;
+			}
 		}
 	}
 }
