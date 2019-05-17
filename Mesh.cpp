@@ -8,6 +8,8 @@ Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
 	this->scale				= glm::vec3(1.0f);
 
 	isChild = false;
+	myParent = nullptr;
+	myGroupParent = nullptr;
 
 	this->materialID = 0;
 	ImportMesh(vertArr, vertexCount);
@@ -44,48 +46,55 @@ Mesh::Mesh(Loader* inLoader, int index)
 
 	this->materialID = inLoader->GetMaterialID(index);
 
+	skeleton.joints.resize(inLoader->GetSkeleton(index).jointCount);
 	for (int j = 0; j < inLoader->GetSkeleton(index).jointCount; j++)
 	{
 		SkeletonD::JointD newJoint;
-		Joint& jointRef = inLoader->GetJoint(j);
+		Joint& jointRef = inLoader->GetJoint(index, j);
 
-		newJoint.name = jointRef.name;
+		newJoint.name = (string)jointRef.name;
 		newJoint.invBindPose = glm::make_mat4(jointRef.invBindPose);
 		newJoint.parentIndex = jointRef.parentIndex;
 
-		this->skeleton.joints.push_back(newJoint);
+		this->skeleton.joints[j] = newJoint;
 	}
 
+	skeleton.animations.resize(inLoader->GetSkeleton(index).aniCount);
 	for (int a = 0; a < inLoader->GetSkeleton(index).aniCount; a++)
 	{
 		SkeletonD::AnimationD newAni;
-		Animation& aniRef = inLoader->GetAnimation(a);
+		Animation& aniRef = inLoader->GetAnimation(index, a);
 
-		newAni.name				= aniRef.name;
+		newAni.name				= (string)aniRef.name;
 		newAni.keyframeFirst	= aniRef.keyframeFirst;
 		newAni.keyframeLast		= aniRef.keyframeLast;
 		newAni.duration			= aniRef.duration;
 		newAni.rate				= aniRef.rate;
+		newAni.keyframes.resize(aniRef.keyframeCount);
 		for (int k = 0; k < aniRef.keyframeCount; k++)
 		{
 			SkeletonD::AnimationD::KeyFrameD newKey;
-			KeyFrame& keyRef = inLoader->GetKeyFrame(k);
+			KeyFrame& keyRef = inLoader->GetKeyFrame(a, k);
 			newKey.id = keyRef.id;
-
+			newKey.local_joints_T.resize(keyRef.transformCount);
+			newKey.local_joints_R.resize(keyRef.transformCount);
+			newKey.local_joints_S.resize(keyRef.transformCount);
 			for (int t = 0; t < keyRef.transformCount; t++)
 			{
-				Transform& ref = inLoader->GetTransform(t);
+				Transform& ref = inLoader->GetTransform(k, t);
 				glm::vec3 newT = glm::make_vec3(ref.transform);
 				glm::quat newR = glm::make_vec4(ref.rotate);
 				glm::vec3 newS = glm::make_vec3(ref.scale);
-				newKey.local_joints_R.push_back(newT);
-				newKey.local_joints_R.push_back(newR);
-				newKey.local_joints_R.push_back(newS);
+				newKey.local_joints_T[t] = newT;
+				newKey.local_joints_R[t] = newR;
+				newKey.local_joints_S[t] = newS;
 			}
-			newAni.keyframes.push_back(newKey);
+			newAni.keyframes[k] = newKey;
 		}
-		skeleton.animations.push_back(newAni);
+		skeleton.animations[a] = newAni;
 	}
+
+	skeleton.currentAnimTime = 0;
 
 
 	ImportMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index));
@@ -99,13 +108,21 @@ Mesh::Mesh()
 	this->scale = glm::vec3(1.0f);
 
 	isChild = false;
+	myGroupParent = nullptr;
+	myParent = nullptr;
 
 	this->materialID = 0;
 }
 
 Mesh::~Mesh()
 {
+	if (myParent)
+		delete myParent;
+	if (myGroupParent)
+		delete myGroupParent;
 
+	myGroupParent = nullptr;
+	myParent = nullptr;
 }
 
 //============================================================= 
@@ -592,6 +609,16 @@ void Mesh::SetScale(glm::vec3 newSca)
 void Mesh::SetScale(float x, float y, float z)
 {
 	scale = glm::vec3(x, y, z);
+}
+
+void Mesh::ForwardTime(float t)
+{
+	skeleton.currentAnimTime += t;
+}
+
+void Mesh::SetTime(float t)
+{
+	skeleton.currentAnimTime = t;
 }
 
 std::vector<vertexPolygon>& Mesh::ModifyVertices()

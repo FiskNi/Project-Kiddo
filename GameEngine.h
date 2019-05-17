@@ -14,10 +14,10 @@
 #include "Scene.h"
 #include "Menu.h"
 #define MAX_KEYS 1024
+
 class GameEngine
 {
 private:
-	static bool m_Keys[MAX_KEYS];
 	// Full screen quad stuff
 	// Might be moved later
 	GLuint gVertexBufferFS = 0;
@@ -40,9 +40,8 @@ private:
 
 	// Main scene
 	Scene mainScene;
-	friend void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
-	void CompileRoomData();
 
+	void CompileRoomData();
 
 	// Main Menu
 	Menu mainMenu;

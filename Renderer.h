@@ -23,6 +23,10 @@
 //	
 //============================================================================
 
+struct SkinDataBuffer
+{
+	glm::mat4 bones[64];
+};
 
 class Renderer
 {
@@ -46,6 +50,8 @@ private:
 
 	GLuint gVertexBufferMenu;
 	GLuint gVertexAttributeMenu;
+
+	GLuint boneBuffer;
 
 
 public:
@@ -81,9 +87,10 @@ public:
 	void SetViewport();
 
 	void CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm::vec3 scale, GLuint shaderProg);
-	void computeMatrixPaletteByTime(float anim_time, Mesh* mesh);
+	void ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time, Mesh* mesh);
 
 	void passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg, GLchar* uniformName, int index);
+
 
 };
 

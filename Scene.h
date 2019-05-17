@@ -36,9 +36,9 @@
 class Scene
 {
 private:
-	bool setUserPointer = false;
+	bool setUserPointer;
 
-	GAMESTATE state = MAINMENU;
+	GAMESTATE state;
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -110,6 +110,6 @@ public:
 	void ResetRoom();
 	void Exited();
 
-	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
+	//void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
 };
 

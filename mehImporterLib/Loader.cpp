@@ -10,10 +10,6 @@ Loader::Loader(std::string fileName)
 	this->mesh = nullptr;
 	this->dirLight = nullptr;
 	this->pointLight = nullptr;
-	this->joints = nullptr;
-	this->animations = nullptr;
-	this->keyFrames = nullptr;
-	this->transforms = nullptr;
 
 
 	// =========================================
@@ -59,40 +55,50 @@ Loader::Loader(std::string fileName)
 				binFile.read((char*)&this->meshVert[i].vertices[j], sizeof(Vertex));
 			}
 
-			this->joints = new Joint[mesh[i].skeleton.jointCount];
-			this->animations = new Animation[mesh[i].skeleton.aniCount];
-			
+			/*if (mesh[i].skeleton.jointCount > 0)
+				this->joints = new Joint[mesh[i].skeleton.jointCount];
+			if (mesh[i].skeleton.aniCount > 0)
+				this->animations = new Animation[mesh[i].skeleton.aniCount];*/
+				
 			// 3.3 Joints
+			Joint* newJoint = new Joint[mesh[i].skeleton.jointCount];	
 			for (int j = 0; j < mesh[i].skeleton.jointCount; j++)
 			{
 				std::cout << "Writing joint " << j << "..." << std::endl;
-				binFile.read((char*)&joints[j], sizeof(Joint) * mesh[i].skeleton.jointCount);
+				binFile.read((char*)&newJoint[j], sizeof(Joint) * mesh[i].skeleton.jointCount);
 			}
+			joints.push_back(newJoint);
 
+			// 3.4.1 Animations
+			Animation* newAni = new Animation[mesh[i].skeleton.aniCount];
 			for (int a = 0; a < mesh[i].skeleton.aniCount; a++)
 			{
-				// 3.4.1 Animations
 				std::cout << "Writing animation " << a << "..." << std::endl;
-				binFile.read((char*)&animations[a], sizeof(Animation));
+				binFile.read((char*)&newAni[a], sizeof(Animation));
 
-				this->keyFrames = new KeyFrame[animations[a].keyframeCount];
-
-				for (int k = 0; k < animations[a].keyframeCount; k++)
+				KeyFrame* newKey = new KeyFrame[newAni[a].keyframeCount];
+				for (int k = 0; k < newAni[a].keyframeCount; k++)
 				{
 					// 3.4.2 Keyframes
 					std::cout << "Writing keyframe " << k << "..." << std::endl;
-					binFile.read((char*)&keyFrames[k], sizeof(KeyFrame));
+					binFile.read((char*)&newKey[k], sizeof(KeyFrame));
 
-					this->transforms = new Transform[keyFrames[k].transformCount];
-
-					for (int t = 0; t < keyFrames[k].transformCount; t++)
+					Transform* newTransform = new Transform[newKey[k].transformCount];
+					for (int p = 0; p < newKey[k].transformCount; p++)
 					{
-						// 3.4.3 Transforms
-						std::cout << "Writing keyTransform " << t << "..." << std::endl;
-						binFile.read((char*)&transforms[t], sizeof(Transform));
+						binFile.read((char*)&newTransform[p], sizeof(Transform));
 					}
+					transforms.push_back(newTransform);
+					//delete newTransform;
+					newTransform = nullptr;
 				}
+				keyFrames.push_back(newKey);
+				//delete newKey;
+				newKey = nullptr;
 			}
+			animations.push_back(newAni);
+			//delete newAni;
+			newAni = nullptr;
 		}
 
 		for (int i = 0; i < fileHeader.materialCount; i++)
@@ -142,10 +148,26 @@ Loader::~Loader()
 	for (int i = 0; i < this->fileHeader.meshCount; i++)
 	{
 		if (meshVert[i].vertices)
-			delete[] this->meshVert[i].vertices;
+			delete[] meshVert[i].vertices;
 	}
-	delete[] this->mesh;
-	delete[] this->material;
+	if (mesh)
+		delete[] mesh;
+	if (material)
+		delete[] material;
+	if (meshGroup)
+		delete[] meshGroup;
+	if (dirLight)
+		delete[] dirLight;
+	if (pointLight)
+		delete[] pointLight;
+	//for (int i = 0; i < joints.size(); i++)
+	//	delete joints[i];
+	//for (int i = 0; i < animations.size(); i++)
+	//	delete animations[i];
+	//for (int i = 0; i < keyFrames.size(); i++)
+	//	delete keyFrames[i];
+	//for (int i = 0; i < transforms.size(); i++)
+	//	delete[] transforms[i];
 }
 
 

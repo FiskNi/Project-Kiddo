@@ -53,9 +53,9 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
-	void PlayerCollectibleCollision(Character* playerCharacter);
 
-	void PlayerItemCollision(Character* playerCharacter);
+	//void PlayerCollectibleCollision(Character* playerCharacter);
+	//void PlayerItemCollision(Character* playerCharacter);
 
 	bool FindParent(Mesh * childMesh);
 	bool FindParent(MeshGroupClass * childMeshGroup);
@@ -119,10 +119,7 @@ public:
 
 	void BridgeUpdates(GLFWwindow* renderWindow);
 
-	void destroyRoom();
-
-
-	void Upgrade(Character* playerCharacter);
+	//void Upgrade(Character* playerCharacter);
 	void CompileMeshData();
 };
 

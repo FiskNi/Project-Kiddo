@@ -17,11 +17,10 @@ private:
 
 	MeshVert* meshVert;
 
-
-	Joint* joints;
-	Animation* animations;
-	KeyFrame* keyFrames;
-	Transform* transforms;
+	std::vector<Joint*> joints;
+	std::vector<Animation*> animations;
+	std::vector<KeyFrame*> keyFrames;
+	std::vector<Transform*> transforms;
 
 public:
 	Loader(std::string fileName);
@@ -37,10 +36,10 @@ public:
 	// New, remove above when implemented
 	LoaderMesh GetMesh(int index) const		{ return mesh[index]; }
 	Skeleton GetSkeleton(int index) const	{ return mesh[index].skeleton; }
-	Joint GetJoint(int index) const			{ return joints[index]; }
-	Animation GetAnimation(int index) const	{ return animations[index]; }
-	KeyFrame GetKeyFrame(int index) const	{ return keyFrames[index]; }
-	Transform GetTransform(int index) const	{ return transforms[index]; }
+	Joint GetJoint(int mIndex, int jIndex) const			{ return joints[mIndex][jIndex]; }
+	Animation GetAnimation(int mIndex, int aIndex) const	{ return animations[mIndex][aIndex]; }
+	KeyFrame GetKeyFrame(int aIndex, int kIndex) const	{ return keyFrames[aIndex][kIndex]; }
+	Transform GetTransform(int kIndex, int tIndex) const	{ return transforms[kIndex][tIndex]; }
 
 
 

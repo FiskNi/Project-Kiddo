@@ -4,6 +4,13 @@
 
 Renderer::Renderer()
 {
+	boneBuffer = 0;
+
+	gVertexBuffer = 0;
+	gVertexAttribute = 0;
+	gVertexBufferMenu = 0;
+	gVertexAttributeMenu = 0;
+
 
 	initWindow(WIDTH, HEIGHT);
 
@@ -146,6 +153,11 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	int specular = 14;
 	int emissive = 15;
 
+	int weights = 16;
+	int bones = 17;
+	int boneList = 18;
+
+
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
@@ -185,7 +197,11 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
 		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
 
-		// Binds the VAO of an object to be renderer. Could become slow further on.
+		// Vertex animation buffer
+		SkinDataBuffer BoneBuffer;
+		ComputeAnimationMatrix(&BoneBuffer, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneList);
+
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
@@ -246,6 +262,7 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
 	glGenBuffers(1, &gVertexBuffer);
 
+
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
 
@@ -298,6 +315,13 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
+
+	//SkinDataBuffer
+	glGenBuffers(1, &boneBuffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer) * 64, NULL, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 }
 
 //= ============================================================
@@ -423,6 +447,7 @@ void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
 		BUFFER_OFFSET(sizeof(float) * 3)
 	);
 
+
 }
 
 //=============================================================
@@ -464,6 +489,8 @@ int Renderer::CreateFrameBuffer()
 
 	// bind default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 	return err;
 }
 
@@ -538,8 +565,9 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm:
 	MODEL_MAT = translationMatrix * rotationMatrix * scaleMatrix;
 }
 
-void Renderer::computeMatrixPaletteByTime(float anim_time, Mesh* mesh)
+void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time, Mesh* mesh)
 {
+	if (mesh->GetSkeleton().animations.size() < 0) return;
 	// use animation 0 for now....
 	SkeletonD::AnimationD& anim = mesh->GetSkeleton().animations[0];
 	// time must be less than duration.
@@ -573,7 +601,7 @@ void Renderer::computeMatrixPaletteByTime(float anim_time, Mesh* mesh)
 	bones_global_pose[0]			= local_r;
 
 	glm::mat4 bone_list[MAXBONES];
-	bone_list[0] = bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
+	boneList->bones[0] = bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
 	for (int bone = 1; bone < boneCount; bone++)
 	{
 		glm::vec3 translation		= glm::vec3(anim.keyframes[k1].local_joints_T[bone] * (1 - t) + anim.keyframes[k2].local_joints_T[bone] * t);
@@ -588,12 +616,8 @@ void Renderer::computeMatrixPaletteByTime(float anim_time, Mesh* mesh)
 		glm::mat4 local				= translationMatrix * rotationMatrix * scaleMatrix;
 
 		bones_global_pose[bone]		= bones_global_pose[mesh->GetSkeleton().joints[bone].parentIndex] * local;
-		bone_list[bone]				= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
+		boneList->bones[bone]				= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
 	}
-
-	// TO BE DELETED
-	// Can be used to make a matrix from a array[16]
-	// glm::mat4 invBindPose = glm::make_mat4x4(mesh->GetSkeleton().joints[0].invBindPose);
 }
 
 

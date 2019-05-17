@@ -20,8 +20,8 @@ private:
 	//-1 is No Parent, 0 is mesh, 1 is group
 	int parentType;
 
-	Mesh * myMeshParent;
-	MeshGroupClass * myGroupParent;
+	Mesh* myMeshParent;
+	MeshGroupClass* myGroupParent;
 
 public:
 	MeshGroupClass();

@@ -2,7 +2,7 @@
 
 Character::Character() : RigidEntity(1)
 {
-	items = new Item*[this->itemCap];
+	/*items = new Item*[this->itemCap];
 	for (int i = 0; i < itemCap; i++) {
 		items[i] = new Item();
 	}
@@ -10,7 +10,7 @@ Character::Character() : RigidEntity(1)
 	collected = new Collectible*[this->collCap];
 	for (int i = 0; i < collCap; i++) {
 		collected[i] = new Collectible();
-	}
+	}*/
 
 	holdingObject = false;
 	entityID = -1;
@@ -189,39 +189,39 @@ void Character::Move(GLFWwindow* window)
 	inputVector = moveDir;
 }
 
-void Character::PickUpItem(Item * item)
-{
-	//if (nrOf == cap) {
-	//	return;
-	//}
-	//else {
-	//	for (int i = 0; i < cap; i++) {
-	//		if (items[i]->GetItemType() == NONE) {
-	//			items[i]->SetItemType(item->GetItemType());
-	//			nrOf++;
-	//			std::cout << "Picked up item" << std::endl;
-	//			break;
-	//		}
-	//	}
-	//}
-}
+//void Character::PickUpItem(Item * item)
+//{
+//	//if (nrOf == cap) {
+//	//	return;
+//	//}
+//	//else {
+//	//	for (int i = 0; i < cap; i++) {
+//	//		if (items[i]->GetItemType() == NONE) {
+//	//			items[i]->SetItemType(item->GetItemType());
+//	//			nrOf++;
+//	//			std::cout << "Picked up item" << std::endl;
+//	//			break;
+//	//		}
+//	//	}
+//	//}
+//}
 
-void Character::PickUpCollectible(Collectible * coll)
-{
-	if (!this->collected[coll->GetIndex()]->GetCollected()) {
-		this->collected[coll->GetIndex()]->SetCollected(true);
-	}
-}
-
-Item * Character::Upgrade()
-{
-	if (items[currentItem] == nullptr) {
-		return nullptr;
-	}
-	else {
-		return items[currentItem];
-	}
-
-}
+//void Character::PickUpCollectible(Collectible * coll)
+//{
+//	if (!this->collected[coll->GetIndex()]->GetCollected()) {
+//		this->collected[coll->GetIndex()]->SetCollected(true);
+//	}
+//}
+//
+//Item * Character::Upgrade()
+//{
+//	if (items[currentItem] == nullptr) {
+//		return nullptr;
+//	}
+//	else {
+//		return items[currentItem];
+//	}
+//
+//}
 
 

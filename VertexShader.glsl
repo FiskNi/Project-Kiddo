@@ -11,6 +11,22 @@ layout(location = 7) uniform mat4 model;
 
 layout(location = 8) uniform mat4 SHADOW_MAT;
 
+layout(location = 16) uniform vec3 weights;
+layout(location = 17) uniform vec3 bones;
+
+struct skinningData
+{
+	mat4 bones[64];
+};
+
+//layout(location = 18) uniform skinningData skinData[64];
+
+layout(std140, binding = 1) uniform SkinDataBlock
+{
+	skinningData skinData[64];
+};
+
+
 out VS_OUT
 {
 	vec3 position;

@@ -73,18 +73,18 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 
 		// EXTRA
-		if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-			scene->Upgrade();
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-			scene->playerCharacter.SetCurrentItem(0);
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-			scene->playerCharacter.SetCurrentItem(1);
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-			scene->playerCharacter.SetCurrentItem(2);
-		if (key == GLFW_KEY_4 && action == GLFW_PRESS)
-			scene->playerCharacter.SetCurrentItem(3);
-		if (key == GLFW_KEY_5 && action == GLFW_PRESS)
-			scene->playerCharacter.SetCurrentItem(4);
+		//if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+		//	scene->Upgrade();
+		//if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+		//	scene->playerCharacter.SetCurrentItem(0);
+		//if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+		//	scene->playerCharacter.SetCurrentItem(1);
+		//if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+		//	scene->playerCharacter.SetCurrentItem(2);
+		//if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+		//	scene->playerCharacter.SetCurrentItem(3);
+		//if (key == GLFW_KEY_5 && action == GLFW_PRESS)
+		//	scene->playerCharacter.SetCurrentItem(4);
 	}
 }
 
@@ -111,6 +111,7 @@ void Scene::_CheckPressedBombs()
 Scene::Scene()
 {
 	LoadShaders();
+	setUserPointer = false;
 	roomBuffer = nullptr;
 	roomNr = 0;
 	isLoading = false;
@@ -133,8 +134,9 @@ Scene::~Scene()
 {
 	if (roomBuffer)
 		delete roomBuffer;
-
-	//audioEngine->drop();
+	roomBuffer = nullptr;
+	if (audioEngine)
+		audioEngine->drop();
 }
 
 void Scene::LoadShaders()
@@ -193,7 +195,7 @@ void Scene::CompileMeshData()
 
 	roomBuffer->CompileMeshData();
 	meshes = roomBuffer->GetMeshData();
-	meshes.push_back(playerCharacter.GetMeshData());
+	//meshes.push_back(playerCharacter.GetMeshData());
 	// Compile character data
 }
 
@@ -290,7 +292,7 @@ void Scene::LoadRoom()
 		delete roomBuffer;
 	roomBuffer = nullptr;
 
-	Loader* roomLoader;
+	Loader* roomLoader = nullptr;
 
 	// Hardcoded rooms that exists in the game. All room files are to be hardcoded here.
 	// roomNr refers to the order of the levels appreance. 

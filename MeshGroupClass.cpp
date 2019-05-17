@@ -49,7 +49,13 @@ MeshGroupClass::MeshGroupClass(Loader * inLoader, int index)
 
 MeshGroupClass::~MeshGroupClass()
 {
+	if (myGroupParent)
+		delete myGroupParent;
+	if (myMeshParent)
+		delete myMeshParent;
 
+	myGroupParent = nullptr;
+	myMeshParent = nullptr;
 }
 
 void MeshGroupClass::SetPosition(glm::vec3 newPos)

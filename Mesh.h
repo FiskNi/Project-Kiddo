@@ -17,7 +17,7 @@ struct SkeletonD
 	struct JointD
 	{
 		string name;
-		int parentIndex = -1;
+		int parentIndex;
 		glm::mat4 invBindPose;
 	};
 
@@ -25,12 +25,7 @@ struct SkeletonD
 	{
 		struct KeyFrameD
 		{
-			int id = 0;
-			// global transform per joint (could be used if no interpolation is needed!
-			vector<glm::vec3>	global_joints_T;
-			vector<glm::quat>	global_joints_R;
-			vector<glm::vec3>	global_joints_S;
-
+			int id;
 			// local transform, good for interpolation and then making a final global.
 			vector<glm::vec3>	local_joints_T;
 			vector<glm::quat>	local_joints_R;
@@ -47,6 +42,7 @@ struct SkeletonD
 	string name;
 	vector<JointD> joints;
 	vector<AnimationD> animations;
+	float currentAnimTime;
 };
 
 class MeshGroupClass;
@@ -69,8 +65,8 @@ private:
 	//-1 is No Parent, 0 is mesh, 1 is group
 	int parentType;
 
-	Mesh * myParent;
-	MeshGroupClass * myGroupParent;
+	Mesh* myParent;
+	MeshGroupClass* myGroupParent;
 	SkeletonD skeleton;
 
 	unsigned int materialID;
@@ -101,6 +97,9 @@ public:
 	void SetScale(glm::vec3 newSca);
 	void SetScale(float x, float y, float z);
 
+	void ForwardTime(float t);
+	void SetTime(float t);
+
 	std::vector<vertexPolygon>& ModifyVertices();
 
 	unsigned int GetMaterialID() const { return materialID; }
@@ -119,7 +118,7 @@ public:
 	MeshGroupClass* GetGroupParent() { return myGroupParent; }
 
 	std::vector<vertexPolygon> GetVertices() { return vertices; }
-	SkeletonD GetSkeleton() { return skeleton; }
+	SkeletonD& GetSkeleton() { return skeleton; }
 	int GetVertexCount() const { return vertexCount; }
 };
 

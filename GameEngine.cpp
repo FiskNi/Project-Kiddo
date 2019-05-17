@@ -144,6 +144,12 @@ void GameEngine::Run()
 		}
 
 		// Deltatime via ImGui
+
+	/*	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
+		int deltaTime = timeSinceStart - oldTimeSinceStart;
+		oldTimeSinceStart = timeSinceStart;*/
+
+
 		float deltaTime = ImGui::GetIO().DeltaTime;
 		if (deltaTime > 1.0f)
 			deltaTime = 0.0f;
@@ -151,7 +157,6 @@ void GameEngine::Run()
 		if (menuIsRunning == true)
 		{
 			// RENDER CALL FOR MAIN MENU HERE
-			CompileMainMenuData();	// TEMP GETS SCENE CAMERA
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 			Camera temp;
 
@@ -190,9 +195,11 @@ void GameEngine::Run()
 				// Draw call for fsq and imgui
 				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 				glDrawArrays(GL_TRIANGLES, 0, 6);
-				UpdateImGui(renderDepth);
-				ImGui::Render();
-				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+				//UpdateImGui(renderDepth);
+				//ImGui::Render();
+				//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 				glfwSwapBuffers(mainRenderer.getWindow());
 			}
 			else
@@ -214,9 +221,11 @@ void GameEngine::Run()
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			UpdateImGui(renderDepth);
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-			glfwSwapBuffers(mainRenderer.getWindow());
+
+			//ImGui::Render();
+			//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			//glfwSwapBuffers(mainRenderer.getWindow());
+
 			// Draw call for fsq and imgui
 
 			// Heavy loading work
