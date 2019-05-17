@@ -49,9 +49,10 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		// Gets the clicked cursor position and checks for collision with any of the buttons
 		double x, y;
 		glfwGetCursorPos(renderWindow, &x, &y);
-		std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
+		//std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
 		CheckCollision(x, y);
 		printMouseClickOnce = true;
+		buttonActionExecuted = false;
 	}
 	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
 		printMouseClickOnce = false;
@@ -60,7 +61,7 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 
 	if (isButtonHit == true) {
 		if (currentButtonHit == 0) {
-			// START GAME
+			// START GAME			// This is handled in GameEngine by getting the last clicked button
 		}
 		else if (currentButtonHit == 1) {
 			// SETTINGS? CREDITS? HOW TO PLAY?

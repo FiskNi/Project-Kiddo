@@ -6,9 +6,8 @@
 
 class Menu {
 private:
-	bool setUserPointer = false;
 
-	GAMESTATE state = MAINMENU;
+	//GAMESTATE state = MAINMENU;
 
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
@@ -34,6 +33,7 @@ private:
 
 	bool isButtonHit;
 	int currentButtonHit;
+	bool buttonActionExecuted;
 
 	bool printMouseClickOnce;
 
@@ -43,9 +43,6 @@ private:
 public:
 	Menu();
 	~Menu();
-
-	static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
-	static void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
 
 	void CreateMainMenu();
 	void MenuUpdate(GLFWwindow* renderWindow, float deltaTime);
@@ -77,8 +74,12 @@ public:
 	bool GetIsMenuRunning() const { return isMenuRunning; }
 	void SetIsMenuRunning(bool tf) { this->isMenuRunning = tf; }
 
-	GAMESTATE GetCurrentState() const { return state; }
-	void SetState(GAMESTATE newState) { this->state = newState; }
+	int GetLastClickedButton() const { return currentButtonHit; }
+	bool GetHasButtonActionExecuted() const { return buttonActionExecuted; }
+	void SetButtonActionExecuted(bool tf) { this->buttonActionExecuted = tf; }
+
+	//GAMESTATE GetCurrentState() const { return state; }
+	//void SetState(GAMESTATE newState) { this->state = newState; }
 
 	bool GetIsLoading() const { return isLoading; }
 	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }

@@ -141,15 +141,23 @@ void GameEngine::Run()
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
+		//if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
+		//{
+		//	menuIsRunning = false;
+		//}
+		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			menuIsRunning = false;
+			if (mainMenu.GetLastClickedButton() == 0) {
+				menuIsRunning = false;
+				mainMenu.SetButtonActionExecuted(true);
+			}
 		}
 		else if (mainScene.GetExit())
 		{
 			menuIsRunning = true;
 			mainScene.Exited();
 		}
+
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
