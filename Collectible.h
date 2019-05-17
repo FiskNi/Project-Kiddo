@@ -15,6 +15,4 @@ public:
 
 	bool GetCollected() { return this->collected; }
 	int GetIndex() { return this->index; }
-
-
 };

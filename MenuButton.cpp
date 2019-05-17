@@ -11,7 +11,8 @@ MenuButton::MenuButton(float offset, int textureID)
 	std::cout << "Button BBox MAX: " << cornerMax.x << "  " << cornerMax.y << std::endl;
 }
 
-MenuButton::~MenuButton() {
+MenuButton::~MenuButton() 
+{
 
 }
 
@@ -22,7 +23,8 @@ MenuButton::~MenuButton() {
 void MenuButton::CreateButtonQuad()
 {
 	// Add an offset to the y coordinate in order to offset upcoming buttons once the shape has been defined
-	ButtonVtx buttVtxTemp[6] = {
+	ButtonVtx buttVtxTemp[6] = 
+	{
 		-0.3f,(0.2f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
 		-0.3f,(+0.5f - offset)	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
 		+0.3f,(+0.5f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
@@ -31,7 +33,8 @@ void MenuButton::CreateButtonQuad()
 		+0.3f,(0.2f - offset)	,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
 	};
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) 
+	{
 		buttonVertices.push_back(buttVtxTemp[i]);
 	}
 

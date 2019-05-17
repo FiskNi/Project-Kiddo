@@ -110,9 +110,9 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
+	roomBuffer = nullptr;
 	LoadShaders();
 	setUserPointer = false;
-	roomBuffer = nullptr;
 	roomNr = 0;
 	isLoading = false;
 	exittoMenu = false;
@@ -198,15 +198,6 @@ void Scene::CompileMeshData()
 	//meshes.push_back(playerCharacter.GetMeshData());
 	// Compile character data
 }
-
-//void Scene::CompileMeshDataMainMenu()
-//{
-//	//// Fills the "meshes" vector with all the mesh data (primitive)
-//	//mainMenuRoomBuffer->CompileMeshData();
-//	//meshes.clear();
-//
-//	//meshes = mainMenuRoomBuffer->GetMeshData();
-//}
 
 //=============================================================
 //	Everything that updates in a scene happens here. 
@@ -300,7 +291,7 @@ void Scene::LoadRoom()
 	if (roomNr == 0)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
-		// roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
+		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)

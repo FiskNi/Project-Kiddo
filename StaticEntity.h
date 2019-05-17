@@ -6,7 +6,6 @@
 //	Unmoveable entities like walls or the ground 
 //============================================================================
 
-
 class StaticEntity : public Entity
 {
 public:

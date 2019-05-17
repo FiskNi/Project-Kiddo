@@ -38,7 +38,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
 		roomMeshes[i].ForwardTime(deltaTime);
-		if (roomMeshes[i].GetSkeleton().currentAnimTime > 5.0f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime > 0.5f)
 			roomMeshes[i].SetTime(0.0f);
 	}
 

@@ -132,3 +132,32 @@ struct PointLight
 	float color[3];
 	float intensity;
 };
+
+
+struct MeshSkeleton
+{
+	std::vector<Joint> joint;
+};
+
+struct MeshAnis
+{
+	struct MeshAnimation
+	{
+		struct KeyFrameL
+		{
+			struct TransformL
+			{
+				Transform t;
+			};
+
+			KeyFrame key;
+			std::vector<TransformL> transforms;
+		};
+
+
+		Animation ani;
+		std::vector<KeyFrameL> keyFrames;
+	};
+
+	std::vector<MeshAnimation> animations;
+};

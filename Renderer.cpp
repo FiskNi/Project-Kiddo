@@ -108,10 +108,6 @@ void Renderer::prePassRender(Shader gShaderProgram,
 	float gClearColour[3], 
 	std::vector<DirectionalLight> dirLightArr)
 {
-	// Position in shader
-	int model_matrix = 1;
-	int shadow_matrix = 2;
-
 	//PrePass render for Shadow mapping 
 	shadowMap.bindForWriting();
 
@@ -125,8 +121,8 @@ void Renderer::prePassRender(Shader gShaderProgram,
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].GetPos(), gShaderProgram.getShader());
 
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
-		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
+		glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
 		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].GetVertexCount());
 		startIndex += objects[i].GetVertexCount();
@@ -141,23 +137,6 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
 {
 	// Position in shader
-	int view_matrix = 5;
-	int projection_matrix = 6;
-	int model_matrix = 7;
-	int shadow_matrix = 8;
-	int cam_pos = 9;
-	int has_normal = 10;
-	int has_albedo = 11;
-	int ambient = 12;
-	int diffuse = 13;
-	int specular = 14;
-	int emissive = 15;
-
-	int weights = 16;
-	int bones = 17;
-	int boneList = 18;
-
-
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
@@ -198,9 +177,14 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
 
 		// Vertex animation buffer
-		SkinDataBuffer BoneBuffer;
-		ComputeAnimationMatrix(&BoneBuffer, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneList);
+		SkinDataBuffer boneData;
+		ComputeAnimationMatrix(&boneData, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
+
+		unsigned int boneDataIndex = glGetUniformBlockIndex(gShaderProgram.getShader(), "SkinDataBlock");
+		glUniformBlockBinding(gShaderProgram.getShader(), boneDataIndex, 1);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneBuffer);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer), &boneData, GL_STATIC_DRAW);
+
 
 
 		// Binds the albedo texture from a material
@@ -259,6 +243,9 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 	glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
 
+	glEnableVertexAttribArray(5);
+	glEnableVertexAttribArray(6);
+
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
 	glGenBuffers(1, &gVertexBuffer);
 
@@ -316,10 +303,29 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
 
+	glVertexAttribPointer(
+		5,
+		4,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 15)
+	);
+
+	glVertexAttribPointer(
+		6,
+		4,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 19)
+	);
+
+
 	//SkinDataBuffer
 	glGenBuffers(1, &boneBuffer);
 	glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer) * 64, NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 64, NULL, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 }
@@ -606,7 +612,7 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 		glm::mat4 local				= translationMatrix * rotationMatrix * scaleMatrix;
 
 		bones_global_pose[bone]		= bones_global_pose[mesh->GetSkeleton().joints[bone].parentIndex] * local;
-		boneList->bones[bone]				= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
+		boneList->bones[bone]		= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
 	}
 }
 

@@ -16,6 +16,8 @@ private:
 	PointLight* pointLight;
 
 	MeshVert* meshVert;
+	std::vector<MeshAnis> animationsD;
+	std::vector<MeshSkeleton> skeletonsD;
 
 	std::vector<Joint*> joints;
 	std::vector<Animation*> animations;
@@ -34,12 +36,12 @@ public:
 	int GetVertexCount(int meshID)		{ return mesh[meshID].vertexCount; }
 
 	// New, remove above when implemented
-	LoaderMesh GetMesh(int index) const		{ return mesh[index]; }
-	Skeleton GetSkeleton(int index) const	{ return mesh[index].skeleton; }
-	Joint GetJoint(int mIndex, int jIndex) const			{ return joints[mIndex][jIndex]; }
-	Animation GetAnimation(int mIndex, int aIndex) const	{ return animations[mIndex][aIndex]; }
-	KeyFrame GetKeyFrame(int aIndex, int kIndex) const	{ return keyFrames[aIndex][kIndex]; }
-	Transform GetTransform(int kIndex, int tIndex) const	{ return transforms[kIndex][tIndex]; }
+	LoaderMesh GetMesh(int index) const												{ return mesh[index]; }
+	Skeleton GetSkeleton(int index) const											{ return mesh[index].skeleton; }
+	Joint GetJoint(int mIndex, int jIndex) const									{ return skeletonsD[mIndex].joint[jIndex]; }
+	Animation GetAnimation(int mIndex, int aIndex) const							{ return animationsD[mIndex].animations[aIndex].ani; }
+	KeyFrame GetKeyFrame(int mIndex, int aIndex, int kIndex) const					{ return animationsD[mIndex].animations[aIndex].keyFrames[kIndex].key; }
+	Transform GetTransform(int mIndex, int aIndex, int kIndex, int tIndex) const	{ return animationsD[mIndex].animations[aIndex].keyFrames[kIndex].transforms[tIndex].t; }
 
 
 

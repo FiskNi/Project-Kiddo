@@ -74,14 +74,14 @@ Mesh::Mesh(Loader* inLoader, int index)
 		for (int k = 0; k < aniRef.keyframeCount; k++)
 		{
 			SkeletonD::AnimationD::KeyFrameD newKey;
-			KeyFrame& keyRef = inLoader->GetKeyFrame(a, k);
+			KeyFrame& keyRef = inLoader->GetKeyFrame(index, a, k);
 			newKey.id = keyRef.id;
 			newKey.local_joints_T.resize(keyRef.transformCount);
 			newKey.local_joints_R.resize(keyRef.transformCount);
 			newKey.local_joints_S.resize(keyRef.transformCount);
 			for (int t = 0; t < keyRef.transformCount; t++)
 			{
-				Transform& ref = inLoader->GetTransform(k, t);
+				Transform& ref = inLoader->GetTransform(index, a, k, t);
 				glm::vec3 newT = glm::make_vec3(ref.transform);
 				glm::quat newR = glm::make_vec4(ref.rotate);
 				glm::vec3 newS = glm::make_vec3(ref.scale);
@@ -116,13 +116,10 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-	if (myParent)
+	/*if (myParent)
 		delete myParent;
 	if (myGroupParent)
-		delete myGroupParent;
-
-	myGroupParent = nullptr;
-	myParent = nullptr;
+		delete myGroupParent;*/
 }
 
 //============================================================= 
@@ -497,6 +494,9 @@ void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 		newVertex.normals = glm::vec3(vertexData.normal[0], vertexData.normal[1], vertexData.normal[2]);
 		newVertex.tangent = glm::vec3(vertexData.tangent[0], vertexData.tangent[1], vertexData.tangent[2]);
 		newVertex.bitangent = glm::vec3(vertexData.bitangent[0], vertexData.bitangent[1], vertexData.bitangent[2]);
+
+		newVertex.weights = glm::vec4(vertexData.weight[0], vertexData.weight[1], vertexData.weight[2], vertexData.weight[3]);
+		newVertex.bones = glm::vec4(vertexData.bone[0], vertexData.bone[1], vertexData.bone[2], vertexData.bone[3]);
 
 		//The reserve should be above the for-loop 
 		vertices.reserve(vertexCount);

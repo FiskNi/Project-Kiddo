@@ -63,7 +63,6 @@ private:
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
-	Mesh* meshess;
 
 	// Materials are stored in a vector
 	std::vector<Material> materials;

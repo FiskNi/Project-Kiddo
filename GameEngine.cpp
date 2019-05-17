@@ -4,7 +4,8 @@
 
 GameEngine::GameEngine()
 {
-
+	mainSceneVertexData = nullptr;
+	mainMenuVertexData = nullptr;
 	// Supreme edition loading screen that shows up too late (should play before the scene loads stuff)
 	mainRenderer.CreateFrameBuffer();
 	mainRenderer.SetViewport();
@@ -80,26 +81,11 @@ void GameEngine::CompileRoomData()
 
 void GameEngine::CompileMainMenuData()
 {
-	//meshCount = mainScene.GetMeshData().size();
 	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
 	int vtxCountButtons = mainMenu.GetVertexCountTotal();
-	//std::cout << vtxCountButtons << std::endl;
-	//std::cout << mainMenu.GetVertexCountTotal() << std::endl;
-	//for (int i = 0; i < nrOfMenuButtons; i++)
-	//{
-	//	vertexCount += mainMenu.GetVertexCountTotal();
-	//}
-	// Allocated memory
-	//mainSceneVertexData = new vertexPolygon[vertexCount];
-
 	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
 
 	int vertexIndex = 0;
-	//for (int k = 0; k < 6; k++)
-	//{
-	//	mainMenuVertexData[vertexIndex] = mainMenu.GetBackgroundVertices(k);
-	//	vertexIndex++;
-	//}
 
 	for (int i = 0; i < nrOfMenuButtons; i++)
 	{
@@ -209,9 +195,9 @@ void GameEngine::Run()
 				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
-				//UpdateImGui(renderDepth);
-				//ImGui::Render();
-				//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				UpdateImGui(renderDepth);
+				ImGui::Render();
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 				glfwSwapBuffers(mainRenderer.getWindow());
 			}
@@ -235,11 +221,9 @@ void GameEngine::Run()
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			UpdateImGui(renderDepth);
 
-			//ImGui::Render();
-			//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-			//glfwSwapBuffers(mainRenderer.getWindow());
-
-			// Draw call for fsq and imgui
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			glfwSwapBuffers(mainRenderer.getWindow());
 
 			// Heavy loading work
 			mainScene.LoadRoom();

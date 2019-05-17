@@ -53,22 +53,28 @@ struct vertexPolygon
 	glm::vec3 normals;
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
+
+	glm::vec4 weights;
+	glm::vec4 bones;
 };
 
-enum BOXTYPE {
+enum BOXTYPE 
+{
 	LIGHTWEIGHT = 0,
 	EXPLOSIVE = 1,
 	ICEBLOCK = 2,
 	REGULAR = 3
 
 };
-enum ITEMTYPE {
+enum ITEMTYPE 
+{
 	FEATHER = 0,
 	BOMB = 1,
 	SNOWFLAKE = 2,
 	NONE = 3
 };
-enum GAMESTATE {
+enum GAMESTATE 
+{
 	PAUSED,
 	PLAYING,
 	MAINMENU

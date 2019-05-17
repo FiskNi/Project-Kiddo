@@ -54,51 +54,57 @@ Loader::Loader(std::string fileName)
 			{
 				binFile.read((char*)&this->meshVert[i].vertices[j], sizeof(Vertex));
 			}
-
-			/*if (mesh[i].skeleton.jointCount > 0)
-				this->joints = new Joint[mesh[i].skeleton.jointCount];
-			if (mesh[i].skeleton.aniCount > 0)
-				this->animations = new Animation[mesh[i].skeleton.aniCount];*/
 				
 			// 3.3 Joints
-			Joint* newJoint = new Joint[mesh[i].skeleton.jointCount];	
+			MeshSkeleton newSkeleton;
+			// Allocate memory for the joint vector inside
+			newSkeleton.joint.resize(mesh[i].skeleton.jointCount);
 			for (int j = 0; j < mesh[i].skeleton.jointCount; j++)
 			{
+				Joint newJoint;
 				std::cout << "Writing joint " << j << "..." << std::endl;
-				binFile.read((char*)&newJoint[j], sizeof(Joint) * mesh[i].skeleton.jointCount);
+				binFile.read((char*)&newJoint, sizeof(Joint));
+				newSkeleton.joint[j] = newJoint;
 			}
-			joints.push_back(newJoint);
 
-			// 3.4.1 Animations
-			Animation* newAni = new Animation[mesh[i].skeleton.aniCount];
+
+			MeshAnis newAnimations;
+			// Allocate memory for the animation vector inside
+			newAnimations.animations.resize(mesh[i].skeleton.aniCount);
 			for (int a = 0; a < mesh[i].skeleton.aniCount; a++)
 			{
+				// 3.4.1 Animations
+				Animation newAni;
 				std::cout << "Writing animation " << a << "..." << std::endl;
-				binFile.read((char*)&newAni[a], sizeof(Animation));
-
-				KeyFrame* newKey = new KeyFrame[newAni[a].keyframeCount];
-				for (int k = 0; k < newAni[a].keyframeCount; k++)
+				binFile.read((char*)&newAni, sizeof(Animation));
+				// Apply the data about the animation and
+				// Allocate memory for the keyframe vector inside
+				newAnimations.animations[a].ani = newAni;
+				newAnimations.animations[a].keyFrames.resize(newAni.keyframeCount);
+				for (int k = 0; k < newAni.keyframeCount; k++)
 				{
 					// 3.4.2 Keyframes
+					KeyFrame newKey;
 					std::cout << "Writing keyframe " << k << "..." << std::endl;
-					binFile.read((char*)&newKey[k], sizeof(KeyFrame));
-
-					Transform* newTransform = new Transform[newKey[k].transformCount];
-					for (int p = 0; p < newKey[k].transformCount; p++)
+					binFile.read((char*)&newKey, sizeof(KeyFrame));
+					// Apply the data about the keyframe and
+					// Allocate memory for the transform vector inside 
+					newAnimations.animations[a].keyFrames[k].key = newKey;
+					newAnimations.animations[a].keyFrames[k].transforms.resize(newKey.transformCount);
+					for (int t = 0; t < newKey.transformCount; t++)
 					{
-						binFile.read((char*)&newTransform[p], sizeof(Transform));
+						// 3.4.3 Transforms
+						Transform newTr;
+						binFile.read((char*)&newTr, sizeof(Transform));
+						// Apply the data about the transform
+						newAnimations.animations[a].keyFrames[k].transforms[t].t = newTr;
 					}
-					transforms.push_back(newTransform);
-					//delete newTransform;
-					newTransform = nullptr;
 				}
-				keyFrames.push_back(newKey);
-				//delete newKey;
-				newKey = nullptr;
 			}
-			animations.push_back(newAni);
-			//delete newAni;
-			newAni = nullptr;
+
+			animationsD.push_back(newAnimations);
+			skeletonsD.push_back(newSkeleton);
+
 		}
 
 		for (int i = 0; i < fileHeader.materialCount; i++)
@@ -160,14 +166,6 @@ Loader::~Loader()
 		delete[] dirLight;
 	if (pointLight)
 		delete[] pointLight;
-	//for (int i = 0; i < joints.size(); i++)
-	//	delete joints[i];
-	//for (int i = 0; i < animations.size(); i++)
-	//	delete animations[i];
-	//for (int i = 0; i < keyFrames.size(); i++)
-	//	delete keyFrames[i];
-	//for (int i = 0; i < transforms.size(); i++)
-	//	delete[] transforms[i];
 }
 
 

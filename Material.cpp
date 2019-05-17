@@ -2,7 +2,7 @@
 // Check header for implementation details
 
 
-Material::Material(char* name, unsigned int id)
+Material::Material(string name, unsigned int id)
 {
 	this->name = name;
 	materialID = id;	// The ID to match with an object comes in with the constuctor
@@ -20,7 +20,7 @@ Material::Material(char* name, unsigned int id)
 
 Material::Material(PhongMaterial material, unsigned int id)
 {
-	this->name = material.name;
+	this->name = (string)material.name;
 	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;

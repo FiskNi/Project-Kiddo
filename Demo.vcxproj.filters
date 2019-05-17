@@ -108,9 +108,6 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -214,9 +211,6 @@
     </ClInclude>
     <ClInclude Include="puzzleNode.h">
       <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiHandler.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Rendering</Filter>

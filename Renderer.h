@@ -22,6 +22,17 @@
 //	Currently the window is created and handled by the renderer, this could be extracted into it's own class.															
 //	
 //============================================================================
+const int view_matrix = 7;
+const int projection_matrix = 8;
+const int model_matrix = 9;
+const int shadow_matrix = 10;
+const int cam_pos = 11;
+const int has_normal = 12;
+const int has_albedo = 13;
+const int ambient = 14;
+const int diffuse = 15;
+const int specular = 16;
+const int emissive = 17;
 
 struct SkinDataBuffer
 {

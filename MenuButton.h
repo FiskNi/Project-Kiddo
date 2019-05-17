@@ -5,12 +5,14 @@
 // Base class idea for Menu Buttons if we need to implement them ourselves
 // Currently not used, but might be needed if we change our ideas.
 
-struct ButtonVtx {
+struct ButtonVtx 
+{
 	float vtxPos[3];
 	float uvPos[2];
 };
 
-class MenuButton {
+class MenuButton 
+{
 private:
 	int textureID;
 	//string name;

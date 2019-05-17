@@ -2,7 +2,7 @@
 
 void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
+	//Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
 
 	// IF PAUSED
 
@@ -24,14 +24,14 @@ void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, i
 		//{
 		//	//RESTART HERE
 		//}
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
-		{
-			//CLOSES WINDOW
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
+		//if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
+		//{
+		//	//CLOSES WINDOW
+		//	glfwSetWindowShouldClose(window, GL_TRUE);
+		//}
 
 		/*if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			std::cout << "BOOTY" << std::endl;
+			std::cout << "Left click" << std::endl;
 		}*/
 	//}
 
@@ -53,6 +53,10 @@ Menu::Menu()
 {
 	vertexCountTotal = 0;
 	nrOfMenuButtons = 0;
+	pauseOverlayTexture = 0;
+	loadingTexture = 0;
+	buttonTextureBase = 0;
+	backgroundTexture = 0;
 	isMenuRunning = true;
 	isButtonHit = false;
 
@@ -74,7 +78,8 @@ Menu::~Menu()
 // ========================================================================
 void Menu::CreateMainMenu()
 {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) 
+	{
 		buttonTextures.push_back(buttonTextureBase);
 		MenuButton newButton(GetCurrentOffset(), i);
 		vertexCountTotal += newButton.GetVertexCount();
@@ -168,8 +173,10 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 // ========================================================================
 void Menu::CheckCollision(float x, float y) 
 {
-	for (int i = 0; i < nrOfMenuButtons; i++) {
-		if (menuButtons[i].CheckInsideCollision(x, y) == true) {
+	for (int i = 0; i < nrOfMenuButtons; i++) 
+	{
+		if (menuButtons[i].CheckInsideCollision(x, y) == true) 
+		{
 			std::cout << "Hit Button nr " << i << std::endl;
 			currentButtonHit = i;
 			isButtonHit = true;

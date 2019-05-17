@@ -4,9 +4,11 @@
 #include "Material.h"
 #include "MenuButton.h"
 
-class Menu {
+class Menu 
+{
 private:
-
+	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 	//GAMESTATE state = MAINMENU;
 
 	GLuint pauseOverlayTexture;
@@ -51,11 +53,6 @@ public:
 	void CheckCollision(float x, float y);
 
 	void CreateBackgroundQuad();
-
-	//void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
-	//void CompileMeshData();
-	//void LoadEntities(std::vector<Material> materials, Loader * level);
-	//void RenderLoading(Shader gShaderProgram);
 
 	GLuint GetPauseOverlay() const { return pauseOverlayTexture; }
 	GLuint GetLoadingTexture() const { return loadingTexture; }

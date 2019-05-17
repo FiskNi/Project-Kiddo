@@ -21,7 +21,6 @@ private:
 	float groundLevel;
 	bool held;
 
-
 public:
 	RigidEntity(unsigned int i);
 	RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
