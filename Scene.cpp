@@ -300,6 +300,7 @@ void Scene::LoadRoom()
 	if (roomNr == 0)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+		// roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)
@@ -320,7 +321,7 @@ void Scene::LoadRoom()
 	else
 	{
 		roomNr = 0;
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 

@@ -79,7 +79,7 @@ public:
 
 	void CompileVertexData(int vertexCount, vertexPolygon* vertices);
 
-	void RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> objects, Camera camera, float gClearColour[3], GLuint texture);
+	void RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures);
 	void CompileMenuVertexData(int vertexCount, ButtonVtx * vertices);
 
 	int CreateFrameBuffer();
