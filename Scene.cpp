@@ -44,13 +44,8 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->exittoMenu = true;
 			scene->state = PLAYING;
 
-			std::cout << "Returning to Main Menu" << std::endl;
-			std::cout << "Loading..." << std::endl;
 			std::cout << "MAIN MENU" << std::endl;
-			std::cout << "Press the numbers below to perform actions: " << std::endl;
-			std::cout << "1 - Start" << std::endl;
-			//std::cout << "2 - Settings" << std::endl;
-			std::cout << "3 - Exit" << std::endl;
+
 		}
 	}
 	// IF PLAYING
@@ -269,6 +264,16 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
 		// Might want to handle mouse picking here
 	}
+	//if (state == MAINMENU) {
+	//	//delete roomBuffer;
+	//	//roomBuffer = nullptr;
+	//	roomLoaded = false;
+	//	isLoading = true;
+	//	exittoMenu = true;
+	//	state = PLAYING;
+	//	std::cout << "MAIN MENU" << std::endl;
+	//}
+
 }
 
 void Scene::ResetRoom()

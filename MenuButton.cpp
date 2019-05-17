@@ -11,6 +11,18 @@ MenuButton::MenuButton(float offset, int textureID)
 	std::cout << "Button BBox MAX: " << cornerMax.x << "  " << cornerMax.y << std::endl;
 }
 
+MenuButton::MenuButton(std::vector<ButtonVtx> vertices, int textureID)
+{
+	this->offset = 0;
+	this->textureID = textureID;
+
+	for (int i = 0; i < 6; i++) {
+		buttonVertices.push_back(vertices[i]);
+	}
+
+	CalculateBoundingBox();
+}
+
 MenuButton::~MenuButton() {
 
 }
@@ -23,12 +35,12 @@ void MenuButton::CreateButtonQuad()
 {
 	// Add an offset to the y coordinate in order to offset upcoming buttons once the shape has been defined
 	ButtonVtx buttVtxTemp[6] = {
-		-0.3f,(0.2f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
-		-0.3f,(+0.5f - offset)	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
-		+0.3f,(+0.5f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
-		-0.3f,(0.2f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
-		+0.3f,(+0.5f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
-		+0.3f,(0.2f - offset)	,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
+		-0.3f,(0.0f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
+		-0.3f,(+0.3f - offset)	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
+		+0.3f,(+0.3f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
+		-0.3f,(0.0f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
+		+0.3f,(+0.3f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
+		+0.3f,(0.0f - offset)	,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
 	};
 
 	for (int i = 0; i < 6; i++) {
@@ -39,13 +51,29 @@ void MenuButton::CreateButtonQuad()
 
 void MenuButton::CalculateBoundingBox()
 {
+	// Calculates the top left and the bottom right corners to determine which vertices are the min and max corners
+	int topLeftIdx = 0;
+	int botRightIdx = 0;
+
+	for (int i = 0; i < 6; i++) {
+		if (buttonVertices[i].x <= buttonVertices[topLeftIdx].x && buttonVertices[i].y >= buttonVertices[topLeftIdx].y ) {
+			topLeftIdx = i;
+		}
+		if (buttonVertices[i].x >= buttonVertices[botRightIdx].x && buttonVertices[i].y <= buttonVertices[botRightIdx].y) {
+			botRightIdx = i;
+		}
+	}
+
+	std::cout << "Top Left idx: " << topLeftIdx << std::endl;
+	std::cout << "Bot Right idx: " << botRightIdx << std::endl;
+
 	// Calculates the pixel position for the vertex coordinates created in -1 to 1 space
 	// Y currently needs -20 as an offset in all cases, might need to be adjusted depending on the button offset in the menu?
-	cornerMin.x = (WIDTH / 2) * (1 + buttonVertices[1].vtxPos[0]);
-	cornerMin.y = (HEIGHT / 2) * (1 - buttonVertices[1].vtxPos[1]) - 20;
+	cornerMin.x = (WIDTH / 2) * (1 + buttonVertices[topLeftIdx].x);
+	cornerMin.y = (HEIGHT / 2) * (1 - buttonVertices[topLeftIdx].y) - 20;
 
-	cornerMax.x = (WIDTH / 2) * (1 + buttonVertices[5].vtxPos[0]);
-	cornerMax.y = (HEIGHT / 2) * (1 - buttonVertices[5].vtxPos[1]) - 20;
+	cornerMax.x = (WIDTH / 2) * (1 + buttonVertices[botRightIdx].x);
+	cornerMax.y = (HEIGHT / 2) * (1 - buttonVertices[botRightIdx].y) - 20;
 }
 
 //*** USE THIS BASE FOR MOUSE PICKING

@@ -44,11 +44,13 @@ private:
 	void CompileRoomData();
 
 
-	// Main Menu
+	// Main Menu & Pause Menu
 	Menu mainMenu;
 	ButtonVtx* mainMenuVertexData;
 	void CompileMainMenuData();
-	bool menuIsRunning;
+	ButtonVtx* pauseMenuVertexData;
+	void CompilePauseMenuData();
+	//bool menuIsRunning;
 
 public:
 	GameEngine();

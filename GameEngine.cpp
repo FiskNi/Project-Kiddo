@@ -43,7 +43,7 @@ GameEngine::GameEngine()
 
 
 
-	menuIsRunning = true;
+	//menuIsRunning = true;
 }
 
 GameEngine::~GameEngine()
@@ -52,6 +52,8 @@ GameEngine::~GameEngine()
 		delete mainSceneVertexData;
 	if (mainMenuVertexData)
 		delete mainMenuVertexData;
+	if (pauseMenuVertexData)
+		delete pauseMenuVertexData;
 }
 
 void GameEngine::CompileRoomData()
@@ -82,15 +84,7 @@ void GameEngine::CompileMainMenuData()
 {
 	//meshCount = mainScene.GetMeshData().size();
 	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
-	int vtxCountButtons = mainMenu.GetVertexCountTotal();
-	//std::cout << vtxCountButtons << std::endl;
-	//std::cout << mainMenu.GetVertexCountTotal() << std::endl;
-	//for (int i = 0; i < nrOfMenuButtons; i++)
-	//{
-	//	vertexCount += mainMenu.GetVertexCountTotal();
-	//}
-	// Allocated memory
-	//mainSceneVertexData = new vertexPolygon[vertexCount];
+	int vtxCountButtons = mainMenu.GetVertexCountMainTotal();
 
 	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
 
@@ -103,14 +97,41 @@ void GameEngine::CompileMainMenuData()
 
 	for (int i = 0; i < nrOfMenuButtons; i++)
 	{
-		int buttonVtxCount = mainMenu.GetMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		int buttonVtxCount = mainMenu.GetMainMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
 		for (int j = 0; j < buttonVtxCount; j++)
 		{
-			mainMenuVertexData[vertexIndex] = mainMenu.GetButtonVertices(i)[j];
+			mainMenuVertexData[vertexIndex] = mainMenu.GetMainMenuButtonVertices(i)[j];
 			vertexIndex++;
 		}
 	}
 	mainRenderer.CompileMenuVertexData(vtxCountButtons, mainMenuVertexData);
+}
+
+void GameEngine::CompilePauseMenuData()
+{
+	//meshCount = mainScene.GetMeshData().size();
+	int nrOfMenuButtons = mainMenu.GetNrOfPauseButtons();
+	int vtxCountButtons = mainMenu.GetVertexCountPauseTotal();
+
+	pauseMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+	int vertexIndex = 0;
+	//for (int k = 0; k < 6; k++)
+	//{
+	//	mainMenuVertexData[vertexIndex] = mainMenu.GetBackgroundVertices(k);
+	//	vertexIndex++;
+	//}
+
+	for (int i = 0; i < nrOfMenuButtons; i++)
+	{
+		int buttonVtxCount = mainMenu.GetPauseMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		for (int j = 0; j < buttonVtxCount; j++)
+		{
+			pauseMenuVertexData[vertexIndex] = mainMenu.GetPauseMenuButtonVertices(i)[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompilePauseMenuVertexData(vtxCountButtons, pauseMenuVertexData);
 }
 
 //=============================================================
@@ -128,8 +149,9 @@ void GameEngine::Run()
 	static bool renderDepth = false;
 	ImGuiInit();
 
-	// Compile Main Menu vertex data (is this really the best spot? no idea rn)
+	// Compile Main Menu and Pause Menu vertex data
 	CompileMainMenuData();
+	CompilePauseMenuData();
 
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
@@ -148,13 +170,16 @@ void GameEngine::Run()
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
 			if (mainMenu.GetLastClickedButton() == 0) {
-				menuIsRunning = false;
+				//menuIsRunning = false;
+				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
 			}
 		}
 		else if (mainScene.GetExit())
 		{
-			menuIsRunning = true;
+			//menuIsRunning = true;
+			//mainMenu.SetActiveMenu(MAINACTIVE);
+			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
 		}
 
@@ -165,19 +190,21 @@ void GameEngine::Run()
 			deltaTime = 0.0f;
 
 
-		if (menuIsRunning == true)
+		//if (menuIsRunning == true)
+		if (mainMenu.GetIsMenuRunning() == true)
 		{
 			// RENDER CALL FOR MAIN MENU HERE
+			mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
-			Camera temp;
 
-			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetButtonTextures());
+			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetButtonTextures(), MAINACTIVE);
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glfwSwapBuffers(mainRenderer.getWindow());
 		}
-		else if (menuIsRunning == false && mainScene.GetRoomLoaded())
+		//else if (menuIsRunning == false && mainScene.GetRoomLoaded())
+		else if (mainMenu.GetIsMenuRunning() == false && mainScene.GetRoomLoaded())
 		{
 			// Main updates to a scene
 			// Includes all interactions in the game world
@@ -213,8 +240,18 @@ void GameEngine::Run()
 			}
 			else
 			{
-				// Pause screen draw call
-				mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+				// Pause Menu Render Call
+				//mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+				mainMenu.SetActiveMenu(PAUSEACTIVE);
+				mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
+				// Currently broken, attempt to handle all the clicking actions in Menu because clicking on pause rn breaks the key callbacks in Scene woop
+				//if (mainMenu.GetUpdateState() == MAINMENU) {
+				//	mainScene.SetCurrentState(MAINMENU);
+				//}
+
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetPauseMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetPauseButtonTextures(), PAUSEACTIVE);
+				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
+
 				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 				glfwSwapBuffers(mainRenderer.getWindow());
@@ -235,6 +272,9 @@ void GameEngine::Run()
 			glfwSwapBuffers(mainRenderer.getWindow());
 			// Draw call for fsq and imgui
 
+
+			// *****LOAD ROOM MESSES UP WHEN YOU RETURN TO THE MAIN MENU AND START AGAIN
+			//  IT LOADS THE NEXT ROOM IN THE LINE, WHICH MEANS IT DOESN'T WORK AS A RESUME AS IT SHOULD
 			// Heavy loading work
 			mainScene.LoadRoom();
 			CompileRoomData();

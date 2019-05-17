@@ -38,7 +38,7 @@ class Scene
 private:
 	bool setUserPointer = false;
 
-	GAMESTATE state = MAINMENU;
+	GAMESTATE state = PLAYING;
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -101,6 +101,7 @@ public:
 	bool GetExit() const { return exittoMenu; }
 	bool GetRoomLoaded() const { return roomLoaded; }
 	int GetCurrentState() const { return state; }
+	void SetCurrentState(GAMESTATE st) { this->state = st; }
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
 	void LoadRoom();
