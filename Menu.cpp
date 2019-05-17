@@ -3,13 +3,16 @@
 
 Menu::Menu() 
 {
-	//pauseOverlayTexture = 0;
 	vertexCountTotal = 0;
 	nrOfMenuButtons = 0;
 	isMenuRunning = true;
+	isButtonHit = false;
+
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
+
+	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
 	CreateMainMenu();
 }
@@ -19,36 +22,55 @@ Menu::~Menu()
 
 }
 
-//void Menu::CompileMainMenuMeshData() {
-//	//// Defines const states here, check to see which room to load
-//	//const int PAUSE = 2;
-//
-//	//// Check which state is active, and run loading accordingly
-//	//if (state == PAUSE)
-//	//{
-//	//	// Hardcoded quad to print something to the screen
-//	//	RigidEntity quad(0);
-//	//	quad.SetPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//	//	quad.SetMaterialID(materials[0].getMaterialID());
-//	//	quad.SetStartPosition(glm::vec3(-8.0f, 5.0f, 3.0f));
-//	//	rigids.push_back(quad);
-//
-//	//	// Perhaps change position for the menu?
-//	//	// Initialize camera (Default constructor)
-//	//	roomCamera = new Camera;
-//	//}
-//
-//	//// Compiles all the mesh data in the room for the renderer
-//	//CompileMeshData();
-//}
-
+// ========================================================================
+//	Creates the buttons for the main menu, this also send in the offset for a "stacked" menu
+// ========================================================================
 void Menu::CreateMainMenu()
 {
 	for (int i = 0; i < 3; i++) {
-		MenuButton newButton(GetCurrentOffset(), 0);
+		buttonTextures.push_back(buttonTextureBase);
+		MenuButton newButton(GetCurrentOffset(), i);
 		vertexCountTotal += newButton.GetVertexCount();
 		menuButtons.push_back(newButton);
 		nrOfMenuButtons++;
+	}
+}
+
+// ========================================================================
+//	Updates the menu and checks for what to do whenever a menu button has been clicked
+// ========================================================================
+void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
+{
+
+	// ****KEY CALLBACK DOES NOT WORK FOR MENU, please do not attempt to re-implement Key callback in Menu****
+	glfwPollEvents();
+	if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
+	{
+		// Gets the clicked cursor position and checks for collision with any of the buttons
+		double x, y;
+		glfwGetCursorPos(renderWindow, &x, &y);
+		//std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
+		CheckCollision(x, y);
+		printMouseClickOnce = true;
+		buttonActionExecuted = false;
+	}
+	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+		printMouseClickOnce = false;
+	}
+
+
+	if (isButtonHit == true) {
+		if (currentButtonHit == 0) {
+			// START GAME			// This is handled in GameEngine by getting the last clicked button
+		}
+		else if (currentButtonHit == 1) {
+			// SETTINGS? CREDITS? HOW TO PLAY?
+		}
+		else if (currentButtonHit == 2) {
+			// EXIT
+			glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+		}
+		isButtonHit = false;
 	}
 }
 
@@ -86,33 +108,39 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 	stbi_image_free(data);
 }
 
+// ========================================================================
+//	Checks collision between the clicked mouse cursor and the buttons
+// ========================================================================
+void Menu::CheckCollision(float x, float y) 
+{
+	for (int i = 0; i < nrOfMenuButtons; i++) {
+		if (menuButtons[i].CheckInsideCollision(x, y) == true) {
+			std::cout << "Hit Button nr " << i << std::endl;
+			currentButtonHit = i;
+			isButtonHit = true;
+			return;
+		}
+	}
+}
 
-//=============================================================
-//	MENU BUTTON QUADS ARE NOW CREATED IN MENU BUTTON
-//=============================================================
-//void Menu::CreateMenuQuad()
-//{
-//	// Height of one button
-//	float buttonHeight = 0.5f;
-//	// calculates the offset for this menu button
-//	float ofs = nrOfMenuButtons * (buttonHeight + BUTTON_OFFSET);
-//	// Add an offset to the y coordinate in order to offset upcoming buttons once the shape has been defined
-//	MenuButton mButton = {
-//		-0.5,(-0.5 + ofs),0.0,	0.0, 0.0,	//0.5, 0.5, 0.5,	// TOP		LEFT
-//		-0.5,(+0.5 + ofs),0.0,	0.0, 1.0,	//0.5, 0.5, 0.5,	// BOTTOM	LEFT
-//		+0.5,(+0.5 + ofs),0.0,	1.0, 1.0,	//0.5, 0.5, 0.5,	// BOTTOM	RIGHT
-//		-0.5,(-0.5 + ofs),0.0,	0.0, 0.0,	//0.5, 0.5, 0.5,	// TOP		LEFT
-//		+0.5,(+0.5 + ofs),0.0,	1.0, 1.0,	//0.5, 0.5, 0.5,	// BOTTOM	RIGHT
-//		+0.5,(-0.5 + ofs),0.0,	1.0, 0.0,	//0.5, 0.5, 0.5,	// TOP		RIGHT
-//	};
-//
-//	menuButtons.push_back(mButton);
-//
-//	//vertexCount = (int)menuButtons.size();
-//
-//	nrOfMenuButtons++;
-//
-//};
+void Menu::CreateBackgroundQuad() {
+
+	ButtonVtx bgQuad[6] =
+	{
+		-1, -1,	0,		0, 0,	// TOP		LEFT
+		-1, +1,	0,		0, 1,	// BOTTOM	LEFT
+		+1, +1,	0,		1, 1,	// BOTTOM	RIGHT
+		-1, -1,	0,		0, 0,	// TOP		LEFT
+		+1, +1,	0,		1, 1,	// BOTTOM	RIGHT
+		+1, -1,	0,		1, 0,	// TOP		RIGHT
+	};
+
+	for (int i = 0; i < 6; i++) {
+		//backgroundQuad[i] = myQuad[i];
+		backgroundQuad.push_back(bgQuad[i]);
+	}
+}
+
 
 //void Menu::CreateMainMenuRoom(std::vector<Material> materials, Loader* aLoader, int state)
 //{

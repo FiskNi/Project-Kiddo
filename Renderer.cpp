@@ -303,25 +303,15 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 //= ============================================================
 //	Render pass for the main menu ( eventually pause menu as well )
 //=============================================================
-void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> objects, Camera camera, float gClearColour[3], GLuint texture )
+void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures)
 {
-	// Position in shader
-	int view_matrix = 5;
-	int projection_matrix = 6;
-	int model_matrix = 7;
-	//int shadow_matrix = 8;
-	int cam_pos = 9;
-	int has_normal = 10;
-	int has_albedo = 11;
-	int ambient = 12;
-	int diffuse = 13;
-	int specular = 14;
-	int emissive = 15;
 
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
 	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
+
+	//secondPassRenderPauseOverlay(bgShaderProgram, bgTexture);
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
@@ -340,6 +330,11 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 	glBindVertexArray(gVertexAttributeMenu);
 
 	unsigned int startIndex = 0;
+
+	//passTextureData(GL_TEXTURE0, bgTexture, gShaderProgram.getShader(), "diffuseTex", 0);
+	//glDrawArrays(GL_TRIANGLES, startIndex, sizeof(ButtonVtx)*6);
+	//startIndex += 6;
+
 	for (int i = 0; i < objects.size(); i++)
 	{
 		// Per object uniforms
@@ -351,16 +346,11 @@ void Renderer::RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> obj
 		// Binds the VAO of an object to be renderer. Could become slow further on.
 
 		//Binds the albedo texture from a material
-		passTextureData(GL_TEXTURE0, texture, gShaderProgram.getShader(), "diffuseTex", 0);
+		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
 
-		//// Binds the normal texture from a material
-		//if (materials[objects[i].GetMaterialID()].hasNormal())
-		//{
-		//	passTextureData(GL_TEXTURE1,
-		//		materials[objects[i].GetMaterialID()].getNormal(),
-		//		gShaderProgram.getShader(),
-		//		"normalTex", 1);
-		//}
+		// Binds the background texture from the Menu
+		passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
+	
 
 		//glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getAmbient()));
 		//glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getDiffuse()));

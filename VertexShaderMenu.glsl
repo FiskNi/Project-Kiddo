@@ -5,9 +5,9 @@ layout(location = 1) in vec2 vertex_uv;
 //layout(location = 3) in vec3 vertex_tangent;
 //layout(location = 4) in vec3 vertex_bitangent;
 
-layout(location = 5) uniform mat4 view;
-layout(location = 6) uniform mat4 proj;
-layout(location = 7) uniform mat4 model;
+//layout(location = 5) uniform mat4 view;
+//layout(location = 6) uniform mat4 proj;
+//layout(location = 7) uniform mat4 model;
 
 //layout(location = 8) uniform mat4 SHADOW_MAT;
 
