@@ -229,6 +229,13 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 //=============================================================
 void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 {
+
+	std::vector<vertexPolygon> testVec;
+
+	for (int i = 0; i < vertexCount; i++)
+		testVec.push_back(vertices[i]);
+
+
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
 
@@ -309,16 +316,15 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 		GL_FLOAT,
 		GL_FALSE,
 		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 15)
+		BUFFER_OFFSET(sizeof(float) * 14)
 	);
 
-	glVertexAttribPointer(
+	glVertexAttribIPointer(
 		6,
 		4,
-		GL_FLOAT,
-		GL_FALSE,
+		GL_INT,
 		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 19)
+		BUFFER_OFFSET(sizeof(float) * 18)
 	);
 
 
@@ -569,6 +575,7 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 	// time must be less than duration.
 	if (anim_time > anim.duration) return;
 
+	//anim_time = 0.0f;
 	// keyframes involved.
 	int k1 = (int)(anim_time * anim.rate);
 	int k2 = fminf(k1 + 1, anim.keyframeLast);
@@ -581,38 +588,39 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 
 	int boneCount = (int)mesh->GetSkeleton().joints.size();
 
-	glm::mat4 local_pose[MAXBONES];
-	glm::mat4 bones_global_pose[MAXBONES];
+	glm::mat4 bones_global_pose[MAXBONES]{ glm::mat4(1.0f) };
+	for (int i = 0; i < MAXBONES; i++)
+		bones_global_pose[i] = glm::mat4(1.0f);
 
 	glm::vec3 translation_r			= glm::vec3(anim.keyframes[k1].local_joints_T[0] * (1 - t) + anim.keyframes[k2].local_joints_T[0] * t);
 	glm::vec3 scaling_r				= glm::vec3(anim.keyframes[k1].local_joints_S[0] * (1 - t) + anim.keyframes[k2].local_joints_S[0] * t);
 	glm::quat quaternion_r			= glm::slerp(anim.keyframes[k1].local_joints_R[0], anim.keyframes[k2].local_joints_R[0], t);
-	glm::mat4 quatMat				= glm::mat4_cast(quaternion_r);
 
 	MODEL_MAT = glm::mat4(1.0f);
 	glm::mat4 translationMatrix_r	= glm::translate(MODEL_MAT, translation_r);
 	glm::mat4 rotationMatrix_r		= glm::mat4_cast(quaternion_r);
 	glm::mat4 scaleMatrix_r			= glm::scale(MODEL_MAT, scaling_r);
 	glm::mat4 local_r				= translationMatrix_r * rotationMatrix_r * scaleMatrix_r;
+
 	bones_global_pose[0]			= local_r;
 
-	glm::mat4 bone_list[MAXBONES];
-	boneList->bones[0] = bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
+	boneList->bones[0]				= bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
+	//boneList->bones[0] = mesh->GetSkeleton().joints[0].invBindPose;
 	for (int bone = 1; bone < boneCount; bone++)
 	{
 		glm::vec3 translation		= glm::vec3(anim.keyframes[k1].local_joints_T[bone] * (1 - t) + anim.keyframes[k2].local_joints_T[bone] * t);
 		glm::vec3 scaling			= glm::vec3(anim.keyframes[k1].local_joints_S[bone] * (1 - t) + anim.keyframes[k2].local_joints_S[bone] * t);
 		glm::quat quaternion		= glm::slerp(anim.keyframes[k1].local_joints_R[bone], anim.keyframes[k2].local_joints_R[bone], t);
-		glm::mat4 quatMat			= glm::mat4_cast(quaternion_r);
 
 		MODEL_MAT = glm::mat4(1.0f);
-		glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation_r);
-		glm::mat4 rotationMatrix	= glm::mat4_cast(quaternion_r);
-		glm::mat4 scaleMatrix		= glm::scale(MODEL_MAT, scaling_r);
+		glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
+		glm::mat4 rotationMatrix	= glm::mat4_cast(quaternion);
+		glm::mat4 scaleMatrix		= glm::scale(MODEL_MAT, scaling);
 		glm::mat4 local				= translationMatrix * rotationMatrix * scaleMatrix;
 
 		bones_global_pose[bone]		= bones_global_pose[mesh->GetSkeleton().joints[bone].parentIndex] * local;
 		boneList->bones[bone]		= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
+		//boneList->bones[bone]		= mesh->GetSkeleton().joints[bone].invBindPose;
 	}
 }
 

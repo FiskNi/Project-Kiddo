@@ -10,7 +10,7 @@ layout(location = 2) in vec3 vertex_normal;
 layout(location = 3) in vec3 vertex_tangent;
 layout(location = 4) in vec3 vertex_bitangent;
 layout(location = 5) in vec4 weights;
-layout(location = 6) in vec4 bones;
+layout(location = 6) in ivec4 bones;
 
 layout(location = 7) uniform mat4 view;
 layout(location = 8) uniform mat4 proj;
@@ -35,10 +35,11 @@ out VS_OUT
 void main() 
 {	
 	gl_Position = vec4(vertex_position, 1.0f);
-	//gl_Position += boneMat[int(bones.x)] * vec4(vertex_position, 1.0f) * weights.x;
-	//gl_Position += boneMat[int(bones.y)] * vec4(vertex_position, 1.0f) * weights.y;
-	//gl_Position += boneMat[int(bones.z)] * vec4(vertex_position, 1.0f) * weights.z;
-	//gl_Position += boneMat[int(bones.w)] * vec4(vertex_position, 1.0f) * weights.w;
+
+	gl_Position  = (boneMat[bones[0]] * vec4(vertex_position, 1.0f)) * weights.x;
+	gl_Position += (boneMat[bones[1]] * vec4(vertex_position, 1.0f)) * weights.y;
+	gl_Position += (boneMat[bones[2]] * vec4(vertex_position, 1.0f)) * weights.z;
+	gl_Position += (boneMat[bones[3]] * vec4(vertex_position, 1.0f)) * weights.w;
 	
 	vs_out.position = vec3(model * gl_Position);
 	

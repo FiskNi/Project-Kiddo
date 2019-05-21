@@ -43,6 +43,7 @@ struct SkeletonD
 	vector<JointD> joints;
 	vector<AnimationD> animations;
 	float currentAnimTime;
+	bool playingBackwards;
 };
 
 class MeshGroupClass;
@@ -98,6 +99,8 @@ public:
 	void SetScale(float x, float y, float z);
 
 	void ForwardTime(float t);
+	void BackwardTime(float t);
+	void SetPlayingBackwards(bool tf);
 	void SetTime(float t);
 
 	std::vector<vertexPolygon>& ModifyVertices();
@@ -120,6 +123,8 @@ public:
 	std::vector<vertexPolygon> GetVertices() { return vertices; }
 	SkeletonD& GetSkeleton() { return skeleton; }
 	int GetVertexCount() const { return vertexCount; }
+	
+	//bool GetPLayingBackwards() { return skeleton.playingBackwards; }
 };
 
 #endif MESH_H

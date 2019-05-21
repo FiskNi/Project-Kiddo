@@ -176,6 +176,9 @@ void Scene::LoadMaterials(Loader* inLoader)
 void Scene::LoadCharacter(Loader* inLoader)
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
+	//Loader characterLoader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+
+
 	for (int i = 0; i < inLoader->GetMeshCount(); i++)
 	{
 		if (inLoader->GetType(i) == 8)

@@ -37,9 +37,22 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	// Simple animation loop
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
-		roomMeshes[i].ForwardTime(deltaTime);
-		if (roomMeshes[i].GetSkeleton().currentAnimTime > 0.5f)
-			roomMeshes[i].SetTime(0.0f);
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 0.5f)
+			roomMeshes[i].SetTime(0);
+		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
+			roomMeshes[i].SetTime(0);
+
+
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 0.45f)
+			roomMeshes[i].SetPlayingBackwards(true);
+		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
+			roomMeshes[i].SetPlayingBackwards(false);
+
+		if (!roomMeshes[i].GetSkeleton().playingBackwards)
+			roomMeshes[i].ForwardTime(deltaTime);
+		else if(roomMeshes[i].GetSkeleton().playingBackwards)
+			roomMeshes[i].BackwardTime(deltaTime);
+
 	}
 
 	// Reset collisions
