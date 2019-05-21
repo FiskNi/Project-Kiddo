@@ -16,7 +16,12 @@ private:
 
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
-	GLuint pauseButtonTexture;
+	//GLuint pauseButtonTexture;
+	GLuint pbt0;
+	GLuint pbt1;
+	GLuint pbt2;
+	GLuint pbt3;
+
 	GLuint buttonTextureBase;
 	std::vector<GLuint> buttonTextures;
 	std::vector<GLuint> pauseButtonTextures;
@@ -59,7 +64,7 @@ public:
 	void MenuUpdate(GLFWwindow* renderWindow, float deltaTime);
 	void CreateMenuTexture(std::string path, GLuint *texture);
 
-	void CheckCollision(float x, float y);
+	bool CheckCollision(float x, float y);
 
 	void CreateBackgroundQuad();
 
@@ -67,7 +72,7 @@ public:
 	GLuint GetPauseOverlay() const { return pauseOverlayTexture; }
 	GLuint GetLoadingTexture() const { return loadingTexture; }
 	GLuint GetButtonTexture() const { return buttonTextureBase; }
-	GLuint GetPauseButtonTexture() const { return pauseButtonTexture; }
+	//GLuint GetPauseButtonTexture() const { return pauseButtonTexture; }
 	GLuint GetBackgroundTexture() const { return backgroundTexture; }
 	std::vector<GLuint> GetButtonTextures() const { return buttonTextures; }
 	std::vector<GLuint> GetPauseButtonTextures() const { return pauseButtonTextures; }

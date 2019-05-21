@@ -335,17 +335,17 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-
+		
 		//Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
 
 		// Binds the background texture from the Menu
-		passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
+		//passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetSize() );
+		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetVertexCount() );
 
 		startIndex += objects[i].GetVertexCount();
 	}
