@@ -1364,6 +1364,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
 				meshAmount++;
+				meshAmount++;
 			}
 			break;
 
