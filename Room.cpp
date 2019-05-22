@@ -159,13 +159,16 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 		{
 			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			{
-				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
-				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+			rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
+			rigids[playerCharacter->GetEntityID()].SetHeld(true);
+			playerCharacter->SetHoldingObject(true);
 			}
+
 		}
 		else
 		{
 			rigids[playerCharacter->GetEntityID()].SetHeld(false);
+			playerCharacter->SetHoldingObject(false);
 		}
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
@@ -1240,7 +1243,7 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights(Loader* inLoader)
 {
-	Light light(0.0f, 0.0f, 0.0f, 0.0f, 200, 9);
+	Light light(0.0f, 0.0f, 0.0f, 0.0f, 600, 11);
 
 	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.SetSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1406,9 +1409,9 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 12:	// Collectible
 		{
-
 			Collectible coll;
 			coll.SetMaterialID(matID);
+			coll.SetIndex(level->GetCollectIndex(i));
 			collectibles.push_back(coll);
 			meshAmount++;
 		}

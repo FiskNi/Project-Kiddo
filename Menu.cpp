@@ -226,7 +226,7 @@ void Menu::CreateBackgroundQuad()
 void Menu::SetCollected(std::vector<Collectible> coll)
 {
 	for (int i = 0; i < COLLECTEDCAP; i++) {
-		collected[i].SetIndex(coll[i].GetIndex());
+		collected[i].SetCollected(coll[i].GetCollected());
 	}
 }
 

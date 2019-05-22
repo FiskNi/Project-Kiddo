@@ -79,7 +79,7 @@ void Material::createAlbedo(std::string path)
 	}
 	else
 	{
-		std::cout << "Failed to load albedo for material "" << name << "". Reason: " << stbi_failure_reason();
+		std::cout << "Failed to load albedo for material " << name << ". Reason: " << stbi_failure_reason();
 		std::cout << ". No material applied or file missing?" << std::endl;
 	}
 

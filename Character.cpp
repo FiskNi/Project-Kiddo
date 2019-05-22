@@ -23,7 +23,7 @@ Character::~Character()
 
 void Character::SetHoldingObject(bool holding)
 {
-	holdingObject = true;
+	holdingObject = holding;
 }
 
 void Character::SetEntityID(unsigned int id)
@@ -165,17 +165,19 @@ void Character::Move(GLFWwindow* window)
 
 		if (glm::length(GetVelocity()) > 0.5f)
 		{
-			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
-			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
-			float rotation = acos(cosRotation);
+			if (!IsHoldingObject()) {
+				glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+				float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
+				float rotation = acos(cosRotation);
 
-			if (GetVelocityX() > 0)
-				rotation;
-			else
-				rotation = -rotation;
+				if (GetVelocityX() > 0)
+					rotation;
+				else
+					rotation = -rotation;
 
-			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
-			SetRotation(qRotation);
+				glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
+				SetRotation(qRotation);
+			}
 		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
