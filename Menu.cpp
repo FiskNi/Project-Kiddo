@@ -22,6 +22,7 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
 	//CreateMenuTexture("Resources/Textures/PauseButtonTEMP.png", &pauseButtonTexture);
+	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
 	CreateMenuTexture("Resources/Textures/PauseTitle.png", &pbt0);
 	CreateMenuTexture("Resources/Textures/PauseResume.png", &pbt1);
@@ -33,7 +34,6 @@ Menu::Menu()
 	pauseButtonTextures.push_back(pbt2);
 	pauseButtonTextures.push_back(pbt3);
 
-	//CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
 	CreateMainMenu();
 }
@@ -48,24 +48,17 @@ Menu::~Menu()
 // ========================================================================
 void Menu::CreateMainMenu()
 {
-	//pauseButtonTextures.push_back(pauseButtonTexture);
+	// Creates Main Menu Background as well as Main Menu Buttons
+	CreateMainMenuButtons();
 
-	for (int i = 0; i < 3; i++) 
-	{
-		buttonTextures.push_back(buttonTextureBase);
-		MenuButton newButton(GetCurrentOffset(), i);
-		vertexCountMainTotal += newButton.GetVertexCount();
-		mainButtons.push_back(newButton);
-		nrOfMainButtons++;
-	}
-
-	for (int i = 0; i < 4; i++) 
-	{
+	// Creates Pause Buttons (Stacked Menu)
+	for (int i = 0; i < 4; i++) {
 		MenuButton newPauseButton(GetCurrentOffsetPause(), i);
 		vertexCountPauseTotal += newPauseButton.GetVertexCount();
 		pauseButtons.push_back(newPauseButton);
 		nrOfPauseButtons++;
 	}
+
 }
 
 // ========================================================================
@@ -94,46 +87,23 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 	if (activeMenu == MAINACTIVE) 
 	{
 		if (isButtonHit == true) {
-			if (currentButtonHit == 0) 
-			{
+			if (currentButtonHit == 1) {
 				// START GAME			// This is handled in GameEngine by getting the last clicked button
 				updateState = PLAYING;
 			}
-			else if (currentButtonHit == 1) 
-			{
+			else if (currentButtonHit == 2) {
 				// SETTINGS? CREDITS? HOW TO PLAY?
 			}
-			else if (currentButtonHit == 2) 
-			{
+			else if (currentButtonHit == 3) {
 				// EXIT
 				glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+			}
+			else if (currentButtonHit == 4) {
+				// MY TOYS / COLLECTIBLE MENU
 			}
 			isButtonHit = false;
 		}
 	}
-	//else if (activeMenu == PAUSEACTIVE) {
-	//	if (isButtonHit == true) {
-	//		//if (currentButtonHit == 0) {
-	//		//	// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
-	//		//	// This shuts the entire window currently as a backup for testing
-	//		//	glfwSetWindowShouldClose(renderWindow, GL_TRUE);
-	//		//}
-	//		//else if (currentButtonHit == 1) {
-	//		//	// RESUME GAME			// CHANGE STATE IN SCENE, let gameengine know it needs to change state
-	//		//	std::cout << "CLICKED BUTTON " << currentButtonHit << std::endl;
-	//		//	//updateState = PLAYING;
-	//		//}
-	//		//else if (currentButtonHit == 2) {
-	//		//	// RESTART
-	//		//	//updateState = PLAYING;
-	//		//}
-	//		//else if (currentButtonHit == 3) {
-	//		//	// EXIT TO MAIN MENU
-	//		//	updateState = MAINMENU;
-	//		//}
-	//		isButtonHit = false;
-	//	}
-	//}
 }
 
 // =============================================================
@@ -183,29 +153,70 @@ bool Menu::CheckCollision(float x, float y)
 			{
 				//std::cout << "Hit Button nr " << i << std::endl;
 				currentButtonHit = i;
-				//isButtonHit = true;
 				return true;
 			}
 		}
 	}
-	else if (activeMenu == MAINACTIVE)
-	{
-		for (int i = 0; i < nrOfMainButtons; i++) 
-		{
-			if (mainButtons[i].CheckInsideCollision(x, y) == true) 
-			{
-				std::cout << "Hit Button nr " << i << std::endl;
-				currentButtonHit = i;
-				isButtonHit = true;
-				return true;
+	else if (activeMenu == MAINACTIVE){
+		for (int i = 0; i < nrOfMainButtons; i++) {
+			if (mainButtons[i].GetIsNotButton() != true) {
+				if (mainButtons[i].CheckInsideCollision(x, y) == true) {
+					std::cout << "Hit Button nr " << i << std::endl;
+					currentButtonHit = i;
+					isButtonHit = true;
+					return true;
+				}
 			}
 		}
 	}
 	return false;
 }
 
-void Menu::CreateBackgroundQuad() 
+// ========================================================================
+//  Creates the Main Menu Background and Main Menu Buttons
+// ========================================================================
+void Menu::CreateMainMenuButtons() 
 {
+
+	// Creates the background, which is not a button (and collision will not be checked on it)
+	CreateBackgroundQuad();
+	buttonTextures.push_back(backgroundTexture);
+	MenuButton bgButton(backgroundQuad, 0, true);
+	mainButtons.push_back(bgButton);
+
+
+	//buttonTextures.push_back(buttonTextureBase);
+	// schh... it works ;^)
+	buttonTextures.push_back(backgroundTexture);
+
+	// Start Button
+	MenuButton newButton(1290, 105, 1610, 220, 1);
+	mainButtons.push_back(newButton);
+
+	// Settings Button
+	MenuButton newButton1(1420, 280, 1730, 480, 1);
+	mainButtons.push_back(newButton1);
+
+	// Exit Button
+	MenuButton newButton2(1650, 750, 1840, 900, 1);
+	mainButtons.push_back(newButton2);
+
+	// My Toys Button (Collectibles)
+	MenuButton newButton3(830, 630, 1220, 850, 1);
+	mainButtons.push_back(newButton3);
+
+	for (int i = 0; i < 5; i++) {
+		vertexCountMainTotal += newButton.GetVertexCount();		// Vertex Count is ALWAYS 6 for all buttons
+		nrOfMainButtons++;
+	}
+	
+	
+}
+
+// ========================================================================
+//  Creates the "Fullscreen quad" for the background
+// ========================================================================
+void Menu::CreateBackgroundQuad() {
 
 	ButtonVtx bgQuad[6] =
 	{
@@ -229,76 +240,3 @@ void Menu::SetCollected(std::vector<Collectible> coll)
 		collected[i].SetCollected(coll[i].GetCollected());
 	}
 }
-
-
-//void Menu::CreateMainMenuRoom(std::vector<Material> materials, Loader* aLoader, int state)
-//{
-//	// This is to initialise the Main Menu room scene, specifically to place the camera in a specific spot
-//
-//	// Check which state is active, and run loading accordingly
-//	if (state == MAINMENU)
-//	{
-//		// Hardcoded quad to print something to the screen
-//		//LoadLights();
-//		LoadEntities(materials, aLoader);
-//
-//		// Perhaps change position for the menu?
-//		// Initialize camera (Default constructor)
-//		menuCamera = new Camera;
-//	}
-//
-//	// Compiles all the mesh data in the room for the renderer
-//	CompileMeshData();
-//}
-//
-//
-////=============================================================
-////	Compiles mesh data for the renderer
-////=============================================================
-//void Menu::CompileMeshData()
-//{
-//	// NEEDS TO BE CHANGED SO THE VECTOR DOESNT REALLOCATED ALL THE TIME
-//	meshes.clear();
-//
-//	for (int i = 0; i < menuMeshes.size(); i++)
-//	{
-//		meshes.push_back(menuMeshes[i]);
-//	}
-//
-//}
-//
-////=============================================================
-////	Entity initialization
-////	Loads and positions all the entities in the scene
-////=============================================================
-//void Menu::LoadEntities(std::vector<Material> materials, Loader* level)
-//{
-//
-//	//==========
-//	// Entity loading will be changed to take in custom attributes and base what is loaded into the room on these
-//	// Will need to move the Loader up from this location to properly take in materials as well
-//	// The pipeline needs to be looked over in general to determine how things will load and be created
-//	//==========
-//
-//	for (int i = 0; i < level->GetMeshCount(); i++)
-//	{
-//		//Custom attributes to be detected here before pushed into the appropriate category?
-//		switch (level->GetType(i))
-//		{
-//		case 0:		// Mesh
-//		{
-//			Mesh mesh(level->GetVerticies(i), level->GetVertexCount(i), materials[0].GetMaterialID());
-//			menuMeshes.push_back(mesh);
-//		}
-//		break;
-//		case 14:	// Menu Button
-//
-//			break;
-//		default:
-//			break;
-//		}
-//
-//
-//
-//	}
-//}
