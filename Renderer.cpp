@@ -229,59 +229,6 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera 
 
 }
 
-//= ============================================================
-//	Render pass for the main menu ( eventually pause menu as well )
-//=============================================================
-void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures, ACTIVEMENU activeMenu)
-{
-
-	// set the color TO BE used (this does not clear the screen right away)
-	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
-	// use the color to clear the color buffer (clear the color buffer only)
-	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
-
-	//secondPassRenderPauseOverlay(bgShaderProgram, bgTexture);
-
-	// tell opengl we want to use the gShaderProgram
-	glUseProgram(gShaderProgram.getShader());
-
-	// Main render queue
-	// Currently the render swaps buffer for every object which could become slow further on
-	// If possible the rendercalls could be improved
-
-	if (activeMenu == PAUSEACTIVE) {
-		glBindVertexArray(gVertexAttributePause);
-	}
-	else {
-		glBindVertexArray(gVertexAttributeMain);
-	}
-
-	unsigned int startIndex = 0;
-
-	//passTextureData(GL_TEXTURE0, bgTexture, gShaderProgram.getShader(), "diffuseTex", 0);
-	//glDrawArrays(GL_TRIANGLES, startIndex, sizeof(ButtonVtx)*6);
-	//startIndex += 6;
-
-	for (int i = 0; i < objects.size(); i++)
-	{
-		
-		//Binds the albedo texture from a material
-		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
-
-		// Binds the background texture from the Menu
-		//passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
-
-		// Draw call
-		// As the buffer is swapped for each object the drawcall currently always starts at index 0
-		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetVertexCount() );
-
-		startIndex += objects[i].GetVertexCount();
-	}
-
-}
-
-
 //=============================================================
 //	Creates a vertexbuffer from all the recieved vertex data
 //=============================================================
@@ -370,7 +317,6 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 14)
 	);
-
 	glVertexAttribIPointer(
 		6,
 		4,
@@ -385,6 +331,48 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 	glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 64, NULL, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+//==============================================================
+//	Render pass for the main menu and pause menu
+//=============================================================
+void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], std::vector<GLuint> textures, ACTIVEMENU activeMenu)
+{
+
+	// set the color TO BE used (this does not clear the screen right away)
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	// use the color to clear the color buffer (clear the color buffer only)
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	// tell opengl we want to use the gShaderProgram
+	glUseProgram(gShaderProgram.getShader());
+
+	// Main render queue
+	// Currently the render swaps buffer for every object which could become slow further on
+	// If possible the rendercalls could be improved
+
+	if (activeMenu == PAUSEACTIVE) {
+		glBindVertexArray(gVertexAttributePause);
+	}
+	else {
+		glBindVertexArray(gVertexAttributeMain);
+	}
+
+	unsigned int startIndex = 0;
+
+	for (int i = 0; i < objects.size(); i++)
+	{
+		
+		//Binds the albedo texture from a material
+		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
+
+		// Draw call
+		// As the buffer is swapped for each object the drawcall currently always starts at index 0
+		// This is what could be improved with one large buffer and then advance the start index for each object
+		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetVertexCount() );
+
+		startIndex += objects[i].GetVertexCount();
+	}
 
 }
 

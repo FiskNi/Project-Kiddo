@@ -14,6 +14,7 @@ class MenuButton {
 private:
 	int textureID;
 	//string name;
+	bool isNotButton;
 
 	std::vector<ButtonVtx> buttonVertices;
 
@@ -24,7 +25,8 @@ private:
 
 public:
 	MenuButton(float offset, int textureID);
-	MenuButton(std::vector<ButtonVtx> vertices, int textureID);
+	MenuButton(std::vector<ButtonVtx> vertices, int textureID, bool isNotButton);
+	MenuButton(int minX, int minY, int maxX, int maxY, int textureID);
 	~MenuButton();
 	void CreateButtonQuad();
 	void CalculateBoundingBox();
@@ -37,6 +39,7 @@ public:
 	int GetSize() const { return sizeof(ButtonVtx) * 6; }
 	int GetVertexCount() const { return 6; }
 	int GetTextureID() const { return textureID; }
+	bool GetIsNotButton() const { return isNotButton; }
 
 };
 
