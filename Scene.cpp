@@ -191,7 +191,7 @@ void Scene::CompileMeshData()
 {
 	// Compile the mesh data of the first room
 	roomBuffer->CompileMeshData();
-	roomBuffer->ModifyMeshData().push_back(playerCharacter.GetMeshData());
+	roomBuffer->GetMeshData().push_back(playerCharacter.GetMeshData());
 	// Compile character data
 }
 

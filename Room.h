@@ -120,7 +120,7 @@ public:
 	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
 	//std::vector<puzzleNode>& GetNodes() { return nodes; }
 	std::vector<BridgeEntity>& GetBridges() { return bridges; }
-	std::vector<Mesh> GetMeshData() const { return meshes; }
+	std::vector<Mesh>& GetMeshData()  { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
 	bool GetRoomCompleted() { return this->isRoomCompleted; }
