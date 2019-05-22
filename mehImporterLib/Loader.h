@@ -37,6 +37,7 @@ public:
 	LoaderMesh GetMesh(int index) const { return mesh[index]; }
 	int GetType(int index) const { return mesh[index].type; }
 	int GetLink(int index) const { return mesh[index].link; }
+	int GetCollectIndex(int index) const { return mesh[index].collect; }
 	
 	float* GetDirLightPos(int index) const { return dirLight[index].position; }
 	float GetDirLightIntensity(int index) const { return dirLight[index].intensity; }
