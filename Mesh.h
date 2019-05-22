@@ -70,6 +70,9 @@ private:
 	MeshGroupClass* myGroupParent;
 	SkeletonD skeleton;
 
+	glm::vec3 parentPosOffset;
+	glm::vec3 parentSizeOffset;
+
 	unsigned int materialID;
 
 public:
@@ -113,9 +116,13 @@ public:
 	string GetMeshParentName() const { return pName; }
 	bool GetIsChild() const { return isChild; }
 	int GetParentType() const { return parentType; }
+	glm::vec3 GetParentPosOffset() const { return parentPosOffset; }
+	glm::vec3 GetParentSizeOffset() const { return parentSizeOffset; }
 
 	void SetMeshParent(Mesh *parent);
 	void SetGroupParent(MeshGroupClass * parent);
+	void SetParentPosOffset(glm::vec3 offset);
+	void SetParentSizeOffset(glm::vec3 offset);
 
 	Mesh* GetMeshParent() { return myParent; }
 	MeshGroupClass* GetGroupParent() { return myGroupParent; }

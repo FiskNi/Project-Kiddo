@@ -1,76 +1,39 @@
 #include "Menu.h"
 
-void Menu::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	//Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
-
-	// IF PAUSED
-
-	//if (menu->state == MAINMENU)
-	//{
-
-		//if (key == GLFW_KEY_1 && action == GLFW_PRESS) 
-		//{
-		//	//RESUMES GAME
-		//	menu->isLoading = true;
-		//	menu->state = PLAYING;
-		//
-		//	std::cout << "START GAME/RESUME" << std::endl;
-		//	std::cout << "Loading takes time!" << std::endl;
-		//	// Bad stuff, needs to be changed but works very temporarily
-		//	//scene->roomBuffer->SetRoomCompleted(true);
-		//}
-		//if (key == GLFW_KEY_2 && action == GLFW_PRESS) 
-		//{
-		//	//RESTART HERE
-		//}
-		//if (key == GLFW_KEY_3 && action == GLFW_PRESS) 
-		//{
-		//	//CLOSES WINDOW
-		//	glfwSetWindowShouldClose(window, GL_TRUE);
-		//}
-
-		/*if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			std::cout << "Left click" << std::endl;
-		}*/
-	//}
-
-}
-
-void Menu::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		//std::cout << "CLICK CLICK BITCH" << std::endl;
-		double x, y;
-		glfwGetCursorPos(window, &x, &y);
-		std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
-	}
-}
 
 Menu::Menu() 
 {
-	vertexCountTotal = 0;
-	nrOfMenuButtons = 0;
-	pauseOverlayTexture = 0;
-	loadingTexture = 0;
-	buttonTextureBase = 0;
-	backgroundTexture = 0;
+	vertexCountMainTotal = 0;
+	vertexCountPauseTotal = 0;
+	nrOfMainButtons = 0;
+	nrOfPauseButtons = 0;
 	isMenuRunning = true;
 	isButtonHit = false;
+	updateState = MAINMENU;
 
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
+	//CreateMenuTexture("Resources/Textures/PauseButtonTEMP.png", &pauseButtonTexture);
 
-	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
+	CreateMenuTexture("Resources/Textures/PauseTitle.png", &pbt0);
+	CreateMenuTexture("Resources/Textures/PauseResume.png", &pbt1);
+	CreateMenuTexture("Resources/Textures/PauseRestart.png", &pbt2);
+	CreateMenuTexture("Resources/Textures/PauseQuit.png", &pbt3);
+
+	pauseButtonTextures.push_back(pbt0);
+	pauseButtonTextures.push_back(pbt1);
+	pauseButtonTextures.push_back(pbt2);
+	pauseButtonTextures.push_back(pbt3);
+
+	//CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
 	CreateMainMenu();
 }
 
 Menu::~Menu() 
 {
+
 }
 
 // ========================================================================
@@ -78,13 +41,21 @@ Menu::~Menu()
 // ========================================================================
 void Menu::CreateMainMenu()
 {
-	for (int i = 0; i < 3; i++) 
-	{
+	//pauseButtonTextures.push_back(pauseButtonTexture);
+
+	for (int i = 0; i < 3; i++) {
 		buttonTextures.push_back(buttonTextureBase);
 		MenuButton newButton(GetCurrentOffset(), i);
-		vertexCountTotal += newButton.GetVertexCount();
-		menuButtons.push_back(newButton);
-		nrOfMenuButtons++;
+		vertexCountMainTotal += newButton.GetVertexCount();
+		mainButtons.push_back(newButton);
+		nrOfMainButtons++;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		MenuButton newPauseButton(GetCurrentOffsetPause(), i);
+		vertexCountPauseTotal += newPauseButton.GetVertexCount();
+		pauseButtons.push_back(newPauseButton);
+		nrOfPauseButtons++;
 	}
 }
 
@@ -110,28 +81,45 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		printMouseClickOnce = false;
 	}
 
-
-	if (isButtonHit == true) {
-		if (currentButtonHit == 0) {
-			// START GAME			// This is handled in GameEngine by getting the last clicked button
+	if (activeMenu == MAINACTIVE) {
+		if (isButtonHit == true) {
+			if (currentButtonHit == 0) {
+				// START GAME			// This is handled in GameEngine by getting the last clicked button
+				updateState = PLAYING;
+			}
+			else if (currentButtonHit == 1) {
+				// SETTINGS? CREDITS? HOW TO PLAY?
+			}
+			else if (currentButtonHit == 2) {
+				// EXIT
+				glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+			}
+			isButtonHit = false;
 		}
-		else if (currentButtonHit == 1) {
-			// SETTINGS? CREDITS? HOW TO PLAY?
-		}
-		else if (currentButtonHit == 2) {
-			// EXIT
-			glfwSetWindowShouldClose(renderWindow, GL_TRUE);
-		}
-		isButtonHit = false;
 	}
-
-	/*if (!setUserPointer)
-	{
-		glfwSetWindowUserPointer(renderWindow, this);
-		glfwSetKeyCallback(renderWindow, key_callback);
-		glfwSetMouseButtonCallback(renderWindow, mouse_button_callback);
-		setUserPointer = true;
-	}*/
+	//else if (activeMenu == PAUSEACTIVE) {
+	//	if (isButtonHit == true) {
+	//		//if (currentButtonHit == 0) {
+	//		//	// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
+	//		//	// This shuts the entire window currently as a backup for testing
+	//		//	glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+	//		//}
+	//		//else if (currentButtonHit == 1) {
+	//		//	// RESUME GAME			// CHANGE STATE IN SCENE, let gameengine know it needs to change state
+	//		//	std::cout << "CLICKED BUTTON " << currentButtonHit << std::endl;
+	//		//	//updateState = PLAYING;
+	//		//}
+	//		//else if (currentButtonHit == 2) {
+	//		//	// RESTART
+	//		//	//updateState = PLAYING;
+	//		//}
+	//		//else if (currentButtonHit == 3) {
+	//		//	// EXIT TO MAIN MENU
+	//		//	updateState = MAINMENU;
+	//		//}
+	//		isButtonHit = false;
+	//	}
+	//}
 }
 
 // =============================================================
@@ -171,18 +159,29 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 // ========================================================================
 //	Checks collision between the clicked mouse cursor and the buttons
 // ========================================================================
-void Menu::CheckCollision(float x, float y) 
+bool Menu::CheckCollision(float x, float y) 
 {
-	for (int i = 0; i < nrOfMenuButtons; i++) 
-	{
-		if (menuButtons[i].CheckInsideCollision(x, y) == true) 
-		{
-			std::cout << "Hit Button nr " << i << std::endl;
-			currentButtonHit = i;
-			isButtonHit = true;
-			return;
+	if (activeMenu == PAUSEACTIVE) {
+		for (int i = 0; i < nrOfPauseButtons; i++) {
+			if (pauseButtons[i].CheckInsideCollision(x, y) == true) {
+				//std::cout << "Hit Button nr " << i << std::endl;
+				currentButtonHit = i;
+	//			isButtonHit = true;
+				return true;
+			}
 		}
 	}
+	else if (activeMenu == MAINACTIVE){
+		for (int i = 0; i < nrOfMainButtons; i++) {
+			if (mainButtons[i].CheckInsideCollision(x, y) == true) {
+				std::cout << "Hit Button nr " << i << std::endl;
+				currentButtonHit = i;
+				isButtonHit = true;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void Menu::CreateBackgroundQuad() {

@@ -75,7 +75,7 @@ void main ()
 	}
 	
 	// hasNormalMap
-	if (1 == 2)
+	if (hasNormalmap)
 	{
 		vec3 tangent = normalize(fsInput.tangent - dot(fsInput.tangent, fsInput.normal) * fsInput.normal);
 		vec3 biTangent = cross(fsInput.normal, tangent);
