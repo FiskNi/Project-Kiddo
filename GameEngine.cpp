@@ -252,19 +252,19 @@ void GameEngine::Run()
 						else if (clickedButton == 1) {
 							// RESUME GAME	
 							mainScene.ResumeGame();
-							std::cout << "RESUME" << std::endl;
+							//std::cout << "RESUME" << std::endl;
 						}
 						else if (clickedButton == 2) {
 							// RESTART
 							mainScene.RestartGame();
-							std::cout << "Restarting level" << std::endl;
+							//std::cout << "Restarting level" << std::endl;
 						}
 						else if (clickedButton == 3) {
 							// Quit to Main Menu (START WILL WORK AS RESUME)
 							mainScene.ExitToMainMenu();
 							mainMenu.SetActiveMenu(MAINACTIVE);
 							mainMenu.SetIsMenuRunning(true);
-							std::cout << "MAIN MENU" << std::endl;
+							//std::cout << "MAIN MENU" << std::endl;
 						}
 
 					}

@@ -84,9 +84,6 @@ void MenuButton::CalculateBoundingBox()
 		}
 	}
 
-	std::cout << "Top Left idx: " << topLeftIdx << std::endl;
-	std::cout << "Bot Right idx: " << botRightIdx << std::endl;
-
 	// Calculates the pixel position for the vertex coordinates created in -1 to 1 space
 	// Y currently needs -20 as an offset in all cases, might need to be adjusted depending on the button offset in the menu?
 	cornerMin.x = (WIDTH / 2) * (1 + buttonVertices[topLeftIdx].x);
