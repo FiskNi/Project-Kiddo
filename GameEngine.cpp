@@ -92,7 +92,7 @@ void GameEngine::CompileMainMenuData()
 
 	for (int i = 0; i < nrOfMenuButtons; i++)
 	{
-		int buttonVtxCount = mainMenu.GetMainMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		int buttonVtxCount = mainMenu.GetMainMenuButtons()[i].GetVertexCount();
 		for (int j = 0; j < buttonVtxCount; j++)
 		{
 			mainMenuVertexData[vertexIndex] = mainMenu.GetMainMenuButtonVertices(i)[j];
@@ -104,22 +104,16 @@ void GameEngine::CompileMainMenuData()
 
 void GameEngine::CompilePauseMenuData()
 {
-	//meshCount = mainScene.GetMeshData().size();
 	int nrOfMenuButtons = mainMenu.GetNrOfPauseButtons();
 	int vtxCountButtons = mainMenu.GetVertexCountPauseTotal();
 
 	pauseMenuVertexData = new ButtonVtx[vtxCountButtons];
 
 	int vertexIndex = 0;
-	//for (int k = 0; k < 6; k++)
-	//{
-	//	mainMenuVertexData[vertexIndex] = mainMenu.GetBackgroundVertices(k);
-	//	vertexIndex++;
-	//}
 
 	for (int i = 0; i < nrOfMenuButtons; i++)
 	{
-		int buttonVtxCount = mainMenu.GetPauseMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		int buttonVtxCount = mainMenu.GetPauseMenuButtons()[i].GetVertexCount();
 		for (int j = 0; j < buttonVtxCount; j++)
 		{
 			pauseMenuVertexData[vertexIndex] = mainMenu.GetPauseMenuButtonVertices(i)[j];
@@ -158,7 +152,6 @@ void GameEngine::Run()
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
 			if (mainMenu.GetLastClickedButton() == 1) {
-				//menuIsRunning = false;
 				mainScene.ResumeGame();
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
@@ -166,9 +159,6 @@ void GameEngine::Run()
 		}
 		else if (mainScene.GetExit())
 		{
-			//menuIsRunning = true;
-			//mainMenu.SetActiveMenu(MAINACTIVE);
-			//mainScene.SetCurrentState(MAINMENU);
 			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
 		}
@@ -180,7 +170,6 @@ void GameEngine::Run()
 			deltaTime = 0.0f;
 
 
-		//if (menuIsRunning == true)
 		if (mainMenu.GetIsMenuRunning() == true)
 		{
 			// RENDER CALL FOR MAIN MENU HERE
@@ -193,7 +182,6 @@ void GameEngine::Run()
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glfwSwapBuffers(mainRenderer.getWindow());
 		}
-		//else if (menuIsRunning == false && mainScene.GetRoomLoaded())
 		else if (mainMenu.GetIsMenuRunning() == false && mainScene.GetRoomLoaded())
 		{
 			// Main updates to a scene
