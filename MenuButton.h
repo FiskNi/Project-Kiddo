@@ -1,30 +1,42 @@
 #pragma once
 #include "Headers.h"
-#include "Mesh.h"
+
 
 // Base class idea for Menu Buttons if we need to implement them ourselves
 // Currently not used, but might be needed if we change our ideas.
 
+struct ButtonVtx {
+	float x, y, z;
+	float u, v;
+};
+
 class MenuButton {
 private:
-	Mesh menuButtonMesh;
+	int textureID;
+	//string name;
 
-	string name;
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+	std::vector<ButtonVtx> buttonVertices;
 
-	glm::vec3 boundingBoxCenter;
-	glm::vec3 boundingBoxSize;
+	float offset;
+
+	glm::vec3 cornerMin;
+	glm::vec3 cornerMax;
+
 public:
-	MenuButton(Loader* inLoader, unsigned int index, unsigned int matID);
+	MenuButton(float offset, int textureID);
+	MenuButton(std::vector<ButtonVtx> vertices, int textureID);
 	~MenuButton();
-	void InitBoundingBox();
+	void CreateButtonQuad();
+	void CalculateBoundingBox();
 
-	void SetPosition(glm::vec3 newPos);
+	bool CheckInsideCollision(float xPos, float yPos);
 
-	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize);
-
+	std::vector<ButtonVtx> GetButtonVertices() const { return buttonVertices; }
+	glm::vec3 GetVertexPosition(int idx) const { return glm::vec3(buttonVertices[idx].x, buttonVertices[idx].y, buttonVertices[idx].z); }
+	// Hardcoded to 6 vertices, as a button will always consist of two quads.
+	int GetSize() const { return sizeof(ButtonVtx) * 6; }
+	int GetVertexCount() const { return 6; }
+	int GetTextureID() const { return textureID; }
 
 };
 

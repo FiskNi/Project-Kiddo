@@ -15,7 +15,7 @@ void Camera::reCalcCamVecs()
 
 Camera::Camera()
 {
-	this->camPos = glm::vec3(-11.35f, 7.4f, 12.9f);
+	this->camPos = glm::vec3(-25.5f, 29.38f, 27.06f);
 	this->worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->camYaw = -45.f;
 	this->camPitch = -36.5f;

@@ -19,6 +19,8 @@
 #include "Button.h"
 #include "Item.h"
 #include "boxHolder.h"
+#include "MeshGroupClass.h"
+
 #include "Door.h"
 #include "Collectible.h"
 //============================================================================
@@ -55,6 +57,20 @@ private:
 
 	void PlayerItemCollision(Character* playerCharacter);
 
+	//Neccesary functions for applying parents and hierarchies.
+	bool FindParent(Mesh * childMesh);
+	bool FindParent(MeshGroupClass * childMeshGroup);
+	void SetAllParents();
+	glm::vec3 updateChild(Mesh* meshPtr);
+	glm::vec3 updateChild(MeshGroupClass* meshPtr);
+	void updateChildren();
+
+	//Left over functions for if we don't freeze the objects ahead of exportions.
+	//Outdated otherwise.
+	std::vector <float> GetParentOffset(Mesh * childMesh);
+	std::vector <float> GetParentOffset(MeshGroupClass * childGroup);
+
+
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> roomMeshes;
@@ -76,6 +92,10 @@ private:
 
 	std::vector<boxHolder> holders;
 
+	//MeshGroups
+	std::vector<MeshGroupClass> meshGroups;
+	std::vector<glm::vec3> posOffset;
+
 	// PuzzleNodes
 	//std::vector<puzzleNode> nodes;
 
@@ -83,6 +103,7 @@ private:
 	Camera* roomCamera;
 
 	bool isRoomCompleted = false;
+	bool firstCall;
 
 	irrklang::ISoundEngine* audioEngine;
 

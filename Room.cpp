@@ -11,6 +11,8 @@ Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEng
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
 
+	firstCall = true;
+
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
 
@@ -221,6 +223,575 @@ void Room::PlayerItemCollision(Character* playerCharacter)
 		}
 	}
 }
+
+//=============================================================
+// This finds and sets the parent of a mesh by going through every different vector.
+// This since the "meshes" vector is constantly being cleared.
+// So it was the best way I could currently think of to make sure every parent is found.
+// --MAKE SURE TO ADD NEW VECTORS IF WE ADD MORE OVER TIME.--
+// Could potentially just go through a single vector practically identical to "meshes" vector except not cleared.
+//=============================================================
+bool Room::FindParent(Mesh * childMesh)
+{
+
+	//Meshgroups are most likely to be parents of meshes and are thus tested first.
+	for (int j = 0; j < meshGroups.size(); j++)
+	{
+		if (meshGroups[j].GetName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetGroupParent(&meshGroups[j]);
+			return true;
+		}
+	}
+
+	for (int j = 0; j < roomMeshes.size(); j++)
+	{
+		if (roomMeshes[j].GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(&roomMeshes[j]);
+			return true;
+		}
+	}
+
+	for (int j = 0; j < statics.size(); j++)
+	{
+		if (statics[j].GetMeshData().GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(statics[j].GetMeshDataPointer());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < rigids.size(); j++)
+	{
+		if (rigids[j].GetMeshData().GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(rigids[j].GetMeshDataPointer());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < holders.size(); j++)
+	{
+		if (holders[j].GetMeshData().GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(holders[j].GetMeshDataPointer());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < buttons.size(); j++)
+	{
+		if (buttons[j].GetMeshData().GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(buttons[j].GetMeshDataPointer());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < pressurePlates.size(); j++)
+	{
+		if (pressurePlates[j].GetMeshData().GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(pressurePlates[j].GetMeshDataPointer());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < doors.size(); j++)
+	{
+		if (doors[j].GetMeshData().GetMeshName() == childMesh->GetMeshParentName())
+		{
+			childMesh->SetMeshParent(doors[j].GetMeshDataPointer());
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//=============================================================
+// Same as above but for MeshGroups just in case.
+//=============================================================
+bool Room::FindParent(MeshGroupClass * childMeshGroup)
+{
+
+	for (int j = 0; j < roomMeshes.size(); j++)
+	{
+		if (roomMeshes[j].GetMeshName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetMeshParent(&roomMeshes[j]);
+			return true;
+		}
+	}
+
+	for (int j = 0; j < statics.size(); j++)
+	{
+		if (statics[j].GetMeshData().GetMeshName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetMeshParent(&roomMeshes[j]);
+			return true;
+		}
+	}
+
+	for (int j = 0; j < rigids.size(); j++)
+	{
+		if (rigids[j].GetMeshData().GetMeshName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetMeshParent(&rigids[j].GetMeshData());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < holders.size(); j++)
+	{
+		if (holders[j].GetMeshData().GetMeshName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetMeshParent(&holders[j].GetMeshData());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < buttons.size(); j++)
+	{
+		if (buttons[j].GetMeshData().GetMeshName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetMeshParent(&buttons[j].GetMeshData());
+			return true;
+		}
+	}
+
+	for (int j = 0; j < pressurePlates.size(); j++)
+	{
+		if (pressurePlates[j].GetMeshData().GetMeshName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetMeshParent(&pressurePlates[j].GetMeshData());
+			return true;
+		}
+	}
+
+	//Meshgroups are least likely to be parents of meshgroups and are thus tested last.
+	for (int j = 0; j < meshGroups.size(); j++)
+	{
+		if (meshGroups[j].GetName() == childMeshGroup->GetParentName())
+		{
+			childMeshGroup->SetGroupParent(&meshGroups[j]);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//=============================================================
+// This finds and sets the parents of all meshes by calling FindParent for every mesh.
+// NEW VECTORS SHOULD BE ADDED OVER TIME
+//=============================================================
+void Room::SetAllParents()
+{
+
+	for (int i = 0; i < roomMeshes.size(); i++)
+	{
+		if (roomMeshes[i].GetIsChild() == true)
+		{
+			bool parentFound = FindParent(&roomMeshes[i]);
+			if (parentFound == false)
+			{
+				std::cout << "CANNOT FIND 'roomMeshes' index:" + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < statics.size(); i++)
+	{
+		if (statics[i].GetMeshData().GetIsChild() == true)
+		{
+			bool parentFound = FindParent(statics[i].GetMeshDataPointer());
+			if (parentFound == false)
+			{
+				cout << "CANNOT FIND 'statics' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		if (rigids[i].GetMeshData().GetIsChild() == true)
+		{
+			bool parentFound = FindParent(rigids[i].GetMeshDataPointer());
+			if (parentFound == false)
+			{
+				cout << "CANNOT FIND 'rigids' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < holders.size(); i++)
+	{
+		if (holders[i].GetMeshData().GetIsChild() == true)
+		{
+			bool parentFound = FindParent(holders[i].GetMeshDataPointer());
+			if (parentFound == false)
+			{
+				cout << "CANNOT FIND 'holders' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < buttons.size(); i++)
+	{
+		if (buttons[i].GetMeshData().GetIsChild() == true)
+		{
+			bool parentFound = FindParent(buttons[i].GetMeshDataPointer());
+			if (parentFound == false)
+			{
+				cout << "CANNOT FIND 'buttons' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < pressurePlates.size(); i++)
+	{
+		if (pressurePlates[i].GetMeshData().GetIsChild() == true)
+		{
+			bool parentFound = FindParent(pressurePlates[i].GetMeshDataPointer());
+			if (parentFound == false)
+			{
+				cout << "CANNOT FIND 'preassurePlates' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < meshGroups.size(); i++)
+	{
+		if (meshGroups[i].GetIsChild() == true)
+		{
+			bool parentFound = FindParent(&meshGroups[i]);
+			if (parentFound == false)
+			{
+				std::cout << "CANNOT FIND 'meshGroups' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+
+	for (int i = 0; i < doors.size(); i++)
+	{
+		if (doors[i].GetMeshData().GetIsChild() == true)
+		{
+			bool parentFound = FindParent(doors[i].GetMeshDataPointer());
+			if (parentFound == false)
+			{
+				cout << "CANNOT FIND 'doors' index: " + to_string(i) +
+					" PARENT DESPITE BEING CHILD. SOMETHING WENT WRONG IN 'FindParent' FUNCTION!!" << endl;
+				system("Pause");
+			}
+		}
+	}
+}
+
+std::vector <float> Room::GetParentOffset(Mesh * childMesh)
+{
+	if (childMesh->GetIsChild() == true)
+	{
+		if (childMesh->GetParentType() == 1)
+		{
+			//Initalize vector of size 9 with all 0s
+			std::vector <float> offset(9,0);
+			//Size can't be 0
+			offset[6] = 1;
+			offset[7] = 1;
+			offset[8] = 1;
+			//Get grandparent and grand-grand-parents offset and so on
+			if (childMesh->GetMeshParent()->GetIsChild() == true)
+			{
+				offset = GetParentOffset(childMesh->GetMeshParent());
+			}
+
+			offset[0] += childMesh->GetMeshParent()->GetPosition().x;
+			offset[1] += childMesh->GetMeshParent()->GetPosition().y;
+			offset[2] += childMesh->GetMeshParent()->GetPosition().z;
+			offset[3] += childMesh->GetMeshParent()->GetRotation().x;
+			offset[4] += childMesh->GetMeshParent()->GetRotation().y;
+			offset[5] += childMesh->GetMeshParent()->GetRotation().z;
+			offset[6] *= childMesh->GetMeshParent()->GetScale().x;
+			offset[7] *= childMesh->GetMeshParent()->GetScale().y;
+			offset[8] *= childMesh->GetMeshParent()->GetScale().z;
+
+			return offset;
+		}
+		else if (childMesh->GetParentType() == 0)
+		{
+			std::vector <float> offset(9, 0);
+			//Size can't be 0
+			offset[6] = 1;
+			offset[7] = 1;
+			offset[8] = 1;
+			//Get grandparent and grand-grand-parents offset and so on
+			if (childMesh->GetGroupParent()->GetIsChild() == true)
+			{
+				//Note we call the other version of the function here.
+				offset = GetParentOffset(childMesh->GetGroupParent());
+			}
+
+			offset[0] += childMesh->GetGroupParent()->GetGroupPosition().x;
+			offset[1] += childMesh->GetGroupParent()->GetGroupPosition().y;
+			offset[2] += childMesh->GetGroupParent()->GetGroupPosition().z;
+			offset[3] += childMesh->GetGroupParent()->GetGroupRotation().x;
+			offset[4] += childMesh->GetGroupParent()->GetGroupRotation().y;
+			offset[5] += childMesh->GetGroupParent()->GetGroupRotation().z;
+			offset[6] *= childMesh->GetGroupParent()->GetGroupScale().x;
+			offset[7] *= childMesh->GetGroupParent()->GetGroupScale().y;
+			offset[8] *= childMesh->GetGroupParent()->GetGroupScale().z;
+
+			return offset;
+		}
+	}
+
+	std::cout << "GetParentOffset (mesh) INPUT IS NOT CHILD. PLEASE ONLY INPUT CHILD MESHES." << endl;
+
+	return std::vector<float>(1,-1);
+}
+
+std::vector <float> Room::GetParentOffset(MeshGroupClass * childGroup)
+{
+	if (childGroup->GetIsChild() == true)
+	{
+		if (childGroup->GetParentType() == 1)
+		{
+
+			std::vector <float> offset(9, 0);
+			//Size can't be 0
+			offset[6] = 1;
+			offset[7] = 1;
+			offset[8] = 1;
+			//Get grandparent and grand-grand-parents offset and so on
+			if (childGroup->GetMeshParent()->GetIsChild() == true)
+			{
+				offset = GetParentOffset(childGroup->GetMeshParent());
+			}
+
+			offset[0] += childGroup->GetMeshParent()->GetPosition().x;
+			offset[1] += childGroup->GetMeshParent()->GetPosition().y;
+			offset[2] += childGroup->GetMeshParent()->GetPosition().z;
+			offset[3] += childGroup->GetMeshParent()->GetRotation().x;
+			offset[4] += childGroup->GetMeshParent()->GetRotation().y;
+			offset[5] += childGroup->GetMeshParent()->GetRotation().z;
+			offset[6] *= childGroup->GetMeshParent()->GetScale().x;
+			offset[7] *= childGroup->GetMeshParent()->GetScale().y;
+			offset[8] *= childGroup->GetMeshParent()->GetScale().z;
+
+			//Special only wanna do this for groups since they're not updated outside
+			glm::vec3 temp = childGroup->GetGroupPosition() * glm::vec3(offset[6], offset[7], offset[8]) + glm::vec3(offset[0], offset[1], offset[2]);
+
+			offset[0] = temp[0];
+			offset[1] = temp[1];
+			offset[2] = temp[2];
+
+
+			return offset;
+		}
+		else if (childGroup->GetParentType() == 0)
+		{
+			std::vector <float> offset(9, 0);
+			//Size can't be 0
+			offset[6] = 1;
+			offset[7] = 1;
+			offset[8] = 1;
+			//Get grandparent and grand-grand-parents offset and so on
+			if (childGroup->GetGroupParent()->GetIsChild() == true)
+			{
+				//I'm going to have to make a second overloaded function... Fuck this shit I'm OUT!
+				offset = GetParentOffset(childGroup->GetGroupParent());
+			}
+
+			offset[0] += childGroup->GetGroupParent()->GetGroupPosition().x;
+			offset[1] += childGroup->GetGroupParent()->GetGroupPosition().y;
+			offset[2] += childGroup->GetGroupParent()->GetGroupPosition().z;
+			offset[3] += childGroup->GetGroupParent()->GetGroupRotation().x;
+			offset[4] += childGroup->GetGroupParent()->GetGroupRotation().y;
+			offset[5] += childGroup->GetGroupParent()->GetGroupRotation().z;
+			offset[6] *= childGroup->GetGroupParent()->GetGroupScale().x;
+			offset[7] *= childGroup->GetGroupParent()->GetGroupScale().y;
+			offset[8] *= childGroup->GetGroupParent()->GetGroupScale().z;
+
+			return offset;
+		}
+	}
+
+	std::cout << "GetParentOffset (group) INPUT IS NOT CHILD. PLEASE ONLY INPUT CHILD GROUPS." << endl;
+
+	return std::vector<float>(1, -1);
+}
+
+glm::vec3 Room::updateChild(Mesh * meshPtr)
+{
+	glm::vec3 returnVec = glm::vec3(0,0,0);
+	if (firstCall == false)
+	{
+		if (meshPtr->GetParentType() == 1)
+		{
+			if (meshPtr->GetMeshParent()->GetPosition() != meshPtr->GetParentPosOffset())
+			{
+				returnVec = (meshPtr->GetMeshParent()->GetPosition() - meshPtr->GetParentPosOffset());
+				meshPtr->SetParentPosOffset(meshPtr->GetMeshParent()->GetPosition());
+			}
+
+		}
+		else if (meshPtr->GetParentType() == 0)
+		{
+			if (meshPtr->GetGroupParent()->GetGroupPosition() != meshPtr->GetParentPosOffset())
+			{
+				returnVec = (meshPtr->GetGroupParent()->GetGroupPosition() - meshPtr->GetParentPosOffset());
+				meshPtr->SetParentPosOffset(meshPtr->GetGroupParent()->GetGroupPosition());
+			}
+		}
+	}
+	else
+	{
+		if (meshPtr->GetParentType() == 1)
+		{
+			//The setting of position won't bloody stick
+			meshPtr->SetParentPosOffset(meshPtr->GetMeshParent()->GetPosition());
+		}
+		else if (meshPtr->GetParentType() == 0)
+		{
+			//Issue: the groups aren't actually moved >~<
+			meshPtr->SetParentPosOffset(meshPtr->GetGroupParent()->GetGroupPosition());
+		}
+	}
+
+	return returnVec;
+}
+
+glm::vec3 Room::updateChild(MeshGroupClass * meshPtr)
+{
+	glm::vec3 returnVec = glm::vec3(0, 0, 0);
+	if (firstCall == false)
+	{
+		if (meshPtr->GetParentType() == 1)
+		{
+			if (meshPtr->GetMeshParent()->GetPosition() != meshPtr->GetParentPosOffset())
+			{
+				returnVec = (meshPtr->GetMeshParent()->GetPosition() - meshPtr->GetParentPosOffset());
+				meshPtr->SetParentPosOffset(meshPtr->GetMeshParent()->GetPosition());
+			}
+
+		}
+		else if (meshPtr->GetParentType() == 0)
+		{
+			if (meshPtr->GetGroupParent()->GetGroupPosition() != meshPtr->GetParentPosOffset())
+			{
+				returnVec = (meshPtr->GetGroupParent()->GetGroupPosition() - meshPtr->GetParentPosOffset());
+				meshPtr->SetParentPosOffset(meshPtr->GetGroupParent()->GetGroupPosition());
+			}
+		}
+	}
+	else
+	{
+		if (meshPtr->GetParentType() == 1)
+		{
+			//The setting of position won't bloody stick
+			meshPtr->SetParentPosOffset(meshPtr->GetMeshParent()->GetPosition());
+		}
+		else if (meshPtr->GetParentType() == 0)
+		{
+			//Issue: the groups aren't actually moved >~<
+			meshPtr->SetParentPosOffset(meshPtr->GetGroupParent()->GetGroupPosition());
+		}
+	}
+
+	return returnVec;
+}
+
+void Room::updateChildren()
+{
+	for (int i = 0; i < roomMeshes.size(); i++)
+	{
+		if (roomMeshes[i].GetIsChild() == true)
+		{
+			roomMeshes[i].SetPosition(roomMeshes[i].GetPosition() + updateChild(&roomMeshes[i]));
+		}
+	}
+
+	for (int i = 0; i < statics.size(); i++)
+	{
+		if (statics[i].GetMeshData().GetIsChild() == true)
+		{
+			Mesh * meshPtr = statics[i].GetMeshDataPointer();
+			glm::vec3 change = updateChild(meshPtr);
+			statics[i].SetPosition(statics[i].GetPosition() + glm::vec3(change[0], 0, change[2]));
+		}
+	}
+
+	for (int i = 0; i < rigids.size(); i++)
+	{
+		if (rigids[i].GetMeshData().GetIsChild() == true)
+		{
+			Mesh * meshPtr = rigids[i].GetMeshDataPointer();
+			/*rigids[i].SetPosition(rigids[i].GetPosition() + updateChild(meshPtr));*/
+			rigids[i].AddVelocity(updateChild(meshPtr)*glm::vec3(25,25,25));
+		}
+	}
+
+	for (int i = 0; i < holders.size(); i++)
+	{
+		if (holders[i].GetMeshData().GetIsChild() == true)
+		{
+			Mesh * meshPtr = holders[i].GetMeshDataPointer();
+			holders[i].SetPosition(holders[i].GetPosition() + updateChild(meshPtr));
+		}
+	}
+
+	for (int i = 0; i < buttons.size(); i++)
+	{
+		if (buttons[i].GetMeshData().GetIsChild() == true)
+		{
+			Mesh * meshPtr = buttons[i].GetMeshDataPointer();
+			buttons[i].SetPosition(buttons[i].GetPosition() + updateChild(meshPtr));
+		}
+	}
+
+	for (int i = 0; i < pressurePlates.size(); i++)
+	{
+		if (pressurePlates[i].GetMeshData().GetIsChild() == true)
+		{
+			Mesh * meshPtr = pressurePlates[i].GetMeshDataPointer();
+			pressurePlates[i].SetPosition(pressurePlates[i].GetPosition() + updateChild(meshPtr));
+		}
+	}
+
+	for (int i = 0; i < meshGroups.size(); i++)
+	{
+		if (meshGroups[i].GetIsChild() == true)
+		{
+			meshGroups[i].SetPosition(meshGroups[i].GetGroupPosition() + updateChild(&meshGroups[i]));
+		}
+	}
+
+	for (int i = 0; i < doors.size(); i++)
+	{
+		if (doors[i].GetMeshData().GetIsChild() == true)
+		{
+			Mesh * meshPtr = doors[i].GetMeshDataPointer();
+			doors[i].SetPosition(doors[i].GetPosition() + updateChild(meshPtr));
+		}
+	}
+}
+
 
 int Room::inBoundCheck(Character playerCharacter)
 {
@@ -465,8 +1036,17 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
 
-					pushDir.y = 0.0f;
-					pushDir *= 3.0f;
+					//pushDir.y = 0.0f;
+					//pushDir *= 3.0f;
+
+					//// Lock to 1 axis
+					//if (abs(pushDir.x) >= abs(pushDir.z))
+					//	pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+					//else
+					//	pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+					//pushDir *= 2.0f;
+
+					//rigids[i].AddVelocity(pushDir);
 
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
@@ -635,6 +1215,11 @@ void Room::CompileMeshData()
 		meshes.push_back(collectibles[i].GetMeshData());
 	}
 
+	//Applying all parent data on the child mesh
+	updateChildren();
+	firstCall = false;
+
+
 }
 
 //=============================================================
@@ -702,8 +1287,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 {
 
 	//==========
-	// Entity loading will be changed to take in custom attributes and base what is loaded into the room on these
-	// Will need to move the Loader up from this location to properly take in materials as well
+	// Entity loading will be changed to take in custom attributes and base    what is loaded into the room on these
+	// Will need to move the Loader up from this location to properly take in  materials as well
 	// The pipeline needs to be looked over in general to determine how things will load and be created
 	//==========
 
@@ -825,15 +1410,22 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		}
 	}
 
-	Collectible coll;
+	for (int i = 0; i < level->GetMeshGroupCount(); i++)
+	{
+		MeshGroupClass group(level, i);
+		meshGroups.push_back(group);
+	}
+	/*Collectible coll;
 	coll.SetPosition(glm::vec3(-15, 0.5, -5));
 	coll.SetIndex(0);
 	coll.SetMaterialID(materials[1].GetMaterialID());
-	collectibles.push_back(coll);
+	collectibles.push_back(coll);*/
 	//Item item;
 	//item.SetItemType(BOMB);
 	//item.SetPosition(glm::vec3(-15, 0.5, -5));
 	//item.SetMaterialID(materials[1].GetMaterialID());
 	//items.push_back(item);
 
+	//Finding and setting parents so that things can be moved properly later.
+	SetAllParents();
 }

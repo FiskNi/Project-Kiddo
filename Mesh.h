@@ -1,6 +1,6 @@
 #pragma once
 #include "Headers.h"
-
+//#include "MeshGroupClass.h"
 //============================================================================
 //	- Mesh
 //	Handles pure mesh data.
@@ -8,6 +8,11 @@
 //	Currently the mesh also holds onto the material id. This could be changed to make
 //	entities hold their own material id.
 //============================================================================
+
+#ifndef MESH_H
+#define MESH_H
+
+class MeshGroupClass;
 
 class Mesh
 {
@@ -19,6 +24,19 @@ private:
 
 	int vertexCount;
 	std::vector<vertexPolygon> vertices;
+
+	string name;
+	string pName;
+	bool isChild;
+
+	//-1 is No Parent, 0 is mesh, 1 is group
+	int parentType;
+
+	Mesh * myParent;
+	MeshGroupClass * myGroupParent;
+
+	glm::vec3 parentPosOffset;
+	glm::vec3 parentSizeOffset;
 
 	unsigned int materialID;
 
@@ -55,9 +73,25 @@ public:
 	glm::vec3 GetPosition() const { return position; }
 	glm::quat GetRotation() const { return rotation; }
 	glm::vec3 GetScale() const { return scale; }
+	string GetMeshName() const { return name; }
+	string GetMeshParentName() const { return pName; }
+	bool GetIsChild() const { return isChild; }
+	int GetParentType() const { return parentType; }
+	glm::vec3 GetParentPosOffset() const { return parentPosOffset; }
+	glm::vec3 GetParentSizeOffset() const { return parentSizeOffset; }
+
+	void SetMeshParent(Mesh *parent);
+	void SetGroupParent(MeshGroupClass * parent);
+	void SetParentPosOffset(glm::vec3 offset);
+	void SetParentSizeOffset(glm::vec3 offset);
+
+	Mesh * GetMeshParent() { return myParent; }
+	MeshGroupClass * GetGroupParent() { return myGroupParent; }
 
 	std::vector<vertexPolygon> GetVertices() { return vertices; }
 	int GetVertexCount() const { return vertexCount; }
 };
+
+#endif MESH_H
 
 

@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "DirectionalLight.h"
 #include "Material.h"
+#include "Menu.h"
 
 //============================================================================
 //	- Renderer
@@ -43,6 +44,13 @@ private:
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
 
+	// Main menu vertex buffers
+	GLuint gVertexBufferMenu;
+	GLuint gVertexAttributeMain;
+	// Pause menu vertex buffers
+	GLuint gVertexBufferPause;
+	GLuint gVertexAttributePause;
+
 
 public:
 	Renderer();
@@ -68,6 +76,10 @@ public:
 		std::vector<Material> materials);
 
 	void CompileVertexData(int vertexCount, vertexPolygon* vertices);
+
+	void RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures, ACTIVEMENU activeMenu);
+	void CompileMenuVertexData(int vertexCount, ButtonVtx * vertices);
+	void CompilePauseMenuVertexData(int vertexCount, ButtonVtx * vertices);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);

@@ -37,6 +37,7 @@ class Scene
 {
 private:
 	bool setUserPointer = false;
+
 	GAMESTATE state = PLAYING;
 
 	void LoadShaders();
@@ -44,7 +45,8 @@ private:
 	void LoadCharacter(Loader* inLoader);
 
 	void CompileMeshData();
-	void CompileMeshDataMainMenu();
+
+	//void CompileMainMenuData();
 	
 	// Global world updates
 	// Should only be applied to active room
@@ -55,6 +57,7 @@ private:
 	Shader basicShader;
 	Shader fsqShader;
 	Shader shadowmapShader;
+	Shader mainMenuShader;
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -65,10 +68,11 @@ private:
 
 	// Rooms
 	Room* roomBuffer;
-	Room* mainMenuRoomBuffer;
+	//Room* mainMenuRoomBuffer;
 	int roomNr;
-	bool isSwitched;
 	bool isLoading;
+	bool exittoMenu;
+	bool roomLoaded;
 
 	Menu menuHandler;
 
@@ -93,21 +97,22 @@ public:
 	std::vector<Material> GetMaterials() const { return materials; }
 	Shader GetShader(unsigned int i) const { return shaders[i]; }
 	std::vector<Mesh> GetMeshData() const { return meshes; }
-	bool GetIsSwitched() const{ return isSwitched; }
 	bool GetIsLoading() const { return isLoading; }
-	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
-
-	//void SetState() { this->press(); }
-	int GetCurrentState() const { return state; };
+	bool GetExit() const { return exittoMenu; }
+	bool GetRoomLoaded() const { return roomLoaded; }
+	int GetCurrentState() const { return state; }
+	void SetCurrentState(GAMESTATE st) { this->state = st; }
 	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
 
-	void SwitchRoom();
+	void LoadRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
-	void SetSwitched();
 	void ResetRoom();
+	void Exited();
+
+	void ResumeGame();
+	void RestartGame();
+	void ExitToMainMenu();
 
 	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
-
-
 };
 

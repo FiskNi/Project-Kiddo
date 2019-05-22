@@ -43,8 +43,14 @@ private:
 	friend void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void CompileRoomData();
 
-	// Main Menu
+
+	// Main Menu & Pause Menu
 	Menu mainMenu;
+	ButtonVtx* mainMenuVertexData;
+	void CompileMainMenuData();
+	ButtonVtx* pauseMenuVertexData;
+	void CompilePauseMenuData();
+	bool printMouseClickOnce;
 
 public:
 	GameEngine();
