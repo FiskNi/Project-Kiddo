@@ -1392,7 +1392,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		{
 			Collectible coll;
 			coll.SetMaterialID(matID);
-			coll.SetIndex
+			/*coll.SetIndex*/
 			collectibles.push_back(coll);
 		}
 			break;
