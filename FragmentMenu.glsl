@@ -14,7 +14,6 @@ out vec4 fragment_color;
 // Texture inputs 
 //uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
-uniform sampler2D backgroundTex;
 
 void main () 
 {

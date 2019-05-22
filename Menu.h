@@ -68,6 +68,7 @@ public:
 
 	bool CheckCollision(float x, float y);
 
+	void CreateMainMenuButtons();
 	void CreateBackgroundQuad();
 
 	// Get Textures ( some are temporary right now ) 

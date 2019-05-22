@@ -163,13 +163,9 @@ void GameEngine::Run()
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		//if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
-		//{
-		//	menuIsRunning = false;
-		//}
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			if (mainMenu.GetLastClickedButton() == 0) {
+			if (mainMenu.GetLastClickedButton() == 1) {
 				//menuIsRunning = false;
 				mainScene.SetCurrentState(PLAYING);
 				mainMenu.SetIsMenuRunning(false);
@@ -199,7 +195,7 @@ void GameEngine::Run()
 			mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 
-			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetButtonTextures(), MAINACTIVE);
+			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -249,7 +245,7 @@ void GameEngine::Run()
 				glfwPollEvents();
 				if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
 				{
-					// Gets the clicked cursor position and checks for collision with any of the buttons
+					// Gets the clicked cursor position and checks for collision with any of the buttons for Pause Menu
 					double x, y;
 					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
 					if (mainMenu.CheckCollision(x, y)) {
@@ -258,8 +254,6 @@ void GameEngine::Run()
 
 						if (clickedButton == 0) {
 							// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
-							// This shuts the entire window currently as a backup for testing
-							//glfwSetWindowShouldClose(mainRenderer.getWindow(), GL_TRUE);
 						}
 						else if (clickedButton == 1) {
 							// RESUME GAME	
@@ -287,10 +281,9 @@ void GameEngine::Run()
 					printMouseClickOnce = false;
 				}
 
-				//mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
 				mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 
-				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetPauseMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetPauseButtonTextures(), PAUSEACTIVE);
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetPauseMenuButtons(), gClearColour, mainMenu.GetPauseButtonTextures(), PAUSEACTIVE);
 				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
 
 				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
@@ -313,13 +306,7 @@ void GameEngine::Run()
 			glfwSwapBuffers(mainRenderer.getWindow());
 			// Draw call for fsq and imgui
 
-
-			// *****LOAD ROOM MESSES UP WHEN YOU RETURN TO THE MAIN MENU AND START AGAIN
-			//  IT LOADS THE NEXT ROOM IN THE LINE, WHICH MEANS IT DOESN'T WORK AS A RESUME AS IT SHOULD
 			// Heavy loading work
-			//if (mainScene.GetCurrentState() == MAINMENU) {
-			//	mainScene.SetCurrentState(MAINMENU);
-			//}
 			mainScene.LoadRoom();
 			CompileRoomData();
 		}

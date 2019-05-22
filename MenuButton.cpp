@@ -4,23 +4,40 @@ MenuButton::MenuButton(float offset, int textureID)
 {
 	this->offset = offset;
 	this->textureID = textureID;
+	this->isNotButton = false;
 	
 	CreateButtonQuad();
 	CalculateBoundingBox();
-	std::cout << "Button BBox MIN: " << cornerMin.x << "  " << cornerMin.y << std::endl;
-	std::cout << "Button BBox MAX: " << cornerMax.x << "  " << cornerMax.y << std::endl;
+	//std::cout << "Button BBox MIN: " << cornerMin.x << "  " << cornerMin.y << std::endl;
+	//std::cout << "Button BBox MAX: " << cornerMax.x << "  " << cornerMax.y << std::endl;
 }
 
-MenuButton::MenuButton(std::vector<ButtonVtx> vertices, int textureID)
+MenuButton::MenuButton(std::vector<ButtonVtx> vertices, int textureID, bool isNotButton)
 {
 	this->offset = 0;
 	this->textureID = textureID;
+	this->isNotButton = isNotButton;
 
 	for (int i = 0; i < 6; i++) {
 		buttonVertices.push_back(vertices[i]);
 	}
 
 	CalculateBoundingBox();
+}
+
+MenuButton::MenuButton(int minX, int minY, int maxX, int maxY, int textureID)
+{
+	this->offset = 0;
+	this->textureID = textureID;
+	this->isNotButton = false;
+
+	CreateButtonQuad();
+
+	cornerMin.x = minX;
+	cornerMin.y = minY;
+	cornerMax.x = maxX;
+	cornerMax.y = maxY;
+
 }
 
 MenuButton::~MenuButton() {
@@ -49,6 +66,9 @@ void MenuButton::CreateButtonQuad()
 
 }
 
+//=============================================================
+//	Calculates the bounding box based on the vertices for the button
+//=============================================================
 void MenuButton::CalculateBoundingBox()
 {
 	// Calculates the top left and the bottom right corners to determine which vertices are the min and max corners

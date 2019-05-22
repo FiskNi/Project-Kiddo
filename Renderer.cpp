@@ -303,7 +303,7 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 //= ============================================================
 //	Render pass for the main menu ( eventually pause menu as well )
 //=============================================================
-void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures, ACTIVEMENU activeMenu)
+void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], std::vector<GLuint> textures, ACTIVEMENU activeMenu)
 {
 
 	// set the color TO BE used (this does not clear the screen right away)
@@ -329,18 +329,11 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 
 	unsigned int startIndex = 0;
 
-	//passTextureData(GL_TEXTURE0, bgTexture, gShaderProgram.getShader(), "diffuseTex", 0);
-	//glDrawArrays(GL_TRIANGLES, startIndex, sizeof(ButtonVtx)*6);
-	//startIndex += 6;
-
 	for (int i = 0; i < objects.size(); i++)
 	{
 		
 		//Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
-
-		// Binds the background texture from the Menu
-		//passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
