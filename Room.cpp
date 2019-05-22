@@ -138,14 +138,16 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 		{
 			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			{
-				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
-				rigids[playerCharacter->GetEntityID()].SetHeld(true);
-				playerCharacter->SetHoldingObject(true);
+			rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
+			rigids[playerCharacter->GetEntityID()].SetHeld(true);
+			playerCharacter->SetHoldingObject(true);
 			}
+
 		}
 		else
 		{
 			rigids[playerCharacter->GetEntityID()].SetHeld(false);
+			playerCharacter->SetHoldingObject(false);
 		}
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));

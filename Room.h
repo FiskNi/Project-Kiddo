@@ -49,7 +49,6 @@ private:
 
 	void RigidStaticCollision(Character* playerCharacter);
 	void RigidGroundCollision(Character* playerCharacter);
-	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
@@ -110,6 +109,8 @@ private:
 public:
 	Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine);
 	~Room();
+
+	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 
 	std::vector<Light>& GetPointLights() { return pointLights; }
 	std::vector<DirectionalLight> GetDirectionalLights() const { return dirLights; }
