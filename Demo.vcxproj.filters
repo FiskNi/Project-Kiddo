@@ -129,9 +129,6 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PressurePlate.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
@@ -243,9 +240,6 @@
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeshGroupClass.h">
