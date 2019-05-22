@@ -1228,7 +1228,7 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights(Loader* inLoader)
 {
-	Light light(0.0f, 0.0f, 0.0f, 0.0f, 200, 9);
+	Light light(0.0f, 0.0f, 0.0f, 0.0f, 600, 11);
 
 	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
 	light.SetSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1389,9 +1389,9 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 12:	// Collectible
 		{
-
 			Collectible coll;
 			coll.SetMaterialID(matID);
+			coll.SetIndex
 			collectibles.push_back(coll);
 		}
 			break;

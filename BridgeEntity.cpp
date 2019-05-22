@@ -178,7 +178,7 @@ void BridgeEntity::Update(float deltaTime)
 
 			if (extendDirection == glm::vec3(0.0f, 1.0f, 0.0f))
 			{
-				if ((restPosition + (extendDirection * extendDistance)).y < GetPosition().y)
+				if ((restPosition + (extendDirection * extendDistance)).y > GetPosition().y)
 				{
 					SetPosition(calculatedPosition);
 				}
