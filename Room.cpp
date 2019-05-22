@@ -140,6 +140,7 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 			{
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
 				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+				playerCharacter->SetHoldingObject(true);
 			}
 		}
 		else
