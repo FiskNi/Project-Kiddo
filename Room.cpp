@@ -1168,6 +1168,7 @@ void Room::CompileMeshData()
 {
 	// NEEDS TO BE CHANGED SO THE VECTOR DOESNT REALLOCATED ALL THE TIME
 	meshes.clear();
+	meshes.shrink_to_fit();
 	meshes.resize(meshAmount);
 
 	int j = 0;

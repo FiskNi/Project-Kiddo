@@ -160,6 +160,8 @@ void Scene::LoadMaterials(Loader* inLoader)
 
 	// Hardcoded materials that will be moved
 	materials.clear();
+	materials.shrink_to_fit();
+
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
 		Material fillMat(inLoader->GetMaterial(i), materials.size());
