@@ -38,19 +38,19 @@ struct DirectionalLight
 out vec4 fragment_color;
 
 // this is a uniform value, the very same value for ALL pixel shader executions
-layout(location = 9) uniform vec3 camPos;
-layout(location = 10) uniform bool hasNormalmap;
-layout(location = 11) uniform bool hasAlbedoMap;
+layout(location = 11) uniform vec3 camPos;
+layout(location = 12) uniform bool hasNormalmap;
+layout(location = 13) uniform bool hasAlbedoMap;
 
 // Texture inputs 
 uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 
-layout(location = 12) uniform vec3 matAmbient;
-layout(location = 13) uniform vec3 matDiffuse;
-layout(location = 14) uniform vec3 matSpecular;
-layout(location = 15) uniform vec3 matEmissive;
+layout(location = 14) uniform vec3 matAmbient;
+layout(location = 15) uniform vec3 matDiffuse;
+layout(location = 16) uniform vec3 matSpecular;
+layout(location = 17) uniform vec3 matEmissive;
 
 #define NR_P_LIGHTS 6
 uniform PointLight pointLights[NR_P_LIGHTS];

@@ -19,6 +19,10 @@
 // read docs: https://github.com/g-truc/glm/blob/master/manual.md#section1
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
+
+//#define GLM_ENABLE_EXPERIMENTAL
+//#include <glm/gtx/quaternion.hpp>
+
 #include <gl/GL.h>
 
 #include "stb_image.h"
@@ -38,9 +42,10 @@
 
 #define WIDTH 1920
 #define HEIGHT 1080
+#define MAXBONES 64
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
-
-#define nr_P_LIGHTS 6
+#define POINTLIGHTS 6
+#define NAME_SIZE 256
 
 #define COLLECTEDCAP 8
 using namespace std;
@@ -53,22 +58,28 @@ struct vertexPolygon
 	glm::vec3 normals;
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
+
+	glm::vec4 weights;
+	glm::ivec4 bones;
 };
 
-enum BOXTYPE {
+enum BOXTYPE 
+{
 	LIGHTWEIGHT = 0,
 	EXPLOSIVE = 1,
 	ICEBLOCK = 2,
 	REGULAR = 3
-
 };
-enum ITEMTYPE {
+enum ITEMTYPE 
+{
 	FEATHER = 0,
 	BOMB = 1,
 	SNOWFLAKE = 2,
 	NONE = 3
 };
-enum GAMESTATE {
+
+enum GAMESTATE 
+{
 	PAUSED,
 	PLAYING,
 	MAINMENU

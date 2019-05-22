@@ -12,16 +12,6 @@ BridgeEntity::BridgeEntity(unsigned int i) : StaticEntity (i)
 	linkID = -999;
 }
 
-BridgeEntity::BridgeEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : StaticEntity(vertArr, vertexCount, matID)
-{
-	restPosition = GetPosition();
-	extendDistance = 2.0f;
-	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
-	extended = false;
-	extending = false;
-	linkID = -999;
-}
-
 BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID) : StaticEntity(inLoader, index, matID)
 {
 	restPosition = GetPosition();

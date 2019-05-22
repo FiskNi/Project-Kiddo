@@ -4,6 +4,13 @@
 
 Renderer::Renderer()
 {
+	boneBuffer = 0;
+
+	gVertexBuffer = 0;
+	gVertexAttribute = 0;
+	gVertexBufferMenu = 0;
+	gVertexAttributeMenu = 0;
+
 
 	initWindow(WIDTH, HEIGHT);
 
@@ -27,12 +34,10 @@ GLFWwindow* Renderer::getWindow()
 }
 
 //=============================================================
-//	From template - Needs explanation
 //	Handles stuff for the fullscreen quad.
 //	Usefull for rendering techniques.
 //=============================================================
-void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, 
-	float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, float gClearColour[])
 {
 	// first pass
 	// render all geometry to a framebuffer object
@@ -46,7 +51,6 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> obje
 }
 
 //=============================================================
-//	From template - Needs explanation
 //	Handles stuff for the fullscreen quad.
 //	Usefull for rendering techniques.
 //=============================================================
@@ -71,7 +75,6 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 
 void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture)
 {
-
 	// Renders alternative Full Screen Quad to cover the screen with a Pause Screen Overlay
 	// bind default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -80,9 +83,9 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 	glUseProgram(gShaderProgram.getShader());
 	glBindVertexArray(gShaderProgram.getVertexAttributes());
 	glDisable(GL_DEPTH_TEST);
-	// bind texture drawn in the first pass!
-	glActiveTexture(GL_TEXTURE0);
+
 	// Binds the pauseOverlayTexture instead of gFboTextureAttachments[0], this is the overlay texture
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, pauseOverlayTexture);
 
 	glActiveTexture(GL_TEXTURE0 + 1);
@@ -90,21 +93,15 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
 }
 
-
-
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, 
-	std::vector<Mesh> objects, 
+void Renderer::ShadowmapRender(Shader gShaderProgram, 
+	const std::vector<Mesh>& objects, 
 	Camera camera, 
 	float gClearColour[3], 
 	std::vector<DirectionalLight> dirLightArr)
 {
-	// Position in shader
-	int model_matrix = 1;
-	int shadow_matrix = 2;
-
 	//PrePass render for Shadow mapping 
 	shadowMap.bindForWriting();
 
@@ -118,8 +115,8 @@ void Renderer::prePassRender(Shader gShaderProgram,
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].GetPos(), gShaderProgram.getShader());
 
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
-		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
+		glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
 		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].GetVertexCount());
 		startIndex += objects[i].GetVertexCount();
@@ -129,23 +126,11 @@ void Renderer::prePassRender(Shader gShaderProgram,
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera camera, 
+void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera camera, 
 	float gClearColour[3], std::vector<Light> lightArr, 
 	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
 {
 	// Position in shader
-	int view_matrix = 5;
-	int projection_matrix = 6;
-	int model_matrix = 7;
-	int shadow_matrix = 8;
-	int cam_pos = 9;
-	int has_normal = 10;
-	int has_albedo = 11;
-	int ambient = 12;
-	int diffuse = 13;
-	int specular = 14;
-	int emissive = 15;
-
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
@@ -165,7 +150,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 
 	dirLightArr[0].SendToShader(gShaderProgram);
 	//Sending all the lights to shader.
-	for (int i = 0; i < nr_P_LIGHTS; i++)
+	for (int i = 0; i < POINTLIGHTS; i++)
 	{
 		lightArr[i].SendToShader(gShaderProgram, i);
 	}
@@ -185,7 +170,22 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
 		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
 
-		// Binds the VAO of an object to be renderer. Could become slow further on.
+		// Vertex animation buffer
+		if (objects[i].GetSkeleton().animations.size() >= 1)
+		{
+			glUniform1ui(hasAnimation, true);
+			SkinDataBuffer boneData;
+			ComputeAnimationMatrix(&boneData, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
+
+			unsigned int boneDataIndex = glGetUniformBlockIndex(gShaderProgram.getShader(), "SkinDataBlock");
+			glUniformBlockBinding(gShaderProgram.getShader(), boneDataIndex, 1);
+			glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneBuffer);
+			glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer), &boneData, GL_STATIC_DRAW);
+		}
+		else
+		{
+			glUniform1ui(hasAnimation, false);
+		}
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
@@ -221,83 +221,6 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		startIndex += objects[i].GetVertexCount();
 	}
 
-}
-
-
-//=============================================================
-//	Creates a vertexbuffer from all the recieved vertex data
-//=============================================================
-void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
-{
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttribute);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttribute);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBuffer);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(vertexPolygon), vertices, GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,							// location in shader
-		3,							// how many elements of type (see next argument)
-		GL_FLOAT,					// type of each element
-		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(vertexPolygon),		// distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-	glVertexAttribPointer(
-		2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 5)
-	);
-
-	glVertexAttribPointer(
-		3,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 8)
-	);
-
-	glVertexAttribPointer(
-		4,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(vertexPolygon),
-		BUFFER_OFFSET(sizeof(float) * 11)
-	);
 }
 
 //= ============================================================
@@ -352,6 +275,119 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 
 }
 
+
+//=============================================================
+//	Creates a vertexbuffer from all the recieved vertex data
+//=============================================================
+void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
+{
+
+	std::vector<vertexPolygon> testVec;
+
+	for (int i = 0; i < vertexCount; i++)
+		testVec.push_back(vertices[i]);
+
+
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttribute);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttribute);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+
+	glEnableVertexAttribArray(5);
+	glEnableVertexAttribArray(6);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBuffer);
+
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(vertexPolygon), vertices, GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,							// location in shader
+		3,							// how many elements of type (see next argument)
+		GL_FLOAT,					// type of each element
+		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(vertexPolygon),		// distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 5)
+	);
+
+	glVertexAttribPointer(
+		3,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 8)
+	);
+
+	glVertexAttribPointer(
+		4,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 11)
+	);
+
+	glVertexAttribPointer(
+		5,
+		4,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 14)
+	);
+
+	glVertexAttribIPointer(
+		6,
+		4,
+		GL_INT,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 18)
+	);
+
+
+	//SkinDataBuffer
+	glGenBuffers(1, &boneBuffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 64, NULL, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+}
+
 //=============================================================
 //	Creates a vertexbuffer from the menu data to be rendered
 //=============================================================
@@ -396,6 +432,7 @@ void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
 		sizeof(ButtonVtx),
 		BUFFER_OFFSET(sizeof(float) * 3)
 	);
+
 
 }
 
@@ -485,6 +522,8 @@ int Renderer::CreateFrameBuffer()
 
 	// bind default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 	return err;
 }
 
@@ -553,10 +592,68 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm:
 	MODEL_MAT = glm::mat4(1.0f);
 
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
-	glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
-	glm::mat4 scaleMatrix = glm::scale(MODEL_MAT, scale);
+	glm::mat4 rotationMatrix	= glm::mat4_cast(rotation);
+	glm::mat4 scaleMatrix		= glm::scale(MODEL_MAT, scale);
 
 	MODEL_MAT = translationMatrix * rotationMatrix * scaleMatrix;
+}
+
+void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time, Mesh* mesh)
+{
+	// use animation 0 for now....
+	SkeletonD::AnimationD& anim = mesh->GetSkeleton().animations[0];
+	// time must be less than duration.
+	if (anim_time > anim.duration) return;
+
+	//anim_time = 0.0f;
+	// keyframes involved.
+	int k1	= (int)(anim_time * anim.rate);
+	k1		= fmaxf(k1, anim.keyframeFirst);
+
+	int k2	= fminf(k1 + 1, anim.keyframeLast);
+
+	// keyframes in anim_time terms
+	float k1_time = k1 / anim.rate;
+	float k2_time = k2 / anim.rate;
+	// time rescaled into [0..1] as a percentage between k1 and k2
+	float t = (anim_time - k1_time) / (k2_time - k1_time);
+
+	int boneCount = (int)mesh->GetSkeleton().joints.size();
+
+	glm::mat4 bones_global_pose[MAXBONES]{ glm::mat4(1.0f) };
+	for (int i = 0; i < MAXBONES; i++)
+		bones_global_pose[i] = glm::mat4(1.0f);
+
+	glm::vec3 translation_r			= glm::vec3(anim.keyframes[k1].local_joints_T[0] * (1 - t) + anim.keyframes[k2].local_joints_T[0] * t);
+	glm::vec3 scaling_r				= glm::vec3(anim.keyframes[k1].local_joints_S[0] * (1 - t) + anim.keyframes[k2].local_joints_S[0] * t);
+	glm::quat quaternion_r			= glm::slerp(anim.keyframes[k1].local_joints_R[0], anim.keyframes[k2].local_joints_R[0], t);
+
+	MODEL_MAT = glm::mat4(1.0f);
+	glm::mat4 translationMatrix_r	= glm::translate(MODEL_MAT, translation_r);
+	glm::mat4 rotationMatrix_r		= glm::mat4_cast(quaternion_r);
+	glm::mat4 scaleMatrix_r			= glm::scale(MODEL_MAT, scaling_r);
+	glm::mat4 local_r				= translationMatrix_r * rotationMatrix_r * scaleMatrix_r;
+
+	bones_global_pose[0]			= local_r;
+
+	boneList->bones[0]				= bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
+	//boneList->bones[0] = mesh->GetSkeleton().joints[0].invBindPose;
+	for (int bone = 1; bone < boneCount; bone++)
+	{
+		glm::vec3 translation		= glm::vec3(anim.keyframes[k1].local_joints_T[bone] * (1 - t) + anim.keyframes[k2].local_joints_T[bone] * t);
+		glm::vec3 scaling			= glm::vec3(anim.keyframes[k1].local_joints_S[bone] * (1 - t) + anim.keyframes[k2].local_joints_S[bone] * t);
+		glm::quat quaternion		= glm::slerp(anim.keyframes[k1].local_joints_R[bone], anim.keyframes[k2].local_joints_R[bone], t);
+
+		MODEL_MAT = glm::mat4(1.0f);
+		glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
+		glm::mat4 rotationMatrix	= glm::mat4_cast(quaternion);
+		glm::mat4 scaleMatrix		= glm::scale(MODEL_MAT, scaling);
+		glm::mat4 local				= translationMatrix * rotationMatrix * scaleMatrix;
+
+		bones_global_pose[bone]		= bones_global_pose[mesh->GetSkeleton().joints[bone].parentIndex] * local;
+		boneList->bones[bone]		= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
+		//boneList->bones[bone]		= mesh->GetSkeleton().joints[bone].invBindPose;
+	}
 }
 
 //=============================================================

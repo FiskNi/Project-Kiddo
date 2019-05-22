@@ -9,7 +9,7 @@ private:
 	int linkID;
 
 public:
-	PressurePlate(Loader * inLoader, unsigned int index, unsigned int matID);
+	PressurePlate(Loader* inLoader, unsigned int index, unsigned int matID);
 	PressurePlate(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	~PressurePlate() {};
 

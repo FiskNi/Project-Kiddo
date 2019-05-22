@@ -2,7 +2,7 @@
 // Check header for implementation details
 
 
-Material::Material(char* name, unsigned int id)
+Material::Material(string name, unsigned int id)
 {
 	this->name = name;
 	materialID = id;	// The ID to match with an object comes in with the constuctor
@@ -20,7 +20,7 @@ Material::Material(char* name, unsigned int id)
 
 Material::Material(PhongMaterial material, unsigned int id)
 {
-	this->name = material.name;
+	this->name = (string)material.name;
 	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;
@@ -78,7 +78,10 @@ void Material::createAlbedo(std::string path)
 		hasAlbedoMap = true;
 	}
 	else
-		std::cout << "Failed to load albedo. Reason: " << stbi_failure_reason() << std::endl;
+	{
+		std::cout << "Failed to load albedo for material " << name << ". Reason: " << stbi_failure_reason();
+		std::cout << ". No material applied or file missing?" << std::endl;
+	}
 
 	stbi_image_free(data);
 }
@@ -112,7 +115,10 @@ void Material::createNormal(std::string path)
 		hasNormalMap = true;
 	}
 	else
-		std::cout << "Failed to load normal. Reason: " << stbi_failure_reason() << std::endl;
+	{
+		std::cout << "Failed to load normal for material " << name << ". Reason: " << stbi_failure_reason();
+		std::cout << "No material applied or file missing?" << std::endl;
+	}
 
 	stbi_image_free(data);
 }

@@ -52,8 +52,8 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
-	void PlayerCollectibleCollision(Character* playerCharacter);
 
+	void PlayerCollectibleCollision(Character* playerCharacter);
 	void PlayerItemCollision(Character* playerCharacter);
 
 	//Neccesary functions for applying parents and hierarchies.
@@ -103,6 +103,7 @@ private:
 
 	bool isRoomCompleted = false;
 	bool firstCall;
+	int meshAmount;
 
 	irrklang::ISoundEngine* audioEngine;
 
@@ -119,19 +120,16 @@ public:
 	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
 	//std::vector<puzzleNode>& GetNodes() { return nodes; }
 	std::vector<BridgeEntity>& GetBridges() { return bridges; }
-	std::vector<Mesh> GetMeshData() const { return meshes; }
+	std::vector<Mesh>& GetMeshData()  { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
 	bool GetRoomCompleted() { return this->isRoomCompleted; }
 
-	void SetRoomCompleted(bool tf) { this->isRoomCompleted = tf; }
+	void SetRoomCompleted(bool tf)								{ this->isRoomCompleted = tf; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
 	void BridgeUpdates(GLFWwindow* renderWindow);
-
-	void destroyRoom();
-
 
 	void Upgrade(Character* playerCharacter);
 	void CompileMeshData();

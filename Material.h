@@ -22,7 +22,7 @@
 class Material
 {
 private:
-	char* name;
+	string name;
 	unsigned int materialID;
 	GLuint albedo;
 	GLuint normal;
@@ -38,7 +38,7 @@ private:
 
 
 public:
-	Material(char* name, unsigned int id);
+	Material(string name, unsigned int id);
 	Material(PhongMaterial material, unsigned int id);
 	~Material();
 

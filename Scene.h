@@ -36,9 +36,9 @@
 class Scene
 {
 private:
-	bool setUserPointer = false;
+	bool setUserPointer;
 
-	GAMESTATE state = PLAYING;
+	GAMESTATE state;
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
@@ -54,6 +54,8 @@ private:
 
 	// Shaders
 	std::vector<Shader> shaders;
+	// This should be created temporarily in the LoadShader funtion
+	// Probably move the CreateShader function inside shaders into the constructor instead as well
 	Shader basicShader;
 	Shader fsqShader;
 	Shader shadowmapShader;
@@ -61,7 +63,6 @@ private:
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
-	Mesh* meshess;
 
 	// Materials are stored in a vector
 	std::vector<Material> materials;
@@ -92,17 +93,16 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const { return roomBuffer->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return roomBuffer->GetDirectionalLights(); }
-	std::vector<Material> GetMaterials() const { return materials; }
-	Shader GetShader(unsigned int i) const { return shaders[i]; }
-	std::vector<Mesh> GetMeshData() const { return meshes; }
-	bool GetIsLoading() const { return isLoading; }
-	bool GetExit() const { return exittoMenu; }
-	bool GetRoomLoaded() const { return roomLoaded; }
-	int GetCurrentState() const { return state; }
-	void SetCurrentState(GAMESTATE st) { this->state = st; }
-	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
+	std::vector<Light> GetPointLights() const					{ return roomBuffer->GetPointLights(); }
+	std::vector<DirectionalLight> GetDirectionalLights() const	{ return roomBuffer->GetDirectionalLights(); }
+	std::vector<Material> GetMaterials() const					{ return materials; }
+	Shader GetShader(unsigned int i) const						{ return shaders[i]; }
+	std::vector<Mesh>& GetMeshData()							{ return roomBuffer->GetMeshData(); }
+	bool GetIsLoading() const									{ return isLoading; }
+	bool GetExit() const										{ return exittoMenu; }
+	bool GetRoomLoaded() const									{ return roomLoaded; }
+	int GetCurrentState() const									{ return state; }
+	Camera GetCamera() const									{ return *(roomBuffer->GetCamera()); }
 
 	void LoadRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
@@ -112,7 +112,8 @@ public:
 	void ResumeGame();
 	void RestartGame();
 	void ExitToMainMenu();
+	void SetCurrentState();
 
-	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
+	//void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
 };
 
