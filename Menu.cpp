@@ -43,7 +43,8 @@ void Menu::CreateMainMenu()
 {
 	//pauseButtonTextures.push_back(pauseButtonTexture);
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) 
+	{
 		buttonTextures.push_back(buttonTextureBase);
 		MenuButton newButton(GetCurrentOffset(), i);
 		vertexCountMainTotal += newButton.GetVertexCount();
@@ -51,7 +52,8 @@ void Menu::CreateMainMenu()
 		nrOfMainButtons++;
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) 
+	{
 		MenuButton newPauseButton(GetCurrentOffsetPause(), i);
 		vertexCountPauseTotal += newPauseButton.GetVertexCount();
 		pauseButtons.push_back(newPauseButton);
@@ -77,20 +79,25 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		printMouseClickOnce = true;
 		buttonActionExecuted = false;
 	}
-	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) 
+	{
 		printMouseClickOnce = false;
 	}
 
-	if (activeMenu == MAINACTIVE) {
+	if (activeMenu == MAINACTIVE) 
+	{
 		if (isButtonHit == true) {
-			if (currentButtonHit == 0) {
+			if (currentButtonHit == 0) 
+			{
 				// START GAME			// This is handled in GameEngine by getting the last clicked button
 				updateState = PLAYING;
 			}
-			else if (currentButtonHit == 1) {
+			else if (currentButtonHit == 1) 
+			{
 				// SETTINGS? CREDITS? HOW TO PLAY?
 			}
-			else if (currentButtonHit == 2) {
+			else if (currentButtonHit == 2) 
+			{
 				// EXIT
 				glfwSetWindowShouldClose(renderWindow, GL_TRUE);
 			}
@@ -161,19 +168,25 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 // ========================================================================
 bool Menu::CheckCollision(float x, float y) 
 {
-	if (activeMenu == PAUSEACTIVE) {
-		for (int i = 0; i < nrOfPauseButtons; i++) {
-			if (pauseButtons[i].CheckInsideCollision(x, y) == true) {
+	if (activeMenu == PAUSEACTIVE) 
+	{
+		for (int i = 0; i < nrOfPauseButtons; i++) 
+		{
+			if (pauseButtons[i].CheckInsideCollision(x, y) == true) 
+			{
 				//std::cout << "Hit Button nr " << i << std::endl;
 				currentButtonHit = i;
-	//			isButtonHit = true;
+				//isButtonHit = true;
 				return true;
 			}
 		}
 	}
-	else if (activeMenu == MAINACTIVE){
-		for (int i = 0; i < nrOfMainButtons; i++) {
-			if (mainButtons[i].CheckInsideCollision(x, y) == true) {
+	else if (activeMenu == MAINACTIVE)
+	{
+		for (int i = 0; i < nrOfMainButtons; i++) 
+		{
+			if (mainButtons[i].CheckInsideCollision(x, y) == true) 
+			{
 				std::cout << "Hit Button nr " << i << std::endl;
 				currentButtonHit = i;
 				isButtonHit = true;
@@ -184,7 +197,8 @@ bool Menu::CheckCollision(float x, float y)
 	return false;
 }
 
-void Menu::CreateBackgroundQuad() {
+void Menu::CreateBackgroundQuad() 
+{
 
 	ButtonVtx bgQuad[6] =
 	{

@@ -106,14 +106,14 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
-	roomBuffer = nullptr;
-	LoadShaders();
-	setUserPointer = false;
 	roomNr = 0;
+	roomBuffer = nullptr;
+	setUserPointer = false;
 	isLoading = false;
 	exittoMenu = false;
 	roomLoaded = false;
 
+	LoadShaders();
 	// If no audiodevice exists this will initiate as NULL, make sure to check that this was successful
 	// when trying to play audio
 	audioEngine = irrklang::createIrrKlangDevice();
@@ -273,11 +273,13 @@ void Scene::Exited()
 	exittoMenu = false;
 }
 
-void Scene::ResumeGame() {
+void Scene::ResumeGame() 
+{
 	state = PLAYING;
 }
 
-void Scene::RestartGame() {
+void Scene::RestartGame() 
+{
 	ResetRoom();
 	state = PLAYING;
 }
@@ -309,7 +311,7 @@ void Scene::LoadRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
 		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
+		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 1)

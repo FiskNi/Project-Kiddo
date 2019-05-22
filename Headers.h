@@ -76,6 +76,7 @@ enum ITEMTYPE
 	SNOWFLAKE = 2,
 	NONE = 3
 };
+
 enum GAMESTATE 
 {
 	PAUSED,

@@ -161,9 +161,10 @@ void GameEngine::Run()
 		//}
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			if (mainMenu.GetLastClickedButton() == 0) {
+			if (mainMenu.GetLastClickedButton() == 0) 
+			{
 				//menuIsRunning = false;
-				mainScene.SetCurrentState(PLAYING);
+				mainScene.ResumeGame();
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
 			}
@@ -179,12 +180,6 @@ void GameEngine::Run()
 
 
 		// Deltatime via ImGui
-
-	/*	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
-		int deltaTime = timeSinceStart - oldTimeSinceStart;
-		oldTimeSinceStart = timeSinceStart;*/
-
-
 		float deltaTime = ImGui::GetIO().DeltaTime;
 		if (deltaTime > 1.0f)
 			deltaTime = 0.0f;
@@ -211,10 +206,10 @@ void GameEngine::Run()
 			mainScene.Update(mainRenderer.getWindow(), deltaTime);
 
 			// PrePass render for Shadow mapping 
-			mainRenderer.prePassRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
+			mainRenderer.ShadowmapRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
 			mainRenderer.SetViewport();	//resets the viewport
 			// First render pass
-			mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+			mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), gClearColour);
 			
 			if (!mainScene.GetCurrentState() == PAUSED)
 			{

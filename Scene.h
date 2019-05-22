@@ -93,16 +93,16 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const { return roomBuffer->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return roomBuffer->GetDirectionalLights(); }
-	std::vector<Material> GetMaterials() const { return materials; }
-	Shader GetShader(unsigned int i) const { return shaders[i]; }
-	std::vector<Mesh> GetMeshData() const { return meshes; }
-	bool GetIsLoading() const { return isLoading; }
-	bool GetExit() const { return exittoMenu; }
-	bool GetRoomLoaded() const { return roomLoaded; }
-	int GetCurrentState() const { return state; }
-	Camera GetCamera() const { return *(roomBuffer->GetCamera()); }
+	std::vector<Light> GetPointLights() const					{ return roomBuffer->GetPointLights(); }
+	std::vector<DirectionalLight> GetDirectionalLights() const	{ return roomBuffer->GetDirectionalLights(); }
+	std::vector<Material> GetMaterials() const					{ return materials; }
+	Shader GetShader(unsigned int i) const						{ return shaders[i]; }
+	std::vector<Mesh> GetMeshData() const						{ return meshes; }
+	bool GetIsLoading() const									{ return isLoading; }
+	bool GetExit() const										{ return exittoMenu; }
+	bool GetRoomLoaded() const									{ return roomLoaded; }
+	int GetCurrentState() const									{ return state; }
+	Camera GetCamera() const									{ return *(roomBuffer->GetCamera()); }
 
 	void LoadRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
@@ -112,6 +112,7 @@ public:
 	void ResumeGame();
 	void RestartGame();
 	void ExitToMainMenu();
+	void SetCurrentState();
 
 	//void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
 };

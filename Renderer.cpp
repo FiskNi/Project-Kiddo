@@ -34,12 +34,10 @@ GLFWwindow* Renderer::getWindow()
 }
 
 //=============================================================
-//	From template - Needs explanation
 //	Handles stuff for the fullscreen quad.
 //	Usefull for rendering techniques.
 //=============================================================
-void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, 
-	float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, float gClearColour[])
 {
 	// first pass
 	// render all geometry to a framebuffer object
@@ -53,7 +51,6 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> obje
 }
 
 //=============================================================
-//	From template - Needs explanation
 //	Handles stuff for the fullscreen quad.
 //	Usefull for rendering techniques.
 //=============================================================
@@ -78,7 +75,6 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 
 void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture)
 {
-
 	// Renders alternative Full Screen Quad to cover the screen with a Pause Screen Overlay
 	// bind default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -87,9 +83,9 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 	glUseProgram(gShaderProgram.getShader());
 	glBindVertexArray(gShaderProgram.getVertexAttributes());
 	glDisable(GL_DEPTH_TEST);
-	// bind texture drawn in the first pass!
-	glActiveTexture(GL_TEXTURE0);
+
 	// Binds the pauseOverlayTexture instead of gFboTextureAttachments[0], this is the overlay texture
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, pauseOverlayTexture);
 
 	glActiveTexture(GL_TEXTURE0 + 1);
@@ -97,12 +93,10 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
 }
 
-
-
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, 
+void Renderer::ShadowmapRender(Shader gShaderProgram, 
 	std::vector<Mesh> objects, 
 	Camera camera, 
 	float gClearColour[3], 
@@ -177,6 +171,8 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
 
 		// Vertex animation buffer
+		if (objects[i].GetSkeleton().animations.size() >= 1)
+		{
 		SkinDataBuffer boneData;
 		ComputeAnimationMatrix(&boneData, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
 
@@ -184,8 +180,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		glUniformBlockBinding(gShaderProgram.getShader(), boneDataIndex, 1);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneBuffer);
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer), &boneData, GL_STATIC_DRAW);
-
-
+		}
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
@@ -217,6 +212,58 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
 		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].GetVertexCount());
+
+		startIndex += objects[i].GetVertexCount();
+	}
+
+}
+
+//= ============================================================
+//	Render pass for the main menu ( eventually pause menu as well )
+//=============================================================
+void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures, ACTIVEMENU activeMenu)
+{
+
+	// set the color TO BE used (this does not clear the screen right away)
+	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
+	// use the color to clear the color buffer (clear the color buffer only)
+	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
+
+	//secondPassRenderPauseOverlay(bgShaderProgram, bgTexture);
+
+	// tell opengl we want to use the gShaderProgram
+	glUseProgram(gShaderProgram.getShader());
+
+	// Main render queue
+	// Currently the render swaps buffer for every object which could become slow further on
+	// If possible the rendercalls could be improved
+
+	if (activeMenu == PAUSEACTIVE) {
+		glBindVertexArray(gVertexAttributePause);
+	}
+	else {
+		glBindVertexArray(gVertexAttributeMain);
+	}
+
+	unsigned int startIndex = 0;
+
+	//passTextureData(GL_TEXTURE0, bgTexture, gShaderProgram.getShader(), "diffuseTex", 0);
+	//glDrawArrays(GL_TRIANGLES, startIndex, sizeof(ButtonVtx)*6);
+	//startIndex += 6;
+
+	for (int i = 0; i < objects.size(); i++)
+	{
+		
+		//Binds the albedo texture from a material
+		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
+
+		// Binds the background texture from the Menu
+		//passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
+
+		// Draw call
+		// As the buffer is swapped for each object the drawcall currently always starts at index 0
+		// This is what could be improved with one large buffer and then advance the start index for each object
+		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetVertexCount() );
 
 		startIndex += objects[i].GetVertexCount();
 	}
@@ -333,58 +380,6 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 	glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 64, NULL, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-}
-
-//= ============================================================
-//	Render pass for the main menu ( eventually pause menu as well )
-//=============================================================
-void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures, ACTIVEMENU activeMenu)
-{
-
-	// set the color TO BE used (this does not clear the screen right away)
-	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
-	// use the color to clear the color buffer (clear the color buffer only)
-	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
-
-	//secondPassRenderPauseOverlay(bgShaderProgram, bgTexture);
-
-	// tell opengl we want to use the gShaderProgram
-	glUseProgram(gShaderProgram.getShader());
-
-	// Main render queue
-	// Currently the render swaps buffer for every object which could become slow further on
-	// If possible the rendercalls could be improved
-
-	if (activeMenu == PAUSEACTIVE) {
-		glBindVertexArray(gVertexAttributePause);
-	}
-	else {
-		glBindVertexArray(gVertexAttributeMain);
-	}
-
-	unsigned int startIndex = 0;
-
-	//passTextureData(GL_TEXTURE0, bgTexture, gShaderProgram.getShader(), "diffuseTex", 0);
-	//glDrawArrays(GL_TRIANGLES, startIndex, sizeof(ButtonVtx)*6);
-	//startIndex += 6;
-
-	for (int i = 0; i < objects.size(); i++)
-	{
-		
-		//Binds the albedo texture from a material
-		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
-
-		// Binds the background texture from the Menu
-		//passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
-
-		// Draw call
-		// As the buffer is swapped for each object the drawcall currently always starts at index 0
-		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetVertexCount() );
-
-		startIndex += objects[i].GetVertexCount();
-	}
 
 }
 
@@ -609,6 +604,8 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 	//anim_time = 0.0f;
 	// keyframes involved.
 	int k1 = (int)(anim_time * anim.rate);
+	k1 = fmaxf(k1, anim.keyframeFirst);
+
 	int k2 = fminf(k1 + 1, anim.keyframeLast);
 
 	// keyframes in anim_time terms
@@ -654,7 +651,6 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 		//boneList->bones[bone]		= mesh->GetSkeleton().joints[bone].invBindPose;
 	}
 }
-
 
 //=============================================================
 //	Used to activate and bind the generated texture.

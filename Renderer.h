@@ -65,6 +65,7 @@ private:
 	// Pause menu vertex buffers
 	GLuint gVertexBufferPause;
 	GLuint gVertexAttributePause;
+	GLuint gVertexAttributeMenu;
 
 	GLuint boneBuffer;
 
@@ -75,11 +76,11 @@ public:
 
 	GLFWwindow *getWindow();
 
-	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, float gClearColour[]);
+	void firstPassRenderTemp(Shader gShaderProgram, float gClearColour[]);
 	void secondPassRenderTemp(Shader gShaderProgram);
 	void secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture);
 
-	void prePassRender(Shader gShaderProgram, 
+	void ShadowmapRender(Shader gShaderProgram, 
 		std::vector<Mesh> objects, 
 		Camera camera, 
 		float gClearColour[3], 
