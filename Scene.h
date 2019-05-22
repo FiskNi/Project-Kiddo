@@ -109,6 +109,10 @@ public:
 	void ResetRoom();
 	void Exited();
 
+	void ResumeGame();
+	void RestartGame();
+	void ExitToMainMenu();
+
 	void Upgrade() { this->roomBuffer->Upgrade(&this->playerCharacter); }
 };
 

@@ -171,6 +171,7 @@ void GameEngine::Run()
 		{
 			if (mainMenu.GetLastClickedButton() == 0) {
 				//menuIsRunning = false;
+				mainScene.SetCurrentState(PLAYING);
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
 			}
@@ -179,6 +180,7 @@ void GameEngine::Run()
 		{
 			//menuIsRunning = true;
 			//mainMenu.SetActiveMenu(MAINACTIVE);
+			//mainScene.SetCurrentState(MAINMENU);
 			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
 		}
@@ -241,13 +243,52 @@ void GameEngine::Run()
 			else
 			{
 				// Pause Menu Render Call
-				//mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
 				mainMenu.SetActiveMenu(PAUSEACTIVE);
+
+				// Checks for clicking on the pause menu
+				glfwPollEvents();
+				if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
+				{
+					// Gets the clicked cursor position and checks for collision with any of the buttons
+					double x, y;
+					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
+					if (mainMenu.CheckCollision(x, y)) {
+						int clickedButton = mainMenu.GetLastClickedButton();
+						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;
+
+						if (clickedButton == 0) {
+							// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
+							// This shuts the entire window currently as a backup for testing
+							//glfwSetWindowShouldClose(mainRenderer.getWindow(), GL_TRUE);
+						}
+						else if (clickedButton == 1) {
+							// RESUME GAME	
+							mainScene.ResumeGame();
+							std::cout << "RESUME" << std::endl;
+						}
+						else if (clickedButton == 2) {
+							// RESTART
+							mainScene.RestartGame();
+							std::cout << "Restarting level" << std::endl;
+						}
+						else if (clickedButton == 3) {
+							// Quit to Main Menu (START WILL WORK AS RESUME)
+							mainScene.ExitToMainMenu();
+							mainMenu.SetActiveMenu(MAINACTIVE);
+							mainMenu.SetIsMenuRunning(true);
+							std::cout << "MAIN MENU" << std::endl;
+						}
+
+					}
+					printMouseClickOnce = true;
+					mainMenu.SetButtonActionExecuted(false);
+				}
+				else if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+					printMouseClickOnce = false;
+				}
+
+				//mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
 				mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
-				// Currently broken, attempt to handle all the clicking actions in Menu because clicking on pause rn breaks the key callbacks in Scene woop
-				//if (mainMenu.GetUpdateState() == MAINMENU) {
-				//	mainScene.SetCurrentState(MAINMENU);
-				//}
 
 				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetPauseMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetPauseButtonTextures(), PAUSEACTIVE);
 				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
@@ -276,6 +317,9 @@ void GameEngine::Run()
 			// *****LOAD ROOM MESSES UP WHEN YOU RETURN TO THE MAIN MENU AND START AGAIN
 			//  IT LOADS THE NEXT ROOM IN THE LINE, WHICH MEANS IT DOESN'T WORK AS A RESUME AS IT SHOULD
 			// Heavy loading work
+			//if (mainScene.GetCurrentState() == MAINMENU) {
+			//	mainScene.SetCurrentState(MAINMENU);
+			//}
 			mainScene.LoadRoom();
 			CompileRoomData();
 		}

@@ -11,54 +11,55 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->roomBuffer->SetRoomCompleted(true);
 	}
 
-	// IF PAUSED
-	if (scene->state == PAUSED)
-	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		{
-			//UNPAUSE
-			scene->state = PLAYING;
-			std::cout << "PLAYING" << std::endl;
-		}
+	//// IF PAUSED
+	//if (scene->state == PAUSED)
+	//{
+	//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	//	{
+	//		//UNPAUSE
+	//		scene->state = PLAYING;
+	//		std::cout << "PLAYING" << std::endl;
+	//	}
 
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-		{
-			//RESUMES GAME
-			scene->state = PLAYING;
-			std::cout << "RESUME" << std::endl;
-		}
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-		{
-			//RESTART HERE
-			scene->ResetRoom();
-			scene->state = PLAYING;
-			std::cout << "Restarting level" << std::endl;
-		}
+	//	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+	//	{
+	//		//RESUMES GAME
+	//		scene->state = PLAYING;
+	//		std::cout << "RESUME" << std::endl;
+	//	}
+	//	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+	//	{
+	//		//RESTART HERE
+	//		scene->ResetRoom();
+	//		scene->state = PLAYING;
+	//		std::cout << "Restarting level" << std::endl;
+	//	}
 
-		if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-			// RETURNS TO MAIN MENU
-			delete scene->roomBuffer;
-			scene->roomBuffer = nullptr;
-			scene->roomLoaded = false;
-			scene->isLoading = true;
-			scene->exittoMenu = true;
-			scene->state = PLAYING;
+	//	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+	//		//// RETURNS TO MAIN MENU
+	//		////delete scene->roomBuffer;
+	//		////scene->roomBuffer = nullptr;
+	//		////scene->roomLoaded = false;
+	//		//scene->isLoading = true;
+	//		//scene->exittoMenu = true;
+	//		//scene->state = MAINMENU;
 
-			std::cout << "MAIN MENU" << std::endl;
+	//		scene->ExitToMainMenu();
+	//		std::cout << "MAIN MENU" << std::endl;
 
-		}
-	}
+	//	}
+	//}
 	// IF PLAYING
-	else if (scene->state == PLAYING)
+	if (scene->state == PLAYING)
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
 			scene->state = PAUSED;
-			std::cout << "PAUSED" << std::endl;
-			std::cout << "Press the numbers below to perform actions: " << std::endl;
-			std::cout << "1 - Resume" << std::endl;
-			std::cout << "2 - Restart" << std::endl;
-			std::cout << "3 - Exit" << std::endl;
+			//std::cout << "PAUSED" << std::endl;
+			//std::cout << "Press the numbers below to perform actions: " << std::endl;
+			//std::cout << "1 - Resume" << std::endl;
+			//std::cout << "2 - Restart" << std::endl;
+			//std::cout << "3 - Exit" << std::endl;
 		}
 
 		if (key == GLFW_KEY_E && action == GLFW_PRESS)
@@ -197,21 +198,13 @@ void Scene::CompileMeshData()
 	// Compile character data
 }
 
-//void Scene::CompileMeshDataMainMenu()
-//{
-//	//// Fills the "meshes" vector with all the mesh data (primitive)
-//	//mainMenuRoomBuffer->CompileMeshData();
-//	//meshes.clear();
-//
-//	//meshes = mainMenuRoomBuffer->GetMeshData();
-//}
-
 //=============================================================
 //	Everything that updates in a scene happens here. 
 //	This can include character movement, world timers, world actions, gamestates etc.
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
+	//Sets user pointer for Key_callbacks
 	if (!setUserPointer) 
 	{
 		glfwSetWindowUserPointer(renderWindow, this);
@@ -254,7 +247,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			}
 
 			roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
-
+			menuHandler.SetCollected(playerCharacter.GetCollectedCollectibles());
 			// Compile render data for the renderer
 			CompileMeshData();
 		}	
@@ -264,15 +257,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// The PAUSED state does not update anything, it leaves movement frozen and only prints PAUSED
 		// Might want to handle mouse picking here
 	}
-	//if (state == MAINMENU) {
-	//	//delete roomBuffer;
-	//	//roomBuffer = nullptr;
-	//	roomLoaded = false;
-	//	isLoading = true;
-	//	exittoMenu = true;
-	//	state = PLAYING;
-	//	std::cout << "MAIN MENU" << std::endl;
-	//}
 
 }
 
@@ -290,6 +274,27 @@ void Scene::ResetRoom()
 void Scene::Exited()
 {
 	exittoMenu = false;
+}
+
+void Scene::ResumeGame() {
+	state = PLAYING;
+}
+
+void Scene::RestartGame() {
+	ResetRoom();
+	state = PLAYING;
+}
+
+void Scene::ExitToMainMenu() {
+	// RETURNS TO MAIN MENU
+	// pLEASE, do NOT remove the room, main menu's start is supposed to work like a Resume.
+	//delete scene->roomBuffer;
+	//scene->roomBuffer = nullptr;
+	//scene->roomLoaded = false;
+	isLoading = true;
+	exittoMenu = true;
+	Exited();
+	state = MAINMENU;
 }
 
 void Scene::LoadRoom()
@@ -349,7 +354,9 @@ void Scene::LoadRoom()
 	playerCharacter.ResetPos();
 
 	CompileMeshData();
-	roomNr++;
+	if (state != MAINMENU) {
+		roomNr++;
+	}
 
 	isLoading = false;
 	roomLoaded = true;

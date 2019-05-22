@@ -140,6 +140,7 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 			{
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
 				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+				playerCharacter->SetHoldingObject(true);
 			}
 		}
 		else
@@ -218,8 +219,8 @@ void Room::PlayerItemCollision(Character* playerCharacter)
 {
 	for (int i = 0; i < items.size(); i++) {
 		if (playerCharacter->CheckCollision(items[i])) {
-			playerCharacter->PickUpItem(&items[i]);
-			items[i].SetPickedUp(true);
+			//playerCharacter->PickUpItem(&items[i]);
+			//items[i].SetPickedUp(true);
 		}
 	}
 }
@@ -1139,19 +1140,19 @@ void Room::destroyRoom()
 
 void Room::Upgrade(Character* playerCharacter)
 {
-	Item* temp = playerCharacter->GetCurrentItem();
-	if (temp != nullptr) {
-		for (int i = 0; i < rigids.size(); i++) {
-			if (playerCharacter->CheckInBound(rigids[i])) {
-				rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
-				if (rigids[i].GetBoxType() == 1) {
-					std::cout << "box upgraded" << std::endl;
-				}
-				//playerCharacter->ItemUsed();
+	//Item* temp = playerCharacter->GetCurrentItem();
+	//if (temp != nullptr) {
+	//	for (int i = 0; i < rigids.size(); i++) {
+	//		if (playerCharacter->CheckInBound(rigids[i])) {
+	//			rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
+	//			if (rigids[i].GetBoxType() == 1) {
+	//				std::cout << "box upgraded" << std::endl;
+	//			}
+	//			//playerCharacter->ItemUsed();
 
-			}
-		}
-	}
+	//		}
+	//	}
+	//}
 
 }
 

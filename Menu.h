@@ -3,6 +3,7 @@
 #include "Headers.h"
 #include "Material.h"
 #include "MenuButton.h"
+#include "Collectible.h"
 
 enum ACTIVEMENU {
 	MAINACTIVE = 0,
@@ -16,7 +17,12 @@ private:
 
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
-	GLuint pauseButtonTexture;
+	//GLuint pauseButtonTexture;
+	GLuint pbt0;
+	GLuint pbt1;
+	GLuint pbt2;
+	GLuint pbt3;
+
 	GLuint buttonTextureBase;
 	std::vector<GLuint> buttonTextures;
 	std::vector<GLuint> pauseButtonTextures;
@@ -49,6 +55,7 @@ private:
 	bool printMouseClickOnce;
 
 	std::vector<ButtonVtx> backgroundQuad;
+	std::vector<Collectible> collected;
 
 
 public:
@@ -59,7 +66,7 @@ public:
 	void MenuUpdate(GLFWwindow* renderWindow, float deltaTime);
 	void CreateMenuTexture(std::string path, GLuint *texture);
 
-	void CheckCollision(float x, float y);
+	bool CheckCollision(float x, float y);
 
 	void CreateBackgroundQuad();
 
@@ -67,7 +74,7 @@ public:
 	GLuint GetPauseOverlay() const { return pauseOverlayTexture; }
 	GLuint GetLoadingTexture() const { return loadingTexture; }
 	GLuint GetButtonTexture() const { return buttonTextureBase; }
-	GLuint GetPauseButtonTexture() const { return pauseButtonTexture; }
+	//GLuint GetPauseButtonTexture() const { return pauseButtonTexture; }
 	GLuint GetBackgroundTexture() const { return backgroundTexture; }
 	std::vector<GLuint> GetButtonTextures() const { return buttonTextures; }
 	std::vector<GLuint> GetPauseButtonTextures() const { return pauseButtonTextures; }
@@ -100,6 +107,8 @@ public:
 
 	bool GetIsLoading() const { return isLoading; }
 	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
+
+	void SetCollected(std::vector<Collectible> coll);
 	
 };
 

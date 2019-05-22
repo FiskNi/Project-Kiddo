@@ -50,7 +50,7 @@ private:
 	void CompileMainMenuData();
 	ButtonVtx* pauseMenuVertexData;
 	void CompilePauseMenuData();
-	//bool menuIsRunning;
+	bool printMouseClickOnce;
 
 public:
 	GameEngine();
