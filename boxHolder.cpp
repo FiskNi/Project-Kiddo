@@ -9,18 +9,6 @@ boxHolder::boxHolder(unsigned int i) : StaticEntity (i)
 	setPositionBBOffset(GetPositionBB());
 }
 
-boxHolder::boxHolder(Vertex* vertArr, unsigned int vertexCount, unsigned int holderMatID, unsigned int boxMatID) : StaticEntity (vertArr, vertexCount,boxMatID)
-{
-	this->visible = false;
-	this->aMesh.CreatePlateData();
-	origPos = GetPosition();
-	origBBPos = GetPositionBB();
-	setPositionBBOffset(origBBPos);
-
-	aMesh.SetPosition(origPos);
-	aMesh.setMaterial(holderMatID);
-}
-
 boxHolder::boxHolder(Loader* inLoader, unsigned int index, unsigned int holderMatID, unsigned int boxMatID) : StaticEntity(inLoader, index, boxMatID)
 {
 	this->visible = false;

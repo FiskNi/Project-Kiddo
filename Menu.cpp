@@ -79,11 +79,13 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		printMouseClickOnce = true;
 		buttonActionExecuted = false;
 	}
-	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+	else if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) 
+	{
 		printMouseClickOnce = false;
 	}
 
-	if (activeMenu == MAINACTIVE) {
+	if (activeMenu == MAINACTIVE) 
+	{
 		if (isButtonHit == true) {
 			if (currentButtonHit == 1) {
 				// START GAME			// This is handled in GameEngine by getting the last clicked button
@@ -143,9 +145,12 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 // ========================================================================
 bool Menu::CheckCollision(float x, float y) 
 {
-	if (activeMenu == PAUSEACTIVE) {
-		for (int i = 0; i < nrOfPauseButtons; i++) {
-			if (pauseButtons[i].CheckInsideCollision(x, y) == true) {
+	if (activeMenu == PAUSEACTIVE) 
+	{
+		for (int i = 0; i < nrOfPauseButtons; i++) 
+		{
+			if (pauseButtons[i].CheckInsideCollision(x, y) == true) 
+			{
 				//std::cout << "Hit Button nr " << i << std::endl;
 				currentButtonHit = i;
 				return true;

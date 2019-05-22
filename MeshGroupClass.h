@@ -21,8 +21,8 @@ private:
 	int parentType;
 	glm::vec3 parentPosOffset;
 
-	Mesh * myMeshParent;
-	MeshGroupClass * myGroupParent;
+	Mesh* myMeshParent;
+	MeshGroupClass* myGroupParent;
 
 public:
 	MeshGroupClass();
