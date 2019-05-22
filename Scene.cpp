@@ -106,12 +106,14 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
+	
 	roomNr = 0;
 	roomBuffer = nullptr;
 	setUserPointer = false;
 	isLoading = false;
 	exittoMenu = false;
 	roomLoaded = false;
+	//meshes = &(roomBuffer->GetMeshData());
 
 	LoadShaders();
 	// If no audiodevice exists this will initiate as NULL, make sure to check that this was successful
@@ -173,7 +175,6 @@ void Scene::LoadCharacter(Loader* inLoader)
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
 	//Loader characterLoader("Resources/Assets/GameReady/Rooms/AniTest.meh");
 
-
 	for (int i = 0; i < inLoader->GetMeshCount(); i++)
 	{
 		if (inLoader->GetType(i) == 8)
@@ -189,11 +190,8 @@ void Scene::LoadCharacter(Loader* inLoader)
 void Scene::CompileMeshData()
 {
 	// Compile the mesh data of the first room
-	meshes.clear();
-
 	roomBuffer->CompileMeshData();
-	meshes = roomBuffer->GetMeshData();
-	//meshes.push_back(playerCharacter.GetMeshData());
+	roomBuffer->ModifyMeshData().push_back(playerCharacter.GetMeshData());
 	// Compile character data
 }
 

@@ -97,7 +97,7 @@ public:
 	std::vector<DirectionalLight> GetDirectionalLights() const	{ return roomBuffer->GetDirectionalLights(); }
 	std::vector<Material> GetMaterials() const					{ return materials; }
 	Shader GetShader(unsigned int i) const						{ return shaders[i]; }
-	std::vector<Mesh> GetMeshData() const						{ return meshes; }
+	std::vector<Mesh>& GetMeshData()							{ return roomBuffer->GetMeshData(); }
 	bool GetIsLoading() const									{ return isLoading; }
 	bool GetExit() const										{ return exittoMenu; }
 	bool GetRoomLoaded() const									{ return roomLoaded; }

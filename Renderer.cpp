@@ -97,7 +97,7 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
 void Renderer::ShadowmapRender(Shader gShaderProgram, 
-	std::vector<Mesh> objects, 
+	const std::vector<Mesh>& objects, 
 	Camera camera, 
 	float gClearColour[3], 
 	std::vector<DirectionalLight> dirLightArr)
@@ -126,7 +126,7 @@ void Renderer::ShadowmapRender(Shader gShaderProgram,
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera camera, 
+void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera camera, 
 	float gClearColour[3], std::vector<Light> lightArr, 
 	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
 {
@@ -173,13 +173,18 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		// Vertex animation buffer
 		if (objects[i].GetSkeleton().animations.size() >= 1)
 		{
-		SkinDataBuffer boneData;
-		ComputeAnimationMatrix(&boneData, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
+			glUniform1ui(hasAnimation, true);
+			SkinDataBuffer boneData;
+			ComputeAnimationMatrix(&boneData, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
 
-		unsigned int boneDataIndex = glGetUniformBlockIndex(gShaderProgram.getShader(), "SkinDataBlock");
-		glUniformBlockBinding(gShaderProgram.getShader(), boneDataIndex, 1);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneBuffer);
-		glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer), &boneData, GL_STATIC_DRAW);
+			unsigned int boneDataIndex = glGetUniformBlockIndex(gShaderProgram.getShader(), "SkinDataBlock");
+			glUniformBlockBinding(gShaderProgram.getShader(), boneDataIndex, 1);
+			glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneBuffer);
+			glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer), &boneData, GL_STATIC_DRAW);
+		}
+		else
+		{
+			glUniform1ui(hasAnimation, false);
 		}
 
 		// Binds the albedo texture from a material
@@ -595,7 +600,6 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm:
 
 void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time, Mesh* mesh)
 {
-	if (mesh->GetSkeleton().animations.size() < 0) return;
 	// use animation 0 for now....
 	SkeletonD::AnimationD& anim = mesh->GetSkeleton().animations[0];
 	// time must be less than duration.
@@ -603,10 +607,10 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 
 	//anim_time = 0.0f;
 	// keyframes involved.
-	int k1 = (int)(anim_time * anim.rate);
-	k1 = fmaxf(k1, anim.keyframeFirst);
+	int k1	= (int)(anim_time * anim.rate);
+	k1		= fmaxf(k1, anim.keyframeFirst);
 
-	int k2 = fminf(k1 + 1, anim.keyframeLast);
+	int k2	= fminf(k1 + 1, anim.keyframeLast);
 
 	// keyframes in anim_time terms
 	float k1_time = k1 / anim.rate;

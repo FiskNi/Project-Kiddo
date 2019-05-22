@@ -33,6 +33,7 @@ const int ambient = 14;
 const int diffuse = 15;
 const int specular = 16;
 const int emissive = 17;
+const int hasAnimation = 18;
 
 struct SkinDataBuffer
 {
@@ -79,15 +80,14 @@ public:
 	void firstPassRenderTemp(Shader gShaderProgram, float gClearColour[]);
 	void secondPassRenderTemp(Shader gShaderProgram);
 	void secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture);
-
 	void ShadowmapRender(Shader gShaderProgram, 
-		std::vector<Mesh> objects, 
+		const std::vector<Mesh>& objects, 
 		Camera camera, 
 		float gClearColour[3], 
 		std::vector<DirectionalLight> dirLightArr);
 
 	void Render(Shader gShaderProgram, 
-		std::vector<Mesh> objects, 
+		std::vector<Mesh>& objects,
 		Camera camera, float gClearColour[3], 
 		std::vector<Light> lightArr, 
 		std::vector<DirectionalLight> dirLightArr, 

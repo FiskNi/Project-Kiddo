@@ -54,8 +54,8 @@ private:
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
 
-	//void PlayerCollectibleCollision(Character* playerCharacter);
-	//void PlayerItemCollision(Character* playerCharacter);
+	void PlayerCollectibleCollision(Character* playerCharacter);
+	void PlayerItemCollision(Character* playerCharacter);
 
 	//Neccesary functions for applying parents and hierarchies.
 	bool FindParent(Mesh * childMesh);
@@ -104,6 +104,7 @@ private:
 
 	bool isRoomCompleted = false;
 	bool firstCall;
+	int meshAmount;
 
 	irrklang::ISoundEngine* audioEngine;
 
@@ -111,25 +112,26 @@ public:
 	Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine);
 	~Room();
 
-	std::vector<Light>& GetPointLights() { return pointLights; }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return dirLights; }
-	std::vector<RigidEntity>& GetRigids() { return rigids; }
-	std::vector<StaticEntity>& GetStatics() { return statics; }
-	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
-	//std::vector<puzzleNode>& GetNodes() { return nodes; }
-	std::vector<BridgeEntity>& GetBridges() { return bridges; }
-	std::vector<Mesh> GetMeshData() const { return meshes; }
-	std::vector<Button>& getButtons() { return buttons; }
-	Camera* GetCamera() { return roomCamera; }
-	bool GetRoomCompleted() { return this->isRoomCompleted; }
+	std::vector<Light>& GetPointLights()						{ return pointLights; }
+	std::vector<DirectionalLight> GetDirectionalLights() const	{ return dirLights; }
+	std::vector<RigidEntity>& GetRigids()						{ return rigids; }
+	std::vector<StaticEntity>& GetStatics()						{ return statics; }
+	std::vector<BoxHoldEntity>& GetBoxHolds()					{ return holdBoxes; }
+	//std::vector<puzzleNode>& GetNodes()						{ return nodes; }
+	std::vector<BridgeEntity>& GetBridges()						{ return bridges; }
+	std::vector<Mesh>& GetMeshData()							{ return meshes; }
+	std::vector<Mesh>& ModifyMeshData()							{ return meshes; }
+	std::vector<Button>& getButtons()							{ return buttons; }
+	Camera* GetCamera()											{ return roomCamera; }
+	bool GetRoomCompleted()										{ return this->isRoomCompleted; }
 
-	void SetRoomCompleted(bool tf) { this->isRoomCompleted = tf; }
+	void SetRoomCompleted(bool tf)								{ this->isRoomCompleted = tf; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
 	void BridgeUpdates(GLFWwindow* renderWindow);
 
-	//void Upgrade(Character* playerCharacter);
+	void Upgrade(Character* playerCharacter);
 	void CompileMeshData();
 };
 

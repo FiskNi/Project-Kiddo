@@ -21,26 +21,26 @@ GameEngine::GameEngine()
 	// Not dynamic (in constructor) but creates one large render buffer rather than
 	// relying on the mesh to have these. This buffer goes into the renderer and would be swapped between rooms.
 	// The scene handles what data this recieves
-	meshCount = mainScene.GetMeshData().size();
-	vertexCount = 0;
-	for (int i = 0; i < meshCount; i++)
-	{
-		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
-	}
-	// Allocated memory
-	mainSceneVertexData = new vertexPolygon[vertexCount];
+	//meshCount = mainScene.GetMeshData().size();
+	//vertexCount = 0;
+	//for (int i = 0; i < meshCount; i++)
+	//{
+	//	vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+	//}
+	//// Allocated memory
+	//mainSceneVertexData = new vertexPolygon[vertexCount];
 
-	int vertexIndex = 0;
-	for (int i = 0; i < meshCount; i++)
-	{
-		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
-		for (int j = 0; j < meshVtxCount; j++)
-		{
-			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
-			vertexIndex++;
-		}
-	}
-	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+	//int vertexIndex = 0;
+	//for (int i = 0; i < meshCount; i++)
+	//{
+	//	int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+	//	for (int j = 0; j < meshVtxCount; j++)
+	//	{
+	//		mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+	//		vertexIndex++;
+	//	}
+	//}
+	//mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 
 
 

@@ -127,7 +127,7 @@ public:
 	Mesh* GetMeshParent() { return myParent; }
 	MeshGroupClass* GetGroupParent() { return myGroupParent; }
 
-	std::vector<vertexPolygon> GetVertices() { return vertices; }
+	std::vector<vertexPolygon>& GetVertices()  { return vertices; }
 	SkeletonD& GetSkeleton() { return skeleton; }
 	int GetVertexCount() const { return vertexCount; }
 	
