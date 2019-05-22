@@ -81,6 +81,10 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->playerCharacter.SetCurrentItem(3);
 		if (key == GLFW_KEY_5 && action == GLFW_PRESS)
 			scene->playerCharacter.SetCurrentItem(4);
+		//if (key == GLFW_KEY_L && action == GLFW_PRESS)
+		//	scene->roomBuffer->BoxHolding(&scene->playerCharacter);
+		//if (key == GLFW_KEY_L && action == GLFW_RELEASE)
+		//	scene->playerCharacter.SetHoldingObject(false);
 	}
 }
 
