@@ -234,8 +234,8 @@ void Room::PlayerItemCollision(Character* playerCharacter)
 {
 	for (int i = 0; i < items.size(); i++) {
 		if (playerCharacter->CheckCollision(items[i])) {
-			//playerCharacter->PickUpItem(&items[i]);
-			//items[i].SetPickedUp(true);
+			/*playerCharacter->PickUpItem(&items[i]);
+			items[i].SetPickedUp(true);*/
 		}
 	}
 }
