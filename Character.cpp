@@ -2,14 +2,12 @@
 
 Character::Character() : RigidEntity(1)
 {
-	items = new Item*[this->itemCap];
 	for (int i = 0; i < itemCap; i++) {
-		items[i] = new Item();
+		items.push_back(Item());
 	}
 	
-	collected = new Collectible*[this->collCap];
-	for (int i = 0; i < collCap; i++) {
-		collected[i] = new Collectible();
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+		collected.push_back(Collectible());
 	}
 
 	holdingObject = false;
@@ -20,7 +18,7 @@ Character::Character() : RigidEntity(1)
 
 Character::~Character()
 {
-	
+
 }
 
 void Character::SetHoldingObject(bool holding)
@@ -189,39 +187,44 @@ void Character::Move(GLFWwindow* window)
 	inputVector = moveDir;
 }
 
-void Character::PickUpItem(Item * item)
+std::vector<Collectible>& Character::GetCollectedCollectibles()
 {
-	//if (nrOf == cap) {
-	//	return;
-	//}
-	//else {
-	//	for (int i = 0; i < cap; i++) {
-	//		if (items[i]->GetItemType() == NONE) {
-	//			items[i]->SetItemType(item->GetItemType());
-	//			nrOf++;
-	//			std::cout << "Picked up item" << std::endl;
-	//			break;
-	//		}
-	//	}
-	//}
+	return collected;
 }
+
+//void Character::PickUpItem(Item * item)
+//{
+//	//if (nrOf == cap) {
+//	//	return;
+//	//}
+//	//else {
+//	//	for (int i = 0; i < cap; i++) {
+//	//		if (items[i]->GetItemType() == NONE) {
+//	//			items[i]->SetItemType(item->GetItemType());
+//	//			nrOf++;
+//	//			std::cout << "Picked up item" << std::endl;
+//	//			break;
+//	//		}
+//	//	}
+//	//}
+//}
 
 void Character::PickUpCollectible(Collectible * coll)
 {
-	if (!this->collected[coll->GetIndex()]->GetCollected()) {
-		this->collected[coll->GetIndex()]->SetCollected(true);
+	if (!collected[coll->GetIndex()].GetCollected()) {
+		collected[coll->GetIndex()].SetCollected(true);
 	}
 }
 
-Item * Character::Upgrade()
-{
-	if (items[currentItem] == nullptr) {
-		return nullptr;
-	}
-	else {
-		return items[currentItem];
-	}
-
-}
+//Item * Character::Upgrade()
+//{
+//	if (items[currentItem] == nullptr) {
+//		return nullptr;
+//	}
+//	else {
+//		return items[currentItem];
+//	}
+//
+//}
 
 

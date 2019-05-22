@@ -204,6 +204,7 @@ void Scene::CompileMeshData()
 //=============================================================
 void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 {
+	//Sets user pointer for Key_callbacks
 	if (!setUserPointer) 
 	{
 		glfwSetWindowUserPointer(renderWindow, this);
@@ -246,7 +247,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			}
 
 			roomBuffer->Update(&playerCharacter, renderWindow, deltaTime);
-
+			menuHandler.SetCollected(playerCharacter.GetCollectedCollectibles());
 			// Compile render data for the renderer
 			CompileMeshData();
 		}	
