@@ -216,25 +216,25 @@ void Room::PlayerDoorCollision(Character* playerCharacter)
 	}
 }
 
-//void Room::PlayerCollectibleCollision(Character * playerCharacter)
-//{
-//	for (int i = 0; i < collectibles.size(); i++) {
-//		if (playerCharacter->CheckCollision(collectibles[i])) {
-//			playerCharacter->PickUpCollectible(&collectibles[i]);
-//			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
-//		}
-//	}
-//}
-//
-//void Room::PlayerItemCollision(Character* playerCharacter)
-//{
-//	for (int i = 0; i < items.size(); i++) {
-//		if (playerCharacter->CheckCollision(items[i])) {
-//			playerCharacter->PickUpItem(&items[i]);
-//			items[i].SetPickedUp(true);
-//		}
-//	}
-//}
+void Room::PlayerCollectibleCollision(Character * playerCharacter)
+{
+	for (int i = 0; i < collectibles.size(); i++) {
+		if (playerCharacter->CheckCollision(collectibles[i])) {
+			playerCharacter->PickUpCollectible(&collectibles[i]);
+			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
+		}
+	}
+}
+
+void Room::PlayerItemCollision(Character* playerCharacter)
+{
+	for (int i = 0; i < items.size(); i++) {
+		if (playerCharacter->CheckCollision(items[i])) {
+			//playerCharacter->PickUpItem(&items[i]);
+			//items[i].SetPickedUp(true);
+		}
+	}
+}
 
 //=============================================================
 // This finds and sets the parent of a mesh by going through every different vector.
@@ -1142,23 +1142,29 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 	}
 }
 
-//void Room::Upgrade(Character* playerCharacter)
-//{
-//	Item* temp = playerCharacter->GetCurrentItem();
-//	if (temp != nullptr) {
-//		for (int i = 0; i < rigids.size(); i++) {
-//			if (playerCharacter->CheckInBound(rigids[i])) {
-//				rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
-//				if (rigids[i].GetBoxType() == 1) {
-//					std::cout << "box upgraded" << std::endl;
-//				}
-//				//playerCharacter->ItemUsed();
-//
-//			}
-//		}
-//	}
-//
-//}
+void Room::destroyRoom()
+{
+	delete roomCamera;
+}
+
+
+void Room::Upgrade(Character* playerCharacter)
+{
+	//Item* temp = playerCharacter->GetCurrentItem();
+	//if (temp != nullptr) {
+	//	for (int i = 0; i < rigids.size(); i++) {
+	//		if (playerCharacter->CheckInBound(rigids[i])) {
+	//			rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
+	//			if (rigids[i].GetBoxType() == 1) {
+	//				std::cout << "box upgraded" << std::endl;
+	//			}
+	//			//playerCharacter->ItemUsed();
+
+	//		}
+	//	}
+	//}
+
+}
 
 //=============================================================
 //	Compiles mesh data for the renderer
@@ -1420,7 +1426,16 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		MeshGroupClass group(level, i);
 		meshGroups.push_back(group);
 	}
-
+	/*Collectible coll;
+	coll.SetPosition(glm::vec3(-15, 0.5, -5));
+	coll.SetIndex(0);
+	coll.SetMaterialID(materials[1].GetMaterialID());
+	collectibles.push_back(coll);*/
+	//Item item;
+	//item.SetItemType(BOMB);
+	//item.SetPosition(glm::vec3(-15, 0.5, -5));
+	//item.SetMaterialID(materials[1].GetMaterialID());
+	//items.push_back(item);
 
 	//Finding and setting parents so that things can be moved properly later.
 	SetAllParents();

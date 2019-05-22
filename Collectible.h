@@ -5,6 +5,8 @@ class Collectible : public StaticEntity
 {
 private:
 	bool collected = false;
+
+	//Index determines which collectible it is, current goes from 0-7
 	int index = -1;
 public:
 	Collectible(unsigned int i = 1) : StaticEntity(i) {};

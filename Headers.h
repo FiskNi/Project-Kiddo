@@ -47,6 +47,7 @@
 #define POINTLIGHTS 6
 #define NAME_SIZE 256
 
+#define COLLECTEDCAP 8
 using namespace std;
 
 // Should be renamed to just vertex or similar since this is only one vertex not a polygon

@@ -3,6 +3,7 @@
 #include "Headers.h"
 #include "Material.h"
 #include "MenuButton.h"
+#include "Collectible.h"
 
 enum ACTIVEMENU 
 {
@@ -56,6 +57,7 @@ private:
 	bool printMouseClickOnce;
 
 	std::vector<ButtonVtx> backgroundQuad;
+	std::vector<Collectible> collected;
 
 
 public:
@@ -107,6 +109,8 @@ public:
 
 	bool GetIsLoading() const						{ return isLoading; }
 	void SetIsLoading(bool isLoading)				{ this->isLoading = isLoading; }
+
+	void SetCollected(std::vector<Collectible> coll);
 	
 };
 

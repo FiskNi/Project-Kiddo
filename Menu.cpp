@@ -3,6 +3,13 @@
 
 Menu::Menu() 
 {
+#pragma region initialize vector
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+		collected.push_back(Collectible());
+	}
+
+#pragma endregion
+
 	vertexCountMainTotal = 0;
 	vertexCountPauseTotal = 0;
 	nrOfMainButtons = 0;
@@ -213,6 +220,13 @@ void Menu::CreateBackgroundQuad()
 	for (int i = 0; i < 6; i++) {
 		//backgroundQuad[i] = myQuad[i];
 		backgroundQuad.push_back(bgQuad[i]);
+	}
+}
+
+void Menu::SetCollected(std::vector<Collectible> coll)
+{
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+		collected[i].SetIndex(coll[i].GetIndex());
 	}
 }
 
