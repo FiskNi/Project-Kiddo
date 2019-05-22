@@ -59,6 +59,11 @@ GameEngine::~GameEngine()
 
 void GameEngine::CompileRoomData()
 {
+	if (mainSceneVertexData)
+		delete[] mainSceneVertexData;
+
+	mainSceneVertexData = nullptr;
+
 	meshCount = mainScene.GetMeshData().size();
 	vertexCount = 0;
 	for (int i = 0; i < meshCount; i++)

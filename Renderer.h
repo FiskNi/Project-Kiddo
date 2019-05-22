@@ -70,7 +70,6 @@ private:
 
 	GLuint boneBuffer;
 
-
 public:
 	Renderer();
 	~Renderer();

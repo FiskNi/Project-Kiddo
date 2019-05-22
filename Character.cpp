@@ -87,7 +87,7 @@ bool Character::CheckInBound(Entity collidingCube)
 void Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 2.5f;
+	const float moveSpeed = 2.0f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
@@ -110,11 +110,13 @@ void Character::Move(GLFWwindow* window)
 			{
 				moveX = -moveSpeed / 5; 
 				moveY = moveSpeed;
+
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX = -moveSpeed;
+				moveX += -moveSpeed / 2;
+				moveZ += -moveSpeed / 2;
 			}
 		}
 
@@ -128,7 +130,8 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX = moveSpeed;
+				moveX += moveSpeed / 2;
+				moveZ += moveSpeed / 2;
 			}
 		}
 
@@ -142,7 +145,8 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ = -moveSpeed;
+				moveX += moveSpeed / 2;
+				moveZ += -moveSpeed / 2;
 			}
 		}
 
@@ -156,7 +160,8 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ = moveSpeed;
+				moveZ += moveSpeed / 2;
+				moveX += -moveSpeed / 2;
 			}
 		}
 

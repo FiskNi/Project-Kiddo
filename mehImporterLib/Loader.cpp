@@ -152,10 +152,11 @@ Loader::~Loader()
 {
 	// NEEDS TO BE LOOKED OVER AND CONFIRMED FOR NO MEMORY LEAKS
 	for (int i = 0; i < this->fileHeader.meshCount; i++)
-	{
 		if (meshVert[i].vertices)
 			delete[] meshVert[i].vertices;
-	}
+
+	if (meshVert)
+		delete[] meshVert;
 	if (mesh)
 		delete[] mesh;
 	if (material)

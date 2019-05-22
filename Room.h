@@ -66,9 +66,8 @@ private:
 
 	//Left over functions for if we don't freeze the objects ahead of exportions.
 	//Outdated otherwise.
-	std::vector <float> GetParentOffset(Mesh * childMesh);
-	std::vector <float> GetParentOffset(MeshGroupClass * childGroup);
-
+	std::vector<float> GetParentOffset(Mesh * childMesh);
+	std::vector<float> GetParentOffset(MeshGroupClass * childGroup);
 
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
@@ -125,7 +124,7 @@ public:
 	Camera* GetCamera() { return roomCamera; }
 	bool GetRoomCompleted() { return this->isRoomCompleted; }
 
-	void SetRoomCompleted(bool tf)								{ this->isRoomCompleted = tf; }
+	void SetRoomCompleted(bool tf) { this->isRoomCompleted = tf; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 

@@ -13,6 +13,8 @@ ShadowMap::ShadowMap()
 
 ShadowMap::~ShadowMap()
 {
+	glDeleteFramebuffers(1, &depthMapFbo);
+	glDeleteTextures(1, depthMapAttachments);
 }
 
 /*

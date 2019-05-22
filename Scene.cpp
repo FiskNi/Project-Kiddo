@@ -106,14 +106,12 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
-	
 	roomNr = 0;
 	roomBuffer = nullptr;
 	setUserPointer = false;
 	isLoading = false;
 	exittoMenu = false;
 	roomLoaded = false;
-	//meshes = &(roomBuffer->GetMeshData());
 
 	LoadShaders();
 	// If no audiodevice exists this will initiate as NULL, make sure to check that this was successful
@@ -286,13 +284,15 @@ void Scene::RestartGame()
 void Scene::ExitToMainMenu() {
 	// RETURNS TO MAIN MENU
 	// pLEASE, do NOT remove the room, main menu's start is supposed to work like a Resume.
-	//delete scene->roomBuffer;
-	//scene->roomBuffer = nullptr;
-	//scene->roomLoaded = false;
+	delete roomBuffer;
+	roomBuffer = nullptr;
+	roomLoaded = false;
 	isLoading = true;
 	exittoMenu = true;
 	Exited();
 	state = MAINMENU;
+	roomNr = 0;
+	ResetRoom();
 }
 
 void Scene::LoadRoom()
@@ -359,7 +359,6 @@ void Scene::LoadRoom()
 	if (state != MAINMENU) 
 		roomNr++;
 	
-
 	isLoading = false;
 	roomLoaded = true;
 	delete roomLoader;

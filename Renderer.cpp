@@ -23,9 +23,15 @@ Renderer::~Renderer()
 {
 	glDeleteFramebuffers(1, &gFbo);
 	glDeleteTextures(2, gFboTextureAttachments);
-	glDeleteVertexArrays(1, &gVertexAttribute);
-	glDeleteBuffers(1, &gVertexBuffer);
 
+	glDeleteVertexArrays(1, &gVertexAttribute);
+	glDeleteVertexArrays(1, &gVertexAttributeMain);
+	glDeleteVertexArrays(1, &gVertexAttributeMenu);
+	glDeleteVertexArrays(1, &gVertexAttributePause);
+
+	glDeleteBuffers(1, &gVertexBuffer);
+	glDeleteBuffers(1, &gVertexBufferMenu);
+	glDeleteBuffers(1, &gVertexBufferPause);
 }
 
 GLFWwindow* Renderer::getWindow()
@@ -281,12 +287,6 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 //=============================================================
 void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 {
-
-	std::vector<vertexPolygon> testVec;
-
-	for (int i = 0; i < vertexCount; i++)
-		testVec.push_back(vertices[i]);
-
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);

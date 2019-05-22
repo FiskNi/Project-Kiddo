@@ -30,7 +30,6 @@ private:
 	float gClearColour[3]{};
 	glm::mat4 gRotate2D;
 
-
 	// Main window and renderer object
 	Renderer mainRenderer;
 	vertexPolygon* mainSceneVertexData;

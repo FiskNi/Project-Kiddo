@@ -19,11 +19,6 @@ private:
 	std::vector<MeshAnis> animationsD;
 	std::vector<MeshSkeleton> skeletonsD;
 
-	std::vector<Joint*> joints;
-	std::vector<Animation*> animations;
-	std::vector<KeyFrame*> keyFrames;
-	std::vector<Transform*> transforms;
-
 public:
 	Loader(std::string fileName);
 	~Loader();

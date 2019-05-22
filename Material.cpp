@@ -47,6 +47,8 @@ Material::Material(PhongMaterial material, unsigned int id)
 
 Material::~Material()
 {
+	/*glDeleteTextures(1, &albedo);
+	glDeleteTextures(1, &normal);*/
 }
 
 void Material::createAlbedo(std::string path)

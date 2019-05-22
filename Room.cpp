@@ -519,7 +519,7 @@ void Room::SetAllParents()
 	}
 }
 
-std::vector <float> Room::GetParentOffset(Mesh * childMesh)
+std::vector<float> Room::GetParentOffset(Mesh * childMesh)
 {
 	if (childMesh->GetIsChild() == true)
 	{
@@ -582,7 +582,7 @@ std::vector <float> Room::GetParentOffset(Mesh * childMesh)
 	return std::vector<float>(1,-1);
 }
 
-std::vector <float> Room::GetParentOffset(MeshGroupClass * childGroup)
+std::vector<float> Room::GetParentOffset(MeshGroupClass * childGroup)
 {
 	if (childGroup->GetIsChild() == true)
 	{
@@ -1126,8 +1126,6 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		}
 	}
 
-
-
 }
 
 void Room::BridgeUpdates(GLFWwindow *renderWindow)
@@ -1161,7 +1159,6 @@ void Room::Upgrade(Character* playerCharacter)
 	//		}
 	//	}
 	//}
-
 }
 
 //=============================================================
@@ -1231,7 +1228,6 @@ void Room::CompileMeshData()
 		j++;
 	}
 	
-
 	//Applying all parent data on the child mesh
 	updateChildren();
 	firstCall = false;
@@ -1285,7 +1281,6 @@ void Room::LoadLights(Loader* inLoader)
 			inLoader->GetDirLightColor(i)[0],
 			inLoader->GetDirLightColor(i)[1],
 			inLoader->GetDirLightColor(i)[2]);
-
 
 		dirLights[i].SetPos(pos);
 		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i) * 0.1f);
