@@ -38,12 +38,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	// Simple animation loop
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
-		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 0.5f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime > 2.0f)
 			roomMeshes[i].SetTime(0);
-		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime < 0.0f)
 			roomMeshes[i].SetTime(0);
 
-		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 0.45f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 1.1f)
 			roomMeshes[i].SetPlayingBackwards(true);
 		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
 			roomMeshes[i].SetPlayingBackwards(false);
@@ -1196,9 +1196,6 @@ void Room::Upgrade(Character* playerCharacter)
 //=============================================================
 void Room::CompileMeshData()
 {
-	meshes.clear();
-	meshes.shrink_to_fit();
-	meshes.resize(meshAmount);
 
 	int j = 0;
 	for (int i = 0; i < roomMeshes.size(); i++)
@@ -1298,7 +1295,7 @@ void Room::LoadLights(Loader* inLoader)
 		
 		pointLights[i].setLightPos(pos);
 		pointLights[i].SetDiffuse(color);
-		pointLights[i].setPower(inLoader->GetPointLightIntensity(i) * 0.1f);
+		pointLights[i].setPower(1.0f);
 	}
 
 	DirectionalLight dirLight;
@@ -1466,17 +1463,9 @@ void Room::LoadEntities(Loader* level)
 		MeshGroupClass group(level, i);
 		meshGroups.push_back(group);
 	}
-	/*Collectible coll;
-	coll.SetPosition(glm::vec3(-15, 0.5, -5));
-	coll.SetIndex(0);
-	coll.SetMaterialID(materials[1].GetMaterialID());
-	collectibles.push_back(coll);*/
-	//Item item;
-	//item.SetItemType(BOMB);
-	//item.SetPosition(glm::vec3(-15, 0.5, -5));
-	//item.SetMaterialID(materials[1].GetMaterialID());
-	//items.push_back(item);
-
+	
+	// Allocate memory for the mesh vector
+	meshes.resize(meshAmount + 1);
 	//Finding and setting parents so that things can be moved properly later.
 	SetAllParents();
 }

@@ -2,11 +2,13 @@
 
 Character::Character() : RigidEntity(1)
 {
-	for (int i = 0; i < itemCap; i++) {
+	for (int i = 0; i < itemCap; i++) 
+	{
 		items.push_back(Item());
 	}
 	
 	for (int i = 0; i < COLLECTEDCAP; i++) {
+
 		collected.push_back(Collectible());
 	}
 

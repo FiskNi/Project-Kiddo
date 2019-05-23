@@ -139,7 +139,7 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// The constructor integer is the material id slot
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
 
-	// Testing to free memory
+	// Free momery
 	for (int i = 0; i < materials.size(); i++)
 		if (materials[i])
 			delete materials[i];
@@ -172,7 +172,7 @@ void Scene::CompileMeshData()
 {
 	// Compile the mesh data of the first room
 	roomBuffer->CompileMeshData();
-	roomBuffer->GetMeshData().push_back(playerCharacter.GetMeshData());
+	roomBuffer->GetMeshData()[roomBuffer->GetMeshData().size() - 1] = playerCharacter.GetMeshData();
 	// Compile character data
 }
 

@@ -491,7 +491,6 @@ void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 	}
 
 	//CalculateTangents();
-
 }
 
 void Mesh::CalculateTangents()
