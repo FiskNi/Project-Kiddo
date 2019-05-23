@@ -14,6 +14,7 @@ Menu::Menu()
 	vertexCountPauseTotal = 0;
 	nrOfMainButtons = 0;
 	nrOfPauseButtons = 0;
+	nrOfCollectibleButtons = 0;
 	isMenuRunning = true;
 	isButtonHit = false;
 	updateState = MAINMENU;
@@ -39,8 +40,10 @@ void Menu::CreateMainMenu()
 {
 	// Creates Main Menu Background as well as Main Menu Buttons
 	CreateMainMenuButtons();
-	// Creates 
+	// Creates Pause Menu buttons and background
 	CreatePauseMenuButtons();
+
+	CreateCollectibleMenuButtons();
 }
 
 // ========================================================================
@@ -82,7 +85,27 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 			}
 			else if (currentButtonHit == 4) {
 				// MY TOYS / COLLECTIBLE MENU
+				//activeMenu = COLLECTIBLEACTIVE;
 			}
+			currentButtonHit = -1;
+			isButtonHit = false;
+		}
+	}
+	else if (activeMenu == COLLECTIBLEACTIVE)
+	{
+		if (isButtonHit == true) {
+			if (currentButtonHit == 1) {
+				// START GAME			// This is handled in GameEngine by getting the last clicked button
+				activeMenu = MAINACTIVE;
+			}
+			else if (currentButtonHit == 2) {
+				// SETTINGS? CREDITS? HOW TO PLAY?
+			}
+			else if (currentButtonHit == 3) {
+				// EXIT
+				//glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+			}
+			currentButtonHit = -1;
 			isButtonHit = false;
 		}
 	}
@@ -131,7 +154,8 @@ bool Menu::CheckCollision(float x, float y)
 	{
 		for (int i = 0; i < nrOfPauseButtons; i++) 
 		{
-			if (mainButtons[i].GetIsNotButton() != true) {
+			if (mainButtons[i].GetIsNotButton() != true) 
+			{
 				if (pauseButtons[i].CheckInsideCollision(x, y) == true)
 				{
 					//std::cout << "Hit Button nr " << i << std::endl;
@@ -141,11 +165,31 @@ bool Menu::CheckCollision(float x, float y)
 			}
 		}
 	}
-	else if (activeMenu == MAINACTIVE){
-		for (int i = 0; i < nrOfMainButtons; i++) {
-			if (mainButtons[i].GetIsNotButton() != true) {
-				if (mainButtons[i].CheckInsideCollision(x, y) == true) {
+	else if (activeMenu == MAINACTIVE)
+	{
+		for (int i = 0; i < nrOfMainButtons; i++) 
+		{
+			if (mainButtons[i].GetIsNotButton() != true) 
+			{
+				if (mainButtons[i].CheckInsideCollision(x, y) == true) 
+				{
 					//std::cout << "Hit Button nr " << i << std::endl;
+					currentButtonHit = i;
+					isButtonHit = true;
+					return true;
+				}
+			}
+		}
+	}
+	else if (activeMenu == COLLECTIBLEACTIVE)
+	{
+		for (int i = 0; i < nrOfCollectibleButtons; i++)
+		{
+			if (collectibleButtons[i].GetIsNotButton() != true)
+			{
+				if (collectibleButtons[i].CheckInsideCollision(x, y) == true)
+				{
+					std::cout << "Hit Button nr " << i << std::endl;
 					currentButtonHit = i;
 					isButtonHit = true;
 					return true;
@@ -161,7 +205,6 @@ bool Menu::CheckCollision(float x, float y)
 // ========================================================================
 void Menu::CreateMainMenuButtons() 
 {
-
 	// Creates the background, which is not a button (and collision will not be checked on it)
 	CreateBackgroundQuad();
 	buttonTextures.push_back(backgroundTexture);
@@ -194,15 +237,13 @@ void Menu::CreateMainMenuButtons()
 		nrOfMainButtons++;
 	}
 	
-	
 }
 
 // ========================================================================
-//  Creates the Main Menu Background and Main Menu Buttons
+//  Creates the Pause Menu Background and Pause Menu Buttons
 // ========================================================================
 void Menu::CreatePauseMenuButtons()
 {
-
 	// Creates the background, which is not a button (and collision will not be checked on it)
 	// backgroundQuad has already been initialised in CreateMainMenuButtons()
 	pauseButtonTextures.push_back(pauseBackgroundTexture);
@@ -229,6 +270,27 @@ void Menu::CreatePauseMenuButtons()
 		nrOfPauseButtons++;
 	}
 
+}
+
+// ========================================================================
+//  Creates the Collectible Menu Buttons
+// ========================================================================
+void Menu::CreateCollectibleMenuButtons()
+{
+	// Creates the background, which is not a button (and collision will not be checked on it)
+	// backgroundQuad has already been initialised in CreateMainMenuButtons()
+	//collectibleTextures.push_back(pauseBackgroundTexture);
+	//MenuButton bgButton(backgroundQuad, 0, true);
+	//collectibleButtons.push_back(bgButton);
+
+
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+		collectibleTextures.push_back(buttonTextureBase);
+		MenuButton colButton(GetCurrentOffset(nrOfCollectibleButtons), 0);
+		collectibleButtons.push_back(colButton);
+		vertexCountCollectibleTotal += colButton.GetVertexCount();		// Vertex count for buttons is always 6
+		nrOfCollectibleButtons++;
+	}
 
 }
 
