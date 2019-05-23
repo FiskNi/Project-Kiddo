@@ -4,7 +4,8 @@
 
 GameEngine::GameEngine()
 {
-
+	mainSceneVertexData = nullptr;
+	mainMenuVertexData = nullptr;
 	// Supreme edition loading screen that shows up too late (should play before the scene loads stuff)
 	mainRenderer.CreateFrameBuffer();
 	mainRenderer.SetViewport();
@@ -20,30 +21,30 @@ GameEngine::GameEngine()
 	// Not dynamic (in constructor) but creates one large render buffer rather than
 	// relying on the mesh to have these. This buffer goes into the renderer and would be swapped between rooms.
 	// The scene handles what data this recieves
-	meshCount = mainScene.GetMeshData().size();
-	vertexCount = 0;
-	for (int i = 0; i < meshCount; i++)
-	{
-		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
-	}
-	// Allocated memory
-	mainSceneVertexData = new vertexPolygon[vertexCount];
+	//meshCount = mainScene.GetMeshData().size();
+	//vertexCount = 0;
+	//for (int i = 0; i < meshCount; i++)
+	//{
+	//	vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+	//}
+	//// Allocated memory
+	//mainSceneVertexData = new vertexPolygon[vertexCount];
 
-	int vertexIndex = 0;
-	for (int i = 0; i < meshCount; i++)
-	{
-		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
-		for (int j = 0; j < meshVtxCount; j++)
-		{
-			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
-			vertexIndex++;
-		}
-	}
-	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
+	//int vertexIndex = 0;
+	//for (int i = 0; i < meshCount; i++)
+	//{
+	//	int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+	//	for (int j = 0; j < meshVtxCount; j++)
+	//	{
+	//		mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+	//		vertexIndex++;
+	//	}
+	//}
+	//mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 
 
 
-	menuIsRunning = true;
+	//menuIsRunning = true;
 }
 
 GameEngine::~GameEngine()
@@ -52,10 +53,17 @@ GameEngine::~GameEngine()
 		delete mainSceneVertexData;
 	if (mainMenuVertexData)
 		delete mainMenuVertexData;
+	if (pauseMenuVertexData)
+		delete pauseMenuVertexData;
 }
 
 void GameEngine::CompileRoomData()
 {
+	if (mainSceneVertexData)
+		delete[] mainSceneVertexData;
+
+	mainSceneVertexData = nullptr;
+
 	meshCount = mainScene.GetMeshData().size();
 	vertexCount = 0;
 	for (int i = 0; i < meshCount; i++)
@@ -80,37 +88,44 @@ void GameEngine::CompileRoomData()
 
 void GameEngine::CompileMainMenuData()
 {
-	//meshCount = mainScene.GetMeshData().size();
 	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
-	int vtxCountButtons = mainMenu.GetVertexCountTotal();
-	//std::cout << vtxCountButtons << std::endl;
-	//std::cout << mainMenu.GetVertexCountTotal() << std::endl;
-	//for (int i = 0; i < nrOfMenuButtons; i++)
-	//{
-	//	vertexCount += mainMenu.GetVertexCountTotal();
-	//}
-	// Allocated memory
-	//mainSceneVertexData = new vertexPolygon[vertexCount];
+	int vtxCountButtons = mainMenu.GetVertexCountMainTotal();
 
 	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
 
 	int vertexIndex = 0;
-	//for (int k = 0; k < 6; k++)
-	//{
-	//	mainMenuVertexData[vertexIndex] = mainMenu.GetBackgroundVertices(k);
-	//	vertexIndex++;
-	//}
 
 	for (int i = 0; i < nrOfMenuButtons; i++)
 	{
-		int buttonVtxCount = mainMenu.GetMenuButtons()[i].GetVertexCount();//mainMenu.GetButtonVertices(i).size();//mainScene.GetMeshData()[i].GetVertices().size();
+		int buttonVtxCount = mainMenu.GetMainMenuButtons()[i].GetVertexCount();
 		for (int j = 0; j < buttonVtxCount; j++)
 		{
-			mainMenuVertexData[vertexIndex] = mainMenu.GetButtonVertices(i)[j];
+			mainMenuVertexData[vertexIndex] = mainMenu.GetMainMenuButtonVertices(i)[j];
 			vertexIndex++;
 		}
 	}
 	mainRenderer.CompileMenuVertexData(vtxCountButtons, mainMenuVertexData);
+}
+
+void GameEngine::CompilePauseMenuData()
+{
+	int nrOfMenuButtons = mainMenu.GetNrOfPauseButtons();
+	int vtxCountButtons = mainMenu.GetVertexCountPauseTotal();
+
+	pauseMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+	int vertexIndex = 0;
+
+	for (int i = 0; i < nrOfMenuButtons; i++)
+	{
+		int buttonVtxCount = mainMenu.GetPauseMenuButtons()[i].GetVertexCount();
+		for (int j = 0; j < buttonVtxCount; j++)
+		{
+			pauseMenuVertexData[vertexIndex] = mainMenu.GetPauseMenuButtonVertices(i)[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompilePauseMenuVertexData(vtxCountButtons, pauseMenuVertexData);
 }
 
 //=============================================================
@@ -128,28 +143,31 @@ void GameEngine::Run()
 	static bool renderDepth = false;
 	ImGuiInit();
 
-	// Compile Main Menu vertex data (is this really the best spot? no idea rn)
+	// Compile Main Menu and Pause Menu vertex data
 	CompileMainMenuData();
+	CompilePauseMenuData();
 
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
 		shutdown = true;
 
-
-
-
 	while (!glfwWindowShouldClose(mainRenderer.getWindow()))
 	{
 		glfwPollEvents();
-		if (glfwGetKey(mainRenderer.getWindow(), GLFW_KEY_1) == GLFW_PRESS)
+		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			menuIsRunning = false;
+			if (mainMenu.GetLastClickedButton() == 1) {
+				mainScene.ResumeGame();
+				mainMenu.SetIsMenuRunning(false);
+				mainMenu.SetButtonActionExecuted(true);
+			}
 		}
 		else if (mainScene.GetExit())
 		{
-			menuIsRunning = true;
+			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
 		}
+
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
@@ -157,29 +175,29 @@ void GameEngine::Run()
 			deltaTime = 0.0f;
 
 
-		if (menuIsRunning == true)
+		if (mainMenu.GetIsMenuRunning() == true)
 		{
 			// RENDER CALL FOR MAIN MENU HERE
+			mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
-			Camera temp;
 
-			mainRenderer.RenderMainMenu(mainScene.GetShader(3), mainMenu.GetMenuButtons(), gClearColour, mainMenu.GetBackgroundTexture(), mainMenu.GetButtonTextures());
+			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glfwSwapBuffers(mainRenderer.getWindow());
 		}
-		else if (menuIsRunning == false && mainScene.GetRoomLoaded())
+		else if (mainMenu.GetIsMenuRunning() == false && mainScene.GetRoomLoaded())
 		{
 			// Main updates to a scene
 			// Includes all interactions in the game world
 			mainScene.Update(mainRenderer.getWindow(), deltaTime);
 
 			// PrePass render for Shadow mapping 
-			mainRenderer.prePassRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
+			mainRenderer.ShadowmapRender(mainScene.GetShader(1), mainScene.GetMeshData(), mainScene.GetCamera(), gClearColour, mainScene.GetDirectionalLights());
 			mainRenderer.SetViewport();	//resets the viewport
 			// First render pass
-			mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), mainScene.GetMeshData(), gClearColour);
+			mainRenderer.firstPassRenderTemp(mainScene.GetShader(2), gClearColour);
 			
 			if (!mainScene.GetCurrentState() == PAUSED)
 			{
@@ -198,15 +216,63 @@ void GameEngine::Run()
 				// Draw call for fsq and imgui
 				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 				glDrawArrays(GL_TRIANGLES, 0, 6);
+
 				UpdateImGui(renderDepth);
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 				glfwSwapBuffers(mainRenderer.getWindow());
 			}
 			else
 			{
-				// Pause screen draw call
-				mainRenderer.secondPassRenderPauseOverlay(mainScene.GetShader(2), mainMenu.GetPauseOverlay());
+				// Pause Menu Render Call
+				mainMenu.SetActiveMenu(PAUSEACTIVE);
+
+				// Checks for clicking on the pause menu
+				glfwPollEvents();
+				if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
+				{
+					// Gets the clicked cursor position and checks for collision with any of the buttons for Pause Menu
+					double x, y;
+					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
+					if (mainMenu.CheckCollision(x, y)) {
+						int clickedButton = mainMenu.GetLastClickedButton();
+						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;
+
+						if (clickedButton == 0) {
+							// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
+						}
+						else if (clickedButton == 1) {
+							// RESUME GAME	
+							mainScene.ResumeGame();
+							//std::cout << "RESUME" << std::endl;
+						}
+						else if (clickedButton == 2) {
+							// RESTART
+							mainScene.RestartGame();
+							//std::cout << "Restarting level" << std::endl;
+						}
+						else if (clickedButton == 3) {
+							// Quit to Main Menu (START WILL WORK AS RESUME)
+							mainScene.ExitToMainMenu();
+							mainMenu.SetActiveMenu(MAINACTIVE);
+							mainMenu.SetIsMenuRunning(true);
+							//std::cout << "MAIN MENU" << std::endl;
+						}
+
+					}
+					printMouseClickOnce = true;
+					mainMenu.SetButtonActionExecuted(false);
+				}
+				else if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+					printMouseClickOnce = false;
+				}
+
+				mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
+
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetPauseMenuButtons(), gClearColour, mainMenu.GetPauseButtonTextures(), PAUSEACTIVE);
+				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
+
 				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 				glfwSwapBuffers(mainRenderer.getWindow());
@@ -222,10 +288,10 @@ void GameEngine::Run()
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			UpdateImGui(renderDepth);
+
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			glfwSwapBuffers(mainRenderer.getWindow());
-			// Draw call for fsq and imgui
 
 			// Heavy loading work
 			mainScene.LoadRoom();

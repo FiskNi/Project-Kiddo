@@ -36,7 +36,6 @@ private:
 
 public:
 	Entity(unsigned int i);
-	Entity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID);
 	Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	Entity(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Entity();
@@ -82,6 +81,8 @@ public:
 
 	// Fixed return to be here 
 	Mesh GetMeshData() const { return entityMesh; }
+
+	Mesh* GetMeshDataPointer() { return &entityMesh; }
 
 	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
 	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }

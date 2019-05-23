@@ -9,6 +9,7 @@ MeshGroupClass::MeshGroupClass()
 	this->name = "Unasigned";
 	this->pName = "Unasigned Parent";
 
+	parentPosOffset = glm::vec3(0, 0, 0);
 	isChild = false;
 	parentType = -1;
 
@@ -39,7 +40,7 @@ MeshGroupClass::MeshGroupClass(Loader * inLoader, int index)
 		pName = "NO MESHGROUP PARENT FOUND";
 		isChild = false;
 	}
-
+	parentPosOffset = glm::vec3(0, 0, 0);
 	parentType = inLoader->GetMeshGroup(index).parentType;
 
 	myGroupParent = nullptr;
@@ -49,7 +50,10 @@ MeshGroupClass::MeshGroupClass(Loader * inLoader, int index)
 
 MeshGroupClass::~MeshGroupClass()
 {
-
+	//if (myGroupParent)
+	//	delete myGroupParent;
+	//if (myMeshParent)
+	//	delete myMeshParent;
 }
 
 void MeshGroupClass::SetPosition(glm::vec3 newPos)
@@ -75,4 +79,9 @@ void MeshGroupClass::SetMeshParent(Mesh * parent)
 void MeshGroupClass::SetGroupParent(MeshGroupClass * parent)
 {
 	myGroupParent = parent;
+}
+
+void MeshGroupClass::SetParentPosOffset(glm::vec3 offset)
+{
+	parentPosOffset = offset;
 }

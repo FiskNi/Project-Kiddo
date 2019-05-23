@@ -2,14 +2,12 @@
 
 Character::Character() : RigidEntity(1)
 {
-	items = new Item*[this->itemCap];
 	for (int i = 0; i < itemCap; i++) {
-		items[i] = new Item();
+		items.push_back(Item());
 	}
 	
-	collected = new Collectible*[this->collCap];
-	for (int i = 0; i < collCap; i++) {
-		collected[i] = new Collectible();
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+		collected.push_back(Collectible());
 	}
 
 	holdingObject = false;
@@ -20,7 +18,7 @@ Character::Character() : RigidEntity(1)
 
 Character::~Character()
 {
-	
+
 }
 
 void Character::SetHoldingObject(bool holding)
@@ -89,7 +87,7 @@ bool Character::CheckInBound(Entity collidingCube)
 void Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 2.5f;
+	const float moveSpeed = 2.0f;
 	const float maxSpeed = 5.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
@@ -112,11 +110,13 @@ void Character::Move(GLFWwindow* window)
 			{
 				moveX = -moveSpeed / 5; 
 				moveY = moveSpeed;
+
 				SetGrounded(false);
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX = -moveSpeed;
+				moveX += -moveSpeed / 2;
+				moveZ += -moveSpeed / 2;
 			}
 		}
 
@@ -130,7 +130,8 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX = moveSpeed;
+				moveX += moveSpeed / 2;
+				moveZ += moveSpeed / 2;
 			}
 		}
 
@@ -144,7 +145,8 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ = -moveSpeed;
+				moveX += moveSpeed / 2;
+				moveZ += -moveSpeed / 2;
 			}
 		}
 
@@ -158,7 +160,8 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ = moveSpeed;
+				moveZ += moveSpeed / 2;
+				moveX += -moveSpeed / 2;
 			}
 		}
 
@@ -167,17 +170,20 @@ void Character::Move(GLFWwindow* window)
 
 		if (glm::length(GetVelocity()) > 0.5f && !holdingObject)
 		{
-			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
-			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
-			float rotation = acos(cosRotation);
+			if (!IsHoldingObject()) 
+			{
+				glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+				float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
+				float rotation = acos(cosRotation);
 
-			if (GetVelocityX() > 0)
-				rotation;
-			else
-				rotation = -rotation;
+				if (GetVelocityX() > 0)
+					rotation;
+				else
+					rotation = -rotation;
 
-			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
-			SetRotation(qRotation);
+				glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
+				SetRotation(qRotation);
+			}
 		}
 
 		moveDir = glm::vec3(moveX, moveY, moveZ);
@@ -189,39 +195,44 @@ void Character::Move(GLFWwindow* window)
 	inputVector = moveDir;
 }
 
-void Character::PickUpItem(Item * item)
+std::vector<Collectible>& Character::GetCollectedCollectibles()
 {
-	//if (nrOf == cap) {
-	//	return;
-	//}
-	//else {
-	//	for (int i = 0; i < cap; i++) {
-	//		if (items[i]->GetItemType() == NONE) {
-	//			items[i]->SetItemType(item->GetItemType());
-	//			nrOf++;
-	//			std::cout << "Picked up item" << std::endl;
-	//			break;
-	//		}
-	//	}
-	//}
+	return collected;
 }
+
+//void Character::PickUpItem(Item * item)
+//{
+//	//if (nrOf == cap) {
+//	//	return;
+//	//}
+//	//else {
+//	//	for (int i = 0; i < cap; i++) {
+//	//		if (items[i]->GetItemType() == NONE) {
+//	//			items[i]->SetItemType(item->GetItemType());
+//	//			nrOf++;
+//	//			std::cout << "Picked up item" << std::endl;
+//	//			break;
+//	//		}
+//	//	}
+//	//}
+//}
 
 void Character::PickUpCollectible(Collectible * coll)
 {
-	if (!this->collected[coll->GetIndex()]->GetCollected()) {
-		this->collected[coll->GetIndex()]->SetCollected(true);
+	if (!collected[coll->GetIndex()].GetCollected()) {
+		collected[coll->GetIndex()].SetCollected(true);
 	}
 }
 
-Item * Character::Upgrade()
-{
-	if (items[currentItem] == nullptr) {
-		return nullptr;
-	}
-	else {
-		return items[currentItem];
-	}
-
-}
+//Item * Character::Upgrade()
+//{
+//	if (items[currentItem] == nullptr) {
+//		return nullptr;
+//	}
+//	else {
+//		return items[currentItem];
+//	}
+//
+//}
 
 

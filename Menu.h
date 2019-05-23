@@ -3,85 +3,115 @@
 #include "Headers.h"
 #include "Material.h"
 #include "MenuButton.h"
+#include "Collectible.h"
 
-class Menu {
+enum ACTIVEMENU 
+{
+	MAINACTIVE = 0,
+	PAUSEACTIVE = 1
+};
+
+class Menu 
+{
 private:
-	bool setUserPointer = false;
 
-	GAMESTATE state = MAINMENU;
+	ACTIVEMENU activeMenu = MAINACTIVE;
 
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
-	// Make this an array of textures?
+	//GLuint pauseButtonTexture;
+	GLuint pbt0;
+	GLuint pbt1;
+	GLuint pbt2;
+	GLuint pbt3;
+
 	GLuint buttonTextureBase;
 	std::vector<GLuint> buttonTextures;
+	std::vector<GLuint> pauseButtonTextures;
 
 	GLuint backgroundTexture;
 
 	// Menu Button objects
-	std::vector<MenuButton> menuButtons;
+	std::vector<MenuButton> mainButtons;
+	std::vector<MenuButton> pauseButtons;
 
 	// These are used to calculate the offset which is sent into the MenuButton constructor (Maybe only send in nr of buttons and calc in MenuButton?)
-	int nrOfMenuButtons;
-	const float BUTTON_OFFSET = 0.05f;
-	const float buttonHeight = 0.3f;
+	int nrOfMainButtons;
+	int nrOfPauseButtons;
+	const float BUTTON_OFFSET	= 0.05f;
+	const float buttonHeight	= 0.3f;
 
 	// The total number of vertices for the menu
-	int vertexCountTotal;
+	int vertexCountMainTotal;
+	int vertexCountPauseTotal;
 
 	bool isMenuRunning;
 	bool isLoading;
 
 	bool isButtonHit;
 	int currentButtonHit;
+	bool buttonActionExecuted;
+
+	GAMESTATE updateState;
 
 	bool printMouseClickOnce;
 
 	std::vector<ButtonVtx> backgroundQuad;
+	std::vector<Collectible> collected;
 
 
 public:
 	Menu();
 	~Menu();
 
-	static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
-	static void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
-
 	void CreateMainMenu();
 	void MenuUpdate(GLFWwindow* renderWindow, float deltaTime);
 	void CreateMenuTexture(std::string path, GLuint *texture);
 
-	void CheckCollision(float x, float y);
+	bool CheckCollision(float x, float y);
 
+	void CreateMainMenuButtons();
 	void CreateBackgroundQuad();
 
-	//void CreateMainMenuRoom(std::vector<Material> materials, Loader * aLoader, int state);
-	//void CompileMeshData();
-	//void LoadEntities(std::vector<Material> materials, Loader * level);
-	//void RenderLoading(Shader gShaderProgram);
+	// Get Textures ( some are temporary right now ) 
+	GLuint GetPauseOverlay() const						{ return pauseOverlayTexture; }
+	GLuint GetLoadingTexture() const					{ return loadingTexture; }
+	GLuint GetButtonTexture() const						{ return buttonTextureBase; }
+	//GLuint GetPauseButtonTexture() const				{ return pauseButtonTexture; }
+	GLuint GetBackgroundTexture() const					{ return backgroundTexture; }
+	std::vector<GLuint> GetButtonTextures() const		{ return buttonTextures; }
+	std::vector<GLuint> GetPauseButtonTextures() const	{ return pauseButtonTextures; }
 
-	GLuint GetPauseOverlay() const { return pauseOverlayTexture; }
-	GLuint GetLoadingTexture() const { return loadingTexture; }
-	GLuint GetButtonTexture() const { return buttonTextureBase; }
-	GLuint GetBackgroundTexture() const { return backgroundTexture; }
-	std::vector<GLuint> GetButtonTextures() const { return buttonTextures; }
+	int GetVertexCountMainTotal() const									{ return vertexCountMainTotal; }
+	std::vector<ButtonVtx> GetMainMenuButtonVertices(int idx) const		{ return mainButtons[idx].GetButtonVertices(); }
+	std::vector<MenuButton> GetMainMenuButtons() const					{ return mainButtons; }
+	int GetVertexCountPauseTotal() const								{ return vertexCountPauseTotal; }
+	std::vector<ButtonVtx> GetPauseMenuButtonVertices(int idx) const	{ return pauseButtons[idx].GetButtonVertices(); }
+	std::vector<MenuButton> GetPauseMenuButtons() const					{ return pauseButtons; }
 
-	int GetVertexCountTotal() const { return vertexCountTotal; }
-	std::vector<ButtonVtx> GetButtonVertices(int idx) const { return menuButtons[idx].GetButtonVertices(); }
-	std::vector<MenuButton> GetMenuButtons() const { return menuButtons; }
-	float GetCurrentOffset() const { return (nrOfMenuButtons-1) * (buttonHeight + BUTTON_OFFSET); }
-	int GetNrOfMenuButtons() const { return nrOfMenuButtons; }
+	float GetCurrentOffset() const					{ return (nrOfMainButtons - 1) * (buttonHeight + BUTTON_OFFSET); }
+	float GetCurrentOffsetPause() const				{ return (nrOfPauseButtons - 1) * (buttonHeight + BUTTON_OFFSET); }
+	int GetNrOfMenuButtons() const					{ return nrOfMainButtons; }
+	int GetNrOfPauseButtons() const					{ return nrOfPauseButtons; }
 
-	ButtonVtx GetBackgroundVertices(int idx) const { return backgroundQuad[idx]; }
+	ButtonVtx GetBackgroundVertices(int idx) const	{ return backgroundQuad[idx]; }
 
-	bool GetIsMenuRunning() const { return isMenuRunning; }
-	void SetIsMenuRunning(bool tf) { this->isMenuRunning = tf; }
+	bool GetIsMenuRunning() const					{ return isMenuRunning; }
+	void SetIsMenuRunning(bool tf)					{ this->isMenuRunning = tf; }
 
-	GAMESTATE GetCurrentState() const { return state; }
-	void SetState(GAMESTATE newState) { this->state = newState; }
+	ACTIVEMENU GetActiveMenu() const				{ return activeMenu; }
+	void SetActiveMenu(ACTIVEMENU nm)				{ this->activeMenu = nm; }
 
-	bool GetIsLoading() const { return isLoading; }
-	void SetIsLoading(bool isLoading) { this->isLoading = isLoading; }
+	int GetLastClickedButton() const				{ return currentButtonHit; }
+	bool GetHasButtonActionExecuted() const			{ return buttonActionExecuted; }
+	void SetButtonActionExecuted(bool tf)			{ this->buttonActionExecuted = tf; }
+
+	GAMESTATE GetUpdateState() const				{ return updateState; }
+
+	bool GetIsLoading() const						{ return isLoading; }
+	void SetIsLoading(bool isLoading)				{ this->isLoading = isLoading; }
+
+	void SetCollected(std::vector<Collectible> coll);
 	
 };
 

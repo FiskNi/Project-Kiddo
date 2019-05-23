@@ -22,7 +22,23 @@
 //	Currently the window is created and handled by the renderer, this could be extracted into it's own class.															
 //	
 //============================================================================
+const int view_matrix = 7;
+const int projection_matrix = 8;
+const int model_matrix = 9;
+const int shadow_matrix = 10;
+const int cam_pos = 11;
+const int has_normal = 12;
+const int has_albedo = 13;
+const int ambient = 14;
+const int diffuse = 15;
+const int specular = 16;
+const int emissive = 17;
+const int hasAnimation = 18;
 
+struct SkinDataBuffer
+{
+	glm::mat4 bones[64];
+};
 
 class Renderer
 {
@@ -44,9 +60,15 @@ private:
 	GLuint gVertexBuffer;
 	GLuint gVertexAttribute;
 
+	// Main menu vertex buffers
 	GLuint gVertexBufferMenu;
+	GLuint gVertexAttributeMain;
+	// Pause menu vertex buffers
+	GLuint gVertexBufferPause;
+	GLuint gVertexAttributePause;
 	GLuint gVertexAttributeMenu;
 
+	GLuint boneBuffer;
 
 public:
 	Renderer();
@@ -54,18 +76,17 @@ public:
 
 	GLFWwindow *getWindow();
 
-	void firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, float gClearColour[]);
+	void firstPassRenderTemp(Shader gShaderProgram, float gClearColour[]);
 	void secondPassRenderTemp(Shader gShaderProgram);
 	void secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture);
-
-	void prePassRender(Shader gShaderProgram, 
-		std::vector<Mesh> objects, 
+	void ShadowmapRender(Shader gShaderProgram, 
+		const std::vector<Mesh>& objects, 
 		Camera camera, 
 		float gClearColour[3], 
 		std::vector<DirectionalLight> dirLightArr);
 
 	void Render(Shader gShaderProgram, 
-		std::vector<Mesh> objects, 
+		std::vector<Mesh>& objects,
 		Camera camera, float gClearColour[3], 
 		std::vector<Light> lightArr, 
 		std::vector<DirectionalLight> dirLightArr, 
@@ -73,14 +94,19 @@ public:
 
 	void CompileVertexData(int vertexCount, vertexPolygon* vertices);
 
-	void RenderMainMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures);
+	void RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], std::vector<GLuint> textures, ACTIVEMENU activeMenu);
 	void CompileMenuVertexData(int vertexCount, ButtonVtx * vertices);
+	void CompilePauseMenuVertexData(int vertexCount, ButtonVtx * vertices);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
 	void SetViewport();
+
 	void CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm::vec3 scale, GLuint shaderProg);
+	void ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time, Mesh* mesh);
+
 	void passTextureData(GLuint TextureUnit, GLuint texID, GLuint shaderProg, GLchar* uniformName, int index);
+
 
 };
 

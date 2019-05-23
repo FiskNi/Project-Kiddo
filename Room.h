@@ -49,19 +49,26 @@ private:
 
 	void RigidStaticCollision(Character* playerCharacter);
 	void RigidGroundCollision(Character* playerCharacter);
-	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
-	void PlayerCollectibleCollision(Character* playerCharacter);
 
+	void PlayerCollectibleCollision(Character* playerCharacter);
 	void PlayerItemCollision(Character* playerCharacter);
 
+	//Neccesary functions for applying parents and hierarchies.
 	bool FindParent(Mesh * childMesh);
 	bool FindParent(MeshGroupClass * childMeshGroup);
 	void SetAllParents();
-	std::vector <float> GetParentOffset(Mesh * childMesh);
-	std::vector <float> GetParentOffset(MeshGroupClass * childGroup);
+	glm::vec3 updateChild(Mesh* meshPtr);
+	glm::vec3 updateChild(MeshGroupClass* meshPtr);
+	void updateChildren();
+
+	//Left over functions for if we don't freeze the objects ahead of exportions.
+	//Outdated otherwise.
+	std::vector<float> GetParentOffset(Mesh * childMesh);
+	std::vector<float> GetParentOffset(MeshGroupClass * childGroup);
+
 	// Object list for the render queue
 	std::vector<Mesh> meshes;
 	std::vector<Mesh> roomMeshes;
@@ -85,6 +92,7 @@ private:
 
 	//MeshGroups
 	std::vector<MeshGroupClass> meshGroups;
+	std::vector<glm::vec3> posOffset;
 
 	// PuzzleNodes
 	//std::vector<puzzleNode> nodes;
@@ -94,12 +102,15 @@ private:
 
 	bool isRoomCompleted = false;
 	bool firstCall;
+	int meshAmount;
 
 	irrklang::ISoundEngine* audioEngine;
 
 public:
 	Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine);
 	~Room();
+
+	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 
 	std::vector<Light>& GetPointLights() { return pointLights; }
 	std::vector<DirectionalLight> GetDirectionalLights() const { return dirLights; }
@@ -108,7 +119,7 @@ public:
 	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
 	//std::vector<puzzleNode>& GetNodes() { return nodes; }
 	std::vector<BridgeEntity>& GetBridges() { return bridges; }
-	std::vector<Mesh> GetMeshData() const { return meshes; }
+	std::vector<Mesh>& GetMeshData()  { return meshes; }
 	std::vector<Button>& getButtons() { return buttons; }
 	Camera* GetCamera() { return roomCamera; }
 	bool GetRoomCompleted() { return this->isRoomCompleted; }
@@ -118,9 +129,6 @@ public:
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
 	void BridgeUpdates(GLFWwindow* renderWindow);
-
-	void destroyRoom();
-
 
 	void Upgrade(Character* playerCharacter);
 	void CompileMeshData();

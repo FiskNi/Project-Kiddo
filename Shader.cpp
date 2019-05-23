@@ -10,6 +10,9 @@ Shader::Shader()
 
 Shader::~Shader()
 {
+	//glDeleteVertexArrays(1, &gVertexAttribute);
+	//glDeleteBuffers(1, &gVertexBuffer);
+	//glDeleteProgram(gShaderProgram);
 }
 
 //=============================================================

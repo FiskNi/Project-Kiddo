@@ -14,10 +14,10 @@
 #include "Scene.h"
 #include "Menu.h"
 #define MAX_KEYS 1024
+
 class GameEngine
 {
 private:
-	static bool m_Keys[MAX_KEYS];
 	// Full screen quad stuff
 	// Might be moved later
 	GLuint gVertexBufferFS = 0;
@@ -30,7 +30,6 @@ private:
 	float gClearColour[3]{};
 	glm::mat4 gRotate2D;
 
-
 	// Main window and renderer object
 	Renderer mainRenderer;
 	vertexPolygon* mainSceneVertexData;
@@ -40,15 +39,16 @@ private:
 
 	// Main scene
 	Scene mainScene;
-	friend void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 	void CompileRoomData();
 
-
-	// Main Menu
+	// Main Menu & Pause Menu
 	Menu mainMenu;
 	ButtonVtx* mainMenuVertexData;
 	void CompileMainMenuData();
-	bool menuIsRunning;
+	ButtonVtx* pauseMenuVertexData;
+	void CompilePauseMenuData();
+	bool printMouseClickOnce;
 
 public:
 	GameEngine();
