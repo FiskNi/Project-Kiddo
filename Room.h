@@ -43,9 +43,9 @@ private:
 	void LoadLights(Loader* inLoader);
 	void LoadEntities(std::vector<Material> materials, Loader* level);
 	void PlayerRigidCollision(Character* playerCharacter);
-	int inBoundCheck(Character playerCharacter);
 	void RigidRigidCollision();
 	void RigidNodeCollision();
+	int inBoundCheck(Character playerCharacter);
 
 	void RigidStaticCollision(Character* playerCharacter);
 	void RigidGroundCollision(Character* playerCharacter);

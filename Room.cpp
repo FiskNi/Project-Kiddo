@@ -153,6 +153,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 //=============================================================
 void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 {
+	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 	if (playerCharacter->GetEntityID() >= 0)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
@@ -175,7 +176,15 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 //			playerCharacter->SetHoldingObject(false);
 		}
 	}
-	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+}
+
+int Room::inBoundCheck(Character playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++)
+		if (playerCharacter.CheckInBound(rigids[i]))
+			return i;
+
+	return -1;
 }
 
 void Room::BoxPlateCollision(Character* playerCharacter)
@@ -813,14 +822,6 @@ void Room::updateChildren()
 }
 
 
-int Room::inBoundCheck(Character playerCharacter)
-{
-	for (int i = 0; i < rigids.size(); i++)
-		if (playerCharacter.CheckInBound(rigids[i]))
-			return i;
-
-	return -1;
-}
 
 //=============================================================
 //	Checks all rigid collisions with the ground, includes the player.

@@ -88,119 +88,107 @@ void Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
 	const float moveSpeed = 2.0f;
-	const float maxSpeed = 5.0;
+	const float maxSpeed = 4.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
 	float moveZ = 0.0f;
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
-	if (glm::length(GetVelocity()) < maxSpeed)
-	{
 
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
+	{
+       	jumpSquat = true;
+		moveY = 1.0f;
+		SetGrounded(false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		if (jumpSquat && RigidEntity::IsGrounded()) 
 		{
-       		jumpSquat = true;
+			moveX = -moveSpeed / 5; 
+			moveY = moveSpeed;
+
+			SetGrounded(false);
+		}
+		else if (RigidEntity::IsGrounded())
+		{
+			moveX += -1.0f;			
+		}
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		if(jumpSquat && RigidEntity::IsGrounded())
+		{
+			moveX = moveSpeed / 5;
 			moveY = moveSpeed;
 			SetGrounded(false);
 		}
-
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		else if (RigidEntity::IsGrounded())
 		{
-			if (jumpSquat && RigidEntity::IsGrounded()) 
-			{
-				moveX = -moveSpeed / 5; 
-				moveY = moveSpeed;
-
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				if (holdingObject)
-					moveX += -moveSpeed / 10;
-				else
-					moveX += -moveSpeed;
-				
-			}
+			moveX += 1.0f;
 		}
-
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		{
-			if(jumpSquat && RigidEntity::IsGrounded())
-			{
-				moveX = moveSpeed / 5;
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				if (holdingObject)
-					moveX += moveSpeed / 10;
-				else
-					moveX += moveSpeed;
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		{
-			if (jumpSquat && RigidEntity::IsGrounded()) 
-			{
-				moveZ = -moveSpeed / 5;
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				if (holdingObject)
-					moveZ += -moveSpeed / 10;
-				else
-					moveZ += -moveSpeed;
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			if (jumpSquat && RigidEntity::IsGrounded())
-			{
-				moveZ = moveSpeed / 5;
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				if (holdingObject)
-					moveZ += moveSpeed / 10;
-				else
-					moveZ += moveSpeed;
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
-			jumpSquat = false;
-
-		if (glm::length(GetVelocity()) > 0.5f && !holdingObject)
-		{
-			if (!IsHoldingObject()) 
-			{
-				glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
-				float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
-				float rotation = acos(cosRotation);
-
-				if (GetVelocityX() > 0)
-					rotation;
-				else
-					rotation = -rotation;
-
-				glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
-				SetRotation(qRotation);
-			}
-		}
-
-		moveDir = glm::vec3(moveX, moveY, moveZ);
-		
-		moveDir *= moveSpeed;
-		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		if (jumpSquat && RigidEntity::IsGrounded()) 
+		{
+			moveZ = -moveSpeed / 5;
+			moveY = moveSpeed;
+			SetGrounded(false);
+		}
+		else if (RigidEntity::IsGrounded())
+		{
+			moveZ += -1.0f;
+		}
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		if (jumpSquat && RigidEntity::IsGrounded())
+		{
+			moveZ = moveSpeed / 5;
+			moveY = moveSpeed;
+			SetGrounded(false);
+		}
+		else if (RigidEntity::IsGrounded())
+		{
+			moveZ += 1.0f;
+		}
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+		jumpSquat = false;
+
+	if (glm::length(GetVelocity()) > 0.1f && !holdingObject)
+	{
+		if (!IsHoldingObject()) 
+		{
+			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
+			float rotation = acos(cosRotation);
+
+			if (GetVelocityX() > 0)
+				rotation;
+			else
+				rotation = -rotation;
+
+			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
+			SetRotation(qRotation);
+		}
+	}
+
+	moveDir = glm::vec3(moveX, moveY, moveZ);
+	if (glm::length(moveDir) >= 0.1f)
+		moveDir = glm::normalize(moveDir);
+
+	if (holdingObject)
+		moveDir *= moveSpeed / 1.8;
+	else
+		moveDir *= moveSpeed;
+		
 	inputVector = moveDir;
 }
 

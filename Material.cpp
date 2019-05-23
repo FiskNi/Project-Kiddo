@@ -38,8 +38,8 @@ Material::Material(PhongMaterial material, unsigned int id)
 		this->emissive[i] = material.emissive[i];
 	this->opacity = material.opacity;
 
-	//createAlbedo(material.albedo);
-	//createNormal(material.normal);
+	createAlbedo(material.albedo);
+	createNormal(material.normal);
 }
 
 

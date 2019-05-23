@@ -162,7 +162,7 @@ void Scene::LoadMaterials(Loader* inLoader)
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
 		Material fillMat(inLoader->GetMaterial(i), (int)materials.size());
-		materials.emplace_back(fillMat);
+		materials.push_back(fillMat);
 	}
 }
 
