@@ -115,8 +115,7 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX += -moveSpeed / 2;
-				moveZ += -moveSpeed / 2;
+				moveX += -moveSpeed;
 			}
 		}
 
@@ -130,8 +129,7 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX += moveSpeed / 2;
-				moveZ += moveSpeed / 2;
+				moveX += moveSpeed;
 			}
 		}
 
@@ -145,8 +143,7 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX += moveSpeed / 2;
-				moveZ += -moveSpeed / 2;
+				moveZ += -moveSpeed;
 			}
 		}
 
@@ -160,8 +157,7 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ += moveSpeed / 2;
-				moveX += -moveSpeed / 2;
+				moveZ += moveSpeed;
 			}
 		}
 
