@@ -292,38 +292,79 @@ void Scene::LoadRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
 		// ADD SOUND PLAY
+
+		// Light overrides
+		for (int i = 0; i < roomBuffer->GetPointLights().size(); i++)
+		{
+			roomBuffer->GetPointLights()[i].setAttenuation(5.0f);
+			roomBuffer->GetPointLights()[i].setPower(5.0f);
+			roomBuffer->GetPointLights()[i].SetSpecular(glm::vec3(0.0f));
+		}
+
+		roomBuffer->GetPointLights()[0].setAttenuation(2);
+		roomBuffer->GetPointLights()[0].setPower(9.0f);
+
+		roomBuffer->GetPointLights()[1].setAttenuation(6);
+		roomBuffer->GetPointLights()[1].setPower(5.0f);
+
+		roomBuffer->GetPointLights()[2].setAttenuation(0);
+		roomBuffer->GetPointLights()[2].setPower(0.0f);
+
+		roomBuffer->GetPointLights()[3].setAttenuation(0);
+		roomBuffer->GetPointLights()[3].setPower(0.0f);
+
+		roomBuffer->GetPointLights()[4].setAttenuation(0);
+		roomBuffer->GetPointLights()[4].setPower(0.0f);
+
+		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 0.89f, 0.6f));
+		roomBuffer->GetDirectionalLights()[0].SetStrength(0.24f);
+
+
 	}
 	else if (roomNr == 1)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 2)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 3)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Submerged]Deco.meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 99)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
+
 		roomNr = 0;
 		//	ADD SOUND PLAY
 	}
 	else
 	{
-		roomNr = -1;
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
+
+		roomNr = 0;
 		// ADD SOUND PLAY
 	}
 
-	LoadMaterials(roomLoader);
-	roomBuffer = new Room(roomLoader, audioEngine);
+
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)

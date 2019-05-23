@@ -1269,9 +1269,9 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights(Loader* inLoader)
 {
-	Light light(0.0f, 0.0f, 0.0f, 0.0f, 600, 11);
+	Light light(0.0f, 0.0f, 0.0f, 0.0f, 300, 4);
 
-	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
+	light.SetDiffuse(glm::vec3(0.0f, 0.0, 0.0f));
 	light.SetSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	pointLights.push_back(light);
@@ -1292,10 +1292,9 @@ void Room::LoadLights(Loader* inLoader)
 				inLoader->GetPointLightColor(i)[1],
 				inLoader->GetPointLightColor(i)[2]);
 
-		
 		pointLights[i].setLightPos(pos);
 		pointLights[i].SetDiffuse(color);
-		pointLights[i].setPower(1.0f);
+		pointLights[i].setPower(6.0f);
 	}
 
 	DirectionalLight dirLight;
@@ -1313,8 +1312,8 @@ void Room::LoadLights(Loader* inLoader)
 			inLoader->GetDirLightColor(i)[2]);
 
 		dirLights[i].SetPos(pos);
-		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i) * 0.1f);
 		dirLights[i].SetDiffuse(color);
+		dirLights[i].SetStrength(0.4f);
 	}
 
 }

@@ -86,7 +86,7 @@ void main ()
 
 	vec3 viewDirection = normalize(camPos - fsInput.position);
 
-	vec3 ambientLight = diffuse.xyz * vec3(0.1f, 0.1f, 0.1f);
+	vec3 ambientLight = diffuse.xyz * vec3(0.01f, 0.01f, 0.01f);
 	vec3 directionalLight = vec3(0.0f);
 
 	vec3 projLightCoords = fsInput.shadow_coord.xyz / fsInput.shadow_coord.w;
@@ -151,7 +151,6 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 	vec3 diffuse = vec3(0.0f);
 	vec3 specular = vec3(0.0f);
 
-	//~~ There's no need to do ANY calculations if we're out of range.
 	if (dist < pLight.range)
 	{
 		//Calculate diffuse factor.
