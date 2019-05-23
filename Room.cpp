@@ -159,16 +159,20 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 		{
 			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			{
-			rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
-			rigids[playerCharacter->GetEntityID()].SetHeld(true);
-			playerCharacter->SetHoldingObject(true);
+				
+				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
+				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+				playerCharacter->SetHoldingObject(true);
+			
 			}
+			else
+				playerCharacter->SetHoldingObject(false);
 
 		}
 		else
 		{
 			rigids[playerCharacter->GetEntityID()].SetHeld(false);
-			playerCharacter->SetHoldingObject(false);
+//			playerCharacter->SetHoldingObject(false);
 		}
 	}
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
@@ -944,39 +948,64 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 //=============================================================
 void Room::PlayerRigidCollision(Character* playerCharacter)
 {
+	//===================================
+	//=========OLD PUSHABLE CODE=========
+	//=?=================================
+	//for (int i = 0; i < rigids.size(); ++i)
+	//{
+	//	if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
+	//	{		
+	//		// Push direction vector
+	//		glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+	//		pushDir = glm::normalize(pushDir);
+
+	//		// Lock to 1 axis
+	//		if (abs(pushDir.x) >= abs(pushDir.z))
+	//			pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+	//		else
+	//			pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+	//		pushDir *= 1.5f;
+
+	//		// Add box velocity
+	//		rigids[i].AddVelocity(pushDir);
+
+	//		// This always comes in as false so this if state doesn't work but is a template
+	//		// for a possible solution. To be deleted later if not used.
+	//		if (playerCharacter->IsColliding())
+	//		{
+	//			playerCharacter->AddVelocity(-pushDir);
+	//		}
+	//		else
+	//		{
+	//			playerCharacter->SetColliding(true);
+	//			playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+	//		}
+
+	//	}
+	//}
+
+
 	for (int i = 0; i < rigids.size(); ++i)
 	{
-		if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
-		{		
-			// Push direction vector
-			glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
-			pushDir = glm::normalize(pushDir);
-
-			// Lock to 1 axis
-			if (abs(pushDir.x) >= abs(pushDir.z))
-				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-			else
-				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-			pushDir *= 1.5f;
-
-			// Add box velocity
-			rigids[i].AddVelocity(pushDir);
-
-			// This always comes in as false so this if state doesn't work but is a template
-			// for a possible solution. To be deleted later if not used.
-			if (playerCharacter->IsColliding())
+		if (playerCharacter->CheckCollision(rigids[i]))
+		{
+			if (abs(rigids[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
-				playerCharacter->AddVelocity(-pushDir);
-			}
-			else
-			{
-				playerCharacter->SetColliding(true);
+				glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+
+				pushDir = normalize(pushDir);
+
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
+
+				//playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
 			}
-
 		}
 	}
 }
+
 
 
 //=============================================================

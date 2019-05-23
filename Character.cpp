@@ -115,7 +115,11 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX += -moveSpeed;
+				if (holdingObject)
+					moveX += -moveSpeed / 10;
+				else
+					moveX += -moveSpeed;
+				
 			}
 		}
 
@@ -129,7 +133,10 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveX += moveSpeed;
+				if (holdingObject)
+					moveX += moveSpeed / 10;
+				else
+					moveX += moveSpeed;
 			}
 		}
 
@@ -143,7 +150,10 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ += -moveSpeed;
+				if (holdingObject)
+					moveZ += -moveSpeed / 10;
+				else
+					moveZ += -moveSpeed;
 			}
 		}
 
@@ -157,14 +167,17 @@ void Character::Move(GLFWwindow* window)
 			}
 			else if (RigidEntity::IsGrounded())
 			{
-				moveZ += moveSpeed;
+				if (holdingObject)
+					moveZ += moveSpeed / 10;
+				else
+					moveZ += moveSpeed;
 			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 			jumpSquat = false;
 
-		if (glm::length(GetVelocity()) > 0.5f)
+		if (glm::length(GetVelocity()) > 0.5f && !holdingObject)
 		{
 			if (!IsHoldingObject()) 
 			{
