@@ -25,7 +25,7 @@ Character::~Character()
 
 void Character::SetHoldingObject(bool holding)
 {
-	holdingObject = true;
+	holdingObject = holding;
 }
 
 void Character::SetEntityID(unsigned int id)
@@ -165,7 +165,7 @@ void Character::Move(GLFWwindow* window)
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 			jumpSquat = false;
 
-		if (glm::length(GetVelocity()) > 0.5f)
+		if (glm::length(GetVelocity()) > 0.5f && !holdingObject)
 		{
 			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
 			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
