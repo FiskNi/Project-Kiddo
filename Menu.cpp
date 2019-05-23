@@ -18,22 +18,10 @@ Menu::Menu()
 	isButtonHit = false;
 	updateState = MAINMENU;
 
-	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
-	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
+	CreateMenuTexture("Resources/Textures/LoadingScreen.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
 	CreateMenuTexture("Resources/Textures/PauseGUI.png", &pauseBackgroundTexture);
 	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
-
-	//CreateMenuTexture("Resources/Textures/PauseTitle.png", &pbt0);
-	//CreateMenuTexture("Resources/Textures/PauseResume.png", &pbt1);
-	//CreateMenuTexture("Resources/Textures/PauseRestart.png", &pbt2);
-	//CreateMenuTexture("Resources/Textures/PauseQuit.png", &pbt3);
-
-	//pauseButtonTextures.push_back(pauseBackgroundTexture);
-	//pauseButtonTextures.push_back(pbt0);
-	//pauseButtonTextures.push_back(pbt1);
-	//pauseButtonTextures.push_back(pbt2);
-	//pauseButtonTextures.push_back(pbt3);
 
 
 	CreateMainMenu();
@@ -45,30 +33,14 @@ Menu::~Menu()
 }
 
 // ========================================================================
-//	Creates the buttons for the main menu, this also send in the offset for a "stacked" menu
+//	Creates the buttons for the main menu and pause menu
 // ========================================================================
 void Menu::CreateMainMenu()
 {
 	// Creates Main Menu Background as well as Main Menu Buttons
 	CreateMainMenuButtons();
+	// Creates 
 	CreatePauseMenuButtons();
-
-	////CreateBackgroundQuad();
-	////pauseButtonTextures.push_back(pauseBackgroundTexture);
-	//MenuButton bgButton(backgroundQuad, 0, true);
-	//pauseButtons.push_back(bgButton);
-	//vertexCountPauseTotal += bgButton.GetVertexCount();
-	//nrOfPauseButtons++;
-
-
-	//// Creates Pause Buttons (Stacked Menu)
-	//for (int i = 1; i < 4; i++) {
-	//	MenuButton newPauseButton(GetCurrentOffsetPause(), 1);
-	//	vertexCountPauseTotal += newPauseButton.GetVertexCount();
-	//	pauseButtons.push_back(newPauseButton);
-	//	nrOfPauseButtons++;
-	//}
-
 }
 
 // ========================================================================
@@ -162,7 +134,7 @@ bool Menu::CheckCollision(float x, float y)
 			if (mainButtons[i].GetIsNotButton() != true) {
 				if (pauseButtons[i].CheckInsideCollision(x, y) == true)
 				{
-					std::cout << "Hit Button nr " << i << std::endl;
+					//std::cout << "Hit Button nr " << i << std::endl;
 					currentButtonHit = i;
 					return true;
 				}
@@ -173,7 +145,7 @@ bool Menu::CheckCollision(float x, float y)
 		for (int i = 0; i < nrOfMainButtons; i++) {
 			if (mainButtons[i].GetIsNotButton() != true) {
 				if (mainButtons[i].CheckInsideCollision(x, y) == true) {
-					std::cout << "Hit Button nr " << i << std::endl;
+					//std::cout << "Hit Button nr " << i << std::endl;
 					currentButtonHit = i;
 					isButtonHit = true;
 					return true;
@@ -276,7 +248,6 @@ void Menu::CreateBackgroundQuad() {
 	};
 
 	for (int i = 0; i < 6; i++) {
-		//backgroundQuad[i] = myQuad[i];
 		backgroundQuad.push_back(bgQuad[i]);
 	}
 }
