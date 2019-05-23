@@ -10,47 +10,25 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (scene->roomBuffer)
 			scene->roomBuffer->SetRoomCompleted(true);
 	}
+	if (key == GLFW_KEY_M && action == GLFW_PRESS && scene->state != MAINMENU)
+	{
+		if (scene->roomBuffer)
+			scene->roomBuffer->SetRoomCompleted(true);
+		scene->roomNr = 99;
+	}
 
-	//// IF PAUSED
-	//if (scene->state == PAUSED)
-	//{
-	//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	//	{
-	//		//UNPAUSE
-	//		scene->state = PLAYING;
-	//		std::cout << "PLAYING" << std::endl;
-	//	}
-
-	//	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-	//	{
-	//		//RESUMES GAME
-	//		scene->state = PLAYING;
-	//		std::cout << "RESUME" << std::endl;
-	//	}
-	//	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-	//	{
-	//		//RESTART HERE
-	//		scene->ResetRoom();
-	//		scene->state = PLAYING;
-	//		std::cout << "Restarting level" << std::endl;
-	//	}
-
-	//	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-	//		//// RETURNS TO MAIN MENU
-	//		////delete scene->roomBuffer;
-	//		////scene->roomBuffer = nullptr;
-	//		////scene->roomLoaded = false;
-	//		//scene->isLoading = true;
-	//		//scene->exittoMenu = true;
-	//		//scene->state = MAINMENU;
-
-	//		scene->ExitToMainMenu();
-	//		std::cout << "MAIN MENU" << std::endl;
-
-	//	}
-	//}
+	// IF PAUSED
+	if (scene->state == PAUSED)
+	{
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		{
+			//UNPAUSE
+			scene->state = PLAYING;
+			std::cout << "PLAYING" << std::endl;
+		}
+	}
 	// IF PLAYING
-	if (scene->state == PLAYING)
+	else if (scene->state == PLAYING)
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
@@ -106,14 +84,12 @@ void Scene::_CheckPressedBombs()
 
 Scene::Scene()
 {
-	
 	roomNr = 0;
 	roomBuffer = nullptr;
 	setUserPointer = false;
 	isLoading = false;
 	exittoMenu = false;
 	roomLoaded = false;
-	//meshes = &(roomBuffer->GetMeshData());
 
 	LoadShaders();
 	// If no audiodevice exists this will initiate as NULL, make sure to check that this was successful
@@ -134,6 +110,9 @@ Scene::~Scene()
 		delete roomBuffer;
 	if (audioEngine)
 		audioEngine->drop();
+	for (int i = 0; i < materials.size(); i++)
+		if (materials[i])
+			delete materials[i];
 }
 
 void Scene::LoadShaders()
@@ -160,14 +139,16 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// The constructor integer is the material id slot
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
 
-	// Hardcoded materials that will be moved
-	materials.clear();
+	// Testing to free memory
+	for (int i = 0; i < materials.size(); i++)
+		if (materials[i])
+			delete materials[i];
+	
+	materials.resize(inLoader->GetMaterialCount());
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
-		Material fillMat(inLoader->GetMaterial(i), materials.size());
-		materials.push_back(fillMat);
+		materials[i] = new Material(inLoader->GetMaterial(i), i);
 	}
-
 }
 
 void Scene::LoadCharacter(Loader* inLoader)
@@ -286,13 +267,14 @@ void Scene::RestartGame()
 void Scene::ExitToMainMenu() {
 	// RETURNS TO MAIN MENU
 	// pLEASE, do NOT remove the room, main menu's start is supposed to work like a Resume.
-	//delete scene->roomBuffer;
-	//scene->roomBuffer = nullptr;
-	//scene->roomLoaded = false;
+	delete roomBuffer;
+	roomBuffer = nullptr;
+	roomLoaded = false;
 	isLoading = true;
 	exittoMenu = true;
 	Exited();
 	state = MAINMENU;
+	roomNr = 0;
 }
 
 void Scene::LoadRoom()
@@ -308,8 +290,7 @@ void Scene::LoadRoom()
 	// Additional hardcoded roomfunctions may be applied here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
-		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
 		// ADD SOUND PLAY
 	}
@@ -328,20 +309,21 @@ void Scene::LoadRoom()
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Submerged]Deco.meh");
 		// ADD SOUND PLAY
 	}
-	//else if (roomNr == 4)
-	//{
-	//	roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Submerged].meh");
-	//	//	ADD SOUND PLAY
-	//}
+	else if (roomNr == 99)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+		roomNr = 0;
+		//	ADD SOUND PLAY
+	}
 	else
 	{
-		roomNr = 0;
+		roomNr = -1;
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 
 	LoadMaterials(roomLoader);
-	roomBuffer = new Room(materials, roomLoader, audioEngine);
+	roomBuffer = new Room(roomLoader, audioEngine);
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)
@@ -359,7 +341,6 @@ void Scene::LoadRoom()
 	if (state != MAINMENU) 
 		roomNr++;
 	
-
 	isLoading = false;
 	roomLoaded = true;
 	delete roomLoader;

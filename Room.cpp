@@ -2,14 +2,14 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine)
+Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 {
 
 	firstCall = true;
 	meshAmount = 0;
 
 	LoadLights(aLoader);
-	LoadEntities(materials, aLoader);
+	LoadEntities(aLoader);
 	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
@@ -153,25 +153,38 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 //=============================================================
 void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 {
+	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 	if (playerCharacter->GetEntityID() >= 0)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
 		{
 			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
 			{
-			rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
-			rigids[playerCharacter->GetEntityID()].SetHeld(true);
-			playerCharacter->SetHoldingObject(true);
+				
+				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
+				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+				playerCharacter->SetHoldingObject(true);
+			
 			}
+			else
+				playerCharacter->SetHoldingObject(false);
 
 		}
 		else
 		{
 			rigids[playerCharacter->GetEntityID()].SetHeld(false);
-			playerCharacter->SetHoldingObject(false);
+//			playerCharacter->SetHoldingObject(false);
 		}
 	}
-	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+}
+
+int Room::inBoundCheck(Character playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++)
+		if (playerCharacter.CheckInBound(rigids[i]))
+			return i;
+
+	return -1;
 }
 
 void Room::BoxPlateCollision(Character* playerCharacter)
@@ -519,7 +532,7 @@ void Room::SetAllParents()
 	}
 }
 
-std::vector <float> Room::GetParentOffset(Mesh * childMesh)
+std::vector<float> Room::GetParentOffset(Mesh * childMesh)
 {
 	if (childMesh->GetIsChild() == true)
 	{
@@ -582,7 +595,7 @@ std::vector <float> Room::GetParentOffset(Mesh * childMesh)
 	return std::vector<float>(1,-1);
 }
 
-std::vector <float> Room::GetParentOffset(MeshGroupClass * childGroup)
+std::vector<float> Room::GetParentOffset(MeshGroupClass * childGroup)
 {
 	if (childGroup->GetIsChild() == true)
 	{
@@ -809,14 +822,6 @@ void Room::updateChildren()
 }
 
 
-int Room::inBoundCheck(Character playerCharacter)
-{
-	for (int i = 0; i < rigids.size(); i++)
-		if (playerCharacter.CheckInBound(rigids[i]))
-			return i;
-
-	return -1;
-}
 
 //=============================================================
 //	Checks all rigid collisions with the ground, includes the player.
@@ -944,39 +949,64 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 //=============================================================
 void Room::PlayerRigidCollision(Character* playerCharacter)
 {
+	//===================================
+	//=========OLD PUSHABLE CODE=========
+	//=?=================================
+	//for (int i = 0; i < rigids.size(); ++i)
+	//{
+	//	if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
+	//	{		
+	//		// Push direction vector
+	//		glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+	//		pushDir = glm::normalize(pushDir);
+
+	//		// Lock to 1 axis
+	//		if (abs(pushDir.x) >= abs(pushDir.z))
+	//			pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
+	//		else
+	//			pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
+	//		pushDir *= 1.5f;
+
+	//		// Add box velocity
+	//		rigids[i].AddVelocity(pushDir);
+
+	//		// This always comes in as false so this if state doesn't work but is a template
+	//		// for a possible solution. To be deleted later if not used.
+	//		if (playerCharacter->IsColliding())
+	//		{
+	//			playerCharacter->AddVelocity(-pushDir);
+	//		}
+	//		else
+	//		{
+	//			playerCharacter->SetColliding(true);
+	//			playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+	//		}
+
+	//	}
+	//}
+
+
 	for (int i = 0; i < rigids.size(); ++i)
 	{
-		if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
-		{		
-			// Push direction vector
-			glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
-			pushDir = glm::normalize(pushDir);
-
-			// Lock to 1 axis
-			if (abs(pushDir.x) >= abs(pushDir.z))
-				pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-			else
-				pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-			pushDir *= 1.5f;
-
-			// Add box velocity
-			rigids[i].AddVelocity(pushDir);
-
-			// This always comes in as false so this if state doesn't work but is a template
-			// for a possible solution. To be deleted later if not used.
-			if (playerCharacter->IsColliding())
+		if (playerCharacter->CheckCollision(rigids[i]))
+		{
+			if (abs(rigids[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
-				playerCharacter->AddVelocity(-pushDir);
-			}
-			else
-			{
-				playerCharacter->SetColliding(true);
+				glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+
+				pushDir = normalize(pushDir);
+
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
+
+				//playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
 			}
-
 		}
 	}
 }
+
 
 
 //=============================================================
@@ -1126,8 +1156,6 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 		}
 	}
 
-
-
 }
 
 void Room::BridgeUpdates(GLFWwindow *renderWindow)
@@ -1161,7 +1189,6 @@ void Room::Upgrade(Character* playerCharacter)
 	//		}
 	//	}
 	//}
-
 }
 
 //=============================================================
@@ -1169,8 +1196,8 @@ void Room::Upgrade(Character* playerCharacter)
 //=============================================================
 void Room::CompileMeshData()
 {
-	// NEEDS TO BE CHANGED SO THE VECTOR DOESNT REALLOCATED ALL THE TIME
 	meshes.clear();
+	meshes.shrink_to_fit();
 	meshes.resize(meshAmount);
 
 	int j = 0;
@@ -1217,21 +1244,23 @@ void Room::CompileMeshData()
 		meshes[j] = holders[i].GetHolderMeshData();
 		j++;
 	}
+
 	for (int i = 0; i < items.size(); i++) {
 
 		meshes[j] = items[i].GetMeshData();
 		j++;
 	}
+
 	for (int i = 0; i < doors.size(); i++) {
 		meshes[j] = doors[i].GetMeshData();
 		j++;
 	}
+
 	for (int i = 0; i < collectibles.size(); i++) {
 		meshes[j] = collectibles[i].GetMeshData();
 		j++;
 	}
 	
-
 	//Applying all parent data on the child mesh
 	updateChildren();
 	firstCall = false;
@@ -1262,9 +1291,9 @@ void Room::LoadLights(Loader* inLoader)
 				inLoader->GetPointLightPos(i)[1],
 				inLoader->GetPointLightPos(i)[2]);
 		glm::vec3 color = glm::vec3(
-			inLoader->GetPointLightColor(i)[0],
-			inLoader->GetPointLightColor(i)[1],
-			inLoader->GetPointLightColor(i)[2]);
+				inLoader->GetPointLightColor(i)[0],
+				inLoader->GetPointLightColor(i)[1],
+				inLoader->GetPointLightColor(i)[2]);
 
 		
 		pointLights[i].setLightPos(pos);
@@ -1286,7 +1315,6 @@ void Room::LoadLights(Loader* inLoader)
 			inLoader->GetDirLightColor(i)[1],
 			inLoader->GetDirLightColor(i)[2]);
 
-
 		dirLights[i].SetPos(pos);
 		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i) * 0.1f);
 		dirLights[i].SetDiffuse(color);
@@ -1298,7 +1326,7 @@ void Room::LoadLights(Loader* inLoader)
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials, Loader* level)
+void Room::LoadEntities(Loader* level)
 {
 
 	//==========

@@ -65,7 +65,7 @@ private:
 	std::vector<Mesh> meshes;
 
 	// Materials are stored in a vector
-	std::vector<Material> materials;
+	std::vector<Material*> materials;
 
 	// Rooms
 	Room* roomBuffer;
@@ -93,9 +93,9 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const					{ return roomBuffer->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const	{ return roomBuffer->GetDirectionalLights(); }
-	std::vector<Material> GetMaterials() const					{ return materials; }
+	std::vector<Light>& GetPointLights()						{ return roomBuffer->GetPointLights(); }
+	std::vector<DirectionalLight>& GetDirectionalLights() 		{ return roomBuffer->GetDirectionalLights(); }
+	std::vector<Material*>& GetMaterials()						{ return materials; }
 	Shader GetShader(unsigned int i) const						{ return shaders[i]; }
 	std::vector<Mesh>& GetMeshData()							{ return roomBuffer->GetMeshData(); }
 	bool GetIsLoading() const									{ return isLoading; }

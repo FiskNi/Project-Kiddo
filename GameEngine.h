@@ -30,7 +30,6 @@ private:
 	float gClearColour[3]{};
 	glm::mat4 gRotate2D;
 
-
 	// Main window and renderer object
 	Renderer mainRenderer;
 	vertexPolygon* mainSceneVertexData;
@@ -49,6 +48,8 @@ private:
 	void CompileMainMenuData();
 	ButtonVtx* pauseMenuVertexData;
 	void CompilePauseMenuData();
+	ButtonVtx* collectibleMenuVertexData;
+	void CompileCollectibleMenuData();
 	bool printMouseClickOnce;
 
 public:

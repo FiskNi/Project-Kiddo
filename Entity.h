@@ -82,7 +82,7 @@ public:
 	// Fixed return to be here 
 	Mesh GetMeshData() const { return entityMesh; }
 
-	Mesh * GetMeshDataPointer() { return &entityMesh; }
+	Mesh* GetMeshDataPointer() { return &entityMesh; }
 
 	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
 	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }

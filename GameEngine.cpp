@@ -59,6 +59,11 @@ GameEngine::~GameEngine()
 
 void GameEngine::CompileRoomData()
 {
+	if (mainSceneVertexData)
+		delete[] mainSceneVertexData;
+
+	mainSceneVertexData = nullptr;
+
 	meshCount = mainScene.GetMeshData().size();
 	vertexCount = 0;
 	for (int i = 0; i < meshCount; i++)
@@ -123,6 +128,27 @@ void GameEngine::CompilePauseMenuData()
 	mainRenderer.CompilePauseMenuVertexData(vtxCountButtons, pauseMenuVertexData);
 }
 
+void GameEngine::CompileCollectibleMenuData()
+{
+	int nrOfMenuButtons = mainMenu.GetNrOfCollectibleButtons();
+	int vtxCountButtons = mainMenu.GetVertexCountCollectibleTotal();
+
+	collectibleMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+	int vertexIndex = 0;
+
+	for (int i = 0; i < nrOfMenuButtons; i++)
+	{
+		int buttonVtxCount = mainMenu.GetCollectibleMenuButtons()[i].GetVertexCount();
+		for (int j = 0; j < buttonVtxCount; j++)
+		{
+			collectibleMenuVertexData[vertexIndex] = mainMenu.GetCollectibleMenuButtonVertices(i)[j];
+			vertexIndex++;
+		}
+	}
+	mainRenderer.CompileCollectibleMenuVertexData(vtxCountButtons, collectibleMenuVertexData);
+}
+
 //=============================================================
 //	Main engine loop
 //=============================================================
@@ -151,7 +177,8 @@ void GameEngine::Run()
 		glfwPollEvents();
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			if (mainMenu.GetLastClickedButton() == 1) {
+			//if (mainMenu.GetLastClickedButton() == 1) {
+			if (mainMenu.GetUpdateState() == PLAYING) {
 				mainScene.ResumeGame();
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
@@ -159,6 +186,7 @@ void GameEngine::Run()
 		}
 		else if (mainScene.GetExit())
 		{
+			//mainMenu.ResetUpdateState();
 			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
 		}
@@ -173,10 +201,13 @@ void GameEngine::Run()
 		if (mainMenu.GetIsMenuRunning() == true)
 		{
 			// RENDER CALL FOR MAIN MENU HERE
-			mainMenu.SetActiveMenu(MAINACTIVE);
+			//mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 
 			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
+			if (mainMenu.GetActiveMenu() == COLLECTIBLEACTIVE) {
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), gClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
+			}
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 			glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -230,6 +261,7 @@ void GameEngine::Run()
 					// Gets the clicked cursor position and checks for collision with any of the buttons for Pause Menu
 					double x, y;
 					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
+					std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
 					if (mainMenu.CheckCollision(x, y)) {
 						int clickedButton = mainMenu.GetLastClickedButton();
 						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;
@@ -249,6 +281,7 @@ void GameEngine::Run()
 						}
 						else if (clickedButton == 3) {
 							// Quit to Main Menu (START WILL WORK AS RESUME)
+							mainMenu.ResetUpdateState();
 							mainScene.ExitToMainMenu();
 							mainMenu.SetActiveMenu(MAINACTIVE);
 							mainMenu.SetIsMenuRunning(true);
@@ -268,7 +301,7 @@ void GameEngine::Run()
 				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetPauseMenuButtons(), gClearColour, mainMenu.GetPauseButtonTextures(), PAUSEACTIVE);
 				mainRenderer.secondPassRenderTemp(mainScene.GetShader(2));
 
-				glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
+				//glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 				glfwSwapBuffers(mainRenderer.getWindow());
 				// Pause screen draw call

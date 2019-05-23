@@ -6,10 +6,10 @@ Loader::Loader(std::string fileName)
 
 	this->meshGroup = nullptr;
 	this->material = nullptr;
-	this->meshVert = nullptr;
 	this->mesh = nullptr;
 	this->dirLight = nullptr;
 	this->pointLight = nullptr;
+	this->meshVert = nullptr;
 
 
 	// =========================================
@@ -151,21 +151,23 @@ Loader::Loader(std::string fileName)
 Loader::~Loader()
 {
 	// NEEDS TO BE LOOKED OVER AND CONFIRMED FOR NO MEMORY LEAKS
-	for (int i = 0; i < this->fileHeader.meshCount; i++)
-	{
-		if (meshVert[i].vertices)
-			delete[] meshVert[i].vertices;
-	}
-	if (mesh)
-		delete[] mesh;
-	if (material)
-		delete[] material;
 	if (meshGroup)
 		delete[] meshGroup;
+	if (material)
+		delete[] material;
+	if (mesh)
+		delete[] mesh;
 	if (dirLight)
 		delete[] dirLight;
 	if (pointLight)
 		delete[] pointLight;
+
+	for (int i = 0; i < this->fileHeader.meshCount; i++)
+		if (meshVert[i].vertices)
+			delete[] meshVert[i].vertices;
+
+	if (meshVert)
+		delete[] meshVert;
 }
 
 
