@@ -1166,7 +1166,6 @@ void Room::Upgrade(Character* playerCharacter)
 //=============================================================
 void Room::CompileMeshData()
 {
-	// NEEDS TO BE CHANGED SO THE VECTOR DOESNT REALLOCATED ALL THE TIME
 	meshes.clear();
 	meshes.shrink_to_fit();
 	meshes.resize(meshAmount);
@@ -1215,15 +1214,18 @@ void Room::CompileMeshData()
 		meshes[j] = holders[i].GetHolderMeshData();
 		j++;
 	}
+
 	for (int i = 0; i < items.size(); i++) {
 
 		meshes[j] = items[i].GetMeshData();
 		j++;
 	}
+
 	for (int i = 0; i < doors.size(); i++) {
 		meshes[j] = doors[i].GetMeshData();
 		j++;
 	}
+
 	for (int i = 0; i < collectibles.size(); i++) {
 		meshes[j] = collectibles[i].GetMeshData();
 		j++;
@@ -1259,9 +1261,9 @@ void Room::LoadLights(Loader* inLoader)
 				inLoader->GetPointLightPos(i)[1],
 				inLoader->GetPointLightPos(i)[2]);
 		glm::vec3 color = glm::vec3(
-			inLoader->GetPointLightColor(i)[0],
-			inLoader->GetPointLightColor(i)[1],
-			inLoader->GetPointLightColor(i)[2]);
+				inLoader->GetPointLightColor(i)[0],
+				inLoader->GetPointLightColor(i)[1],
+				inLoader->GetPointLightColor(i)[2]);
 
 		
 		pointLights[i].setLightPos(pos);

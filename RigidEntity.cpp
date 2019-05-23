@@ -13,7 +13,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 	held = false;
 }
 
-RigidEntity::RigidEntity(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
+RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
 {
 	startPos = GetPosition();
 	savedPos = startPos;

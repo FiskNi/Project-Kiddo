@@ -76,7 +76,6 @@ private:
 	unsigned int materialID;
 
 public:
-	Mesh(Vertex* vertArr, unsigned int vertexCount);
 	Mesh(Loader* inLoader, int index);
 	Mesh();
 	~Mesh();

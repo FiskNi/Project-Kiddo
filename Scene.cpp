@@ -157,17 +157,13 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// Initialize materials and textures
 	// The constructor integer is the material id slot
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
-
-	// Hardcoded materials that will be moved
 	materials.clear();
 	materials.shrink_to_fit();
-
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
-		Material fillMat(inLoader->GetMaterial(i), materials.size());
-		materials.push_back(fillMat);
+		Material fillMat(inLoader->GetMaterial(i), (int)materials.size());
+		materials.emplace_back(fillMat);
 	}
-
 }
 
 void Scene::LoadCharacter(Loader* inLoader)
@@ -294,7 +290,6 @@ void Scene::ExitToMainMenu() {
 	Exited();
 	state = MAINMENU;
 	roomNr = 0;
-	ResetRoom();
 }
 
 void Scene::LoadRoom()

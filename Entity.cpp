@@ -17,7 +17,7 @@ Entity::Entity(unsigned int i)
 	InitBoundingBox();
 }
 
-Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader, index)
 {
 	// Created a bounding box based on the entityMesh 
 	LoaderMesh tempMesh = inLoader->GetMesh(index);

@@ -38,15 +38,15 @@ Material::Material(PhongMaterial material, unsigned int id)
 		this->emissive[i] = material.emissive[i];
 	this->opacity = material.opacity;
 
-	createAlbedo(material.albedo);
-	createNormal(material.normal);
+	//createAlbedo(material.albedo);
+	//createNormal(material.normal);
 }
 
 
 Material::~Material()
 {
-	/*glDeleteTextures(1, &albedo);
-	glDeleteTextures(1, &normal);*/
+	//glDeleteTextures(1, &albedo);
+	//glDeleteTextures(1, &normal);
 }
 
 void Material::createAlbedo(std::string path)
