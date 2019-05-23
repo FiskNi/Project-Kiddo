@@ -10,6 +10,12 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (scene->roomBuffer)
 			scene->roomBuffer->SetRoomCompleted(true);
 	}
+	if (key == GLFW_KEY_M && action == GLFW_PRESS && scene->state != MAINMENU)
+	{
+		if (scene->roomBuffer)
+			scene->roomBuffer->SetRoomCompleted(true);
+		scene->roomNr = 99;
+	}
 
 	// IF PAUSED
 	if (scene->state == PAUSED)
@@ -277,8 +283,7 @@ void Scene::LoadRoom()
 	// Additional hardcoded roomfunctions may be applied here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
-		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
 		// ADD SOUND PLAY
 	}
@@ -297,11 +302,12 @@ void Scene::LoadRoom()
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Submerged]Deco.meh");
 		// ADD SOUND PLAY
 	}
-	//else if (roomNr == 4)
-	//{
-	//	roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Submerged].meh");
-	//	//	ADD SOUND PLAY
-	//}
+	else if (roomNr == 99)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+		roomNr = 0;
+		//	ADD SOUND PLAY
+	}
 	else
 	{
 		roomNr = 0;
