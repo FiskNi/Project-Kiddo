@@ -48,6 +48,8 @@ private:
 	void CompileMainMenuData();
 	ButtonVtx* pauseMenuVertexData;
 	void CompilePauseMenuData();
+	ButtonVtx* collectibleMenuVertexData;
+	void CompileCollectibleMenuData();
 	bool printMouseClickOnce;
 
 public:
