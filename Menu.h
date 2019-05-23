@@ -19,7 +19,7 @@ private:
 
 	GLuint pauseOverlayTexture;
 	GLuint loadingTexture;
-	//GLuint pauseButtonTexture;
+	GLuint pauseBackgroundTexture;
 	GLuint pbt0;
 	GLuint pbt1;
 	GLuint pbt2;
@@ -71,6 +71,7 @@ public:
 	bool CheckCollision(float x, float y);
 
 	void CreateMainMenuButtons();
+	void CreatePauseMenuButtons();
 	void CreateBackgroundQuad();
 
 	// Get Textures ( some are temporary right now ) 

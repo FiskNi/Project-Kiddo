@@ -21,18 +21,19 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/PauseMenu1.png", &pauseOverlayTexture);
 	CreateMenuTexture("Resources/Textures/Loading1.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
-	//CreateMenuTexture("Resources/Textures/PauseButtonTEMP.png", &pauseButtonTexture);
+	CreateMenuTexture("Resources/Textures/PauseGUI.png", &pauseBackgroundTexture);
 	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
-	CreateMenuTexture("Resources/Textures/PauseTitle.png", &pbt0);
-	CreateMenuTexture("Resources/Textures/PauseResume.png", &pbt1);
-	CreateMenuTexture("Resources/Textures/PauseRestart.png", &pbt2);
-	CreateMenuTexture("Resources/Textures/PauseQuit.png", &pbt3);
+	//CreateMenuTexture("Resources/Textures/PauseTitle.png", &pbt0);
+	//CreateMenuTexture("Resources/Textures/PauseResume.png", &pbt1);
+	//CreateMenuTexture("Resources/Textures/PauseRestart.png", &pbt2);
+	//CreateMenuTexture("Resources/Textures/PauseQuit.png", &pbt3);
 
-	pauseButtonTextures.push_back(pbt0);
-	pauseButtonTextures.push_back(pbt1);
-	pauseButtonTextures.push_back(pbt2);
-	pauseButtonTextures.push_back(pbt3);
+	//pauseButtonTextures.push_back(pauseBackgroundTexture);
+	//pauseButtonTextures.push_back(pbt0);
+	//pauseButtonTextures.push_back(pbt1);
+	//pauseButtonTextures.push_back(pbt2);
+	//pauseButtonTextures.push_back(pbt3);
 
 
 	CreateMainMenu();
@@ -50,14 +51,23 @@ void Menu::CreateMainMenu()
 {
 	// Creates Main Menu Background as well as Main Menu Buttons
 	CreateMainMenuButtons();
+	CreatePauseMenuButtons();
 
-	// Creates Pause Buttons (Stacked Menu)
-	for (int i = 0; i < 4; i++) {
-		MenuButton newPauseButton(GetCurrentOffsetPause(), i);
-		vertexCountPauseTotal += newPauseButton.GetVertexCount();
-		pauseButtons.push_back(newPauseButton);
-		nrOfPauseButtons++;
-	}
+	////CreateBackgroundQuad();
+	////pauseButtonTextures.push_back(pauseBackgroundTexture);
+	//MenuButton bgButton(backgroundQuad, 0, true);
+	//pauseButtons.push_back(bgButton);
+	//vertexCountPauseTotal += bgButton.GetVertexCount();
+	//nrOfPauseButtons++;
+
+
+	//// Creates Pause Buttons (Stacked Menu)
+	//for (int i = 1; i < 4; i++) {
+	//	MenuButton newPauseButton(GetCurrentOffsetPause(), 1);
+	//	vertexCountPauseTotal += newPauseButton.GetVertexCount();
+	//	pauseButtons.push_back(newPauseButton);
+	//	nrOfPauseButtons++;
+	//}
 
 }
 
@@ -149,11 +159,13 @@ bool Menu::CheckCollision(float x, float y)
 	{
 		for (int i = 0; i < nrOfPauseButtons; i++) 
 		{
-			if (pauseButtons[i].CheckInsideCollision(x, y) == true) 
-			{
-				//std::cout << "Hit Button nr " << i << std::endl;
-				currentButtonHit = i;
-				return true;
+			if (mainButtons[i].GetIsNotButton() != true) {
+				if (pauseButtons[i].CheckInsideCollision(x, y) == true)
+				{
+					std::cout << "Hit Button nr " << i << std::endl;
+					currentButtonHit = i;
+					return true;
+				}
 			}
 		}
 	}
@@ -211,6 +223,41 @@ void Menu::CreateMainMenuButtons()
 	}
 	
 	
+}
+
+// ========================================================================
+//  Creates the Main Menu Background and Main Menu Buttons
+// ========================================================================
+void Menu::CreatePauseMenuButtons()
+{
+
+	// Creates the background, which is not a button (and collision will not be checked on it)
+	// backgroundQuad has already been initialised in CreateMainMenuButtons()
+	pauseButtonTextures.push_back(pauseBackgroundTexture);
+	MenuButton bgButton(backgroundQuad, 0, true);
+	pauseButtons.push_back(bgButton);
+
+
+	pauseButtonTextures.push_back(pauseBackgroundTexture);
+
+	// Start Button
+	MenuButton newButton(750, 380, 1100, 495, 1);
+	pauseButtons.push_back(newButton);
+
+	// Settings Button
+	MenuButton newButton1(715, 500, 1100, 600, 1);
+	pauseButtons.push_back(newButton1);
+
+	// Exit Button
+	MenuButton newButton2(800, 605, 1000, 690, 1);
+	pauseButtons.push_back(newButton2);
+
+	for (int i = 0; i < 4; i++) {
+		vertexCountPauseTotal += bgButton.GetVertexCount();		// Vertex count for buttons is always 6
+		nrOfPauseButtons++;
+	}
+
+
 }
 
 // ========================================================================
