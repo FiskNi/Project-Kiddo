@@ -2,14 +2,14 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine)
+Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 {
 
 	firstCall = true;
 	meshAmount = 0;
 
 	LoadLights(aLoader);
-	LoadEntities(materials, aLoader);
+	LoadEntities(aLoader);
 	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
@@ -1326,7 +1326,7 @@ void Room::LoadLights(Loader* inLoader)
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials, Loader* level)
+void Room::LoadEntities(Loader* level)
 {
 
 	//==========

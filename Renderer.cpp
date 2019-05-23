@@ -134,7 +134,7 @@ void Renderer::ShadowmapRender(Shader gShaderProgram,
 //=============================================================
 void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera camera, 
 	float gClearColour[3], std::vector<Light> lightArr, 
-	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
+	std::vector<DirectionalLight> dirLightArr, std::vector<Material*> materials)
 {
 	// Position in shader
 	// set the color TO BE used (this does not clear the screen right away)
@@ -173,8 +173,8 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera 
 		// Per object uniforms
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
-		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
+		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()]->hasNormal());
+		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()]->hasAlbedo());
 
 		// Vertex animation buffer
 		if (objects[i].GetSkeleton().animations.size() >= 1)
@@ -195,23 +195,23 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera 
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
-			materials[objects[i].GetMaterialID()].getAlbedo(),
+			materials[objects[i].GetMaterialID()]->getAlbedo(),
 			gShaderProgram.getShader(),
 			"diffuseTex", 0);
 
 		// Binds the normal texture from a material
-		if (materials[objects[i].GetMaterialID()].hasNormal())
+		if (materials[objects[i].GetMaterialID()]->hasNormal())
 		{
 			passTextureData(GL_TEXTURE1,
-				materials[objects[i].GetMaterialID()].getNormal(),
+				materials[objects[i].GetMaterialID()]->getNormal(),
 				gShaderProgram.getShader(),
 				"normalTex", 1);
 		}
 
-		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getAmbient()));
-		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getDiffuse()));
-		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getSpecular()));
-		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getEmissive()));
+		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getAmbient()));
+		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getDiffuse()));
+		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getSpecular()));
+		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getEmissive()));
 
 		// Binds the shadowmap (handles by the renderer)
 		passTextureData(GL_TEXTURE2,

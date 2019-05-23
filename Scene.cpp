@@ -110,6 +110,9 @@ Scene::~Scene()
 		delete roomBuffer;
 	if (audioEngine)
 		audioEngine->drop();
+	for (int i = 0; i < materials.size(); i++)
+		if (materials[i])
+			delete materials[i];
 }
 
 void Scene::LoadShaders()
@@ -135,12 +138,16 @@ void Scene::LoadMaterials(Loader* inLoader)
 	// Initialize materials and textures
 	// The constructor integer is the material id slot
 	// So the first material has id #0 (materials is size 0), second has id #1, and so on
-	materials.clear();
-	materials.shrink_to_fit();
+
+	// Testing to free memory
+	for (int i = 0; i < materials.size(); i++)
+		if (materials[i])
+			delete materials[i];
+	
+	materials.resize(inLoader->GetMaterialCount());
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
-		Material fillMat(inLoader->GetMaterial(i), (int)materials.size());
-		materials.push_back(fillMat);
+		materials[i] = new Material(inLoader->GetMaterial(i), i);
 	}
 }
 
@@ -310,13 +317,13 @@ void Scene::LoadRoom()
 	}
 	else
 	{
-		roomNr = 0;
+		roomNr = -1;
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		// ADD SOUND PLAY
 	}
 
 	LoadMaterials(roomLoader);
-	roomBuffer = new Room(materials, roomLoader, audioEngine);
+	roomBuffer = new Room(roomLoader, audioEngine);
 
 	// Set player position and reset it
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)

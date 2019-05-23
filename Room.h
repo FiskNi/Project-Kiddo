@@ -41,7 +41,7 @@ class Room
 {
 private:
 	void LoadLights(Loader* inLoader);
-	void LoadEntities(std::vector<Material> materials, Loader* level);
+	void LoadEntities(Loader* level);
 	void PlayerRigidCollision(Character* playerCharacter);
 	void RigidRigidCollision();
 	void RigidNodeCollision();
@@ -107,24 +107,24 @@ private:
 	irrklang::ISoundEngine* audioEngine;
 
 public:
-	Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine);
+	Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine);
 	~Room();
 
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
 
-	std::vector<Light>& GetPointLights() { return pointLights; }
-	std::vector<DirectionalLight> GetDirectionalLights() const { return dirLights; }
-	std::vector<RigidEntity>& GetRigids() { return rigids; }
-	std::vector<StaticEntity>& GetStatics() { return statics; }
-	std::vector<BoxHoldEntity>& GetBoxHolds() { return holdBoxes; }
-	//std::vector<puzzleNode>& GetNodes() { return nodes; }
-	std::vector<BridgeEntity>& GetBridges() { return bridges; }
-	std::vector<Mesh>& GetMeshData()  { return meshes; }
-	std::vector<Button>& getButtons() { return buttons; }
-	Camera* GetCamera() { return roomCamera; }
-	bool GetRoomCompleted() { return this->isRoomCompleted; }
+	std::vector<Light>& GetPointLights()					{ return pointLights; }
+	std::vector<DirectionalLight>& GetDirectionalLights()	{ return dirLights; }
+	std::vector<RigidEntity>& GetRigids()					{ return rigids; }
+	std::vector<StaticEntity>& GetStatics()					{ return statics; }
+	std::vector<BoxHoldEntity>& GetBoxHolds()				{ return holdBoxes; }
+	//std::vector<puzzleNode>& GetNodes()					{ return nodes; }
+	std::vector<BridgeEntity>& GetBridges()					{ return bridges; }
+	std::vector<Mesh>& GetMeshData()						{ return meshes; }
+	std::vector<Button>& getButtons()						{ return buttons; }
+	Camera* GetCamera()										{ return roomCamera; }
+	bool GetRoomCompleted()									{ return this->isRoomCompleted; }
 
-	void SetRoomCompleted(bool tf) { this->isRoomCompleted = tf; }
+	void SetRoomCompleted(bool tf)							{ this->isRoomCompleted = tf; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 
