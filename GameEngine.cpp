@@ -235,6 +235,7 @@ void GameEngine::Run()
 					// Gets the clicked cursor position and checks for collision with any of the buttons for Pause Menu
 					double x, y;
 					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
+					std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
 					if (mainMenu.CheckCollision(x, y)) {
 						int clickedButton = mainMenu.GetLastClickedButton();
 						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;

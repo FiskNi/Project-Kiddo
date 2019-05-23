@@ -11,46 +11,18 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->roomBuffer->SetRoomCompleted(true);
 	}
 
-	//// IF PAUSED
-	//if (scene->state == PAUSED)
-	//{
-	//	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	//	{
-	//		//UNPAUSE
-	//		scene->state = PLAYING;
-	//		std::cout << "PLAYING" << std::endl;
-	//	}
-
-	//	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-	//	{
-	//		//RESUMES GAME
-	//		scene->state = PLAYING;
-	//		std::cout << "RESUME" << std::endl;
-	//	}
-	//	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-	//	{
-	//		//RESTART HERE
-	//		scene->ResetRoom();
-	//		scene->state = PLAYING;
-	//		std::cout << "Restarting level" << std::endl;
-	//	}
-
-	//	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-	//		//// RETURNS TO MAIN MENU
-	//		////delete scene->roomBuffer;
-	//		////scene->roomBuffer = nullptr;
-	//		////scene->roomLoaded = false;
-	//		//scene->isLoading = true;
-	//		//scene->exittoMenu = true;
-	//		//scene->state = MAINMENU;
-
-	//		scene->ExitToMainMenu();
-	//		std::cout << "MAIN MENU" << std::endl;
-
-	//	}
-	//}
+	// IF PAUSED
+	if (scene->state == PAUSED)
+	{
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		{
+			//UNPAUSE
+			scene->state = PLAYING;
+			std::cout << "PLAYING" << std::endl;
+		}
+	}
 	// IF PLAYING
-	if (scene->state == PLAYING)
+	else if (scene->state == PLAYING)
 	{
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
