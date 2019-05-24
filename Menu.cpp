@@ -1,6 +1,24 @@
 #include "Menu.h"
 
 
+void Menu::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+
+	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	bool isCollided = menu->CheckCollision(x, y, false);
+	if (isCollided == true) {
+		//glfwSetCursor(window, menu->handCursor);
+		std::cout << "HIT" << std::endl;
+		menu->isHovering = true;
+	}
+	else {
+		//glfwSetCursor(window, menu->handCursor);
+		menu->isHovering = false;
+	}
+}
+
 Menu::Menu() 
 {
 #pragma region initialize vector
@@ -12,6 +30,7 @@ Menu::Menu()
 
 	vertexCountMainTotal = 0;
 	vertexCountPauseTotal = 0;
+	vertexCountCollectibleTotal = 0;
 	nrOfMainButtons = 0;
 	nrOfPauseButtons = 0;
 	nrOfCollectibleButtons = 0;
@@ -30,7 +49,7 @@ Menu::Menu()
 
 Menu::~Menu() 
 {
-
+	//glfwDestroyCursor(handCursor);
 }
 
 // ========================================================================
@@ -52,6 +71,14 @@ void Menu::CreateMainMenu()
 void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 {
 
+	//Sets user pointer for Key_callbacks
+	if (!setUserPointer)
+	{
+		glfwSetWindowUserPointer(renderWindow, this);
+		glfwSetCursorPosCallback(renderWindow, cursor_position_callback);
+		setUserPointer = true;
+	}
+
 	// ****KEY CALLBACK DOES NOT WORK FOR MENU, please do not attempt to re-implement Key callback in Menu****
 	glfwPollEvents();
 	if (glfwGetMouseButton(renderWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
@@ -60,7 +87,7 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		double x, y;
 		glfwGetCursorPos(renderWindow, &x, &y);
 		//std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
-		CheckCollision(x, y);
+		CheckCollision(x, y, true);
 		printMouseClickOnce = true;
 		buttonActionExecuted = false;
 	}
@@ -148,7 +175,7 @@ void Menu::CreateMenuTexture(std::string path, GLuint *texture)
 // ========================================================================
 //	Checks collision between the clicked mouse cursor and the buttons
 // ========================================================================
-bool Menu::CheckCollision(float x, float y) 
+bool Menu::CheckCollision(float x, float y, bool isClicked) 
 {
 	if (activeMenu == PAUSEACTIVE) 
 	{
@@ -158,8 +185,10 @@ bool Menu::CheckCollision(float x, float y)
 			{
 				if (pauseButtons[i].CheckInsideCollision(x, y) == true)
 				{
-					//std::cout << "Hit Button nr " << i << std::endl;
-					currentButtonHit = i;
+					if (isClicked == true) {
+						//std::cout << "Hit Button nr " << i << std::endl;
+						currentButtonHit = i;
+					}
 					return true;
 				}
 			}
@@ -173,9 +202,11 @@ bool Menu::CheckCollision(float x, float y)
 			{
 				if (mainButtons[i].CheckInsideCollision(x, y) == true) 
 				{
-					//std::cout << "Hit Button nr " << i << std::endl;
-					currentButtonHit = i;
-					isButtonHit = true;
+					if (isClicked == true) {
+						//std::cout << "Hit Button nr " << i << std::endl;
+						currentButtonHit = i;
+						isButtonHit = true;
+					}
 					return true;
 				}
 			}
@@ -189,9 +220,11 @@ bool Menu::CheckCollision(float x, float y)
 			{
 				if (collectibleButtons[i].CheckInsideCollision(x, y) == true)
 				{
-					std::cout << "Hit Button nr " << i << std::endl;
-					currentButtonHit = i;
-					isButtonHit = true;
+					if (isClicked == true) {
+						std::cout << "Hit Button nr " << i << std::endl;
+						currentButtonHit = i;
+						isButtonHit = true;
+					}
 					return true;
 				}
 			}
@@ -279,18 +312,22 @@ void Menu::CreateCollectibleMenuButtons()
 {
 	// Creates the background, which is not a button (and collision will not be checked on it)
 	// backgroundQuad has already been initialised in CreateMainMenuButtons()
-	//collectibleTextures.push_back(pauseBackgroundTexture);
-	//MenuButton bgButton(backgroundQuad, 0, true);
-	//collectibleButtons.push_back(bgButton);
 
 
+	collectibleTextures.push_back(buttonTextureBase);
+	collectibleTextures.push_back(buttonTextureBase);
 	for (int i = 0; i < COLLECTEDCAP; i++) {
-		collectibleTextures.push_back(buttonTextureBase);
 		MenuButton colButton(GetCurrentOffset(nrOfCollectibleButtons), 0);
 		collectibleButtons.push_back(colButton);
 		vertexCountCollectibleTotal += colButton.GetVertexCount();		// Vertex count for buttons is always 6
 		nrOfCollectibleButtons++;
 	}
+
+	//collectibleTextures.push_back(backgroundTexture);
+	//MenuButton bgButton(backgroundQuad, 2, true);
+	//collectibleButtons.push_back(bgButton);
+	//vertexCountCollectibleTotal += bgButton.GetVertexCount();		// Vertex count for buttons is always 6
+	//nrOfCollectibleButtons++;
 
 }
 

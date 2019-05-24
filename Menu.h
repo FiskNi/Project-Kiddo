@@ -15,6 +15,7 @@ enum ACTIVEMENU
 class Menu 
 {
 private:
+	bool setUserPointer;
 
 	ACTIVEMENU activeMenu = MAINACTIVE;
 
@@ -39,7 +40,7 @@ private:
 	int nrOfPauseButtons;
 	int nrOfCollectibleButtons;
 	const float BUTTON_OFFSET	= 0.0f;
-	const float buttonWidth	= 0.3f;
+	const float buttonWidth	= 0.165f;
 
 	// The total number of vertices for the menu
 	int vertexCountMainTotal;
@@ -59,8 +60,15 @@ private:
 
 	std::vector<Collectible> collected;
 
+	bool isHovering;
+
+	//GLFWcursor* handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+
 
 public:
+
+	static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
+
 	Menu();
 	~Menu();
 
@@ -68,7 +76,7 @@ public:
 	void MenuUpdate(GLFWwindow* renderWindow, float deltaTime);
 	void CreateMenuTexture(std::string path, GLuint *texture);
 
-	bool CheckCollision(float x, float y);
+	bool CheckCollision(float x, float y, bool isClicked);
 
 	void CreateMainMenuButtons();
 	void CreatePauseMenuButtons();
@@ -92,7 +100,7 @@ public:
 	std::vector<MenuButton> GetCollectibleMenuButtons() const				{ return collectibleButtons; }
 
 	// Offset is for stacked menus, which will be used if we make a collectible menu
-	float GetCurrentOffset(int nrOfButtons) const	{ return (nrOfButtons - 1) * (buttonWidth + BUTTON_OFFSET); }
+	float GetCurrentOffset(int nrOfButtons) const	{ return (nrOfButtons - 1) * (buttonWidth + BUTTON_OFFSET) - 0.3f; }
 	int GetNrOfMenuButtons() const					{ return nrOfMainButtons; }
 	int GetNrOfPauseButtons() const					{ return nrOfPauseButtons; }
 	int GetNrOfCollectibleButtons() const			{ return nrOfCollectibleButtons; }
@@ -114,6 +122,8 @@ public:
 
 	bool GetIsLoading() const						{ return isLoading; }
 	void SetIsLoading(bool isLoading)				{ this->isLoading = isLoading; }
+
+	bool GetIsHovering() const { return isHovering; }
 
 	void SetCollected(std::vector<Collectible> coll);
 	
