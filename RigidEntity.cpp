@@ -134,7 +134,7 @@ void RigidEntity::Update(float deltaTime)
 		float bbBottom = GetHitboxSize().y;
 		float bbCenter = GetHitboxOffset().y;
 		velocity.y = 0.0f;
-		calculatedPosition.y = groundLevel + bbBottom - bbCenter;
+		calculatedPosition.y = groundLevel + bbBottom + bbCenter;
 	}
 
 	// Move this entity 
@@ -165,6 +165,8 @@ void RigidEntity::SetColliding(bool colliding)
 void RigidEntity::SetGrounded(bool grounded)
 {
 	this->grounded = grounded;
+	if (grounded)
+		SetVelocityY(0.0f);
 }
 
 void RigidEntity::GroundLevel(float y)

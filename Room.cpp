@@ -829,7 +829,7 @@ void Room::updateChildren()
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
-	const float maxDiff = 0.5f; // Max ground height difference
+	const float maxDiff = 0.7f; // Max ground height difference
 
 	 //Rigid entites ground collision
 	for (int i = 0; i < rigids.size(); i++)
@@ -838,7 +838,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		rigids[i].SetGrounded(false);
 
 		// Variable to find the highest ground level
-		float ground = rigids[i].GetGroundLevel();
+		float ground = -999.0f;
 
 		// All the statics
 		for (int j = 0; j < statics.size(); ++j)
@@ -848,7 +848,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
 				{
-					ground = statics[j].GetHitboxTop();
+					if (statics[j].GetHitboxTop() > ground)
+						ground = statics[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
 			}
@@ -862,7 +863,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 				{
-					ground = bridges[j].GetHitboxTop();
+					if (statics[j].GetHitboxTop() > ground)
+						ground = bridges[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
 			}
@@ -894,7 +896,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	// Player ground collisions
 	// Recheck grounded state, assume it's not grounded
 	playerCharacter->SetGrounded(false);
-	float ground = playerCharacter->GetGroundLevel();
+	float ground = -999.0f;
 	for (int j = 0; j < statics.size(); ++j)
 	{
 		if (playerCharacter->CheckCollision(statics[j]))
@@ -902,7 +904,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			// If ground is close enough
 			if (abs(playerCharacter->GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
 			{
-				ground = statics[j].GetHitboxTop();
+				if (statics[j].GetHitboxTop() > ground)
+					ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}	
 		}
@@ -915,7 +918,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			// If ground is close enough
 			if (abs(playerCharacter->GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 			{
-				ground = bridges[j].GetHitboxTop();
+				if (statics[j].GetHitboxTop() > ground)
+					ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}	
 		}
@@ -930,7 +934,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(playerCharacter->GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
 				{
-					//holders[j].puntBox();
 					ground = holders[j].GetHitboxTopOffsetBB();
 					playerCharacter->SetGrounded(true);
 				}
@@ -1128,7 +1131,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				playerCharacter->SetVelocity(-pushDir);
+				//playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
@@ -1147,7 +1150,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				playerCharacter->SetVelocity(-pushDir);
+				//playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
@@ -1278,6 +1281,7 @@ void Room::LoadLights(Loader* inLoader)
 	pointLights.push_back(light);
 	pointLights.push_back(light);
 	pointLights.push_back(light);
+
 
 	for (int i = 0; i < inLoader->GetPointLightCount(); i++)
 	{
@@ -1432,22 +1436,22 @@ void Room::LoadEntities(Loader* level)
 
 		case 12:	// Collectible
 		{
-			Collectible coll;
+			/*Collectible coll;
 			coll.SetMaterialID(matID);
 			coll.SetIndex(level->GetCollectIndex(i));
 			collectibles.push_back(coll);
-			meshAmount++;
+			meshAmount++;*/
 		}
 			break;
 
 		case 13:	//Item
 		{
-			Item item;
-			//Need to look over how to import itemtype :)
-			//item.SetItemType()
-			item.SetMaterialID(matID);
-			items.push_back(item);
-			meshAmount++;
+			//Item item;
+			////Need to look over how to import itemtype :)
+			////item.SetItemType()
+			//item.SetMaterialID(matID);
+			//items.push_back(item);
+			//meshAmount++;
 		}
 
 		default:

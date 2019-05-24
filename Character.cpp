@@ -223,7 +223,7 @@ void Character::Move(GLFWwindow* window)
 		moveDir = glm::normalize(moveDir);
 
 	if (holdingObject)
-		moveDir *= moveSpeed / 1.8;
+		moveDir *= moveSpeed / 1.5;
 	else
 		moveDir *= moveSpeed;
 		
