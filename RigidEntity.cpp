@@ -153,7 +153,7 @@ void RigidEntity::Update(float deltaTime)
 void RigidEntity::ResetPos()
 {
 	SetPosition(startPos);
-	SetVelocity(0.0f, 1.0f, 1.0f);
+	SetVelocity(0.0f, 0.0f, 0.0f);
 	this->boxType = REGULAR;
 }
 

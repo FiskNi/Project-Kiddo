@@ -76,6 +76,8 @@ public:
 
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe 
 	void scaleBB(float x);
+	void scaleBBX(float x);
+	void scaleBBZ(float z);
 	void scaleBBY(float y);
 	void setBBY(float y);
 

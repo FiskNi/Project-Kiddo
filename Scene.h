@@ -42,7 +42,7 @@ private:
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
-	void LoadCharacter(Loader* inLoader);
+	void LoadCharacter();
 
 	void CompileMeshData();
 
@@ -78,7 +78,7 @@ private:
 	Menu menuHandler;
 
 	// Character
-	Character playerCharacter;
+	Character* playerCharacter;
 
 	//Key_callback
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

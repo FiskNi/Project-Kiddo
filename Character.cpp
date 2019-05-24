@@ -18,6 +18,42 @@ Character::Character() : RigidEntity(1)
 	respawnPos = glm::vec3(0.0f);
 }
 
+Character::Character(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : RigidEntity(inLoader, index, matID, frozen)
+{
+	for (int i = 0; i < itemCap; i++)
+	{
+		items.push_back(Item());
+	}
+
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+
+		collected.push_back(Collectible());
+	}
+
+	holdingObject = false;
+	entityID = -1;
+	inputVector = glm::vec3(0.0f);
+	respawnPos = glm::vec3(0.0f);
+}
+
+Character::Character(Loader* inLoader, unsigned int index, unsigned int matID) : RigidEntity(inLoader, index, matID)
+{
+	for (int i = 0; i < itemCap; i++)
+	{
+		items.push_back(Item());
+	}
+
+	for (int i = 0; i < COLLECTEDCAP; i++) 
+	{
+		collected.push_back(Collectible());
+	}
+
+	holdingObject = false;
+	entityID = -1;
+	inputVector = glm::vec3(0.0f);
+	respawnPos = glm::vec3(0.0f);
+}
+
 Character::~Character()
 {
 
@@ -54,7 +90,7 @@ bool Character::CheckInBound(Entity collidingCube)
 
 	// This is how large the use area around the character is
 	const float bbOffset = 2.0f;
-	inBoundBox.size = glm::vec3(GetHitboxSize().x * bbOffset, 0.5f, GetHitboxSize().y * bbOffset);
+	inBoundBox.size = glm::vec3(GetHitboxSize().x * bbOffset, GetHitboxSize().y, GetHitboxSize().z * bbOffset);
 
 	//=============================================================
 	//	The collision check here is mostly identical to 

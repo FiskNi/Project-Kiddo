@@ -273,6 +273,16 @@ void Entity::scaleBB(float x)
 	boundingBoxSize *= x;
 }
 
+void Entity::scaleBBX(float x)
+{
+	boundingBoxSize.x *= x;
+}
+
+void Entity::scaleBBZ(float z)
+{
+	boundingBoxSize.z *= z;
+}
+
 void Entity::scaleBBY(float y)
 {
 	boundingBoxSize.y *= y;

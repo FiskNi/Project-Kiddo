@@ -32,6 +32,8 @@ private:
 
 public:
 	Character();
+	Character(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
+	Character(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Character();
 	
 	void SetHoldingObject(bool holding);
