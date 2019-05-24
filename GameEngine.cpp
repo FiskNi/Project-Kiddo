@@ -55,6 +55,8 @@ GameEngine::~GameEngine()
 		delete mainMenuVertexData;
 	if (pauseMenuVertexData)
 		delete pauseMenuVertexData;
+	if (collectibleMenuVertexData)
+		delete collectibleMenuVertexData;
 }
 
 void GameEngine::CompileRoomData()
@@ -160,6 +162,13 @@ void GameEngine::Run()
 	// If this becomes true the program will have failed in someway or been manually shut down
 	bool shutdown = false;
 
+	// Cursor creation
+
+	//GLFWcursor* mainCursor = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+	GLFWcursor* handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+
+	glfwSetCursor(mainRenderer.getWindow(), handCursor);
+
 	// Load ImGui content
 	static bool renderDepth = false;
 	ImGuiInit();
@@ -167,6 +176,7 @@ void GameEngine::Run()
 	// Compile Main Menu and Pause Menu vertex data
 	CompileMainMenuData();
 	CompilePauseMenuData();
+	CompileCollectibleMenuData();
 
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
@@ -204,7 +214,15 @@ void GameEngine::Run()
 			//mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 
+			if (mainMenu.GetIsHovering() == true) {
+				glfwSetCursor(mainRenderer.getWindow(), handCursor);
+			}
+			else {
+				glfwSetCursor(mainRenderer.getWindow(), NULL);
+			}
+
 			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
+			// If Collectible Menu is active, render te Collectible menu over the main menu
 			if (mainMenu.GetActiveMenu() == COLLECTIBLEACTIVE) {
 				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), gClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
 			}
@@ -261,8 +279,8 @@ void GameEngine::Run()
 					// Gets the clicked cursor position and checks for collision with any of the buttons for Pause Menu
 					double x, y;
 					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
-					std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
-					if (mainMenu.CheckCollision(x, y)) {
+					//std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
+					if (mainMenu.CheckCollision(x, y, true)) {
 						int clickedButton = mainMenu.GetLastClickedButton();
 						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;
 
@@ -347,6 +365,10 @@ void GameEngine::Run()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+
+	// Delete cursors
+	//glfwDestroyCursor(mainCursor);
+	glfwDestroyCursor(handCursor);
 
 	// *******************************
 	// MEMORY NEEDS TO BE LOOKED OVER! - No memory leaks!
