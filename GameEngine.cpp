@@ -163,11 +163,10 @@ void GameEngine::Run()
 	bool shutdown = false;
 
 	// Cursor creation
-
 	//GLFWcursor* mainCursor = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
 	GLFWcursor* handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-
-	glfwSetCursor(mainRenderer.getWindow(), handCursor);
+	// Sets cursor to the OG cursor arrow
+	glfwSetCursor(mainRenderer.getWindow(), NULL);
 
 	// Load ImGui content
 	static bool renderDepth = false;
@@ -187,16 +186,16 @@ void GameEngine::Run()
 		glfwPollEvents();
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			//if (mainMenu.GetLastClickedButton() == 1) {
 			if (mainMenu.GetUpdateState() == PLAYING) {
 				mainScene.ResumeGame();
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
+				switchCursorOnce = false;
 			}
 		}
 		else if (mainScene.GetExit())
 		{
-			//mainMenu.ResetUpdateState();
+			mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
 		}
@@ -214,17 +213,26 @@ void GameEngine::Run()
 			//mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.MenuUpdate(mainRenderer.getWindow(), deltaTime);
 
-			if (mainMenu.GetIsHovering() == true) {
+			if (mainMenu.CheckButtonHovering(mainRenderer.getWindow()) == true && switchCursorOnce != true) {
 				glfwSetCursor(mainRenderer.getWindow(), handCursor);
+				//std::cout << "Cursor switched HAND" << std::endl;
+				switchCursorOnce = true;
 			}
-			else {
+			else if (mainMenu.CheckButtonHovering(mainRenderer.getWindow()) == false && switchCursorOnce == true) {
 				glfwSetCursor(mainRenderer.getWindow(), NULL);
+				//std::cout << "Cursor switched REGULAR" << std::endl;
+				switchCursorOnce = false;
 			}
 
+			// Switch from pause menu to main menu here to avoid accidental "double tap" with the input buffer saving the position collision from pause menu for main menu
+			if (mainMenu.GetActiveMenu() == PAUSEACTIVE) {
+				mainMenu.SetActiveMenu(MAINACTIVE);
+			}
 			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
 			// If Collectible Menu is active, render te Collectible menu over the main menu
 			if (mainMenu.GetActiveMenu() == COLLECTIBLEACTIVE) {
 				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), gClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
+				// ADD CLICKABLE TEST HERE
 			}
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
@@ -272,6 +280,17 @@ void GameEngine::Run()
 				// Pause Menu Render Call
 				mainMenu.SetActiveMenu(PAUSEACTIVE);
 
+				if (mainMenu.CheckButtonHovering(mainRenderer.getWindow()) == true && switchCursorOnce != true) {
+					glfwSetCursor(mainRenderer.getWindow(), handCursor);
+					//std::cout << "Cursor switched HAND" << std::endl;
+					switchCursorOnce = true;
+				}
+				else if (mainMenu.CheckButtonHovering(mainRenderer.getWindow()) == false && switchCursorOnce == true) {
+					glfwSetCursor(mainRenderer.getWindow(), NULL);
+					//std::cout << "Cursor switched REGULAR" << std::endl;
+					switchCursorOnce = false;
+				}
+
 				// Checks for clicking on the pause menu
 				glfwPollEvents();
 				if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && printMouseClickOnce == false)
@@ -299,13 +318,13 @@ void GameEngine::Run()
 						}
 						else if (clickedButton == 3) {
 							// Quit to Main Menu (START WILL WORK AS RESUME)
+							//mainMenu.SetActiveMenu(MAINACTIVE);
 							mainMenu.ResetUpdateState();
 							mainScene.ExitToMainMenu();
-							mainMenu.SetActiveMenu(MAINACTIVE);
 							mainMenu.SetIsMenuRunning(true);
 							//std::cout << "MAIN MENU" << std::endl;
 						}
-
+						switchCursorOnce = false;
 					}
 					printMouseClickOnce = true;
 					mainMenu.SetButtonActionExecuted(false);
