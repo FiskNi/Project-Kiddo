@@ -107,28 +107,28 @@ public:
 
 	std::vector<vertexPolygon>& ModifyVertices();
 
-	unsigned int GetMaterialID() const { return materialID; }
-	glm::vec3 GetPosition() const { return position; }
-	glm::quat GetRotation() const { return rotation; }
-	glm::vec3 GetScale() const { return scale; }
-	string GetMeshName() const { return name; }
-	string GetMeshParentName() const { return pName; }
-	bool GetIsChild() const { return isChild; }
-	int GetParentType() const { return parentType; }
-	glm::vec3 GetParentPosOffset() const { return parentPosOffset; }
-	glm::vec3 GetParentSizeOffset() const { return parentSizeOffset; }
+	unsigned int GetMaterialID() const		{ return materialID; }
+	glm::vec3 GetPosition() const			{ return position; }
+	glm::quat GetRotation() const			{ return rotation; }
+	glm::vec3 GetScale() const				{ return scale; }
+	string GetMeshName() const				{ return name; }
+	string GetMeshParentName() const		{ return pName; }
+	bool GetIsChild() const					{ return isChild; }
+	int GetParentType() const				{ return parentType; }
+	glm::vec3 GetParentPosOffset() const	{ return parentPosOffset; }
+	glm::vec3 GetParentSizeOffset() const	{ return parentSizeOffset; }
 
 	void SetMeshParent(Mesh *parent);
 	void SetGroupParent(MeshGroupClass * parent);
 	void SetParentPosOffset(glm::vec3 offset);
 	void SetParentSizeOffset(glm::vec3 offset);
 
-	Mesh* GetMeshParent() { return myParent; }
-	MeshGroupClass* GetGroupParent() { return myGroupParent; }
+	Mesh* GetMeshParent()						{ return myParent; }
+	MeshGroupClass* GetGroupParent()			{ return myGroupParent; }
 
-	std::vector<vertexPolygon>& GetVertices()  { return vertices; }
-	SkeletonD& GetSkeleton() { return skeleton; }
-	int GetVertexCount() const { return vertexCount; }
+	std::vector<vertexPolygon>& GetVertices()	{ return vertices; }
+	SkeletonD& GetSkeleton()					{ return skeleton; }
+	int GetVertexCount() const					{ return vertexCount; }
 	
 	//bool GetPLayingBackwards() { return skeleton.playingBackwards; }
 };

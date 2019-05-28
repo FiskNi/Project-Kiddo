@@ -82,19 +82,19 @@ public:
 	void setBBY(float y);
 
 	// Fixed return to be here 
-	Mesh GetMeshData() const { return entityMesh; }
+	Mesh& GetMeshData()						{ return entityMesh; }
 
-	Mesh* GetMeshDataPointer() { return &entityMesh; }
+	Mesh* GetMeshDataPointer()				{ return &entityMesh; }
 
-	glm::vec3 GetPosition() const { return  entityMesh.GetPosition(); }
-	glm::vec3 GetPositionBB() const { return GetPosition() + boundingBoxCenter; }
-	glm::vec3 GetHitboxSize() const { return boundingBoxSize; }
-	glm::vec3 GetHitboxOffset() const { return boundingBoxCenter; }
-	float GetHitboxBottom() const { return GetPosition().y - boundingBoxSize.y + boundingBoxCenter.y; }
-	float GetHitboxTop() const { return GetPosition().y + boundingBoxSize.y + boundingBoxCenter.y; }
+	glm::vec3 GetPosition() const			{ return  entityMesh.GetPosition(); }
+	glm::vec3 GetPositionBB() const			{ return GetPosition() + boundingBoxCenter; }
+	glm::vec3 GetHitboxSize() const			{ return boundingBoxSize; }
+	glm::vec3 GetHitboxOffset() const		{ return boundingBoxCenter; }
+	float GetHitboxBottom() const			{ return GetPosition().y - boundingBoxSize.y + boundingBoxCenter.y; }
+	float GetHitboxTop() const				{ return GetPosition().y + boundingBoxSize.y + boundingBoxCenter.y; }
 
-	float GetHitboxBottomOffsetBB() const { return GetHitboxOffset().y - boundingBoxSize.y; }
-	float GetHitboxTopOffsetBB() const { return GetHitboxOffset().y + boundingBoxSize.y; }
+	float GetHitboxBottomOffsetBB() const	{ return GetHitboxOffset().y - boundingBoxSize.y; }
+	float GetHitboxTopOffsetBB() const		{ return GetHitboxOffset().y + boundingBoxSize.y; }
 
 
 

@@ -100,7 +100,7 @@ Scene::Scene()
 	// when trying to play audio
 	audioEngine = irrklang::createIrrKlangDevice();
 	if (audioEngine)
-		audioEngine->play2D("irrKlang/media/bell.wav", false);
+		audioEngine->play2D("irrKlang/media/ophelia.mp3", true);
 	else
 		std::cout << "Failed to create audio device, none connected?" << std::endl;
 
@@ -209,17 +209,14 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		}
 		else
 		{
-			Gravity();
 			// Player movement vector
 			playerCharacter->Move(renderWindow);
 			if (!playerCharacter->IsColliding())
 			{
 				playerCharacter->AddVelocity(playerCharacter->GetInputVector());
 			}
+			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
 
-			// Character update
-			playerCharacter->Update(deltaTime);
-			// Update the scene
 			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 			{
 				roomBuffer->GetRigids()[i].Update(deltaTime);
@@ -229,8 +226,9 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			{
 				roomBuffer->GetBridges()[i].Update(deltaTime);
 			}
+			playerCharacter->Update(deltaTime);
 
-			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
+			Gravity();
 			menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
 			// Compile render data for the renderer
 			CompileMeshData();
@@ -302,14 +300,6 @@ void Scene::LoadRoom()
 		roomBuffer = new Room(roomLoader, audioEngine);
 		// ADD SOUND PLAY
 
-		// Light overrides
-		for (int i = 0; i < roomBuffer->GetPointLights().size(); i++)
-		{
-			roomBuffer->GetPointLights()[i].setAttenuation(5.0f);
-			roomBuffer->GetPointLights()[i].setPower(5.0f);
-			roomBuffer->GetPointLights()[i].SetSpecular(glm::vec3(0.0f));
-		}
-
 		roomBuffer->GetPointLights()[0].setAttenuation(2);
 		roomBuffer->GetPointLights()[0].setPower(9.0f);
 
@@ -319,21 +309,21 @@ void Scene::LoadRoom()
 		roomBuffer->GetPointLights()[2].setAttenuation(0);
 		roomBuffer->GetPointLights()[2].setPower(0.0f);
 
-		roomBuffer->GetPointLights()[3].setAttenuation(0);
-		roomBuffer->GetPointLights()[3].setPower(0.0f);
-
-		roomBuffer->GetPointLights()[4].setAttenuation(0);
-		roomBuffer->GetPointLights()[4].setPower(0.0f);
-
 		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 0.89f, 0.6f));
-		roomBuffer->GetDirectionalLights()[0].SetStrength(0.24f);
-
+		roomBuffer->GetDirectionalLights()[0].SetStrength(0.32f);
 	}
 	else if (roomNr == 1)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/BridgeBuildTutorial.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, audioEngine);
+		for (int i = 0; i < roomBuffer->GetPointLights().size(); i++)
+		{
+			roomBuffer->GetPointLights()[i].setAttenuation(5.0f);
+			roomBuffer->GetPointLights()[i].setPower(4.0f);
+			roomBuffer->GetPointLights()[i].SetSpecular(glm::vec3(0.0f));
+		}
+
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 2)
@@ -345,10 +335,39 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[ToyBox].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Toybox].meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, audioEngine);
 		// ADD SOUND PLAY
+
+
+		roomBuffer->GetPointLights()[0].setAttenuation(3);
+		roomBuffer->GetPointLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[0].setPower(4.0f);
+
+		roomBuffer->GetPointLights()[1].setAttenuation(2);
+		roomBuffer->GetPointLights()[1].SetDiffuse(glm::vec3(0.5f, 0.0f, 1.0f));
+		roomBuffer->GetPointLights()[1].setPower(5.0f);
+
+		roomBuffer->GetPointLights()[2].setAttenuation(2);
+		roomBuffer->GetPointLights()[2].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[2].setPower(5.0f);
+
+		roomBuffer->GetPointLights()[3].setAttenuation(3);
+		roomBuffer->GetPointLights()[3].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[3].setPower(4.0f);
+
+		roomBuffer->GetPointLights()[4].setAttenuation(7);
+		roomBuffer->GetPointLights()[4].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[4].setPower(1.0f);
+
+		roomBuffer->GetPointLights()[5].setAttenuation(2);
+		roomBuffer->GetPointLights()[5].SetDiffuse(glm::vec3(0.0f, 0.0f, 0.0f));
+		roomBuffer->GetPointLights()[5].setPower(10.0f);
+
+		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetDirectionalLights()[0].SetStrength(0.18f);
+
 	}
 	else if (roomNr == 99)
 	{
@@ -397,7 +416,7 @@ void Scene::LoadRoom()
 void Scene::Gravity()
 {
 	// Our downward acceleration
-	const float gravity = -2.0;
+	const float gravity = -0.982;
 
 	// Entity boxes
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)

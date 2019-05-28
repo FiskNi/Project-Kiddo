@@ -138,8 +138,8 @@ void Renderer::ShadowmapRender(Shader gShaderProgram,
 //	Main render pass
 //=============================================================
 void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera camera, 
-	float gClearColour[3], std::vector<Light> lightArr, 
-	std::vector<DirectionalLight> dirLightArr, std::vector<Material*> materials)
+	float gClearColour[3], std::vector<Light>& lightArr, 
+	std::vector<DirectionalLight>& dirLightArr, std::vector<Material*>& materials)
 {
 	// Position in shader
 	// set the color TO BE used (this does not clear the screen right away)
