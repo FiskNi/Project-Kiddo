@@ -252,7 +252,7 @@ std::vector<Collectible>& Character::GetCollectedCollectibles()
 //	//}
 //}
 
-void Character::PickUpCollectible(Collectible * coll)
+void Character::PickUpCollectible(Collectible* coll)
 {
 	if (!collected[coll->GetIndex()].GetCollected()) {
 		collected[coll->GetIndex()].SetCollected(true);
