@@ -1320,7 +1320,8 @@ void Room::CompileMeshData()
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
 	{
-		meshes.push_back(colPlanes[i].GetMeshData());
+		//meshes[j] = colPlanes[i].GetMeshData();
+		j++;
 	}
 
 	//Applying all parent data on the child mesh
@@ -1522,6 +1523,7 @@ void Room::LoadEntities(Loader* level)
 			ColPlane plane(level, i, matID);
 
 			colPlanes.push_back(plane);
+			meshAmount++;
 			break;
 		}
 
