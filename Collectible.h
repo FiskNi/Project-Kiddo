@@ -1,5 +1,6 @@
 #pragma once
 #include "StaticEntity.h"
+#include "Headers.h"
 
 class Collectible : public StaticEntity
 {
@@ -10,6 +11,7 @@ private:
 	int index = -1;
 public:
 	Collectible(unsigned int i = 1) : StaticEntity(i) {};
+	Collectible(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
 	~Collectible() {};
 
 	void SetCollected(bool tf) { this->collected = tf; }

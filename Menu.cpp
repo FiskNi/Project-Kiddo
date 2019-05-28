@@ -33,12 +33,21 @@ Menu::Menu()
 	CreateCollectibleTextures();	
 
 	CreateMainMenu();
+
+	musicEngine = irrklang::createIrrKlangDevice();
+	//if (audioEngine)
+	//	audioEngine->play2D("irrKlang/media/sad-music-box.mp3", false);
+	//else
+	//	std::cout << "Failed to create audio device, none connected?" << std::endl;
 }
 
 
 Menu::~Menu() 
 {
 	//glfwDestroyCursor(handCursor);
+
+	if (musicEngine)
+		musicEngine->drop();
 }
 
 // ========================================================================
@@ -87,9 +96,14 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 	if (activeMenu == MAINACTIVE) 
 	{
 		if (isButtonHit == true) {
-			if (currentButtonHit == 1) {
+			if (musicEngine)
+				musicEngine->play2D("irrKlang/media/paper.mp3", false);
+
+			if (currentButtonHit == 1) 
+			{
 				// START GAME			// This is handled in GameEngine by getting the last clicked button
 				updateState = PLAYING;
+
 			}
 			else if (currentButtonHit == 2) {
 				// SETTINGS? CREDITS? HOW TO PLAY?
@@ -134,6 +148,7 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 	}
 	else if (activeMenu == PAUSEACTIVE) {
 		if (isButtonHit == true) {
+
 			currentButtonHit = -1;
 			isButtonHit = false;
 		}

@@ -72,6 +72,8 @@ private:
 
 	bool isHovering;
 
+	irrklang::ISoundEngine* musicEngine;
+
 public:
 
 	Menu();

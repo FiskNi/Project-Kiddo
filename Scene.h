@@ -75,8 +75,6 @@ private:
 	bool exittoMenu;
 	bool roomLoaded;
 
-	//Menu menuHandler;
-
 	// Character
 	Character* playerCharacter;
 
@@ -87,7 +85,8 @@ private:
 	void _CheckPressedButtons();
 	void _CheckPressedBombs();
 
-	irrklang::ISoundEngine* audioEngine;
+	irrklang::ISoundEngine* musicEngine;
+	irrklang::ISoundEngine* walkingEngine;
 
 public:
 	Scene();

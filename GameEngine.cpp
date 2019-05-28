@@ -45,6 +45,13 @@ GameEngine::GameEngine()
 
 
 	//menuIsRunning = true;
+
+	musicEngine = irrklang::createIrrKlangDevice();
+	if (musicEngine)
+		musicEngine->play2D("irrKlang/media/sad-music-box.mp3", true);
+
+	soundEffectEngine = irrklang::createIrrKlangDevice();
+
 }
 
 GameEngine::~GameEngine()
@@ -59,6 +66,10 @@ GameEngine::~GameEngine()
 		delete collectibleMenuVertexData;
 	if (htpMenuVertexData)
 		delete htpMenuVertexData;
+	if (musicEngine)
+		musicEngine->drop();
+	if (soundEffectEngine)
+		soundEffectEngine->drop();
 }
 
 void GameEngine::CompileRoomData()
@@ -209,11 +220,14 @@ void GameEngine::Run()
 		glfwPollEvents();
 		if (mainMenu.GetHasButtonActionExecuted() == false) 
 		{
-			if (mainMenu.GetUpdateState() == PLAYING) {
+			if (mainMenu.GetUpdateState() == PLAYING) 
+			{
 				mainScene.ResumeGame();
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
 				switchCursorOnce = false;
+				if (musicEngine)
+					musicEngine->stopAllSounds();
 			}
 		}
 		else if (mainScene.GetExit())
@@ -221,6 +235,7 @@ void GameEngine::Run()
 			mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.SetIsMenuRunning(true);
 			mainScene.Exited();
+
 		}
 
 
@@ -328,6 +343,9 @@ void GameEngine::Run()
 						int clickedButton = mainMenu.GetLastClickedButton();
 						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;
 
+						if (soundEffectEngine)
+							soundEffectEngine->play2D("irrKlang/media/paper.mp3", false);
+
 						if (clickedButton == 0) {
 							// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
 						}
@@ -347,6 +365,8 @@ void GameEngine::Run()
 							mainMenu.ResetUpdateState();
 							mainScene.ExitToMainMenu();
 							mainMenu.SetIsMenuRunning(true);
+							if (musicEngine)
+								musicEngine->play2D("irrKlang/media/sad-music-box.mp3", true);
 							//std::cout << "MAIN MENU" << std::endl;
 						}
 						switchCursorOnce = false;

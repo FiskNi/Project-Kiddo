@@ -144,6 +144,12 @@
     <ClCompile Include="Item.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="ColPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collectible.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -256,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="MenuButton.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColPlane.h">
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

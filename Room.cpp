@@ -2,7 +2,7 @@
 
 
 
-Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
+Room::Room(Loader* aLoader, irrklang::ISoundEngine* musicEngine)
 {
 
 	firstCall = true;
@@ -17,13 +17,16 @@ Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
 
-	this->audioEngine = audioEngine;
+	this->musicEngine = musicEngine;
+	boxEngine = irrklang::createIrrKlangDevice();
 }
 
 Room::~Room()
 {
 	if (roomCamera)
 		delete roomCamera;
+	if (boxEngine)
+		boxEngine->drop();
 }
 
 //=============================================================
@@ -64,7 +67,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	}
 
 
+
 	BoxHolding(playerCharacter, renderWindow);
+	if(playerCharacter->IsHoldingObject() == false)
+		if (boxEngine)
+			boxEngine->stopAllSounds();
+
 
 	RigidGroundCollision(playerCharacter);
 	PlayerRigidCollision(playerCharacter);
@@ -77,7 +85,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	PlayerDoorCollision(playerCharacter);
 	
 	//PlayerItemCollision(playerCharacter);
-	//PlayerCollectibleCollision(playerCharacter);
+	PlayerCollectibleCollision(playerCharacter);
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -93,6 +101,8 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 				{
 					if (!bridges[j].GetExtending() && !bridges[j].GetExtended())
 						// ADD SOUND PLAY
+						if (musicEngine)
+							musicEngine->play2D("irrKlang/media/Button.mp3", false);
 					bridges[j].Extend();			
 				}
 			}
@@ -115,6 +125,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 							if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[p].CheckLinkID(pressurePlates[j].GetLinkID()))
 							{
 								bridges[p].Retract();
+
 							}
 						}
 					}	
@@ -164,13 +175,26 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
 		{
-			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS || glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_E) == GLFW_PRESS)
 			{
 				
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
 				rigids[playerCharacter->GetEntityID()].SetHeld(true);
 				playerCharacter->SetHoldingObject(true);
-			
+				
+				
+				if (glm::length(rigids[playerCharacter->GetEntityID()].GetVelocity()) >= 0.5f)
+				{
+					if (boxEngine && !boxEngine->isCurrentlyPlaying("irrKlang/media/movingBoxes1.mp3"))
+					{
+						boxEngine->play2D("irrKlang/media/movingBoxes1.mp3", false);
+					}
+				}
+				else
+					if(boxEngine)
+						boxEngine->stopAllSounds();
 			}
 		}
 	}
@@ -231,10 +255,14 @@ void Room::PlayerDoorCollision(Character* playerCharacter)
 	}
 }
 
-void Room::PlayerCollectibleCollision(Character * playerCharacter)
+void Room::PlayerCollectibleCollision(Character* playerCharacter)
 {
-	for (int i = 0; i < collectibles.size(); i++) {
-		if (playerCharacter->CheckCollision(collectibles[i])) {
+	for (int i = 0; i < collectibles.size(); i++) 
+	{
+		if (playerCharacter->CheckCollision(collectibles[i])) 
+		{
+			if(musicEngine)
+				musicEngine->play2D("irrKlang/media/plingCollect.mp3", false);
 			playerCharacter->PickUpCollectible(&collectibles[i]);
 			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
 		}
@@ -859,7 +887,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		for (int j = 0; j < bridges.size(); ++j)
 		{
 			if (rigids[i].CheckCollision(bridges[j]))
-			{	
+			{
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 				{
@@ -890,6 +918,21 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			}
 		}
 
+		//All the ColPlanes
+		for (int j = 0; j < colPlanes.size(); ++j)
+		{
+			if (rigids[i].CheckHolderCollision(colPlanes[j]))
+			{
+				float tempGround = colPlanes[j].GetGroundHeight(rigids[i].GetPosition());
+
+				if (tempGround != -1)
+				{
+					ground = tempGround;
+					rigids[i].SetGrounded(true);
+				}
+			}
+		}
+
 		rigids[i].GroundLevel(ground);
 	}
 
@@ -907,7 +950,21 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				if (statics[j].GetHitboxTop() > ground)
 					ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
-			}	
+			}
+		}
+	}
+
+	for (int j = 0; j < colPlanes.size(); ++j)
+	{
+		if (playerCharacter->CheckHolderCollision(colPlanes[j]))
+		{
+			float tempGround = colPlanes[j].GetGroundHeight(playerCharacter->GetPosition());
+
+			if (tempGround != -1)
+			{
+				ground = tempGround;
+				playerCharacter->SetGrounded(true);
+			}
 		}
 	}
 
@@ -1159,6 +1216,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 
 }
 
+
 void Room::BridgeUpdates(GLFWwindow *renderWindow)
 {
 	for (int i = 0; i < bridges.size(); i++)
@@ -1258,7 +1316,11 @@ void Room::CompileMeshData()
 		meshes[j] = collectibles[i].GetMeshData();
 		j++;
 	}
-	
+	for (int i = 0; i < colPlanes.size(); i++)
+	{
+		meshes.push_back(colPlanes[i].GetMeshData());
+	}
+
 	//Applying all parent data on the child mesh
 	updateChildren();
 	firstCall = false;
@@ -1436,11 +1498,11 @@ void Room::LoadEntities(Loader* level)
 
 		case 12:	// Collectible
 		{
-			/*Collectible coll;
+			Collectible coll(level, i, matID, true);
 			coll.SetMaterialID(matID);
 			coll.SetIndex(level->GetCollectIndex(i));
 			collectibles.push_back(coll);
-			meshAmount++;*/
+			meshAmount++;
 		}
 			break;
 
@@ -1452,6 +1514,13 @@ void Room::LoadEntities(Loader* level)
 			//item.SetMaterialID(matID);
 			//items.push_back(item);
 			//meshAmount++;
+		}
+		case 14: // Collision Plane
+		{
+			ColPlane plane(level, i, matID);
+
+			colPlanes.push_back(plane);
+			break;
 		}
 
 		default:

@@ -56,6 +56,9 @@ private:
 
 	float collMenuClearColour[3]{0.25f, 0.15f, 0.25f};
 
+	irrklang::ISoundEngine* musicEngine;
+	irrklang::ISoundEngine* soundEffectEngine;
+
 public:
 	GameEngine();
 	~GameEngine();

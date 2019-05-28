@@ -131,6 +131,8 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="ColPlane.cpp" />
+    <ClCompile Include="Collectible.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -167,6 +169,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Collectible.h" />
+    <ClInclude Include="ColPlane.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="Entity.h" />

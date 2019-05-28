@@ -23,6 +23,7 @@
 
 #include "Door.h"
 #include "Collectible.h"
+#include "ColPlane.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -87,6 +88,7 @@ private:
 	std::vector<Item> items;
 	std::vector<Door> doors;
 	std::vector<Collectible> collectibles;
+	std::vector<ColPlane> colPlanes;
 
 	std::vector<boxHolder> holders;
 
@@ -104,10 +106,11 @@ private:
 	bool firstCall;
 	int meshAmount;
 
-	irrklang::ISoundEngine* audioEngine;
+	irrklang::ISoundEngine* musicEngine;
+	irrklang::ISoundEngine* boxEngine;
 
 public:
-	Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine);
+	Room(Loader* aLoader, irrklang::ISoundEngine* musicEngine);
 	~Room();
 
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
