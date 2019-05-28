@@ -314,7 +314,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/BridgeBuildTutorial.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, audioEngine);
 		for (int i = 0; i < roomBuffer->GetPointLights().size(); i++)
@@ -334,6 +334,12 @@ void Scene::LoadRoom()
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 3)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BridgeTutorial].meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, audioEngine);
+	}
+	else if (roomNr == 4)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Toybox].meh");
 		LoadMaterials(roomLoader);
