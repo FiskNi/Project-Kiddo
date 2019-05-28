@@ -312,6 +312,7 @@ void GameEngine::Run()
 				UpdateImGui(renderDepth);
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 				glfwSwapBuffers(mainRenderer.getWindow());
 			}
