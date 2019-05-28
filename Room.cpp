@@ -887,7 +887,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		for (int j = 0; j < bridges.size(); ++j)
 		{
 			if (rigids[i].CheckCollision(bridges[j]))
-			{	
+			{
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 				{
@@ -918,6 +918,21 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			}
 		}
 
+		//All the ColPlanes
+		for (int j = 0; j < colPlanes.size(); ++j)
+		{
+			if (rigids[i].CheckHolderCollision(colPlanes[j]))
+			{
+				float tempGround = colPlanes[j].GetGroundHeight(rigids[i].GetPosition());
+
+				if (tempGround != -1)
+				{
+					ground = tempGround;
+					rigids[i].SetGrounded(true);
+				}
+			}
+		}
+
 		rigids[i].GroundLevel(ground);
 	}
 
@@ -935,7 +950,21 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				if (statics[j].GetHitboxTop() > ground)
 					ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
-			}	
+			}
+		}
+	}
+
+	for (int j = 0; j < colPlanes.size(); ++j)
+	{
+		if (playerCharacter->CheckHolderCollision(colPlanes[j]))
+		{
+			float tempGround = colPlanes[j].GetGroundHeight(playerCharacter->GetPosition());
+
+			if (tempGround != -1)
+			{
+				ground = tempGround;
+				playerCharacter->SetGrounded(true);
+			}
 		}
 	}
 
@@ -1187,6 +1216,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 
 }
 
+
 void Room::BridgeUpdates(GLFWwindow *renderWindow)
 {
 	for (int i = 0; i < bridges.size(); i++)
@@ -1286,7 +1316,11 @@ void Room::CompileMeshData()
 		meshes[j] = collectibles[i].GetMeshData();
 		j++;
 	}
-	
+	for (int i = 0; i < colPlanes.size(); i++)
+	{
+		meshes.push_back(colPlanes[i].GetMeshData());
+	}
+
 	//Applying all parent data on the child mesh
 	updateChildren();
 	firstCall = false;
@@ -1480,6 +1514,13 @@ void Room::LoadEntities(Loader* level)
 			//item.SetMaterialID(matID);
 			//items.push_back(item);
 			//meshAmount++;
+		}
+		case 14: // Collision Plane
+		{
+			ColPlane plane(level, i, matID);
+
+			colPlanes.push_back(plane);
+			break;
 		}
 
 		default:

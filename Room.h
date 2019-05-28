@@ -23,6 +23,7 @@
 
 #include "Door.h"
 #include "Collectible.h"
+#include "ColPlane.h"
 //============================================================================
 //	- Rooms
 //	A room will hold everything that doesn't get transfered between rooms.
@@ -87,6 +88,7 @@ private:
 	std::vector<Item> items;
 	std::vector<Door> doors;
 	std::vector<Collectible> collectibles;
+	std::vector<ColPlane> colPlanes;
 
 	std::vector<boxHolder> holders;
 
