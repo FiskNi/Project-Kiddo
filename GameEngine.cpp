@@ -269,10 +269,10 @@ void GameEngine::Run()
 			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
 			// If Collectible Menu is active, render te Collectible menu over the main menu
 			if (mainMenu.GetActiveMenu() == COLLECTIBLEACTIVE) {
-				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), collMenuClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), gClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
 			}
 			else if (mainMenu.GetActiveMenu() == HTPACTIVE) {
-				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetHtpMenuButtons(), collMenuClearColour, mainMenu.GetHtpTextures(), HTPACTIVE);
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetHtpMenuButtons(), gClearColour, mainMenu.GetHtpTextures(), HTPACTIVE);
 			}
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
