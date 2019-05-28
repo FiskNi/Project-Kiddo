@@ -17,7 +17,7 @@ Entity::Entity(unsigned int i)
 	InitBoundingBox();
 }
 
-Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader->GetVerticies(index), inLoader->GetVertexCount(index))
+Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : entityMesh(inLoader, index)
 {
 	// Created a bounding box based on the entityMesh 
 	LoaderMesh tempMesh = inLoader->GetMesh(index);
@@ -53,7 +53,6 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entit
 	glm::mat4 rotationMatrix = glm::mat4_cast(eRotation);
 	glm::mat4 scaleMatrix = glm::scale(offsetCenterMat, eScale);
 
-
 	InitBoundingBox();
 	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
 	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
@@ -69,8 +68,6 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entit
 	{
 		entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
 	}
-
-
 
 	//boundingBoxCenter = ePosition;
 
@@ -123,6 +120,7 @@ bool Entity::CheckCollision(Entity collidingCube)
 	AABB collidingBoundingBox;
 	collidingBoundingBox.position = collidingCube.GetPositionBB();
 	collidingBoundingBox.size = collidingCube.GetHitboxSize();
+	collidingBoundingBox.size.y *= 1.02f;
 
 	glm::vec3 box1p1 = thisBoundingBox.position + thisBoundingBox.size;
 	glm::vec3 box1p2 = thisBoundingBox.position - thisBoundingBox.size;
@@ -271,6 +269,16 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 void Entity::scaleBB(float x)
 {
 	boundingBoxSize *= x;
+}
+
+void Entity::scaleBBX(float x)
+{
+	boundingBoxSize.x *= x;
+}
+
+void Entity::scaleBBZ(float z)
+{
+	boundingBoxSize.z *= z;
 }
 
 void Entity::scaleBBY(float y)

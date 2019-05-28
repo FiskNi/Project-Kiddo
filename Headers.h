@@ -31,10 +31,6 @@
 
 #include "irrKlang/include/irrKlang.h"
 
-// Include FreeType for fonts and text
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "glfw3.lib")

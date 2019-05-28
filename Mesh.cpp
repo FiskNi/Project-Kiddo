@@ -1,22 +1,5 @@
 #include "Mesh.h" 
 
-Mesh::Mesh(Vertex* vertArr, unsigned int vertexCount)
-{
-	this->position			= glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotationEulerXYZ	= glm::vec3(0.0f, 0.0f, 0.0f);
-	this->rotation			= glm::quat(rotationEulerXYZ);
-	this->scale				= glm::vec3(1.0f);
-
-	isChild = false;
-	parentPosOffset = glm::vec3(0, 0, 0);
-	parentSizeOffset = glm::vec3(1, 1, 1);
-	myParent = nullptr;
-	myGroupParent = nullptr;
-
-	this->materialID = 0;
-	ImportMesh(vertArr, vertexCount);
-}
-
 Mesh::Mesh(Loader* inLoader, int index)
 {
 	glm::vec3 ePosition		= glm::vec3(inLoader->GetMesh(index).translation[0], inLoader->GetMesh(index).translation[1], inLoader->GetMesh(index).translation[2]);
@@ -508,7 +491,6 @@ void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 	}
 
 	//CalculateTangents();
-
 }
 
 void Mesh::CalculateTangents()

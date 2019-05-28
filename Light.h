@@ -45,6 +45,7 @@ public:
 	void SetDiffuse(glm::vec3 diffuse);
 	void SetSpecular(glm::vec3 specular);
 	void setAttenuation(float constant, float linear, float quadratic);
+	void setAttenuation(int attModifier);
 	void setRange(float range);
 	void setPower(float power);
 

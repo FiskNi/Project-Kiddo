@@ -8,8 +8,12 @@ Renderer::Renderer()
 
 	gVertexBuffer = 0;
 	gVertexAttribute = 0;
-	gVertexBufferMenu = 0;
-	gVertexAttributeMenu = 0;
+	gVertexBufferMain = 0;
+	gVertexAttributeMain = 0;
+	gVertexBufferPause = 0;
+	gVertexAttributePause = 0;
+	gVertexBufferCollectible = 0;
+	gVertexAttributeCollectible = 0;
 
 
 	initWindow(WIDTH, HEIGHT);
@@ -23,9 +27,16 @@ Renderer::~Renderer()
 {
 	glDeleteFramebuffers(1, &gFbo);
 	glDeleteTextures(2, gFboTextureAttachments);
-	glDeleteVertexArrays(1, &gVertexAttribute);
-	glDeleteBuffers(1, &gVertexBuffer);
 
+	glDeleteVertexArrays(1, &gVertexAttribute);
+	glDeleteVertexArrays(1, &gVertexAttributeMain);
+	glDeleteVertexArrays(1, &gVertexAttributePause);
+	glDeleteVertexArrays(1, &gVertexAttributeCollectible);
+
+	glDeleteBuffers(1, &gVertexBuffer);
+	glDeleteBuffers(1, &gVertexBufferMain);
+	glDeleteBuffers(1, &gVertexBufferPause);
+	glDeleteBuffers(1, &gVertexBufferCollectible);
 }
 
 GLFWwindow* Renderer::getWindow()
@@ -127,8 +138,8 @@ void Renderer::ShadowmapRender(Shader gShaderProgram,
 //	Main render pass
 //=============================================================
 void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera camera, 
-	float gClearColour[3], std::vector<Light> lightArr, 
-	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
+	float gClearColour[3], std::vector<Light>& lightArr, 
+	std::vector<DirectionalLight>& dirLightArr, std::vector<Material*>& materials)
 {
 	// Position in shader
 	// set the color TO BE used (this does not clear the screen right away)
@@ -167,8 +178,8 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera 
 		// Per object uniforms
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
-		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
+		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()]->hasNormal());
+		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()]->hasAlbedo());
 
 		// Vertex animation buffer
 		if (objects[i].GetSkeleton().animations.size() >= 1)
@@ -189,23 +200,23 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera 
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
-			materials[objects[i].GetMaterialID()].getAlbedo(),
+			materials[objects[i].GetMaterialID()]->getAlbedo(),
 			gShaderProgram.getShader(),
 			"diffuseTex", 0);
 
 		// Binds the normal texture from a material
-		if (materials[objects[i].GetMaterialID()].hasNormal())
+		if (materials[objects[i].GetMaterialID()]->hasNormal())
 		{
 			passTextureData(GL_TEXTURE1,
-				materials[objects[i].GetMaterialID()].getNormal(),
+				materials[objects[i].GetMaterialID()]->getNormal(),
 				gShaderProgram.getShader(),
 				"normalTex", 1);
 		}
 
-		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getAmbient()));
-		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getDiffuse()));
-		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getSpecular()));
-		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getEmissive()));
+		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getAmbient()));
+		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getDiffuse()));
+		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getSpecular()));
+		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getEmissive()));
 
 		// Binds the shadowmap (handles by the renderer)
 		passTextureData(GL_TEXTURE2,
@@ -228,12 +239,6 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera 
 //=============================================================
 void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 {
-
-	std::vector<vertexPolygon> testVec;
-
-	for (int i = 0; i < vertexCount; i++)
-		testVec.push_back(vertices[i]);
-
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
@@ -354,6 +359,9 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 	if (activeMenu == PAUSEACTIVE) {
 		glBindVertexArray(gVertexAttributePause);
 	}
+	else if (activeMenu == COLLECTIBLEACTIVE) {
+		glBindVertexArray(gVertexAttributeCollectible);
+	}
 	else {
 		glBindVertexArray(gVertexAttributeMain);
 	}
@@ -393,10 +401,10 @@ void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
 	glEnableVertexAttribArray(1);
 
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferMenu);
+	glGenBuffers(1, &gVertexBufferMain);
 
 	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMenu);
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMain);
 
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
@@ -445,6 +453,53 @@ void Renderer::CompilePauseMenuVertexData(int vertexCount, ButtonVtx* vertices)
 
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferPause);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(ButtonVtx), vertices, GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,							// location in shader
+		3,							// how many elements of type (see next argument)
+		GL_FLOAT,					// type of each element
+		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(ButtonVtx),		// distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(ButtonVtx),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+}
+
+//=============================================================
+//	Creates a vertexbuffer from the menu data to be rendered
+//=============================================================
+void Renderer::CompileCollectibleMenuVertexData(int vertexCount, ButtonVtx* vertices)
+{
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttributeCollectible);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttributeCollectible);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBufferCollectible);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferCollectible);
 
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)

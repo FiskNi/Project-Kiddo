@@ -23,7 +23,6 @@ private:
 	float nearPlane;
 	float farPlane;
 
-
 	//Should only apply to some cameras.
 	float mSpeed;
 	//float zoom;

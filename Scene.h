@@ -42,7 +42,7 @@ private:
 
 	void LoadShaders();
 	void LoadMaterials(Loader* inLoader);
-	void LoadCharacter(Loader* inLoader);
+	void LoadCharacter();
 
 	void CompileMeshData();
 
@@ -65,7 +65,7 @@ private:
 	std::vector<Mesh> meshes;
 
 	// Materials are stored in a vector
-	std::vector<Material> materials;
+	std::vector<Material*> materials;
 
 	// Rooms
 	Room* roomBuffer;
@@ -78,7 +78,7 @@ private:
 	Menu menuHandler;
 
 	// Character
-	Character playerCharacter;
+	Character* playerCharacter;
 
 	//Key_callback
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -93,9 +93,9 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<Light> GetPointLights() const					{ return roomBuffer->GetPointLights(); }
-	std::vector<DirectionalLight> GetDirectionalLights() const	{ return roomBuffer->GetDirectionalLights(); }
-	std::vector<Material> GetMaterials() const					{ return materials; }
+	std::vector<Light>& GetPointLights()						{ return roomBuffer->GetPointLights(); }
+	std::vector<DirectionalLight>& GetDirectionalLights() 		{ return roomBuffer->GetDirectionalLights(); }
+	std::vector<Material*>& GetMaterials()						{ return materials; }
 	Shader GetShader(unsigned int i) const						{ return shaders[i]; }
 	std::vector<Mesh>& GetMeshData()							{ return roomBuffer->GetMeshData(); }
 	bool GetIsLoading() const									{ return isLoading; }

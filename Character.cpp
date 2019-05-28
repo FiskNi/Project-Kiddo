@@ -2,11 +2,49 @@
 
 Character::Character() : RigidEntity(1)
 {
-	for (int i = 0; i < itemCap; i++) {
+	for (int i = 0; i < itemCap; i++) 
+	{
 		items.push_back(Item());
 	}
 	
 	for (int i = 0; i < COLLECTEDCAP; i++) {
+
+		collected.push_back(Collectible());
+	}
+
+	holdingObject = false;
+	entityID = -1;
+	inputVector = glm::vec3(0.0f);
+	respawnPos = glm::vec3(0.0f);
+}
+
+Character::Character(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : RigidEntity(inLoader, index, matID, frozen)
+{
+	for (int i = 0; i < itemCap; i++)
+	{
+		items.push_back(Item());
+	}
+
+	for (int i = 0; i < COLLECTEDCAP; i++) {
+
+		collected.push_back(Collectible());
+	}
+
+	holdingObject = false;
+	entityID = -1;
+	inputVector = glm::vec3(0.0f);
+	respawnPos = glm::vec3(0.0f);
+}
+
+Character::Character(Loader* inLoader, unsigned int index, unsigned int matID) : RigidEntity(inLoader, index, matID)
+{
+	for (int i = 0; i < itemCap; i++)
+	{
+		items.push_back(Item());
+	}
+
+	for (int i = 0; i < COLLECTEDCAP; i++) 
+	{
 		collected.push_back(Collectible());
 	}
 
@@ -52,7 +90,7 @@ bool Character::CheckInBound(Entity collidingCube)
 
 	// This is how large the use area around the character is
 	const float bbOffset = 2.0f;
-	inBoundBox.size = glm::vec3(GetHitboxSize().x * bbOffset, 0.5f, GetHitboxSize().y * bbOffset);
+	inBoundBox.size = glm::vec3(GetHitboxSize().x * bbOffset, GetHitboxSize().y, GetHitboxSize().z * bbOffset);
 
 	//=============================================================
 	//	The collision check here is mostly identical to 
@@ -87,105 +125,108 @@ bool Character::CheckInBound(Entity collidingCube)
 void Character::Move(GLFWwindow* window)
 {
 	// Player movement speed
-	const float moveSpeed = 2.5f;
-	const float maxSpeed = 5.0;
+	const float moveSpeed = 2.0f;
+	const float maxSpeed = 4.0;
 	float moveX = 0.0f;
 	float moveY = 0.0f;
 	float moveZ = 0.0f;
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
-	if (glm::length(GetVelocity()) < maxSpeed)
-	{
 
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
+	{
+       	jumpSquat = true;
+		moveY = 1.0f;
+		SetGrounded(false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		if (jumpSquat && RigidEntity::IsGrounded()) 
 		{
-       		jumpSquat = true;
+			moveX = -moveSpeed / 5; 
+			moveY = moveSpeed;
+
+			SetGrounded(false);
+		}
+		else if (RigidEntity::IsGrounded())
+		{
+			moveX += -1.0f;			
+		}
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		if(jumpSquat && RigidEntity::IsGrounded())
+		{
+			moveX = moveSpeed / 5;
 			moveY = moveSpeed;
 			SetGrounded(false);
 		}
-
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		else if (RigidEntity::IsGrounded())
 		{
-			if (jumpSquat && RigidEntity::IsGrounded()) 
-			{
-				moveX = -moveSpeed / 5; 
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				moveX = -moveSpeed;
-			}
+			moveX += 1.0f;
 		}
-
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		{
-			if(jumpSquat && RigidEntity::IsGrounded())
-			{
-				moveX = moveSpeed / 5;
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				moveX = moveSpeed;
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		{
-			if (jumpSquat && RigidEntity::IsGrounded()) 
-			{
-				moveZ = -moveSpeed / 5;
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				moveZ = -moveSpeed;
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			if (jumpSquat && RigidEntity::IsGrounded())
-			{
-				moveZ = moveSpeed / 5;
-				moveY = moveSpeed;
-				SetGrounded(false);
-			}
-			else if (RigidEntity::IsGrounded())
-			{
-				moveZ = moveSpeed;
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
-			jumpSquat = false;
-
-		if (glm::length(GetVelocity()) > 0.5f)
-		{
-			if (!IsHoldingObject()) {
-				glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
-				float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
-				float rotation = acos(cosRotation);
-
-				if (GetVelocityX() > 0)
-					rotation;
-				else
-					rotation = -rotation;
-
-				glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
-				SetRotation(qRotation);
-			}
-		}
-
-		moveDir = glm::vec3(moveX, moveY, moveZ);
-		
-		moveDir *= moveSpeed;
-		glm::clamp(moveDir, 0.0f, glm::length(GetVelocity()));
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		if (jumpSquat && RigidEntity::IsGrounded()) 
+		{
+			moveZ = -moveSpeed / 5;
+			moveY = moveSpeed;
+			SetGrounded(false);
+		}
+		else if (RigidEntity::IsGrounded())
+		{
+			moveZ += -1.0f;
+		}
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		if (jumpSquat && RigidEntity::IsGrounded())
+		{
+			moveZ = moveSpeed / 5;
+			moveY = moveSpeed;
+			SetGrounded(false);
+		}
+		else if (RigidEntity::IsGrounded())
+		{
+			moveZ += 1.0f;
+		}
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+		jumpSquat = false;
+
+	if (glm::length(GetVelocity()) > 0.1f && !holdingObject)
+	{
+		if (!IsHoldingObject()) 
+		{
+			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
+			float rotation = acos(cosRotation);
+
+			if (GetVelocityX() > 0)
+				rotation;
+			else
+				rotation = -rotation;
+
+			glm::quat qRotation = glm::quat(glm::vec3(0.0f, rotation, 0.0f));
+			SetRotation(qRotation);
+		}
+	}
+
+	moveDir = glm::vec3(moveX, moveY, moveZ);
+	if (glm::length(moveDir) >= 0.1f)
+		moveDir = glm::normalize(moveDir);
+
+	if (holdingObject)
+		moveDir *= moveSpeed / 1.5;
+	else
+		moveDir *= moveSpeed;
+		
 	inputVector = moveDir;
 }
 

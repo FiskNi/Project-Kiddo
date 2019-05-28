@@ -113,7 +113,7 @@ void BridgeEntity::Update(float deltaTime)
 			const float speed = 5.0f;
 			glm::vec3 velocity = extendDirection * speed * deltaTime;
 			glm::vec3 calculatedPosition = GetPosition();
-			calculatedPosition += velocity;
+			calculatedPosition += (velocity * 2.0f);
 
 			glm::vec3 extendStop = restPosition + extendDirection * extendDistance;
 
@@ -194,7 +194,59 @@ void BridgeEntity::Update(float deltaTime)
 	}
 	else if (!extended)
 	{
-		SetPosition(restPosition);
-		extended = false;
+		//SetPosition(restPosition);
+		//extended = false;
+
+		const float speed = 5.0f;
+		glm::vec3 velocity = extendDirection * speed * deltaTime;
+		glm::vec3 calculatedPosition = GetPosition();
+		calculatedPosition -= (velocity * 2.0f);
+
+		glm::vec3 extendStop = restPosition + extendDirection * extendDistance;
+
+		if (extendDirection == glm::vec3(1.0f, 0.0f, 0.0f))
+		{
+			if (restPosition.x < GetPosition().x)
+			{
+				SetPosition(calculatedPosition);
+			}
+		}
+		if (extendDirection == glm::vec3(-1.0f, 0.0f, 0.0f))
+		{
+			if (restPosition.x > GetPosition().x)
+			{
+				SetPosition(calculatedPosition);
+			}
+		}
+		if (extendDirection == glm::vec3(0.0f, 0.0f, 1.0f))
+		{
+			if (restPosition.z < GetPosition().z)
+			{
+				SetPosition(calculatedPosition);
+			}
+		}
+		if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
+		{
+			if (restPosition.z > GetPosition().z)
+			{
+				SetPosition(calculatedPosition);
+			}
+		}
+
+		if (extendDirection == glm::vec3(0.0f, 1.0f, 0.0f))
+		{
+			if (restPosition.y < GetPosition().y)
+			{
+				SetPosition(calculatedPosition);
+			}
+		}
+		if (extendDirection == glm::vec3(0.0f, -1.0f, 0.0f))
+		{
+			if (restPosition.y > GetPosition().y)
+			{
+				SetPosition(calculatedPosition);
+			}
+		}
+
 	}
 }
