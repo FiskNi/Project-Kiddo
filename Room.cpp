@@ -1366,7 +1366,7 @@ void Room::LoadLights(Loader* inLoader)
 	DirectionalLight dirLight;
 	dirLights.push_back(dirLight);
 
-	for (int i = 0; i < inLoader->GetDirLightCount(); i++)
+	for (int i = 0; i < 1; i++)
 	{
 		glm::vec3 pos = glm::vec3(
 			inLoader->GetDirLightPos(i)[0],

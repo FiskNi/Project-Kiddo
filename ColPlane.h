@@ -1,7 +1,7 @@
 #pragma once
 #include "StaticEntity.h"
 
-class ColPlane :public StaticEntity
+class ColPlane : public StaticEntity
 {
 private:
 	std::vector<vertexPolygon> origVertPos;
