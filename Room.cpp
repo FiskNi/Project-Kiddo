@@ -2,7 +2,7 @@
 
 
 
-Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
+Room::Room(Loader* aLoader, irrklang::ISoundEngine* musicEngine)
 {
 
 	firstCall = true;
@@ -17,13 +17,16 @@ Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
 
-	this->audioEngine = audioEngine;
+	this->musicEngine = musicEngine;
+	boxEngine = irrklang::createIrrKlangDevice();
 }
 
 Room::~Room()
 {
 	if (roomCamera)
 		delete roomCamera;
+	if (boxEngine)
+		boxEngine->drop();
 }
 
 //=============================================================
@@ -64,7 +67,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	}
 
 
+
 	BoxHolding(playerCharacter, renderWindow);
+	if(playerCharacter->IsHoldingObject() == false)
+		if (boxEngine)
+			boxEngine->stopAllSounds();
+
 
 	RigidGroundCollision(playerCharacter);
 	PlayerRigidCollision(playerCharacter);
@@ -93,6 +101,8 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 				{
 					if (!bridges[j].GetExtending() && !bridges[j].GetExtended())
 						// ADD SOUND PLAY
+						if (musicEngine)
+							musicEngine->play2D("irrKlang/media/Button.mp3", false);
 					bridges[j].Extend();			
 				}
 			}
@@ -115,6 +125,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 							if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[p].CheckLinkID(pressurePlates[j].GetLinkID()))
 							{
 								bridges[p].Retract();
+
 							}
 						}
 					}	
@@ -170,7 +181,18 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
 				rigids[playerCharacter->GetEntityID()].SetHeld(true);
 				playerCharacter->SetHoldingObject(true);
-			
+				
+				
+				if (glm::length(rigids[playerCharacter->GetEntityID()].GetVelocity()) >= 0.5f)
+				{
+					if (boxEngine && !boxEngine->isCurrentlyPlaying("irrKlang/media/movingBoxes1.mp3"))
+					{
+						boxEngine->play2D("irrKlang/media/movingBoxes1.mp3", false);
+					}
+				}
+				else
+					if(boxEngine)
+						boxEngine->stopAllSounds();
 			}
 		}
 	}

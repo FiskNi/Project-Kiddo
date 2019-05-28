@@ -104,10 +104,11 @@ private:
 	bool firstCall;
 	int meshAmount;
 
-	irrklang::ISoundEngine* audioEngine;
+	irrklang::ISoundEngine* musicEngine;
+	irrklang::ISoundEngine* boxEngine;
 
 public:
-	Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine);
+	Room(Loader* aLoader, irrklang::ISoundEngine* musicEngine);
 	~Room();
 
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
