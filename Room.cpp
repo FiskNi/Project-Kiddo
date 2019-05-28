@@ -38,12 +38,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	// Simple animation loop
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
-		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 0.5f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 1.0f)
 			roomMeshes[i].SetTime(0);
 		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
 			roomMeshes[i].SetTime(0);
 
-		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 0.45f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 1.0f)
 			roomMeshes[i].SetPlayingBackwards(true);
 		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
 			roomMeshes[i].SetPlayingBackwards(false);

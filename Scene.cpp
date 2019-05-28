@@ -120,7 +120,7 @@ Scene::Scene()
 	// when trying to play audio
 	audioEngine = irrklang::createIrrKlangDevice();
 	if (audioEngine)
-		audioEngine->play2D("irrKlang/media/bell.wav", false);
+		audioEngine->play2D("irrKlang/media/ophelia.mp3", true);
 	else
 		std::cout << "Failed to create audio device, none connected?" << std::endl;
 
