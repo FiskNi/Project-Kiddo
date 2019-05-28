@@ -135,9 +135,9 @@ void Character::Move(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
 	{
-       	jumpSquat = true;
+       /*	jumpSquat = true;
 		moveY = 1.0f;
-		SetGrounded(false);
+		SetGrounded(false);*/
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)

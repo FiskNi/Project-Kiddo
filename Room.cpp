@@ -164,7 +164,9 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
 		{
-			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS || glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_E) == GLFW_PRESS)
 			{
 				
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
