@@ -1,24 +1,6 @@
 #include "Menu.h"
 
 
-void Menu::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-{
-
-	Menu* menu = (Menu*)glfwGetWindowUserPointer(window);
-	double x, y;
-	glfwGetCursorPos(window, &x, &y);
-	bool isCollided = menu->CheckCollision(x, y, false);
-	if (isCollided == true) {
-		//glfwSetCursor(window, menu->handCursor);
-		std::cout << "HIT" << std::endl;
-		menu->isHovering = true;
-	}
-	else {
-		//glfwSetCursor(window, menu->handCursor);
-		menu->isHovering = false;
-	}
-}
-
 Menu::Menu() 
 {
 #pragma region initialize vector
@@ -43,6 +25,22 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/PauseGUI.png", &pauseBackgroundTexture);
 	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 
+	CreateMenuTexture("Resources/Textures/PauseQuit.png", &tempCollQuit);
+
+	// TESTING COLLECTIBLE TEXTURES
+	// apparently the first button's texture is always te same as the last texture
+	//collectibleTextures.push_back(buttonTextureBase);
+	collectibleTextures.push_back(backgroundTexture);
+	collectibleTextures.push_back(tempCollQuit);
+	collectibleTextures.push_back(backgroundTexture);
+	collectibleTextures.push_back(loadingTexture);
+	collectibleTextures.push_back(pauseBackgroundTexture);
+	collectibleTextures.push_back(backgroundTexture);
+	collectibleTextures.push_back(loadingTexture);
+	collectibleTextures.push_back(pauseBackgroundTexture);
+	collectibleTextures.push_back(backgroundTexture);
+	collectibleTextures.push_back(loadingTexture);
+	collectibleTextures.push_back(pauseBackgroundTexture);
 
 	CreateMainMenu();
 }
@@ -70,14 +68,6 @@ void Menu::CreateMainMenu()
 // ========================================================================
 void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 {
-
-	//Sets user pointer for Key_callbacks
-	if (!setUserPointer)
-	{
-		glfwSetWindowUserPointer(renderWindow, this);
-		glfwSetCursorPosCallback(renderWindow, cursor_position_callback);
-		setUserPointer = true;
-	}
 
 	// ****KEY CALLBACK DOES NOT WORK FOR MENU, please do not attempt to re-implement Key callback in Menu****
 	glfwPollEvents();
@@ -112,7 +102,7 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 			}
 			else if (currentButtonHit == 4) {
 				// MY TOYS / COLLECTIBLE MENU
-				//activeMenu = COLLECTIBLEACTIVE;
+				activeMenu = COLLECTIBLEACTIVE;
 			}
 			currentButtonHit = -1;
 			isButtonHit = false;
@@ -132,6 +122,12 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 				// EXIT
 				//glfwSetWindowShouldClose(renderWindow, GL_TRUE);
 			}
+			currentButtonHit = -1;
+			isButtonHit = false;
+		}
+	}
+	else if (activeMenu == PAUSEACTIVE) {
+		if (isButtonHit == true) {
 			currentButtonHit = -1;
 			isButtonHit = false;
 		}
@@ -233,6 +229,18 @@ bool Menu::CheckCollision(float x, float y, bool isClicked)
 	return false;
 }
 
+bool Menu::CheckButtonHovering(GLFWwindow * renderWindow) {
+	double x, y;
+	glfwGetCursorPos(renderWindow, &x, &y);
+
+	if (CheckCollision(x, y, false)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 // ========================================================================
 //  Creates the Main Menu Background and Main Menu Buttons
 // ========================================================================
@@ -314,17 +322,17 @@ void Menu::CreateCollectibleMenuButtons()
 	// backgroundQuad has already been initialised in CreateMainMenuButtons()
 
 
-	collectibleTextures.push_back(buttonTextureBase);
-	collectibleTextures.push_back(buttonTextureBase);
+	//collectibleTextures.push_back(buttonTextureBase);
 	for (int i = 0; i < COLLECTEDCAP; i++) {
-		MenuButton colButton(GetCurrentOffset(nrOfCollectibleButtons), 0);
+		//collectibleTextures.push_back(buttonTextureBase);
+		MenuButton colButton(GetCurrentOffset(nrOfCollectibleButtons), i);
 		collectibleButtons.push_back(colButton);
 		vertexCountCollectibleTotal += colButton.GetVertexCount();		// Vertex count for buttons is always 6
 		nrOfCollectibleButtons++;
 	}
 
 	//collectibleTextures.push_back(backgroundTexture);
-	//MenuButton bgButton(backgroundQuad, 2, true);
+	//MenuButton bgButton(backgroundQuad, COLLECTEDCAP, true);
 	//collectibleButtons.push_back(bgButton);
 	//vertexCountCollectibleTotal += bgButton.GetVertexCount();		// Vertex count for buttons is always 6
 	//nrOfCollectibleButtons++;

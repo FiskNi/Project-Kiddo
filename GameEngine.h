@@ -51,6 +51,7 @@ private:
 	ButtonVtx* collectibleMenuVertexData;
 	void CompileCollectibleMenuData();
 	bool printMouseClickOnce;
+	bool switchCursorOnce;
 
 public:
 	GameEngine();

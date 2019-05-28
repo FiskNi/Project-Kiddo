@@ -15,7 +15,6 @@ enum ACTIVEMENU
 class Menu 
 {
 private:
-	bool setUserPointer;
 
 	ACTIVEMENU activeMenu = MAINACTIVE;
 
@@ -23,6 +22,8 @@ private:
 	GLuint loadingTexture;
 	GLuint pauseBackgroundTexture;
 	GLuint backgroundTexture;
+
+	GLuint tempCollQuit;
 
 	GLuint buttonTextureBase;
 	std::vector<GLuint> buttonTextures;
@@ -62,12 +63,7 @@ private:
 
 	bool isHovering;
 
-	//GLFWcursor* handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-
-
 public:
-
-	static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 	Menu();
 	~Menu();
@@ -77,6 +73,8 @@ public:
 	void CreateMenuTexture(std::string path, GLuint *texture);
 
 	bool CheckCollision(float x, float y, bool isClicked);
+
+	bool CheckButtonHovering(GLFWwindow * renderWindow);
 
 	void CreateMainMenuButtons();
 	void CreatePauseMenuButtons();
