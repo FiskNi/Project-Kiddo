@@ -1114,6 +1114,8 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 					pushDir.y = 0.0f;
 					pushDir *= 3.0f;
 
+
+
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
