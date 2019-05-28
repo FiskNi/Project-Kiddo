@@ -15,12 +15,12 @@ class Character
 {
 private:
 	const int itemCap = 4;
-	const int collCap = 8;
+	//const int collCap = 8;
 
 	int currentItem = 0;
 	int nrOf = 0;
-	Item** items;
-	Collectible** collected;
+	std::vector<Item> items;
+	std::vector<Collectible> collected;
 	//ID, playerID = 1, Movable box = 2.
 	int entityID;
 	bool holdingObject;
@@ -32,6 +32,8 @@ private:
 
 public:
 	Character();
+	Character(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
+	Character(Loader* inLoader, unsigned int index, unsigned int matID);
 	~Character();
 	
 	void SetHoldingObject(bool holding);
@@ -45,17 +47,13 @@ public:
 	int GetEntityID() const { return entityID; }
 	glm::vec3 GetInputVector() { return inputVector; }
 	glm::vec3 GetRespawnPos() { return respawnPos; }
-	
-	Item* GetCurrentItem() { return this->items[this->currentItem]; }
-	void PickUpItem(Item* item);
+	Item GetCurrentItem() { return this->items[this->currentItem]; }
+	std::vector<Collectible>& GetCollectedCollectibles();
+
+	//void PickUpItem(Item* item);
 	void PickUpCollectible(Collectible* coll);
 	void SetCurrentItem(int i) { this->currentItem = i; }
-	Item* Upgrade();
-	void ItemUsed() {
-		delete items[this->currentItem];
-		items[this->currentItem] = nullptr;
-		nrOf--;
-	}
+	//Item* Upgrade();
 
 
 };

@@ -4,6 +4,17 @@
 
 Renderer::Renderer()
 {
+	boneBuffer = 0;
+
+	gVertexBuffer = 0;
+	gVertexAttribute = 0;
+	gVertexBufferMain = 0;
+	gVertexAttributeMain = 0;
+	gVertexBufferPause = 0;
+	gVertexAttributePause = 0;
+	gVertexBufferCollectible = 0;
+	gVertexAttributeCollectible = 0;
+
 
 	initWindow(WIDTH, HEIGHT);
 
@@ -16,9 +27,16 @@ Renderer::~Renderer()
 {
 	glDeleteFramebuffers(1, &gFbo);
 	glDeleteTextures(2, gFboTextureAttachments);
-	glDeleteVertexArrays(1, &gVertexAttribute);
-	glDeleteBuffers(1, &gVertexBuffer);
 
+	glDeleteVertexArrays(1, &gVertexAttribute);
+	glDeleteVertexArrays(1, &gVertexAttributeMain);
+	glDeleteVertexArrays(1, &gVertexAttributePause);
+	glDeleteVertexArrays(1, &gVertexAttributeCollectible);
+
+	glDeleteBuffers(1, &gVertexBuffer);
+	glDeleteBuffers(1, &gVertexBufferMain);
+	glDeleteBuffers(1, &gVertexBufferPause);
+	glDeleteBuffers(1, &gVertexBufferCollectible);
 }
 
 GLFWwindow* Renderer::getWindow()
@@ -27,12 +45,10 @@ GLFWwindow* Renderer::getWindow()
 }
 
 //=============================================================
-//	From template - Needs explanation
 //	Handles stuff for the fullscreen quad.
 //	Usefull for rendering techniques.
 //=============================================================
-void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> objects, 
-	float gClearColour[])
+void Renderer::firstPassRenderTemp(Shader gShaderProgram, float gClearColour[])
 {
 	// first pass
 	// render all geometry to a framebuffer object
@@ -46,7 +62,6 @@ void Renderer::firstPassRenderTemp(Shader gShaderProgram, std::vector<Mesh> obje
 }
 
 //=============================================================
-//	From template - Needs explanation
 //	Handles stuff for the fullscreen quad.
 //	Usefull for rendering techniques.
 //=============================================================
@@ -71,7 +86,6 @@ void Renderer::secondPassRenderTemp(Shader gShaderProgram)
 
 void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture)
 {
-
 	// Renders alternative Full Screen Quad to cover the screen with a Pause Screen Overlay
 	// bind default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -80,9 +94,9 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 	glUseProgram(gShaderProgram.getShader());
 	glBindVertexArray(gShaderProgram.getVertexAttributes());
 	glDisable(GL_DEPTH_TEST);
-	// bind texture drawn in the first pass!
-	glActiveTexture(GL_TEXTURE0);
+
 	// Binds the pauseOverlayTexture instead of gFboTextureAttachments[0], this is the overlay texture
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, pauseOverlayTexture);
 
 	glActiveTexture(GL_TEXTURE0 + 1);
@@ -90,21 +104,15 @@ void Renderer::secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseO
 	glBindTexture(GL_TEXTURE_2D, shadowMap.getDepthMapAttachment());
 }
 
-
-
 //=============================================================
 //	Pre pass render needed to generate depth map for shadows.
 //=============================================================
-void Renderer::prePassRender(Shader gShaderProgram, 
-	std::vector<Mesh> objects, 
+void Renderer::ShadowmapRender(Shader gShaderProgram, 
+	const std::vector<Mesh>& objects, 
 	Camera camera, 
 	float gClearColour[3], 
 	std::vector<DirectionalLight> dirLightArr)
 {
-	// Position in shader
-	int model_matrix = 1;
-	int shadow_matrix = 2;
-
 	//PrePass render for Shadow mapping 
 	shadowMap.bindForWriting();
 
@@ -118,8 +126,8 @@ void Renderer::prePassRender(Shader gShaderProgram,
 		shadowMap.CreateShadowMatrixData(dirLightArr[0].GetPos(), gShaderProgram.getShader());
 
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
-		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniformMatrix4fv(shadow_matrix, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
+		glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
+		glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(shadowMap.getShadowMatrix()));
 
 		glDrawArrays(GL_TRIANGLES, startIndex, objects[i].GetVertexCount());
 		startIndex += objects[i].GetVertexCount();
@@ -129,23 +137,11 @@ void Renderer::prePassRender(Shader gShaderProgram,
 //=============================================================
 //	Main render pass
 //=============================================================
-void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera camera, 
-	float gClearColour[3], std::vector<Light> lightArr, 
-	std::vector<DirectionalLight> dirLightArr, std::vector<Material> materials)
+void Renderer::Render(Shader gShaderProgram, std::vector<Mesh>& objects, Camera camera, 
+	float gClearColour[3], std::vector<Light>& lightArr, 
+	std::vector<DirectionalLight>& dirLightArr, std::vector<Material*>& materials)
 {
 	// Position in shader
-	int view_matrix = 5;
-	int projection_matrix = 6;
-	int model_matrix = 7;
-	int shadow_matrix = 8;
-	int cam_pos = 9;
-	int has_normal = 10;
-	int has_albedo = 11;
-	int ambient = 12;
-	int diffuse = 13;
-	int specular = 14;
-	int emissive = 15;
-
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
@@ -165,7 +161,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 
 	dirLightArr[0].SendToShader(gShaderProgram);
 	//Sending all the lights to shader.
-	for (int i = 0; i < nr_P_LIGHTS; i++)
+	for (int i = 0; i < POINTLIGHTS; i++)
 	{
 		lightArr[i].SendToShader(gShaderProgram, i);
 	}
@@ -182,30 +178,45 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 		// Per object uniforms
 		CreateModelMatrix(objects[i].GetPosition(), objects[i].GetRotation(), objects[i].GetScale(), gShaderProgram.getShader());
 		glUniformMatrix4fv(model_matrix, 1, GL_FALSE, glm::value_ptr(MODEL_MAT));
-		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()].hasNormal());
-		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()].hasAlbedo());
+		glUniform1ui(has_normal, materials[objects[i].GetMaterialID()]->hasNormal());
+		glUniform1ui(has_albedo, materials[objects[i].GetMaterialID()]->hasAlbedo());
 
-		// Binds the VAO of an object to be renderer. Could become slow further on.
+		// Vertex animation buffer
+		if (objects[i].GetSkeleton().animations.size() >= 1)
+		{
+			glUniform1ui(hasAnimation, true);
+			SkinDataBuffer boneData;
+			ComputeAnimationMatrix(&boneData, objects[i].GetSkeleton().currentAnimTime, &objects[i]);
+
+			unsigned int boneDataIndex = glGetUniformBlockIndex(gShaderProgram.getShader(), "SkinDataBlock");
+			glUniformBlockBinding(gShaderProgram.getShader(), boneDataIndex, 1);
+			glBindBufferBase(GL_UNIFORM_BUFFER, 1, boneBuffer);
+			glBufferData(GL_UNIFORM_BUFFER, sizeof(SkinDataBuffer), &boneData, GL_STATIC_DRAW);
+		}
+		else
+		{
+			glUniform1ui(hasAnimation, false);
+		}
 
 		// Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0,
-			materials[objects[i].GetMaterialID()].getAlbedo(),
+			materials[objects[i].GetMaterialID()]->getAlbedo(),
 			gShaderProgram.getShader(),
 			"diffuseTex", 0);
 
 		// Binds the normal texture from a material
-		if (materials[objects[i].GetMaterialID()].hasNormal())
+		if (materials[objects[i].GetMaterialID()]->hasNormal())
 		{
 			passTextureData(GL_TEXTURE1,
-				materials[objects[i].GetMaterialID()].getNormal(),
+				materials[objects[i].GetMaterialID()]->getNormal(),
 				gShaderProgram.getShader(),
 				"normalTex", 1);
 		}
 
-		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getAmbient()));
-		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getDiffuse()));
-		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getSpecular()));
-		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()].getEmissive()));
+		glUniform3fv(ambient, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getAmbient()));
+		glUniform3fv(diffuse, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getDiffuse()));
+		glUniform3fv(specular, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getSpecular()));
+		glUniform3fv(emissive, 1, glm::value_ptr(materials[objects[i].GetMaterialID()]->getEmissive()));
 
 		// Binds the shadowmap (handles by the renderer)
 		passTextureData(GL_TEXTURE2,
@@ -223,12 +234,12 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh> objects, Camera c
 
 }
 
-
 //=============================================================
 //	Creates a vertexbuffer from all the recieved vertex data
 //=============================================================
 void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 {
+
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
 
@@ -243,8 +254,12 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 	glEnableVertexAttribArray(3);
 	glEnableVertexAttribArray(4);
 
+	glEnableVertexAttribArray(5);
+	glEnableVertexAttribArray(6);
+
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
 	glGenBuffers(1, &gVertexBuffer);
+
 
 	// Bind the buffer ID as an ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
@@ -298,20 +313,41 @@ void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 		sizeof(vertexPolygon),
 		BUFFER_OFFSET(sizeof(float) * 11)
 	);
+
+	glVertexAttribPointer(
+		5,
+		4,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 14)
+	);
+	glVertexAttribIPointer(
+		6,
+		4,
+		GL_INT,
+		sizeof(vertexPolygon),
+		BUFFER_OFFSET(sizeof(float) * 18)
+	);
+
+
+	//SkinDataBuffer
+	glGenBuffers(1, &boneBuffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, boneBuffer);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 64, NULL, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-//= ============================================================
-//	Render pass for the main menu ( eventually pause menu as well )
+//==============================================================
+//	Render pass for the main menu and pause menu
 //=============================================================
-void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], GLuint bgTexture, std::vector<GLuint> textures, ACTIVEMENU activeMenu)
+void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], std::vector<GLuint> textures, ACTIVEMENU activeMenu)
 {
 
 	// set the color TO BE used (this does not clear the screen right away)
 	glClearColor(gClearColour[0], gClearColour[1], gClearColour[2], 1.0f);
 	// use the color to clear the color buffer (clear the color buffer only)
-	glClear(GL_COLOR_BUFFER_BIT);													// MAYBE CLEAR THE COLOUR BUT MAYBE NOT
-
-	//secondPassRenderPauseOverlay(bgShaderProgram, bgTexture);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
@@ -323,29 +359,25 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 	if (activeMenu == PAUSEACTIVE) {
 		glBindVertexArray(gVertexAttributePause);
 	}
+	else if (activeMenu == COLLECTIBLEACTIVE) {
+		glBindVertexArray(gVertexAttributeCollectible);
+	}
 	else {
 		glBindVertexArray(gVertexAttributeMain);
 	}
 
 	unsigned int startIndex = 0;
 
-	//passTextureData(GL_TEXTURE0, bgTexture, gShaderProgram.getShader(), "diffuseTex", 0);
-	//glDrawArrays(GL_TRIANGLES, startIndex, sizeof(ButtonVtx)*6);
-	//startIndex += 6;
-
 	for (int i = 0; i < objects.size(); i++)
 	{
-
+		
 		//Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
-
-		// Binds the background texture from the Menu
-		passTextureData(GL_TEXTURE1, bgTexture, gShaderProgram.getShader(), "backgroundTex", 1);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
 		// This is what could be improved with one large buffer and then advance the start index for each object
-		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetSize() );
+		glDrawArrays(GL_TRIANGLES, startIndex, (int)objects[i].GetVertexCount() );
 
 		startIndex += objects[i].GetVertexCount();
 	}
@@ -369,10 +401,58 @@ void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
 	glEnableVertexAttribArray(1);
 
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferMenu);
+	glGenBuffers(1, &gVertexBufferMain);
 
 	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMenu);
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMain);
+
+	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
+	// the last argument (read the docs!)
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(ButtonVtx), vertices, GL_STATIC_DRAW);
+
+	// tell OpenGL about layout in memory (input assembler information)
+	glVertexAttribPointer(
+		0,							// location in shader
+		3,							// how many elements of type (see next argument)
+		GL_FLOAT,					// type of each element
+		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
+		sizeof(ButtonVtx),		// distance between two vertices in memory (stride)
+		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
+	);
+
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(ButtonVtx),
+		BUFFER_OFFSET(sizeof(float) * 3)
+	);
+
+
+}
+
+//=============================================================
+//	Creates a vertexbuffer from the menu data to be rendered
+//=============================================================
+void Renderer::CompilePauseMenuVertexData(int vertexCount, ButtonVtx* vertices)
+{
+	// Vertex Array Object (VAO), description of the inputs to the GPU 
+	glGenVertexArrays(1, &gVertexAttributePause);
+
+	// bind is like "enabling" the object to use it
+	glBindVertexArray(gVertexAttributePause);
+
+	// this activates the first and second attributes of this VAO
+	// think of "attributes" as inputs to the Vertex Shader
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+	glGenBuffers(1, &gVertexBufferPause);
+
+	// Bind the buffer ID as an ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferPause);
 
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
@@ -402,13 +482,13 @@ void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
 //=============================================================
 //	Creates a vertexbuffer from the menu data to be rendered
 //=============================================================
-void Renderer::CompilePauseMenuVertexData(int vertexCount, ButtonVtx* vertices)
+void Renderer::CompileCollectibleMenuVertexData(int vertexCount, ButtonVtx* vertices)
 {
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttributePause);
+	glGenVertexArrays(1, &gVertexAttributeCollectible);
 
 	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttributePause);
+	glBindVertexArray(gVertexAttributeCollectible);
 
 	// this activates the first and second attributes of this VAO
 	// think of "attributes" as inputs to the Vertex Shader
@@ -416,10 +496,10 @@ void Renderer::CompilePauseMenuVertexData(int vertexCount, ButtonVtx* vertices)
 	glEnableVertexAttribArray(1);
 
 	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferPause);
+	glGenBuffers(1, &gVertexBufferCollectible);
 
 	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferPause);
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferCollectible);
 
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
@@ -485,6 +565,8 @@ int Renderer::CreateFrameBuffer()
 
 	// bind default framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 	return err;
 }
 
@@ -553,10 +635,68 @@ void Renderer::CreateModelMatrix(glm::vec3 translation, glm::quat rotation, glm:
 	MODEL_MAT = glm::mat4(1.0f);
 
 	glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
-	glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
-	glm::mat4 scaleMatrix = glm::scale(MODEL_MAT, scale);
+	glm::mat4 rotationMatrix	= glm::mat4_cast(rotation);
+	glm::mat4 scaleMatrix		= glm::scale(MODEL_MAT, scale);
 
 	MODEL_MAT = translationMatrix * rotationMatrix * scaleMatrix;
+}
+
+void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time, Mesh* mesh)
+{
+	// use animation 0 for now....
+	SkeletonD::AnimationD& anim = mesh->GetSkeleton().animations[0];
+	// time must be less than duration.
+	if (anim_time > anim.duration) return;
+
+	//anim_time = 0.0f;
+	// keyframes involved.
+	int k1	= (int)(anim_time * anim.rate);
+	k1		= fmaxf(k1, anim.keyframeFirst);
+
+	int k2	= fminf(k1 + 1, anim.keyframeLast);
+
+	// keyframes in anim_time terms
+	float k1_time = k1 / anim.rate;
+	float k2_time = k2 / anim.rate;
+	// time rescaled into [0..1] as a percentage between k1 and k2
+	float t = (anim_time - k1_time) / (k2_time - k1_time);
+
+	int boneCount = (int)mesh->GetSkeleton().joints.size();
+
+	glm::mat4 bones_global_pose[MAXBONES]{ glm::mat4(1.0f) };
+	for (int i = 0; i < MAXBONES; i++)
+		bones_global_pose[i] = glm::mat4(1.0f);
+
+	glm::vec3 translation_r			= glm::vec3(anim.keyframes[k1].local_joints_T[0] * (1 - t) + anim.keyframes[k2].local_joints_T[0] * t);
+	glm::vec3 scaling_r				= glm::vec3(anim.keyframes[k1].local_joints_S[0] * (1 - t) + anim.keyframes[k2].local_joints_S[0] * t);
+	glm::quat quaternion_r			= glm::slerp(anim.keyframes[k1].local_joints_R[0], anim.keyframes[k2].local_joints_R[0], t);
+
+	MODEL_MAT = glm::mat4(1.0f);
+	glm::mat4 translationMatrix_r	= glm::translate(MODEL_MAT, translation_r);
+	glm::mat4 rotationMatrix_r		= glm::mat4_cast(quaternion_r);
+	glm::mat4 scaleMatrix_r			= glm::scale(MODEL_MAT, scaling_r);
+	glm::mat4 local_r				= translationMatrix_r * rotationMatrix_r * scaleMatrix_r;
+
+	bones_global_pose[0]			= local_r;
+
+	boneList->bones[0]				= bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
+	//boneList->bones[0] = mesh->GetSkeleton().joints[0].invBindPose;
+	for (int bone = 1; bone < boneCount; bone++)
+	{
+		glm::vec3 translation		= glm::vec3(anim.keyframes[k1].local_joints_T[bone] * (1 - t) + anim.keyframes[k2].local_joints_T[bone] * t);
+		glm::vec3 scaling			= glm::vec3(anim.keyframes[k1].local_joints_S[bone] * (1 - t) + anim.keyframes[k2].local_joints_S[bone] * t);
+		glm::quat quaternion		= glm::slerp(anim.keyframes[k1].local_joints_R[bone], anim.keyframes[k2].local_joints_R[bone], t);
+
+		MODEL_MAT = glm::mat4(1.0f);
+		glm::mat4 translationMatrix = glm::translate(MODEL_MAT, translation);
+		glm::mat4 rotationMatrix	= glm::mat4_cast(quaternion);
+		glm::mat4 scaleMatrix		= glm::scale(MODEL_MAT, scaling);
+		glm::mat4 local				= translationMatrix * rotationMatrix * scaleMatrix;
+
+		bones_global_pose[bone]		= bones_global_pose[mesh->GetSkeleton().joints[bone].parentIndex] * local;
+		boneList->bones[bone]		= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
+		//boneList->bones[bone]		= mesh->GetSkeleton().joints[bone].invBindPose;
+	}
 }
 
 //=============================================================

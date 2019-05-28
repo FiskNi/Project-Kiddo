@@ -2,17 +2,18 @@
 
 
 
-Room::Room(std::vector<Material> materials, Loader* aLoader, irrklang::ISoundEngine* audioEngine)
+Room::Room(Loader* aLoader, irrklang::ISoundEngine* audioEngine)
 {
+
+	firstCall = true;
+	meshAmount = 0;
+
 	LoadLights(aLoader);
-	LoadEntities(materials, aLoader);
+	LoadEntities(aLoader);
 	isRoomCompleted = false;
 
 	// Initialize camera (Default constructor)
 	roomCamera = new Camera;
-
-	firstCall = true;
-
 	// Compiles all the mesh data in the room for the renderer
 	CompileMeshData();
 
@@ -34,10 +35,34 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 {
 	roomCamera->FPSCamControls(renderWindow, deltaTime);
 
+	// Simple animation loop
+	for (int i = 0; i < roomMeshes.size(); i++)
+	{
+		if (roomMeshes[i].GetSkeleton().currentAnimTime > 2.0f)
+			roomMeshes[i].SetTime(0);
+		if (roomMeshes[i].GetSkeleton().currentAnimTime < 0.0f)
+			roomMeshes[i].SetTime(0);
+
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 1.1f)
+			roomMeshes[i].SetPlayingBackwards(true);
+		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
+			roomMeshes[i].SetPlayingBackwards(false);
+
+		if (!roomMeshes[i].GetSkeleton().playingBackwards)
+			roomMeshes[i].ForwardTime(deltaTime);
+		else if(roomMeshes[i].GetSkeleton().playingBackwards)
+			roomMeshes[i].BackwardTime(deltaTime);
+	}
+
 	// Reset collisions
 	playerCharacter->SetColliding(false);
+	playerCharacter->SetHoldingObject(false);
 	for (int i = 0; i < rigids.size(); i++)
+	{
 		rigids[i].SetColliding(false);
+		rigids[i].SetHeld(false);
+	}
+
 
 	BoxHolding(playerCharacter, renderWindow);
 
@@ -49,8 +74,9 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BridgeUpdates(renderWindow);
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
-	PlayerItemCollision(playerCharacter);
 	PlayerDoorCollision(playerCharacter);
+	
+	//PlayerItemCollision(playerCharacter);
 	PlayerCollectibleCollision(playerCharacter);
 
 	// Game events
@@ -132,22 +158,33 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 //=============================================================
 void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 {
+	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));	
+
 	if (playerCharacter->GetEntityID() >= 0)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
 		{
-			if (glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_E) == GLFW_PRESS)
 			{
+				
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
 				rigids[playerCharacter->GetEntityID()].SetHeld(true);
+				playerCharacter->SetHoldingObject(true);
+			
 			}
 		}
-		else
-		{
-			rigids[playerCharacter->GetEntityID()].SetHeld(false);
-		}
 	}
-	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+}
+
+int Room::inBoundCheck(Character playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++)
+		if (playerCharacter.CheckInBound(rigids[i]))
+			return i;
+
+	return -1;
 }
 
 void Room::BoxPlateCollision(Character* playerCharacter)
@@ -162,7 +199,6 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 			{
 				pressurePlates[i].setPressed(true);
 				// PLAY SOUND
-
 			}
 		}
 
@@ -171,16 +207,9 @@ void Room::BoxPlateCollision(Character* playerCharacter)
 			pressurePlates[i].setPressed(true);
 			// PLAY SOUND
 		}
-
 	}
 }
 
-//=============================================================
-//	Checks all rigid collisions with the ground, includes the player.
-//	This loops trough all the rigids and all the statics in the scene.
-//	Afterwards does a collision check and applies the highest ground level found.
-//	The actual action on collison happens in the rigid entity class.
-//=============================================================
 void Room::ButtonInteract(GLFWwindow* window, Character * playerCharacter)
 {
 	/*if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
@@ -204,10 +233,12 @@ void Room::PlayerDoorCollision(Character* playerCharacter)
 	}
 }
 
-void Room::PlayerCollectibleCollision(Character * playerCharacter)
+void Room::PlayerCollectibleCollision(Character* playerCharacter)
 {
-	for (int i = 0; i < collectibles.size(); i++) {
-		if (playerCharacter->CheckCollision(collectibles[i])) {
+	for (int i = 0; i < collectibles.size(); i++) 
+	{
+		if (playerCharacter->CheckCollision(collectibles[i])) 
+		{
 			playerCharacter->PickUpCollectible(&collectibles[i]);
 			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
 		}
@@ -218,8 +249,8 @@ void Room::PlayerItemCollision(Character* playerCharacter)
 {
 	for (int i = 0; i < items.size(); i++) {
 		if (playerCharacter->CheckCollision(items[i])) {
-			playerCharacter->PickUpItem(&items[i]);
-			items[i].SetPickedUp(true);
+			/*playerCharacter->PickUpItem(&items[i]);
+			items[i].SetPickedUp(true);*/
 		}
 	}
 }
@@ -503,7 +534,7 @@ void Room::SetAllParents()
 	}
 }
 
-std::vector <float> Room::GetParentOffset(Mesh * childMesh)
+std::vector<float> Room::GetParentOffset(Mesh * childMesh)
 {
 	if (childMesh->GetIsChild() == true)
 	{
@@ -566,7 +597,7 @@ std::vector <float> Room::GetParentOffset(Mesh * childMesh)
 	return std::vector<float>(1,-1);
 }
 
-std::vector <float> Room::GetParentOffset(MeshGroupClass * childGroup)
+std::vector<float> Room::GetParentOffset(MeshGroupClass * childGroup)
 {
 	if (childGroup->GetIsChild() == true)
 	{
@@ -793,15 +824,6 @@ void Room::updateChildren()
 }
 
 
-int Room::inBoundCheck(Character playerCharacter)
-{
-	for (int i = 0; i < rigids.size(); i++)
-		if (playerCharacter.CheckInBound(rigids[i]))
-			return i;
-
-	return -1;
-}
-
 
 //=============================================================
 //	Checks all rigid collisions with the ground, includes the player.
@@ -811,7 +833,7 @@ int Room::inBoundCheck(Character playerCharacter)
 //=============================================================
 void Room::RigidGroundCollision(Character* playerCharacter)
 {
-	const float maxDiff = 0.5f; // Max ground height difference
+	const float maxDiff = 0.7f; // Max ground height difference
 
 	 //Rigid entites ground collision
 	for (int i = 0; i < rigids.size(); i++)
@@ -820,7 +842,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		rigids[i].SetGrounded(false);
 
 		// Variable to find the highest ground level
-		float ground = rigids[i].GetGroundLevel();
+		float ground = -999.0f;
 
 		// All the statics
 		for (int j = 0; j < statics.size(); ++j)
@@ -830,7 +852,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
 				{
-					ground = statics[j].GetHitboxTop();
+					if (statics[j].GetHitboxTop() > ground)
+						ground = statics[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
 			}
@@ -844,7 +867,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 				{
-					ground = bridges[j].GetHitboxTop();
+					if (statics[j].GetHitboxTop() > ground)
+						ground = bridges[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
 			}
@@ -891,8 +915,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	// Player ground collisions
 	// Recheck grounded state, assume it's not grounded
 	playerCharacter->SetGrounded(false);
-	float ground = playerCharacter->GetGroundLevel();
-
+	float ground = -999.0f;
 	for (int j = 0; j < statics.size(); ++j)
 	{
 		if (playerCharacter->CheckCollision(statics[j]))
@@ -900,8 +923,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			// If ground is close enough
 			if (abs(playerCharacter->GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
 			{
-				ground = statics[j].GetHitboxTop();
-
+				if (statics[j].GetHitboxTop() > ground)
+					ground = statics[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}
 		}
@@ -928,7 +951,8 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			// If ground is close enough
 			if (abs(playerCharacter->GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 			{
-				ground = bridges[j].GetHitboxTop();
+				if (statics[j].GetHitboxTop() > ground)
+					ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}	
 		}
@@ -943,7 +967,6 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(playerCharacter->GetHitboxBottom() - holders[j].GetHitboxTopOffsetBB()) < maxDiff)
 				{
-					//holders[j].puntBox();
 					ground = holders[j].GetHitboxTopOffsetBB();
 					playerCharacter->SetGrounded(true);
 				}
@@ -960,11 +983,13 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 //=============================================================
 void Room::PlayerRigidCollision(Character* playerCharacter)
 {
+	//===================================
+	//=========OLD PUSHABLE CODE=========
+	//===================================
 	for (int i = 0; i < rigids.size(); ++i)
 	{
 		if (!rigids[i].IsHeld() && playerCharacter->CheckCollision(rigids[i]))
-		{
-			
+		{		
 			// Push direction vector
 			glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
 			pushDir = glm::normalize(pushDir);
@@ -993,7 +1018,29 @@ void Room::PlayerRigidCollision(Character* playerCharacter)
 
 		}
 	}
+
+
+	for (int i = 0; i < rigids.size(); ++i)
+	{
+		if (playerCharacter->CheckCollision(rigids[i]))
+		{
+			if (abs(rigids[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
+			{
+				glm::vec3 pushDir = rigids[i].GetPosition() - playerCharacter->GetPosition();
+
+				pushDir = normalize(pushDir);
+
+				pushDir.y = 0.0f;
+				pushDir *= 3.0f;
+
+				//playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
+				playerCharacter->SetColliding(true);
+			}
+		}
+	}
 }
+
 
 
 //=============================================================
@@ -1117,7 +1164,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				playerCharacter->SetVelocity(-pushDir);
+				//playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
@@ -1136,14 +1183,12 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				playerCharacter->SetVelocity(-pushDir);
+				//playerCharacter->SetVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
 		}
 	}
-
-
 
 }
 
@@ -1164,34 +1209,21 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 	}
 }
 
-float Room::GetGroundHeight(float posX, float posZ)
-{
-
-	return 0.0f;
-}
-
-void Room::destroyRoom()
-{
-	delete roomCamera;
-}
-
-
 void Room::Upgrade(Character* playerCharacter)
 {
-	Item* temp = playerCharacter->GetCurrentItem();
-	if (temp != nullptr) {
-		for (int i = 0; i < rigids.size(); i++) {
-			if (playerCharacter->CheckInBound(rigids[i])) {
-				rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
-				if (rigids[i].GetBoxType() == 1) {
-					std::cout << "box upgraded" << std::endl;
-				}
-				//playerCharacter->ItemUsed();
+	//Item* temp = playerCharacter->GetCurrentItem();
+	//if (temp != nullptr) {
+	//	for (int i = 0; i < rigids.size(); i++) {
+	//		if (playerCharacter->CheckInBound(rigids[i])) {
+	//			rigids[i].SetBoxType(playerCharacter->GetCurrentItem()->GetItemType());
+	//			if (rigids[i].GetBoxType() == 1) {
+	//				std::cout << "box upgraded" << std::endl;
+	//			}
+	//			//playerCharacter->ItemUsed();
 
-			}
-		}
-	}
-
+	//		}
+	//	}
+	//}
 }
 
 //=============================================================
@@ -1199,59 +1231,66 @@ void Room::Upgrade(Character* playerCharacter)
 //=============================================================
 void Room::CompileMeshData()
 {
-	// NEEDS TO BE CHANGED SO THE VECTOR DOESNT REALLOCATED ALL THE TIME
-	meshes.clear();
 
+	int j = 0;
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
-		meshes.push_back(roomMeshes[i]);
+		meshes[j] = roomMeshes[i];
+		j++;
 	}
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
-		meshes.push_back(rigids[i].GetMeshData());
+		meshes[j] = rigids[i].GetMeshData();
+		j++;
 	}
 
 	for (int i = 0; i < statics.size(); i++)
 	{
-		meshes.push_back(statics[i].GetMeshData());
+		meshes[j] = statics[i].GetMeshData();
+		j++;
 	}
-
-	//for (int i = 0; i < nodes.size(); i++)
-	//{
-	//	meshes.push_back(nodes[i].GetMeshData());
-	//}
 
 	for (int i = 0; i < bridges.size(); i++)
 	{
-		meshes.push_back(bridges[i].GetMeshData());
+		meshes[j] = bridges[i].GetMeshData();
+		j++;
 	}
 
 	for (int i = 0; i < pressurePlates.size(); i++) 
 	{
-		meshes.push_back(pressurePlates[i].GetMeshData());
+		meshes[j] = pressurePlates[i].GetMeshData();
+		j++;
 	}
 
 	for (int i = 0; i < buttons.size(); i++) 
 	{
-		meshes.push_back(buttons[i].GetMeshData());
+		meshes[j] = buttons[i].GetMeshData();
+		j++;
 	}
 
 	for (int i = 0; i < holders.size(); i++)
 	{
-		meshes.push_back(holders[i].GetMeshData());
-		meshes.push_back(holders[i].GetHolderMeshData());
+		meshes[j] = holders[i].GetMeshData();
+		j++;
+		meshes[j] = holders[i].GetHolderMeshData();
+		j++;
 	}
 
 	for (int i = 0; i < items.size(); i++) {
 
-		meshes.push_back(items[i].GetMeshData());
+		meshes[j] = items[i].GetMeshData();
+		j++;
 	}
+
 	for (int i = 0; i < doors.size(); i++) {
-		meshes.push_back(doors[i].GetMeshData());
+		meshes[j] = doors[i].GetMeshData();
+		j++;
 	}
+
 	for (int i = 0; i < collectibles.size(); i++) {
-		meshes.push_back(collectibles[i].GetMeshData());
+		meshes[j] = collectibles[i].GetMeshData();
+		j++;
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
 	{
@@ -1261,8 +1300,6 @@ void Room::CompileMeshData()
 	//Applying all parent data on the child mesh
 	updateChildren();
 	firstCall = false;
-
-
 }
 
 //=============================================================
@@ -1271,9 +1308,9 @@ void Room::CompileMeshData()
 //=============================================================
 void Room::LoadLights(Loader* inLoader)
 {
-	Light light(0.0f, 0.0f, 0.0f, 0.0f, 200, 9);
+	Light light(0.0f, 0.0f, 0.0f, 0.0f, 300, 4);
 
-	light.SetDiffuse(glm::vec3(1.0f, 1.0, 1.0f));
+	light.SetDiffuse(glm::vec3(0.0f, 0.0, 0.0f));
 	light.SetSpecular(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	pointLights.push_back(light);
@@ -1283,6 +1320,7 @@ void Room::LoadLights(Loader* inLoader)
 	pointLights.push_back(light);
 	pointLights.push_back(light);
 
+
 	for (int i = 0; i < inLoader->GetPointLightCount(); i++)
 	{
 		glm::vec3 pos = glm::vec3(
@@ -1290,14 +1328,13 @@ void Room::LoadLights(Loader* inLoader)
 				inLoader->GetPointLightPos(i)[1],
 				inLoader->GetPointLightPos(i)[2]);
 		glm::vec3 color = glm::vec3(
-			inLoader->GetPointLightColor(i)[0],
-			inLoader->GetPointLightColor(i)[1],
-			inLoader->GetPointLightColor(i)[2]);
+				inLoader->GetPointLightColor(i)[0],
+				inLoader->GetPointLightColor(i)[1],
+				inLoader->GetPointLightColor(i)[2]);
 
-		
 		pointLights[i].setLightPos(pos);
 		pointLights[i].SetDiffuse(color);
-		pointLights[i].setPower(inLoader->GetPointLightIntensity(i) * 0.1f);
+		pointLights[i].setPower(6.0f);
 	}
 
 	DirectionalLight dirLight;
@@ -1314,10 +1351,9 @@ void Room::LoadLights(Loader* inLoader)
 			inLoader->GetDirLightColor(i)[1],
 			inLoader->GetDirLightColor(i)[2]);
 
-
 		dirLights[i].SetPos(pos);
-		dirLights[i].SetStrength(inLoader->GetDirLightIntensity(i) * 0.1f);
 		dirLights[i].SetDiffuse(color);
+		dirLights[i].SetStrength(0.4f);
 	}
 
 }
@@ -1326,7 +1362,7 @@ void Room::LoadLights(Loader* inLoader)
 //	Entity initialization
 //	Loads and positions all the entities in the scene
 //=============================================================
-void Room::LoadEntities(std::vector<Material> materials, Loader* level)
+void Room::LoadEntities(Loader* level)
 {
 
 	//==========
@@ -1345,12 +1381,14 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
+				meshAmount++;
 			}
 			break;
 		case 1:		// Mesh
 			{
 				Mesh mesh(level, i);
 				roomMeshes.push_back(mesh);
+				meshAmount++;
 			}
 			break;
 
@@ -1358,6 +1396,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			{
 				StaticEntity levelEntity(level, i, matID, true);
 				statics.push_back(levelEntity);
+				meshAmount++;
 			}
 			break;
 
@@ -1367,6 +1406,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				cubeEntity.OffsetPositionY(3.0f);
 				cubeEntity.SetStartPosition(cubeEntity.GetPosition());
 				rigids.push_back(cubeEntity);
+				meshAmount++;
 			}
 			break;
 
@@ -1378,6 +1418,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
 				bridgeEntity.SetExtendDistance(level->GetMesh(i).dist);
 				bridges.push_back(bridgeEntity);
+				meshAmount++;
 			}
 			break;
 
@@ -1386,6 +1427,8 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				boxHolder boxHolderEntity(level, i, matID, matID, true);
 				boxHolderEntity.puntBox();
 				this->holders.push_back(boxHolderEntity);
+				meshAmount++;
+				meshAmount++;
 			}
 			break;
 
@@ -1396,6 +1439,7 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				button.SetMaterialID(matID);
 				button.scaleBB(2);
 				buttons.push_back(button);
+				meshAmount++;
 			}
 			break;
 
@@ -1407,20 +1451,18 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 				pPlate.setBBY(2.0f);
 				pPlate.scaleBB(2.0f);
 				pressurePlates.push_back(pPlate);
+				meshAmount++;
 			}
 			break;
 
 		case 8:		// Character
-
 			break;
 
 		case 9:		// Door
 			{
-				//Mesh mesh(level, i);
-				//roomMeshes.push_back(mesh);
 				Door door(level, i, matID);
-				//door.SetPosition(glm::vec3(-40, 0.5, 5));
 				doors.push_back(door);
+				meshAmount++;
 			}
 			break;
 
@@ -1432,20 +1474,22 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 
 		case 12:	// Collectible
 		{
-
-			Collectible coll;
+			Collectible coll(level, i, matID, true);
 			coll.SetMaterialID(matID);
+			coll.SetIndex(level->GetCollectIndex(i));
 			collectibles.push_back(coll);
+			meshAmount++;
 		}
 			break;
 
 		case 13:	//Item
 		{
-			Item item;
-			//Need to look over how to import itemtype :)
-			//item.SetItemType()
-			item.SetMaterialID(matID);
-			items.push_back(item);
+			//Item item;
+			////Need to look over how to import itemtype :)
+			////item.SetItemType()
+			//item.SetMaterialID(matID);
+			//items.push_back(item);
+			//meshAmount++;
 		}
 		case 14: // Collision Plane
 		{
@@ -1465,17 +1509,9 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 		MeshGroupClass group(level, i);
 		meshGroups.push_back(group);
 	}
-	/*Collectible coll;
-	coll.SetPosition(glm::vec3(-15, 0.5, -5));
-	coll.SetIndex(0);
-	coll.SetMaterialID(materials[1].GetMaterialID());
-	collectibles.push_back(coll);*/
-	//Item item;
-	//item.SetItemType(BOMB);
-	//item.SetPosition(glm::vec3(-15, 0.5, -5));
-	//item.SetMaterialID(materials[1].GetMaterialID());
-	//items.push_back(item);
-
+	
+	// Allocate memory for the mesh vector
+	meshes.resize(meshAmount + 1);
 	//Finding and setting parents so that things can be moved properly later.
 	SetAllParents();
 }

@@ -4,23 +4,40 @@ MenuButton::MenuButton(float offset, int textureID)
 {
 	this->offset = offset;
 	this->textureID = textureID;
+	this->isNotButton = false;
 	
 	CreateButtonQuad();
 	CalculateBoundingBox();
-	std::cout << "Button BBox MIN: " << cornerMin.x << "  " << cornerMin.y << std::endl;
-	std::cout << "Button BBox MAX: " << cornerMax.x << "  " << cornerMax.y << std::endl;
+	//std::cout << "Button BBox MIN: " << cornerMin.x << "  " << cornerMin.y << std::endl;
+	//std::cout << "Button BBox MAX: " << cornerMax.x << "  " << cornerMax.y << std::endl;
 }
 
-MenuButton::MenuButton(std::vector<ButtonVtx> vertices, int textureID)
+MenuButton::MenuButton(std::vector<ButtonVtx> vertices, int textureID, bool isNotButton)
 {
 	this->offset = 0;
 	this->textureID = textureID;
+	this->isNotButton = isNotButton;
 
 	for (int i = 0; i < 6; i++) {
 		buttonVertices.push_back(vertices[i]);
 	}
 
 	CalculateBoundingBox();
+}
+
+MenuButton::MenuButton(int minX, int minY, int maxX, int maxY, int textureID)
+{
+	this->offset = 0;
+	this->textureID = textureID;
+	this->isNotButton = false;
+
+	CreateButtonQuad();
+
+	cornerMin.x = minX;
+	cornerMin.y = minY;
+	cornerMax.x = maxX;
+	cornerMax.y = maxY;
+
 }
 
 MenuButton::~MenuButton() {
@@ -34,13 +51,21 @@ MenuButton::~MenuButton() {
 void MenuButton::CreateButtonQuad()
 {
 	// Add an offset to the y coordinate in order to offset upcoming buttons once the shape has been defined
+	//ButtonVtx buttVtxTemp[6] = {
+	//	-0.3f,(0.0f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
+	//	-0.3f,(+0.3f - offset)	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
+	//	+0.3f,(+0.3f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
+	//	-0.3f,(0.0f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
+	//	+0.3f,(+0.3f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
+	//	+0.3f,(0.0f - offset)	,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
+	//};
 	ButtonVtx buttVtxTemp[6] = {
-		-0.3f,(0.0f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
-		-0.3f,(+0.3f - offset)	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
-		+0.3f,(+0.3f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
-		-0.3f,(0.0f - offset)	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
-		+0.3f,(+0.3f - offset)	,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
-		+0.3f,(0.0f - offset)	,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
+	(-0.165f + offset), 0.0f	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
+	(-0.165f + offset), 0.3f	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
+	(+0.0f + offset), 0.3f		,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
+	(-0.165f + offset), 0.0f	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
+	(+0.0f + offset), 0.3f		,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
+	(+0.0f + offset), 0.0f		,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
 	};
 
 	for (int i = 0; i < 6; i++) {
@@ -49,6 +74,9 @@ void MenuButton::CreateButtonQuad()
 
 }
 
+//=============================================================
+//	Calculates the bounding box based on the vertices for the button
+//=============================================================
 void MenuButton::CalculateBoundingBox()
 {
 	// Calculates the top left and the bottom right corners to determine which vertices are the min and max corners
@@ -63,9 +91,6 @@ void MenuButton::CalculateBoundingBox()
 			botRightIdx = i;
 		}
 	}
-
-	std::cout << "Top Left idx: " << topLeftIdx << std::endl;
-	std::cout << "Bot Right idx: " << botRightIdx << std::endl;
 
 	// Calculates the pixel position for the vertex coordinates created in -1 to 1 space
 	// Y currently needs -20 as an offset in all cases, might need to be adjusted depending on the button offset in the menu?

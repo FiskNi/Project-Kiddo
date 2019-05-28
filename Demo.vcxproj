@@ -108,7 +108,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>false</OmitFramePointers>
       <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -132,9 +132,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ColPlane.cpp" />
+    <ClCompile Include="Collectible.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="ImGuiHandler.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuButton.cpp" />
@@ -161,7 +161,6 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="StaticEntity.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boxHolder.h" />
@@ -174,7 +173,6 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="ImGuiHandler.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuButton.h" />
@@ -203,7 +201,6 @@
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="StaticEntity.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="mehImporterLib\mehImporterLib.vcxproj">

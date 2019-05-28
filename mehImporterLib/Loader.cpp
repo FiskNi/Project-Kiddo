@@ -1,5 +1,4 @@
 #include "Loader.h"
-
 //#include <string>
 Loader::Loader(std::string fileName)
 {
@@ -7,14 +6,10 @@ Loader::Loader(std::string fileName)
 
 	this->meshGroup = nullptr;
 	this->material = nullptr;
-	this->meshVert = nullptr;
 	this->mesh = nullptr;
 	this->dirLight = nullptr;
 	this->pointLight = nullptr;
-	this->joints = nullptr;
-	this->animations = nullptr;
-	this->keyFrames = nullptr;
-	this->transforms = nullptr;
+	this->meshVert = nullptr;
 
 
 	// =========================================
@@ -32,17 +27,6 @@ Loader::Loader(std::string fileName)
 	}
 	else
 	{
-		//==========================================
-		// Read the exact size of mehHeader AKA size
-		// of Int for now which = 4 bytes.
-		// Each time we read the sizeof a struct we're 
-		// really reading the size of all it contains
-		// so if it has 2 ints that'd be 8 bytes.
-		//==========================================
-
-
-		//std::cout << things << std::endl;
-
 		//Mesh
 		binFile.read((char*)&this->fileHeader, sizeof(MehHeader));
 
@@ -57,7 +41,6 @@ Loader::Loader(std::string fileName)
 		{
 			binFile.read((char*)&this->meshGroup[i], sizeof(MeshGroup));
 		}
-		/*MeshGroup a = meshGroup[1];*/
 		for (int i = 0; i < fileHeader.meshCount; i++)
 		{
 
@@ -71,41 +54,57 @@ Loader::Loader(std::string fileName)
 			{
 				binFile.read((char*)&this->meshVert[i].vertices[j], sizeof(Vertex));
 			}
-
-			this->joints = new Joint[mesh[i].skeletons.jointCount];
-			this->animations = new Animation[mesh[i].skeletons.aniCount];
-			
-			
-
+				
 			// 3.3 Joints
-			for (int j = 0; j < mesh[i].skeletons.jointCount; j++)
+			MeshSkeleton newSkeleton;
+			// Allocate memory for the joint vector inside
+			newSkeleton.joint.resize(mesh[i].skeleton.jointCount);
+			for (int j = 0; j < mesh[i].skeleton.jointCount; j++)
 			{
+				Joint newJoint;
 				std::cout << "Writing joint " << j << "..." << std::endl;
-				binFile.read((char*)&joints[j], sizeof(Joint) * mesh[i].skeletons.jointCount);
+				binFile.read((char*)&newJoint, sizeof(Joint));
+				newSkeleton.joint[j] = newJoint;
 			}
 
-			for (int a = 0; a < mesh[i].skeletons.aniCount; a++)
+
+			MeshAnis newAnimations;
+			// Allocate memory for the animation vector inside
+			newAnimations.animations.resize(mesh[i].skeleton.aniCount);
+			for (int a = 0; a < mesh[i].skeleton.aniCount; a++)
 			{
 				// 3.4.1 Animations
+				Animation newAni;
 				std::cout << "Writing animation " << a << "..." << std::endl;
-				binFile.read((char*)&animations[a], sizeof(Animation));
-				this->keyFrames = new KeyFrame[animations[a].keyframeCount];
-
-				for (int k = 0; k < animations[a].keyframeCount; k++)
+				binFile.read((char*)&newAni, sizeof(Animation));
+				// Apply the data about the animation and
+				// Allocate memory for the keyframe vector inside
+				newAnimations.animations[a].ani = newAni;
+				newAnimations.animations[a].keyFrames.resize(newAni.keyframeCount);
+				for (int k = 0; k < newAni.keyframeCount; k++)
 				{
 					// 3.4.2 Keyframes
+					KeyFrame newKey;
 					std::cout << "Writing keyframe " << k << "..." << std::endl;
-					binFile.read((char*)&keyFrames[k], sizeof(KeyFrame));
-					this->transforms = new Transform[keyFrames[k].transformCount];
-
-					for (int t = 0; t < keyFrames[k].transformCount; t++)
+					binFile.read((char*)&newKey, sizeof(KeyFrame));
+					// Apply the data about the keyframe and
+					// Allocate memory for the transform vector inside 
+					newAnimations.animations[a].keyFrames[k].key = newKey;
+					newAnimations.animations[a].keyFrames[k].transforms.resize(newKey.transformCount);
+					for (int t = 0; t < newKey.transformCount; t++)
 					{
 						// 3.4.3 Transforms
-						std::cout << "Writing keyTransform " << t << "..." << std::endl;
-						binFile.read((char*)&transforms[t], sizeof(Transform));
+						Transform newTr;
+						binFile.read((char*)&newTr, sizeof(Transform));
+						// Apply the data about the transform
+						newAnimations.animations[a].keyFrames[k].transforms[t].t = newTr;
 					}
 				}
 			}
+
+			animationsD.push_back(newAnimations);
+			skeletonsD.push_back(newSkeleton);
+
 		}
 
 		for (int i = 0; i < fileHeader.materialCount; i++)
@@ -152,13 +151,23 @@ Loader::Loader(std::string fileName)
 Loader::~Loader()
 {
 	// NEEDS TO BE LOOKED OVER AND CONFIRMED FOR NO MEMORY LEAKS
+	if (meshGroup)
+		delete[] meshGroup;
+	if (material)
+		delete[] material;
+	if (mesh)
+		delete[] mesh;
+	if (dirLight)
+		delete[] dirLight;
+	if (pointLight)
+		delete[] pointLight;
+
 	for (int i = 0; i < this->fileHeader.meshCount; i++)
-	{
 		if (meshVert[i].vertices)
-			delete[] this->meshVert[i].vertices;
-	}
-	delete[] this->mesh;
-	delete[] this->material;
+			delete[] meshVert[i].vertices;
+
+	if (meshVert)
+		delete[] meshVert;
 }
 
 

@@ -50,6 +50,7 @@ void DirectionalLight::SetDirection(glm::vec3 direction)
 void DirectionalLight::SetStrength(float str)
 {
 	strength = str;
+	diffuse *= strength;
 }
 
 void DirectionalLight::SetDiffuse(glm::vec3 diffuse)

@@ -38,19 +38,19 @@ struct DirectionalLight
 out vec4 fragment_color;
 
 // this is a uniform value, the very same value for ALL pixel shader executions
-layout(location = 9) uniform vec3 camPos;
-layout(location = 10) uniform bool hasNormalmap;
-layout(location = 11) uniform bool hasAlbedoMap;
+layout(location = 11) uniform vec3 camPos;
+layout(location = 12) uniform bool hasNormalmap;
+layout(location = 13) uniform bool hasAlbedoMap;
 
 // Texture inputs 
 uniform sampler2D shadowMap;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 
-layout(location = 12) uniform vec3 matAmbient;
-layout(location = 13) uniform vec3 matDiffuse;
-layout(location = 14) uniform vec3 matSpecular;
-layout(location = 15) uniform vec3 matEmissive;
+layout(location = 14) uniform vec3 matAmbient;
+layout(location = 15) uniform vec3 matDiffuse;
+layout(location = 16) uniform vec3 matSpecular;
+layout(location = 17) uniform vec3 matEmissive;
 
 #define NR_P_LIGHTS 6
 uniform PointLight pointLights[NR_P_LIGHTS];
@@ -86,7 +86,7 @@ void main ()
 
 	vec3 viewDirection = normalize(camPos - fsInput.position);
 
-	vec3 ambientLight = diffuse.xyz * vec3(0.1f, 0.1f, 0.1f);
+	vec3 ambientLight = diffuse.xyz * vec3(0.01f, 0.01f, 0.01f);
 	vec3 directionalLight = vec3(0.0f);
 
 	vec3 projLightCoords = fsInput.shadow_coord.xyz / fsInput.shadow_coord.w;
@@ -112,7 +112,7 @@ void main ()
 	}
 
 	vec3 pointLight = vec3(0.0f);
-	for(int i = 0; i < NR_P_LIGHTS; ++i)
+	for(int i = 0; i < NR_P_LIGHTS; i++)
 	{
 		pointLight += diffuse.xyz * CalculatePointLight(pointLights[i], fsInput.position, normal, viewDirection);
 	}
@@ -151,7 +151,6 @@ vec3 CalculatePointLight(PointLight pLight, vec3 pixelPos, vec3 aNormal, vec3 vi
 	vec3 diffuse = vec3(0.0f);
 	vec3 specular = vec3(0.0f);
 
-	//~~ There's no need to do ANY calculations if we're out of range.
 	if (dist < pLight.range)
 	{
 		//Calculate diffuse factor.

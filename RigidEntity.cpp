@@ -13,19 +13,7 @@ RigidEntity::RigidEntity(unsigned int i) : Entity(i)
 	held = false;
 }
 
-
-RigidEntity::RigidEntity(Vertex* vertArr, unsigned int vertexCount, unsigned int matID) : Entity(vertArr, vertexCount, matID)
-{
-	startPos = GetPosition();
-	savedPos = startPos;
-	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-	collision = false;
-	grounded = false;
-	groundLevel = 0.0f;
-	held = false;
-}
-
-RigidEntity::RigidEntity(Loader * inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
+RigidEntity::RigidEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : Entity(inLoader, index, matID, frozen)
 {
 	startPos = GetPosition();
 	savedPos = startPos;
@@ -146,7 +134,7 @@ void RigidEntity::Update(float deltaTime)
 		float bbBottom = GetHitboxSize().y;
 		float bbCenter = GetHitboxOffset().y;
 		velocity.y = 0.0f;
-		calculatedPosition.y = groundLevel + bbBottom - bbCenter;
+		calculatedPosition.y = groundLevel + bbBottom + bbCenter;
 	}
 
 	// Move this entity 
@@ -165,7 +153,7 @@ void RigidEntity::Update(float deltaTime)
 void RigidEntity::ResetPos()
 {
 	SetPosition(startPos);
-	SetVelocity(0.0f, 1.0f, 1.0f);
+	SetVelocity(0.0f, 0.0f, 0.0f);
 	this->boxType = REGULAR;
 }
 
@@ -177,6 +165,8 @@ void RigidEntity::SetColliding(bool colliding)
 void RigidEntity::SetGrounded(bool grounded)
 {
 	this->grounded = grounded;
+	if (grounded)
+		SetVelocityY(0.0f);
 }
 
 void RigidEntity::GroundLevel(float y)

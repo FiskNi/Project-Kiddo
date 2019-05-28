@@ -2,7 +2,7 @@
 // Check header for implementation details
 
 
-Material::Material(char* name, unsigned int id)
+Material::Material(string name, unsigned int id)
 {
 	this->name = name;
 	materialID = id;	// The ID to match with an object comes in with the constuctor
@@ -20,7 +20,7 @@ Material::Material(char* name, unsigned int id)
 
 Material::Material(PhongMaterial material, unsigned int id)
 {
-	this->name = material.name;
+	this->name = (string)material.name;
 	materialID = id;	// The ID to match with an object comes in with the constuctor
 	albedo = 0;
 	normal = 0;
@@ -38,8 +38,6 @@ Material::Material(PhongMaterial material, unsigned int id)
 		this->emissive[i] = material.emissive[i];
 	this->opacity = material.opacity;
 
-
-
 	createAlbedo(material.albedo);
 	createNormal(material.normal);
 }
@@ -47,11 +45,12 @@ Material::Material(PhongMaterial material, unsigned int id)
 
 Material::~Material()
 {
+	glDeleteTextures(1, &albedo);
+	glDeleteTextures(1, &normal);
 }
 
 void Material::createAlbedo(std::string path)
 {
-
 	//Generate Texture, 1:st argument is amt of textures second is where to store them
 	glGenTextures(1, &albedo);
 	glBindTexture(GL_TEXTURE_2D, albedo);
@@ -67,7 +66,7 @@ void Material::createAlbedo(std::string path)
 	
 	const char* filePath = path.c_str();
 	// Flips the imported texture according to OpenGL UVs
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 	unsigned char* data = stbi_load(filePath, &widht, &height, &colourChannels, 3);
 	if (data)
 	{
@@ -78,7 +77,10 @@ void Material::createAlbedo(std::string path)
 		hasAlbedoMap = true;
 	}
 	else
-		std::cout << "Failed to load albedo. Reason: " << stbi_failure_reason() << std::endl;
+	{
+		std::cout << "Failed to load albedo for material " << name << ". Reason: " << stbi_failure_reason();
+		std::cout << ". No material applied or file missing?" << std::endl;
+	}
 
 	stbi_image_free(data);
 }
@@ -101,7 +103,7 @@ void Material::createNormal(std::string path)
 
 	const char* filePath = path.c_str();
 	// Flips the imported texture according to OpenGL UVs
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 	unsigned char* data = stbi_load(filePath, &widht, &height, &colourChannels, 0);
 	if (data)
 	{
@@ -112,7 +114,10 @@ void Material::createNormal(std::string path)
 		hasNormalMap = true;
 	}
 	else
-		std::cout << "Failed to load normal. Reason: " << stbi_failure_reason() << std::endl;
+	{
+		std::cout << "Failed to load normal for material " << name << ". Reason: " << stbi_failure_reason();
+		std::cout << "No material applied or file missing?" << std::endl;
+	}
 
 	stbi_image_free(data);
 }
