@@ -261,6 +261,8 @@ void Room::PlayerCollectibleCollision(Character* playerCharacter)
 	{
 		if (playerCharacter->CheckCollision(collectibles[i])) 
 		{
+			if(musicEngine)
+				musicEngine->play2D("irrKlang/media/plingCollect.mp3", false);
 			playerCharacter->PickUpCollectible(&collectibles[i]);
 			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
 		}

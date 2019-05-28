@@ -227,7 +227,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 				//bool test = walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3");
 				if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
 				{
-					walkingEngine->play2D("irrKlang/media/walking.mp3", true);
+					walkingEngine->play2D("irrKlang/media/walking.mp3", false);
 				}
 			}
 			else
