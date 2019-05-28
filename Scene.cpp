@@ -75,7 +75,6 @@ void Scene::_CheckPressedButtons()
 			roomBuffer->getButtons()[i].SetPressed(true);
 			if (musicEngine)
 				musicEngine->play2D("irrKlang/media/lever1.mp3", false);
-			// ADD SOUND PLAY
 		}
 	}
 }
