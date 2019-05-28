@@ -30,6 +30,8 @@ private:
 
 	glm::vec3 respawnPos;
 
+	irrklang::ISoundEngine* soundEffectEngine;
+
 public:
 	Character();
 	Character(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);

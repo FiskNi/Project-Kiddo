@@ -53,6 +53,9 @@ private:
 	bool printMouseClickOnce;
 	bool switchCursorOnce;
 
+	irrklang::ISoundEngine* musicEngine;
+	irrklang::ISoundEngine* soundEffectEngine;
+
 public:
 	GameEngine();
 	~GameEngine();
