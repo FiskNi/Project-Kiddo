@@ -136,9 +136,9 @@ void Character::Move(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_SPACE) != GLFW_RELEASE && RigidEntity::IsGrounded())
 	{
-       	jumpSquat = true;
+       /*	jumpSquat = true;
 		moveY = 1.0f;
-		SetGrounded(false);
+		SetGrounded(false);*/
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -253,7 +253,7 @@ std::vector<Collectible>& Character::GetCollectedCollectibles()
 //	//}
 //}
 
-void Character::PickUpCollectible(Collectible * coll)
+void Character::PickUpCollectible(Collectible* coll)
 {
 	if (!collected[coll->GetIndex()].GetCollected()) {
 		collected[coll->GetIndex()].SetCollected(true);

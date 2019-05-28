@@ -85,7 +85,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	PlayerDoorCollision(playerCharacter);
 	
 	//PlayerItemCollision(playerCharacter);
-	//PlayerCollectibleCollision(playerCharacter);
+	PlayerCollectibleCollision(playerCharacter);
 
 	// Game events
 	// This is where link IDs will be added for each entity in the scene based on importer attributes
@@ -175,7 +175,9 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	{
 		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()]))
 		{
-			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS || glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS)
+			if (glfwGetKey(renderWindow, GLFW_KEY_SPACE) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_L) == GLFW_PRESS ||
+				glfwGetKey(renderWindow, GLFW_KEY_E) == GLFW_PRESS)
 			{
 				
 				rigids[playerCharacter->GetEntityID()].AddVelocity(playerCharacter->GetInputVector());
@@ -253,10 +255,12 @@ void Room::PlayerDoorCollision(Character* playerCharacter)
 	}
 }
 
-void Room::PlayerCollectibleCollision(Character * playerCharacter)
+void Room::PlayerCollectibleCollision(Character* playerCharacter)
 {
-	for (int i = 0; i < collectibles.size(); i++) {
-		if (playerCharacter->CheckCollision(collectibles[i])) {
+	for (int i = 0; i < collectibles.size(); i++) 
+	{
+		if (playerCharacter->CheckCollision(collectibles[i])) 
+		{
 			playerCharacter->PickUpCollectible(&collectibles[i]);
 			collectibles[i].SetPosition(glm::vec3(0, -30, 0));
 		}
@@ -1458,11 +1462,11 @@ void Room::LoadEntities(Loader* level)
 
 		case 12:	// Collectible
 		{
-			/*Collectible coll;
+			Collectible coll(level, i, matID, true);
 			coll.SetMaterialID(matID);
 			coll.SetIndex(level->GetCollectIndex(i));
 			collectibles.push_back(coll);
-			meshAmount++;*/
+			meshAmount++;
 		}
 			break;
 
