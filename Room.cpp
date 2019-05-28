@@ -802,6 +802,7 @@ int Room::inBoundCheck(Character playerCharacter)
 	return -1;
 }
 
+
 //=============================================================
 //	Checks all rigid collisions with the ground, includes the player.
 //	This loops trough all the rigids and all the statics in the scene.
@@ -839,7 +840,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 		for (int j = 0; j < bridges.size(); ++j)
 		{
 			if (rigids[i].CheckCollision(bridges[j]))
-			{	
+			{
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 				{
@@ -869,6 +870,21 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			}
 		}
 
+		//All the ColPlanes
+		for (int j = 0; j < colPlanes.size(); ++j)
+		{
+			if (rigids[i].CheckHolderCollision(colPlanes[j]))
+			{
+				float tempGround = colPlanes[j].GetGroundHeight(rigids[i].GetPosition());
+
+				if (tempGround != -1)
+				{
+					ground = tempGround;
+					rigids[i].SetGrounded(true);
+				}
+			}
+		}
+
 		rigids[i].GroundLevel(ground);
 	}
 
@@ -876,6 +892,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 	// Recheck grounded state, assume it's not grounded
 	playerCharacter->SetGrounded(false);
 	float ground = playerCharacter->GetGroundLevel();
+
 	for (int j = 0; j < statics.size(); ++j)
 	{
 		if (playerCharacter->CheckCollision(statics[j]))
@@ -884,8 +901,23 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			if (abs(playerCharacter->GetHitboxBottom() - statics[j].GetHitboxTop()) < maxDiff)
 			{
 				ground = statics[j].GetHitboxTop();
+
 				playerCharacter->SetGrounded(true);
-			}	
+			}
+		}
+	}
+
+	for (int j = 0; j < colPlanes.size(); ++j)
+	{
+		if (playerCharacter->CheckHolderCollision(colPlanes[j]))
+		{
+			float tempGround = colPlanes[j].GetGroundHeight(playerCharacter->GetPosition());
+
+			if (tempGround != -1)
+			{
+				ground = tempGround;
+				playerCharacter->SetGrounded(true);
+			}
 		}
 	}
 
@@ -1115,6 +1147,7 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 
 }
 
+
 void Room::BridgeUpdates(GLFWwindow *renderWindow)
 {
 	for (int i = 0; i < bridges.size(); i++)
@@ -1129,6 +1162,12 @@ void Room::BridgeUpdates(GLFWwindow *renderWindow)
 			bridges[i].Retract();
 		}
 	}
+}
+
+float Room::GetGroundHeight(float posX, float posZ)
+{
+
+	return 0.0f;
 }
 
 void Room::destroyRoom()
@@ -1213,6 +1252,10 @@ void Room::CompileMeshData()
 	}
 	for (int i = 0; i < collectibles.size(); i++) {
 		meshes.push_back(collectibles[i].GetMeshData());
+	}
+	for (int i = 0; i < colPlanes.size(); i++)
+	{
+		meshes.push_back(colPlanes[i].GetMeshData());
 	}
 
 	//Applying all parent data on the child mesh
@@ -1403,6 +1446,13 @@ void Room::LoadEntities(std::vector<Material> materials, Loader* level)
 			//item.SetItemType()
 			item.SetMaterialID(matID);
 			items.push_back(item);
+		}
+		case 14: // Collision Plane
+		{
+			ColPlane plane(level, i, matID);
+
+			colPlanes.push_back(plane);
+			break;
 		}
 
 		default:

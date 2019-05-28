@@ -57,7 +57,7 @@ Loader::Loader(std::string fileName)
 		{
 			binFile.read((char*)&this->meshGroup[i], sizeof(MeshGroup));
 		}
-		MeshGroup a = meshGroup[1];
+		/*MeshGroup a = meshGroup[1];*/
 		for (int i = 0; i < fileHeader.meshCount; i++)
 		{
 
