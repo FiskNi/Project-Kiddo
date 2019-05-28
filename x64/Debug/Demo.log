@@ -1,4 +1,18 @@
+<<<<<<< HEAD
+﻿  BridgeEntity.cpp
+  Character.cpp
+  ColPlane.cpp
+  Collectible.cpp
+  Menu.cpp
+  GameEngine.cpp
+  Renderer.cpp
+  Room.cpp
+  Scene.cpp
+c:\users\martina\documents\github martina\project-kiddo\scene.cpp(359): error C2065: 'audioEngine': undeclared identifier
+  Generating Code...
+=======
 ﻿  Room.cpp
   Scene.cpp
   Generating Code...
   Demo.vcxproj -> C:\Users\BTH computer\Desktop\NewProject\Project-Kiddo\x64\Debug\Demo.exe
+>>>>>>> master
