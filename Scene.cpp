@@ -229,7 +229,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			playerCharacter->Update(deltaTime);
 
 			Gravity();
-			menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
+			//menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
 			// Compile render data for the renderer
 			CompileMeshData();
 		}	

@@ -57,6 +57,8 @@ GameEngine::~GameEngine()
 		delete pauseMenuVertexData;
 	if (collectibleMenuVertexData)
 		delete collectibleMenuVertexData;
+	if (htpMenuVertexData)
+		delete htpMenuVertexData;
 }
 
 void GameEngine::CompileRoomData()
@@ -88,68 +90,88 @@ void GameEngine::CompileRoomData()
 	mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
 }
 
-void GameEngine::CompileMainMenuData()
+void GameEngine::CompileMenuData(ACTIVEMENU activeMenu)
 {
-	int nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
-	int vtxCountButtons = mainMenu.GetVertexCountMainTotal();
-
-	mainMenuVertexData = new ButtonVtx[vtxCountButtons];
-
+	int nrOfMenuButtons = 0;
+	int vtxCountButtons = 0;
 	int vertexIndex = 0;
 
-	for (int i = 0; i < nrOfMenuButtons; i++)
-	{
-		int buttonVtxCount = mainMenu.GetMainMenuButtons()[i].GetVertexCount();
-		for (int j = 0; j < buttonVtxCount; j++)
+	if (activeMenu == MAINACTIVE) {
+		nrOfMenuButtons = mainMenu.GetNrOfMenuButtons();
+		vtxCountButtons = mainMenu.GetVertexCountMainTotal();
+
+		mainMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+		for (int i = 0; i < nrOfMenuButtons; i++)
 		{
-			mainMenuVertexData[vertexIndex] = mainMenu.GetMainMenuButtonVertices(i)[j];
-			vertexIndex++;
+			int buttonVtxCount = mainMenu.GetMainMenuButtons()[i].GetVertexCount();
+			for (int j = 0; j < buttonVtxCount; j++)
+			{
+				mainMenuVertexData[vertexIndex] = mainMenu.GetMainMenuButtonVertices(i)[j];
+				vertexIndex++;
+			}
 		}
+		mainRenderer.CompileMenuVertexData(vtxCountButtons, mainMenuVertexData, MAINACTIVE);
+
 	}
-	mainRenderer.CompileMenuVertexData(vtxCountButtons, mainMenuVertexData);
+	else if (activeMenu == PAUSEACTIVE) {
+		nrOfMenuButtons = mainMenu.GetNrOfPauseButtons();
+		vtxCountButtons = mainMenu.GetVertexCountPauseTotal();
+
+		pauseMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+		for (int i = 0; i < nrOfMenuButtons; i++)
+		{
+			int buttonVtxCount = mainMenu.GetPauseMenuButtons()[i].GetVertexCount();
+			for (int j = 0; j < buttonVtxCount; j++)
+			{
+				pauseMenuVertexData[vertexIndex] = mainMenu.GetPauseMenuButtonVertices(i)[j];
+				vertexIndex++;
+			}
+		}
+		mainRenderer.CompileMenuVertexData(vtxCountButtons, pauseMenuVertexData, PAUSEACTIVE);
+
+	}
+	else if (activeMenu == COLLECTIBLEACTIVE) {
+		nrOfMenuButtons = mainMenu.GetNrOfCollectibleButtons();
+		vtxCountButtons = mainMenu.GetVertexCountCollectibleTotal();
+
+		collectibleMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+		for (int i = 0; i < nrOfMenuButtons; i++)
+		{
+			int buttonVtxCount = mainMenu.GetCollectibleMenuButtons()[i].GetVertexCount();
+			for (int j = 0; j < buttonVtxCount; j++)
+			{
+				collectibleMenuVertexData[vertexIndex] = mainMenu.GetCollectibleMenuButtonVertices(i)[j];
+				vertexIndex++;
+			}
+		}
+		mainRenderer.CompileMenuVertexData(vtxCountButtons, collectibleMenuVertexData, COLLECTIBLEACTIVE);
+
+	}
+	else if(activeMenu == HTPACTIVE){
+		nrOfMenuButtons = mainMenu.GetNrOfHtpButtons();
+		vtxCountButtons = mainMenu.GetVertexCountHtpTotal();
+
+		htpMenuVertexData = new ButtonVtx[vtxCountButtons];
+
+		for (int i = 0; i < nrOfMenuButtons; i++)
+		{
+			int buttonVtxCount = mainMenu.GetHtpMenuButtons()[i].GetVertexCount();
+			for (int j = 0; j < buttonVtxCount; j++)
+			{
+				htpMenuVertexData[vertexIndex] = mainMenu.GetHtpMenuButtonVertices(i)[j];
+				vertexIndex++;
+			}
+		}
+		mainRenderer.CompileMenuVertexData(vtxCountButtons, htpMenuVertexData, HTPACTIVE);
+
+	}
+
 }
 
-void GameEngine::CompilePauseMenuData()
-{
-	int nrOfMenuButtons = mainMenu.GetNrOfPauseButtons();
-	int vtxCountButtons = mainMenu.GetVertexCountPauseTotal();
 
-	pauseMenuVertexData = new ButtonVtx[vtxCountButtons];
-
-	int vertexIndex = 0;
-
-	for (int i = 0; i < nrOfMenuButtons; i++)
-	{
-		int buttonVtxCount = mainMenu.GetPauseMenuButtons()[i].GetVertexCount();
-		for (int j = 0; j < buttonVtxCount; j++)
-		{
-			pauseMenuVertexData[vertexIndex] = mainMenu.GetPauseMenuButtonVertices(i)[j];
-			vertexIndex++;
-		}
-	}
-	mainRenderer.CompilePauseMenuVertexData(vtxCountButtons, pauseMenuVertexData);
-}
-
-void GameEngine::CompileCollectibleMenuData()
-{
-	int nrOfMenuButtons = mainMenu.GetNrOfCollectibleButtons();
-	int vtxCountButtons = mainMenu.GetVertexCountCollectibleTotal();
-
-	collectibleMenuVertexData = new ButtonVtx[vtxCountButtons];
-
-	int vertexIndex = 0;
-
-	for (int i = 0; i < nrOfMenuButtons; i++)
-	{
-		int buttonVtxCount = mainMenu.GetCollectibleMenuButtons()[i].GetVertexCount();
-		for (int j = 0; j < buttonVtxCount; j++)
-		{
-			collectibleMenuVertexData[vertexIndex] = mainMenu.GetCollectibleMenuButtonVertices(i)[j];
-			vertexIndex++;
-		}
-	}
-	mainRenderer.CompileCollectibleMenuVertexData(vtxCountButtons, collectibleMenuVertexData);
-}
 
 //=============================================================
 //	Main engine loop
@@ -172,10 +194,11 @@ void GameEngine::Run()
 	static bool renderDepth = false;
 	ImGuiInit();
 
-	// Compile Main Menu and Pause Menu vertex data
-	CompileMainMenuData();
-	CompilePauseMenuData();
-	CompileCollectibleMenuData();
+	// Compile Menu data vertex data
+	CompileMenuData(MAINACTIVE);
+	CompileMenuData(PAUSEACTIVE);
+	CompileMenuData(COLLECTIBLEACTIVE);
+	CompileMenuData(HTPACTIVE);
 
 	// Framebuffer for the main renderer
 	if (mainRenderer.CreateFrameBuffer() != 0)
@@ -231,8 +254,10 @@ void GameEngine::Run()
 			mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetMainMenuButtons(), gClearColour, mainMenu.GetButtonTextures(), MAINACTIVE);
 			// If Collectible Menu is active, render te Collectible menu over the main menu
 			if (mainMenu.GetActiveMenu() == COLLECTIBLEACTIVE) {
-				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), gClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
-				// ADD CLICKABLE TEST HERE
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetCollectibleMenuButtons(), collMenuClearColour, mainMenu.GetCollectibleTextures(), COLLECTIBLEACTIVE);
+			}
+			else if (mainMenu.GetActiveMenu() == HTPACTIVE) {
+				mainRenderer.RenderMenu(mainScene.GetShader(3), mainMenu.GetHtpMenuButtons(), collMenuClearColour, mainMenu.GetHtpTextures(), HTPACTIVE);
 			}
 
 			glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle

@@ -42,16 +42,19 @@ private:
 
 	void CompileRoomData();
 
+
 	// Main Menu & Pause Menu
 	Menu mainMenu;
+	void CompileMenuData(ACTIVEMENU activeMenu);
 	ButtonVtx* mainMenuVertexData;
-	void CompileMainMenuData();
 	ButtonVtx* pauseMenuVertexData;
-	void CompilePauseMenuData();
 	ButtonVtx* collectibleMenuVertexData;
-	void CompileCollectibleMenuData();
+	ButtonVtx* htpMenuVertexData;
+
 	bool printMouseClickOnce;
 	bool switchCursorOnce;
+
+	float collMenuClearColour[3]{0.25f, 0.15f, 0.25f};
 
 public:
 	GameEngine();

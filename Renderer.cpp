@@ -352,6 +352,9 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 	// tell opengl we want to use the gShaderProgram
 	glUseProgram(gShaderProgram.getShader());
 
+	//glDisable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
+
 	// Main render queue
 	// Currently the render swaps buffer for every object which could become slow further on
 	// If possible the rendercalls could be improved
@@ -361,6 +364,9 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 	}
 	else if (activeMenu == COLLECTIBLEACTIVE) {
 		glBindVertexArray(gVertexAttributeCollectible);
+	}
+	else if (activeMenu == HTPACTIVE) {
+		glBindVertexArray(gVertexAttributeHtp);
 	}
 	else {
 		glBindVertexArray(gVertexAttributeMain);
@@ -373,6 +379,7 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 		
 		//Binds the albedo texture from a material
 		passTextureData(GL_TEXTURE0, textures[objects[i].GetTextureID()], gShaderProgram.getShader(), "diffuseTex", 0);
+		//passTextureData(GL_TEXTURE0, textures[i], gShaderProgram.getShader(), "diffuseTex", 0);
 
 		// Draw call
 		// As the buffer is swapped for each object the drawcall currently always starts at index 0
@@ -387,24 +394,51 @@ void Renderer::RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects
 //=============================================================
 //	Creates a vertexbuffer from the menu data to be rendered
 //=============================================================
-void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
+void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices, ACTIVEMENU activeMenu)
 {
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttributeMain);
+	if (activeMenu == PAUSEACTIVE) {
+		glGenVertexArrays(1, &gVertexAttributePause);
+		glBindVertexArray(gVertexAttributePause);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glGenBuffers(1, &gVertexBufferPause);
+		glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferPause);
+	}
+	else if (activeMenu == COLLECTIBLEACTIVE) {
+		glGenVertexArrays(1, &gVertexAttributeCollectible);
+		glBindVertexArray(gVertexAttributeCollectible);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glGenBuffers(1, &gVertexBufferCollectible);
+		glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferCollectible);
+	}
+	else if (activeMenu == HTPACTIVE) {
+		glGenVertexArrays(1, &gVertexAttributeHtp);
+		glBindVertexArray(gVertexAttributeHtp);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glGenBuffers(1, &gVertexBufferHtp);
+		glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferHtp);
+	}
+	else {
+		glBindVertexArray(gVertexAttributeMain);
+		// Vertex Array Object (VAO), description of the inputs to the GPU 
+		glGenVertexArrays(1, &gVertexAttributeMain);
 
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttributeMain);
+		// bind is like "enabling" the object to use it
+		glBindVertexArray(gVertexAttributeMain);
 
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+		// this activates the first and second attributes of this VAO
+		// think of "attributes" as inputs to the Vertex Shader
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferMain);
+		// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
+		glGenBuffers(1, &gVertexBufferMain);
 
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMain);
+		// Bind the buffer ID as an ARRAY_BUFFER
+		glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferMain);
+	}
 
 	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
 	// the last argument (read the docs!)
@@ -429,100 +463,6 @@ void Renderer::CompileMenuVertexData(int vertexCount, ButtonVtx* vertices)
 		BUFFER_OFFSET(sizeof(float) * 3)
 	);
 
-
-}
-
-//=============================================================
-//	Creates a vertexbuffer from the menu data to be rendered
-//=============================================================
-void Renderer::CompilePauseMenuVertexData(int vertexCount, ButtonVtx* vertices)
-{
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttributePause);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttributePause);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferPause);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferPause);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(ButtonVtx), vertices, GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,							// location in shader
-		3,							// how many elements of type (see next argument)
-		GL_FLOAT,					// type of each element
-		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(ButtonVtx),		// distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(ButtonVtx),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
-
-}
-
-//=============================================================
-//	Creates a vertexbuffer from the menu data to be rendered
-//=============================================================
-void Renderer::CompileCollectibleMenuVertexData(int vertexCount, ButtonVtx* vertices)
-{
-	// Vertex Array Object (VAO), description of the inputs to the GPU 
-	glGenVertexArrays(1, &gVertexAttributeCollectible);
-
-	// bind is like "enabling" the object to use it
-	glBindVertexArray(gVertexAttributeCollectible);
-
-	// this activates the first and second attributes of this VAO
-	// think of "attributes" as inputs to the Vertex Shader
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	// create a vertex buffer object (VBO) id (out Array of Structs on the GPU side)
-	glGenBuffers(1, &gVertexBufferCollectible);
-
-	// Bind the buffer ID as an ARRAY_BUFFER
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferCollectible);
-
-	// This "could" imply copying to the GPU, depending on what the driver wants to do, and
-	// the last argument (read the docs!)
-	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(ButtonVtx), vertices, GL_STATIC_DRAW);
-
-	// tell OpenGL about layout in memory (input assembler information)
-	glVertexAttribPointer(
-		0,							// location in shader
-		3,							// how many elements of type (see next argument)
-		GL_FLOAT,					// type of each element
-		GL_FALSE,					// integers will be normalized to [-1,1] or [0,1] when read...
-		sizeof(ButtonVtx),		// distance between two vertices in memory (stride)
-		BUFFER_OFFSET(0)			// offset of FIRST vertex in the list.
-	);
-
-	glVertexAttribPointer(
-		1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(ButtonVtx),
-		BUFFER_OFFSET(sizeof(float) * 3)
-	);
 
 }
 

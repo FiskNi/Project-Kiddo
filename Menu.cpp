@@ -13,9 +13,11 @@ Menu::Menu()
 	vertexCountMainTotal = 0;
 	vertexCountPauseTotal = 0;
 	vertexCountCollectibleTotal = 0;
+	vertexCountHtpTotal = 0;
 	nrOfMainButtons = 0;
 	nrOfPauseButtons = 0;
 	nrOfCollectibleButtons = 0;
+	nrOfHtpButtons = 0;
 	isMenuRunning = true;
 	isButtonHit = false;
 	updateState = MAINMENU;
@@ -24,26 +26,15 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
 	CreateMenuTexture("Resources/Textures/PauseGUI.png", &pauseBackgroundTexture);
 	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
+	CreateMenuTexture("Resources/Textures/HTPtemp.png", &howToPlayTexture);
 
 	CreateMenuTexture("Resources/Textures/PauseQuit.png", &tempCollQuit);
 
-	// TESTING COLLECTIBLE TEXTURES
-	// apparently the first button's texture is always te same as the last texture
-	//collectibleTextures.push_back(buttonTextureBase);
-	collectibleTextures.push_back(backgroundTexture);
-	collectibleTextures.push_back(tempCollQuit);
-	collectibleTextures.push_back(backgroundTexture);
-	collectibleTextures.push_back(loadingTexture);
-	collectibleTextures.push_back(pauseBackgroundTexture);
-	collectibleTextures.push_back(backgroundTexture);
-	collectibleTextures.push_back(loadingTexture);
-	collectibleTextures.push_back(pauseBackgroundTexture);
-	collectibleTextures.push_back(backgroundTexture);
-	collectibleTextures.push_back(loadingTexture);
-	collectibleTextures.push_back(pauseBackgroundTexture);
+	CreateCollectibleTextures();	
 
 	CreateMainMenu();
 }
+
 
 Menu::~Menu() 
 {
@@ -55,12 +46,19 @@ Menu::~Menu()
 // ========================================================================
 void Menu::CreateMainMenu()
 {
+	// Initialises all the predefined quads in -1 to 1 space
+	CreateBackgroundQuad();
+	CreateHeaderQuad();
+	CreateReturnQuad();
+
 	// Creates Main Menu Background as well as Main Menu Buttons
 	CreateMainMenuButtons();
 	// Creates Pause Menu buttons and background
 	CreatePauseMenuButtons();
-
+	// Creates Collectible Menu buttons
 	CreateCollectibleMenuButtons();
+
+	CreateHTPMenuButtons();
 }
 
 // ========================================================================
@@ -95,6 +93,7 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 			}
 			else if (currentButtonHit == 2) {
 				// SETTINGS? CREDITS? HOW TO PLAY?
+				activeMenu = HTPACTIVE;
 			}
 			else if (currentButtonHit == 3) {
 				// EXIT
@@ -113,14 +112,21 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 		if (isButtonHit == true) {
 			if (currentButtonHit == 1) {
 				// START GAME			// This is handled in GameEngine by getting the last clicked button
-				activeMenu = MAINACTIVE;
+				//activeMenu = MAINACTIVE;
 			}
-			else if (currentButtonHit == 2) {
-				// SETTINGS? CREDITS? HOW TO PLAY?
-			}
-			else if (currentButtonHit == 3) {
+			else if (currentButtonHit == 9) {
 				// EXIT
 				//glfwSetWindowShouldClose(renderWindow, GL_TRUE);
+				activeMenu = MAINACTIVE;
+			}
+			currentButtonHit = -1;
+			isButtonHit = false;
+		}
+	}
+	else if (activeMenu == HTPACTIVE) {
+		if (isButtonHit == true) {
+			if (currentButtonHit == 0) {
+				activeMenu = MAINACTIVE;
 			}
 			currentButtonHit = -1;
 			isButtonHit = false;
@@ -226,6 +232,24 @@ bool Menu::CheckCollision(float x, float y, bool isClicked)
 			}
 		}
 	}
+	else if (activeMenu == HTPACTIVE)
+	{
+		for (int i = 0; i < nrOfHtpButtons; i++)
+		{
+			if (htpButtons[i].GetIsNotButton() != true)
+			{
+				if (htpButtons[i].CheckInsideCollision(x, y) == true)
+				{
+					if (isClicked == true) {
+						//std::cout << "Hit Button nr " << i << std::endl;
+						currentButtonHit = i;
+						isButtonHit = true;
+					}
+					return true;
+				}
+			}
+		}
+	}
 	return false;
 }
 
@@ -247,7 +271,7 @@ bool Menu::CheckButtonHovering(GLFWwindow * renderWindow) {
 void Menu::CreateMainMenuButtons() 
 {
 	// Creates the background, which is not a button (and collision will not be checked on it)
-	CreateBackgroundQuad();
+	//CreateBackgroundQuad();
 	buttonTextures.push_back(backgroundTexture);
 	MenuButton bgButton(backgroundQuad, 0, true);
 	mainButtons.push_back(bgButton);
@@ -276,6 +300,7 @@ void Menu::CreateMainMenuButtons()
 	for (int i = 0; i < 5; i++) {
 		vertexCountMainTotal += newButton.GetVertexCount();		// Vertex Count is ALWAYS 6 for all buttons
 		nrOfMainButtons++;
+		//buttonTextures.push_back(backgroundTexture);
 	}
 	
 }
@@ -318,12 +343,13 @@ void Menu::CreatePauseMenuButtons()
 // ========================================================================
 void Menu::CreateCollectibleMenuButtons()
 {
-	// Creates the background, which is not a button (and collision will not be checked on it)
-	// backgroundQuad has already been initialised in CreateMainMenuButtons()
 
+	collectibleTextures.push_back(pauseBackgroundTexture);
+	MenuButton hdButton(headerQuad, 0, true);
+	collectibleButtons.push_back(hdButton);
 
 	//collectibleTextures.push_back(buttonTextureBase);
-	for (int i = 0; i < COLLECTEDCAP; i++) {
+	for (int i = 1; i < COLLECTEDCAP+1; i++) {
 		//collectibleTextures.push_back(buttonTextureBase);
 		MenuButton colButton(GetCurrentOffset(nrOfCollectibleButtons), i);
 		collectibleButtons.push_back(colButton);
@@ -331,12 +357,69 @@ void Menu::CreateCollectibleMenuButtons()
 		nrOfCollectibleButtons++;
 	}
 
+	collectibleTextures.push_back(pauseBackgroundTexture);
+	MenuButton rtButton(returnQuad, COLLECTEDCAP+1, false);
+	collectibleButtons.push_back(rtButton);
+
+	vertexCountCollectibleTotal += hdButton.GetVertexCount();		// Vertex count for buttons is always 6
+	nrOfCollectibleButtons++;
+	vertexCountCollectibleTotal += hdButton.GetVertexCount();		// Vertex count for buttons is always 6
+	nrOfCollectibleButtons++;
+
 	//collectibleTextures.push_back(backgroundTexture);
 	//MenuButton bgButton(backgroundQuad, COLLECTEDCAP, true);
-	//collectibleButtons.push_back(bgButton);
+	//collectibleButtons.push_back(bgButton); 
 	//vertexCountCollectibleTotal += bgButton.GetVertexCount();		// Vertex count for buttons is always 6
 	//nrOfCollectibleButtons++;
 
+
+	// add this button last, this is never rendered, but this holds the first button's texture
+	MenuButton newButton2(1921, 1081, 1941, 1101, COLLECTEDCAP+2);
+	collectibleButtons.push_back(newButton2);
+
+}
+
+
+// ========================================================================
+//  Creates the Pause Menu Background and Pause Menu Buttons
+// ========================================================================
+void Menu::CreateHTPMenuButtons()
+{
+	// Creates the background, which is not a button (and collision will not be checked on it)
+	// backgroundQuad has already been initialised in CreateMainMenuButtons()
+	htpTextures.push_back(howToPlayTexture);
+	MenuButton bgButton(backgroundQuad, 0, false);
+	htpButtons.push_back(bgButton);
+
+	//// Start Button
+	//MenuButton newButton(750, 380, 1100, 495, 1);
+	//pauseButtons.push_back(newButton);
+
+	vertexCountHtpTotal += bgButton.GetVertexCount();		// Vertex count for buttons is always 6
+	nrOfHtpButtons++;
+
+
+}
+
+void Menu::CreateCollectibleTextures()
+{
+	// TESTING COLLECTIBLE TEXTURES
+	// apparently the first button's texture is always te same as the last texture
+	//collectibleTextures.push_back(buttonTextureBase);
+	collectibleTextures.push_back(backgroundTexture);			// dummy texture, will not be used at the end because of a bug
+	collectibleTextures.push_back(pauseBackgroundTexture);		// Collectible 1
+	collectibleTextures.push_back(backgroundTexture);			// Collectible 2
+	collectibleTextures.push_back(loadingTexture);				// Collectible 3
+	collectibleTextures.push_back(pauseBackgroundTexture);		// Collectible 4
+	collectibleTextures.push_back(backgroundTexture);			// Collectible 5
+	collectibleTextures.push_back(loadingTexture);				// Collectible 6
+	collectibleTextures.push_back(pauseBackgroundTexture);		// Collectible 7
+	collectibleTextures.push_back(backgroundTexture);			// Collectible 8
+	collectibleTextures.push_back(tempCollQuit);				// Return Button
+	collectibleTextures.push_back(buttonTextureBase);			// Header Button,	This last texture is the header texture due to a bug
+
+	//collectibleTextures.push_back(loadingTexture);
+	//collectibleTextures.push_back(pauseBackgroundTexture);
 }
 
 // ========================================================================
@@ -356,6 +439,40 @@ void Menu::CreateBackgroundQuad() {
 
 	for (int i = 0; i < 6; i++) {
 		backgroundQuad.push_back(bgQuad[i]);
+	}
+}
+
+void Menu::CreateHeaderQuad() {
+
+	ButtonVtx bgQuad[6] =
+	{
+		-0.5, +0.3,	0,		0, 0,	// TOP		LEFT
+		-0.5, +0.7,	0,		0, 1,	// BOTTOM	LEFT
+		+0.5, +0.7,	0,		1, 1,	// BOTTOM	RIGHT
+		-0.5, +0.3,	0,		0, 0,	// TOP		LEFT
+		+0.5, +0.7,	0,		1, 1,	// BOTTOM	RIGHT
+		+0.5, +0.3,	0,		1, 0,	// TOP		RIGHT
+	};
+
+	for (int i = 0; i < 6; i++) {
+		headerQuad.push_back(bgQuad[i]);
+	}
+}
+
+void Menu::CreateReturnQuad() {
+
+	ButtonVtx bgQuad[6] =
+	{
+		+0.4, -0.8,	0,		0, 0,	// TOP		LEFT
+		+0.4, -0.5,	0,		0, 1,	// BOTTOM	LEFT
+		+0.8, -0.5,	0,		1, 1,	// BOTTOM	RIGHT
+		+0.4, -0.8,	0,		0, 0,	// TOP		LEFT
+		+0.8, -0.5,	0,		1, 1,	// BOTTOM	RIGHT
+		+0.8, -0.8,	0,		1, 0,	// TOP		RIGHT
+	};
+
+	for (int i = 0; i < 6; i++) {
+		returnQuad.push_back(bgQuad[i]);
 	}
 }
 

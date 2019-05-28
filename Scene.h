@@ -75,7 +75,7 @@ private:
 	bool exittoMenu;
 	bool roomLoaded;
 
-	Menu menuHandler;
+	//Menu menuHandler;
 
 	// Character
 	Character* playerCharacter;

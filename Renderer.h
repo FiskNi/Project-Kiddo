@@ -69,6 +69,9 @@ private:
 	// Collectible menu vertex buffers
 	GLuint gVertexBufferCollectible;
 	GLuint gVertexAttributeCollectible;
+	// HTP menu vertex buffers
+	GLuint gVertexBufferHtp;
+	GLuint gVertexAttributeHtp;
 
 	GLuint boneBuffer;
 
@@ -97,9 +100,7 @@ public:
 	void CompileVertexData(int vertexCount, vertexPolygon* vertices);
 
 	void RenderMenu(Shader gShaderProgram, std::vector<MenuButton> objects, float gClearColour[3], std::vector<GLuint> textures, ACTIVEMENU activeMenu);
-	void CompileMenuVertexData(int vertexCount, ButtonVtx * vertices);
-	void CompilePauseMenuVertexData(int vertexCount, ButtonVtx * vertices);
-	void CompileCollectibleMenuVertexData(int vertexCount, ButtonVtx * vertices);
+	void CompileMenuVertexData(int vertexCount, ButtonVtx * vertices, ACTIVEMENU activeMenu);
 
 	int CreateFrameBuffer();
 	void initWindow(unsigned int w, unsigned int h);
