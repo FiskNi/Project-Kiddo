@@ -66,8 +66,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		rigids[i].SetHeld(false);
 	}
 
-
-
 	BoxHolding(playerCharacter, renderWindow);
 	if(playerCharacter->IsHoldingObject() == false)
 		if (boxEngine)
