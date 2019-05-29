@@ -114,6 +114,11 @@ public:
 	~Room();
 
 	void BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow);
+	void NewBoxHolding(Character* playerCharacter);
+	void ReleaseBox(Character* playerCharacter);
+	void DragBox(Character* playerCharacter);
+	void CheckIfBoxIsStillInbound(Character* playerCharacter);
+	void SetHoldPosition(Character* playerCharacter, int i);
 
 	std::vector<Light>& GetPointLights()					{ return pointLights; }
 	std::vector<DirectionalLight>& GetDirectionalLights()	{ return dirLights; }

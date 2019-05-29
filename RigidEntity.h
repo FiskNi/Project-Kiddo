@@ -19,7 +19,7 @@ private:
 	bool collision;
 	bool grounded;
 	float groundLevel;
-	bool held;
+	bool held = false;
 
 public:
 	RigidEntity(unsigned int i);
