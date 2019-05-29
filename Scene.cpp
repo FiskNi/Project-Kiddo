@@ -364,7 +364,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BridgeTutorial].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxBridgeTutorial].meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
