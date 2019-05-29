@@ -400,13 +400,12 @@ void Menu::CreateCollectibleMenuButtons()
 // ========================================================================
 void Menu::CreateHTPMenuButtons()
 {
-	// Creates the background, which is not a button (and collision will not be checked on it)
-	// backgroundQuad has already been initialised in CreateMainMenuButtons()
+	// Creates the button covering the screen for the HTP
 	htpTextures.push_back(howToPlayTexture);
 	MenuButton bgButton(backgroundQuad, 0, false);
 	htpButtons.push_back(bgButton);
 
-	//// Start Button
+	//// Leftover button in case we want a specific button for returning
 	//MenuButton newButton(750, 380, 1100, 495, 1);
 	//pauseButtons.push_back(newButton);
 
