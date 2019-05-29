@@ -49,6 +49,17 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->_CheckPressedButtons();
 			scene->_CheckPressedBombs();
 		}
+		if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+			scene->roomBuffer->NewBoxHolding(scene->playerCharacter);
+		}
+		if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
+			std::cout << "release" << std::endl;
+			scene->roomBuffer->ReleaseBox(scene->playerCharacter);
+		}
+
+		//if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+		//	scene->playerCharacter->SetVelocityZ(-1.0f);
+		//}
 
 		// EXTRA
 		//if (key == GLFW_KEY_Q && action == GLFW_PRESS)

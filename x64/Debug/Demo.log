@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 ﻿  BridgeEntity.cpp
   Character.cpp
@@ -16,3 +17,7 @@ c:\users\martina\documents\github martina\project-kiddo\scene.cpp(359): error C2
   Generating Code...
   Demo.vcxproj -> C:\Users\BTH computer\Desktop\NewProject\Project-Kiddo\x64\Debug\Demo.exe
 >>>>>>> master
+=======
+﻿  Character.cpp
+  Demo.vcxproj -> C:\Programmering\Project-Kiddo\x64\Debug\Demo.exe
+>>>>>>> Stashed changes

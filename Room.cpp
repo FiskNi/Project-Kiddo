@@ -59,17 +59,20 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 	// Reset collisions
 	playerCharacter->SetColliding(false);
-	playerCharacter->SetHoldingObject(false);
+	//playerCharacter->SetHoldingObject(false);
 	for (int i = 0; i < rigids.size(); i++)
 	{
 		rigids[i].SetColliding(false);
-		rigids[i].SetHeld(false);
+		//rigids[i].SetHeld(false);
 	}
 
 	BoxHolding(playerCharacter, renderWindow);
 	if(playerCharacter->IsHoldingObject() == false)
 		if (boxEngine)
 			boxEngine->stopAllSounds();
+	//BoxHolding(playerCharacter, renderWindow);
+	DragBox(playerCharacter);
+	CheckIfBoxIsStillInbound(playerCharacter);
 
 
 	RigidGroundCollision(playerCharacter);
@@ -198,6 +201,68 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 	}
 }
 
+
+void Room::NewBoxHolding(Character * playerCharacter)
+{
+	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+
+	if (playerCharacter->GetEntityID() >= 0) {
+		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()])) {
+			rigids[playerCharacter->GetEntityID()].SetHeld(true);
+			playerCharacter->SetHoldingObject(true);
+			std::cout << "Box is being held" << std::endl;
+			SetHoldPosition(playerCharacter, playerCharacter->GetEntityID());
+		}
+	}
+}
+void Room::ReleaseBox(Character * playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++) {
+		if (rigids[i].IsHeld()) {
+			rigids[i].SetHeld(false);
+			playerCharacter->SetHoldingObject(false);
+			std::cout << "Box has been released" << std::endl;
+		}
+	}
+}
+void Room::DragBox(Character * playerCharacter)
+{
+	for (int i = 0; i < rigids.size(); i++) {
+		if (rigids[i].IsHeld()) {
+			rigids[i].SetVelocityX(playerCharacter->GetVelocity().x);
+			rigids[i].SetVelocityZ(playerCharacter->GetVelocity().z);
+		}
+	}
+}
+void Room::CheckIfBoxIsStillInbound(Character * playerCharacter)
+{
+	if (inBoundCheck(*playerCharacter) == -1) {
+		for (int i = 0; i < rigids.size(); i++) {
+			if (rigids[i].IsHeld()) {
+				rigids[i].SetHeld(false);
+			}
+		}
+	}
+}
+void Room::SetHoldPosition(Character * playerCharacter, int i)
+{
+	if (playerCharacter->GetLastDir() == 1) {
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x - 1.3);
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
+	}
+	else if (playerCharacter->GetLastDir() == 2) {
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x + 1.3);
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
+	}
+	else if (playerCharacter->GetLastDir() == 3) {
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - 1);
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
+	}
+	else if (playerCharacter->GetLastDir() == 4) {
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + 1);
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
+	}
+}
 int Room::inBoundCheck(Character playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); i++)
@@ -1318,7 +1383,8 @@ void Room::CompileMeshData()
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
 	{
-		meshes.push_back(colPlanes[i].GetMeshData());
+		//meshes[j] = colPlanes[i].GetMeshData();
+		j++;
 	}
 
 	//Applying all parent data on the child mesh
@@ -1520,6 +1586,7 @@ void Room::LoadEntities(Loader* level)
 			ColPlane plane(level, i, matID);
 
 			colPlanes.push_back(plane);
+			meshAmount++;
 			break;
 		}
 

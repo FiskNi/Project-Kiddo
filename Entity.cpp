@@ -218,6 +218,16 @@ void Entity::SetPositionY(float y)
 	entityMesh.SetPositionY(y);
 }
 
+void Entity::SetPositionX(float x)
+{
+	entityMesh.SetPositionX(x);
+}
+
+void Entity::SetPositionZ(float z)
+{
+	entityMesh.SetPositionZ(z);
+}
+
 void Entity::OffsetPosition(glm::vec3 offset)
 {
 	entityMesh.SetPosition(entityMesh.GetPosition() + offset);
