@@ -52,6 +52,7 @@ Character::Character(Loader* inLoader, unsigned int index, unsigned int matID) :
 	entityID = -1;
 	inputVector = glm::vec3(0.0f);
 	respawnPos = glm::vec3(0.0f);
+
 }
 
 Character::~Character()
@@ -151,7 +152,8 @@ void Character::Move(GLFWwindow* window)
 		}
 		else if (RigidEntity::IsGrounded())
 		{
-			moveX += -1.0f;			
+			moveX += -1.0f;
+			lastDir = 1;
 		}
 	}
 
@@ -166,6 +168,7 @@ void Character::Move(GLFWwindow* window)
 		else if (RigidEntity::IsGrounded())
 		{
 			moveX += 1.0f;
+			lastDir = 2;
 		}
 	}
 
@@ -180,6 +183,7 @@ void Character::Move(GLFWwindow* window)
 		else if (RigidEntity::IsGrounded())
 		{
 			moveZ += -1.0f;
+			lastDir = 3;
 		}
 	}
 
@@ -194,6 +198,7 @@ void Character::Move(GLFWwindow* window)
 		else if (RigidEntity::IsGrounded())
 		{
 			moveZ += 1.0f;
+			lastDir = 4;
 		}
 	}
 
@@ -202,7 +207,7 @@ void Character::Move(GLFWwindow* window)
 
 	if (glm::length(GetVelocity()) > 0.1f && !holdingObject)
 	{
-		if (!IsHoldingObject()) 
+		if (!holdingObject) 
 		{
 			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
 			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));

@@ -51,6 +51,8 @@ public:
 	void SetPosition(float xyz[]);
 	void SetPosition(float x, float y, float z);
 	void SetPositionY(float y);
+	void SetPositionX(float x);
+	void SetPositionZ(float z);
 
 
 	void OffsetPosition(glm::vec3 offset);

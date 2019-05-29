@@ -60,12 +60,12 @@ void MenuButton::CreateButtonQuad()
 	//	+0.3f,(0.0f - offset)	,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
 	//};
 	ButtonVtx buttVtxTemp[6] = {
-	(-0.165f + offset), 0.0f	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
-	(-0.165f + offset), 0.3f	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
-	(+0.0f + offset), 0.3f		,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
-	(-0.165f + offset), 0.0f	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
-	(+0.0f + offset), 0.3f		,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
-	(+0.0f + offset), 0.0f		,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
+	(-0.165f + offset), -0.15f	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	// bot left?
+	(-0.165f + offset), 0.15f	,0.0f,		0.0f, 1.0f,	// BOTTOM	LEFT	// top left?
+	(+0.0f + offset), 0.15f		,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT	// top right?
+	(-0.165f + offset), -0.15f	,0.0f,		0.0f, 0.0f,	// TOP		LEFT	
+	(+0.0f + offset), 0.15f		,0.0f,		1.0f, 1.0f,	// BOTTOM	RIGHT
+	(+0.0f + offset), -0.15f		,0.0f,		1.0f, 0.0f,	// TOP		RIGHT	// bot right?
 	};
 
 	for (int i = 0; i < 6; i++) {

@@ -33,6 +33,10 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		{
 			scene->state = PAUSED;
+
+			// PLAY SOUND ESC
+			if (scene->musicEngine)
+				scene->musicEngine->play2D("irrKlang/media/pausePaper.mp3", false);
 			//std::cout << "PAUSED" << std::endl;
 			//std::cout << "Press the numbers below to perform actions: " << std::endl;
 			//std::cout << "1 - Resume" << std::endl;
@@ -45,6 +49,17 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->_CheckPressedButtons();
 			scene->_CheckPressedBombs();
 		}
+		if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+			scene->roomBuffer->NewBoxHolding(scene->playerCharacter);
+		}
+		if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
+			std::cout << "release" << std::endl;
+			scene->roomBuffer->ReleaseBox(scene->playerCharacter);
+		}
+
+		//if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+		//	scene->playerCharacter->SetVelocityZ(-1.0f);
+		//}
 
 		// EXTRA
 		//if (key == GLFW_KEY_Q && action == GLFW_PRESS)
@@ -69,7 +84,8 @@ void Scene::_CheckPressedButtons()
 		if (!roomBuffer->getButtons()[i].isPressed() && playerCharacter->CheckCollision(roomBuffer->getButtons()[i]))
 		{
 			roomBuffer->getButtons()[i].SetPressed(true);
-			// ADD SOUND PLAY
+			if (musicEngine)
+				musicEngine->play2D("irrKlang/media/lever1.mp3", false);
 		}
 	}
 }
@@ -98,11 +114,8 @@ Scene::Scene()
 	LoadShaders();
 	// If no audiodevice exists this will initiate as NULL, make sure to check that this was successful
 	// when trying to play audio
-	audioEngine = irrklang::createIrrKlangDevice();
-	if (audioEngine)
-		audioEngine->play2D("irrKlang/media/ophelia.mp3", true);
-	else
-		std::cout << "Failed to create audio device, none connected?" << std::endl;
+	musicEngine = irrklang::createIrrKlangDevice();
+	walkingEngine = irrklang::createIrrKlangDevice();
 
 	// This is the initial state the scene will be in when the update loop starts running
 	state = PLAYING;
@@ -112,8 +125,10 @@ Scene::~Scene()
 {
 	if (roomBuffer)
 		delete roomBuffer;
-	if (audioEngine)
-		audioEngine->drop();
+	if (musicEngine)
+		musicEngine->drop();
+	if (walkingEngine)
+		walkingEngine->drop();
 	for (int i = 0; i < materials.size(); i++)
 		if (materials[i])
 			delete materials[i];
@@ -217,6 +232,19 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			}
 			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
 
+			if (glm::length(playerCharacter->GetVelocity()) >= 0.5f)
+			{
+				//bool test = walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3");
+				if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
+				{
+					walkingEngine->play2D("irrKlang/media/walking.mp3", false);
+				}
+			}
+			else
+				if (walkingEngine)
+					walkingEngine->stopAllSounds();
+				
+			
 			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 			{
 				roomBuffer->GetRigids()[i].Update(deltaTime);
@@ -229,7 +257,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			playerCharacter->Update(deltaTime);
 
 			Gravity();
-			menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
+			//menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
 			// Compile render data for the renderer
 			CompileMeshData();
 		}	
@@ -268,7 +296,8 @@ void Scene::RestartGame()
 	state = PLAYING;
 }
 
-void Scene::ExitToMainMenu() {
+void Scene::ExitToMainMenu() 
+{
 	// RETURNS TO MAIN MENU
 	// pLEASE, do NOT remove the room, main menu's start is supposed to work like a Resume.
 	delete roomBuffer;
@@ -297,7 +326,7 @@ void Scene::LoadRoom()
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
 
 		roomBuffer->GetPointLights()[0].setAttenuation(2);
@@ -316,7 +345,7 @@ void Scene::LoadRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 		for (int i = 0; i < roomBuffer->GetPointLights().size(); i++)
 		{
 			roomBuffer->GetPointLights()[i].setAttenuation(5.0f);
@@ -330,20 +359,20 @@ void Scene::LoadRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
 	}
 	else if (roomNr == 3)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BridgeTutorial].meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 	}
 	else if (roomNr == 4)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Toybox].meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
 
 
@@ -379,7 +408,7 @@ void Scene::LoadRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 
 		roomNr = 0;
 		//	ADD SOUND PLAY
@@ -388,7 +417,7 @@ void Scene::LoadRoom()
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
 		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, audioEngine);
+		roomBuffer = new Room(roomLoader, musicEngine);
 
 		roomNr = 0;
 		// ADD SOUND PLAY

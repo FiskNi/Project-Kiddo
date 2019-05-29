@@ -14,6 +14,7 @@ class Character
 	: public RigidEntity
 {
 private:
+	int lastDir;
 	const int itemCap = 4;
 	//const int collCap = 8;
 
@@ -29,6 +30,8 @@ private:
 	bool jumpSquat = false;
 
 	glm::vec3 respawnPos;
+
+	irrklang::ISoundEngine* soundEffectEngine;
 
 public:
 	Character();
@@ -49,6 +52,7 @@ public:
 	glm::vec3 GetRespawnPos() { return respawnPos; }
 	Item GetCurrentItem() { return this->items[this->currentItem]; }
 	std::vector<Collectible>& GetCollectedCollectibles();
+	int GetLastDir() { return this->lastDir; }
 
 	//void PickUpItem(Item* item);
 	void PickUpCollectible(Collectible* coll);

@@ -1,2 +1,23 @@
-﻿  Menu.cpp
-  Demo.vcxproj -> C:\Users\Martina\Documents\GitHub Martina\Project-Kiddo\x64\Debug\Demo.exe
+<<<<<<< Updated upstream
+<<<<<<< HEAD
+﻿  BridgeEntity.cpp
+  Character.cpp
+  ColPlane.cpp
+  Collectible.cpp
+  Menu.cpp
+  GameEngine.cpp
+  Renderer.cpp
+  Room.cpp
+  Scene.cpp
+c:\users\martina\documents\github martina\project-kiddo\scene.cpp(359): error C2065: 'audioEngine': undeclared identifier
+  Generating Code...
+=======
+﻿  Room.cpp
+  Scene.cpp
+  Generating Code...
+  Demo.vcxproj -> C:\Users\BTH computer\Desktop\NewProject\Project-Kiddo\x64\Debug\Demo.exe
+>>>>>>> master
+=======
+﻿  Character.cpp
+  Demo.vcxproj -> C:\Programmering\Project-Kiddo\x64\Debug\Demo.exe
+>>>>>>> Stashed changes
