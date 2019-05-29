@@ -28,7 +28,19 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
 	CreateMenuTexture("Resources/Textures/HowToPlayMenu.png", &howToPlayTexture);
 
-	CreateMenuTexture("Resources/Textures/PauseQuit.png", &tempCollQuit);
+
+	CreateMenuTexture("Resources/Textures/ColButtonEmpty.png", &collEmptyTexture);
+	CreateMenuTexture("Resources/Textures/ColButton1.png", &collTextures[0]);
+	CreateMenuTexture("Resources/Textures/ColButton2.png", &collTextures[1]);
+	CreateMenuTexture("Resources/Textures/ColButton3.png", &collTextures[2]);
+	CreateMenuTexture("Resources/Textures/ColButton4.png", &collTextures[3]);
+	CreateMenuTexture("Resources/Textures/ColButton5.png", &collTextures[4]);
+	CreateMenuTexture("Resources/Textures/ColButton6.png", &collTextures[5]);
+	CreateMenuTexture("Resources/Textures/ColButton7.png", &collTextures[6]);
+	CreateMenuTexture("Resources/Textures/ColButton8.png", &collTextures[7]);
+	CreateMenuTexture("Resources/Textures/ColButton9.png", &collTextures[8]);
+
+	CreateMenuTexture("Resources/Textures/ColReturn.png", &collReturnTexture);
 
 	CreateCollectibleTextures();	
 
@@ -128,7 +140,7 @@ void Menu::MenuUpdate(GLFWwindow * renderWindow, float deltaTime)
 				// START GAME			// This is handled in GameEngine by getting the last clicked button
 				//activeMenu = MAINACTIVE;
 			}
-			else if (currentButtonHit == 9) {
+			else if (currentButtonHit == 10) {
 				// EXIT
 				//glfwSetWindowShouldClose(renderWindow, GL_TRUE);
 				activeMenu = MAINACTIVE;
@@ -421,15 +433,16 @@ void Menu::CreateCollectibleTextures()
 	// apparently the first button's texture is always te same as the last texture
 	//collectibleTextures.push_back(buttonTextureBase);
 	collectibleTextures.push_back(backgroundTexture);			// dummy texture, will not be used at the end because of a bug
-	collectibleTextures.push_back(pauseBackgroundTexture);		// Collectible 1
-	collectibleTextures.push_back(backgroundTexture);			// Collectible 2
-	collectibleTextures.push_back(loadingTexture);				// Collectible 3
-	collectibleTextures.push_back(pauseBackgroundTexture);		// Collectible 4
-	collectibleTextures.push_back(backgroundTexture);			// Collectible 5
-	collectibleTextures.push_back(loadingTexture);				// Collectible 6
-	collectibleTextures.push_back(pauseBackgroundTexture);		// Collectible 7
-	collectibleTextures.push_back(backgroundTexture);			// Collectible 8
-	collectibleTextures.push_back(tempCollQuit);				// Return Button
+	collectibleTextures.push_back(collTextures[0]);				// Collectible 1
+	collectibleTextures.push_back(collTextures[1]);				// Collectible 2
+	collectibleTextures.push_back(collTextures[2]);				// Collectible 3
+	collectibleTextures.push_back(collTextures[3]);				// Collectible 4
+	collectibleTextures.push_back(collTextures[4]);				// Collectible 5
+	collectibleTextures.push_back(collTextures[5]);				// Collectible 6
+	collectibleTextures.push_back(collTextures[6]);				// Collectible 7
+	collectibleTextures.push_back(collTextures[7]);				// Collectible 8
+	collectibleTextures.push_back(collTextures[8]);				// Collectible 9
+	collectibleTextures.push_back(collReturnTexture);			// Return Button
 	collectibleTextures.push_back(buttonTextureBase);			// Header Button,	This last texture is the header texture due to a bug
 
 	//collectibleTextures.push_back(loadingTexture);
