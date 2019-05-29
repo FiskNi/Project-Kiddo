@@ -134,6 +134,7 @@ public:
 	void SetActiveMenu(ACTIVEMENU nm)				{ this->activeMenu = nm; }
 
 	int GetLastClickedButton() const				{ return currentButtonHit; }
+	void ResetLastClickedButton()					{ this->currentButtonHit = -1; }
 	bool GetHasButtonActionExecuted() const			{ return buttonActionExecuted; }
 	void SetButtonActionExecuted(bool tf)			{ this->buttonActionExecuted = tf; }
 

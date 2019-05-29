@@ -225,6 +225,7 @@ void GameEngine::Run()
 				mainScene.ResumeGame();
 				mainMenu.SetIsMenuRunning(false);
 				mainMenu.SetButtonActionExecuted(true);
+				mainMenu.ResetUpdateState();
 				switchCursorOnce = false;
 				if (musicEngine)
 					musicEngine->stopAllSounds();
@@ -320,6 +321,7 @@ void GameEngine::Run()
 			{
 				// Pause Menu Render Call
 				mainMenu.SetActiveMenu(PAUSEACTIVE);
+				//std::cout << mainScene.GetCurrentState() << std::endl;
 
 				if (mainMenu.CheckButtonHovering(mainRenderer.getWindow()) == true && switchCursorOnce != true) {
 					glfwSetCursor(mainRenderer.getWindow(), handCursor);
@@ -340,17 +342,13 @@ void GameEngine::Run()
 					double x, y;
 					glfwGetCursorPos(mainRenderer.getWindow(), &x, &y);
 					//std::cout << "Current Cursor Position: " << x << "  " << y << std::endl;
-					if (mainMenu.CheckCollision(x, y, true)) {
+					if (mainMenu.CheckCollision(x, y, true) == true) {
 						int clickedButton = mainMenu.GetLastClickedButton();
-						//std::cout << "HIT BITCH NR " << clickedButton << " ok" << std::endl;
 
 						if (soundEffectEngine)
 							soundEffectEngine->play2D("irrKlang/media/paper.mp3", false);
 
-						if (clickedButton == 0) {
-							// DO NOTHING HERE, TOP PAUSE BUTTON SHOULD JUST BE A TEXTURE SAYING PAUSE
-						}
-						else if (clickedButton == 1) {
+						if (clickedButton == 1) {
 							// RESUME GAME	
 							mainScene.ResumeGame();
 							//std::cout << "RESUME" << std::endl;
@@ -370,10 +368,11 @@ void GameEngine::Run()
 								musicEngine->play2D("irrKlang/media/sad-music-box.mp3", true);
 							//std::cout << "MAIN MENU" << std::endl;
 						}
+						mainMenu.ResetLastClickedButton();
 						switchCursorOnce = false;
+						printMouseClickOnce = true;
+						mainMenu.SetButtonActionExecuted(false);
 					}
-					printMouseClickOnce = true;
-					mainMenu.SetButtonActionExecuted(false);
 				}
 				else if (glfwGetMouseButton(mainRenderer.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
 					printMouseClickOnce = false;
