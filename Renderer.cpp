@@ -620,7 +620,7 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 	bones_global_pose[0]			= local_r;
 
 	boneList->bones[0]				= bones_global_pose[0] * mesh->GetSkeleton().joints[0].invBindPose;
-	//boneList->bones[0] = mesh->GetSkeleton().joints[0].invBindPose;
+	//boneList->bones[0] = glm::inverse(mesh->GetSkeleton().joints[0].invBindPose);
 	for (int bone = 1; bone < boneCount; bone++)
 	{
 		glm::vec3 translation		= glm::vec3(anim.keyframes[k1].local_joints_T[bone] * (1 - t) + anim.keyframes[k2].local_joints_T[bone] * t);
@@ -635,7 +635,7 @@ void Renderer::ComputeAnimationMatrix(SkinDataBuffer* boneList, float anim_time,
 
 		bones_global_pose[bone]		= bones_global_pose[mesh->GetSkeleton().joints[bone].parentIndex] * local;
 		boneList->bones[bone]		= bones_global_pose[bone] * mesh->GetSkeleton().joints[bone].invBindPose;
-		//boneList->bones[bone]		= mesh->GetSkeleton().joints[bone].invBindPose;
+		//boneList->bones[bone]		= glm::inverse(mesh->GetSkeleton().joints[bone].invBindPose);
 	}
 }
 

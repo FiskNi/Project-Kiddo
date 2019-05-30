@@ -152,7 +152,6 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshGroupClass.cpp" />
     <ClCompile Include="PressurePlate.cpp" />
-    <ClCompile Include="puzzleNode.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RigidEntity.cpp" />
     <ClCompile Include="Room.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshGroupClass.h" />
     <ClInclude Include="PressurePlate.h" />
-    <ClInclude Include="puzzleNode.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RigidEntity.h" />
     <ClInclude Include="Room.h" />

@@ -54,20 +54,23 @@ Entity::Entity(Loader* inLoader, unsigned int index, unsigned int matID) : entit
 	glm::mat4 scaleMatrix = glm::scale(offsetCenterMat, eScale);
 
 	InitBoundingBox();
-	// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
-	// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
-	offsetCenterMat = rotationMatrix * scaleMatrix;
-	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
-	{
-		entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
-	}
-	InitBoundingBox();
 
-	offsetCenterMat = glm::inverse(offsetCenterMat);
-	for (int i = 0; i < entityMesh.GetVertices().size(); i++)
-	{
-		entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
-	}
+	//boundingBoxCenter = glm::vec3(0.0f);
+
+	//// Scuffed solution for fixing the mesh center to be the center of the boundingbox instead 
+	//// This should in theory also cause the boundingbox center to always be at 0, 0, 0 local 
+	//offsetCenterMat = rotationMatrix * scaleMatrix;
+	//for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	//{
+	//	entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+	//}
+	//InitBoundingBox();
+
+	//offsetCenterMat = glm::inverse(offsetCenterMat);
+	//for (int i = 0; i < entityMesh.GetVertices().size(); i++)
+	//{
+	//	entityMesh.ModifyVertices()[i].position = glm::vec3(offsetCenterMat * glm::vec4(entityMesh.GetVertices()[i].position, 1.0f));
+	//}
 
 	//boundingBoxCenter = ePosition;
 
@@ -103,6 +106,7 @@ void Entity::InitBoundingBox()
 
 	SetBoundingBox(center, halfSize);
 }
+
 
 bool Entity::CheckCollision(Entity collidingCube)
 {
@@ -181,12 +185,10 @@ bool Entity::CheckHolderCollision(Entity collidingCube)
 
 bool Entity::CheckInsideCollision(Entity AABB)
 {
-	if (AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x
-		&& AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x
-		&& AABB.GetPositionBB().y + AABB.boundingBoxSize.y < this->GetPositionBB().y + boundingBoxSize.y
-		&& AABB.GetPositionBB().y - AABB.boundingBoxSize.y > this->GetPositionBB().y - boundingBoxSize.y
-		&& AABB.GetPositionBB().z + AABB.boundingBoxSize.z < this->GetPositionBB().z + boundingBoxSize.z
-		&& AABB.GetPositionBB().z - AABB.boundingBoxSize.z > this->GetPositionBB().z - boundingBoxSize.z)
+	if (AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x && 
+		AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x &&  
+		AABB.GetPositionBB().z + AABB.boundingBoxSize.z < this->GetPositionBB().z + boundingBoxSize.z && 
+		AABB.GetPositionBB().z - AABB.boundingBoxSize.z > this->GetPositionBB().z - boundingBoxSize.z)
 	{
 		return true;
 	}
@@ -274,6 +276,10 @@ void Entity::SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize)
 {
 	boundingBoxSize = BBoxHalfSize;
 	boundingBoxCenter = BBoxCenter;
+}
+void Entity::SetBoundingBox(glm::vec3 size)
+{
+	boundingBoxSize = size;
 }
 
 void Entity::scaleBB(float x)

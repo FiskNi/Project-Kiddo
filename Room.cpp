@@ -41,12 +41,12 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	// Simple animation loop
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
-		if (roomMeshes[i].GetSkeleton().currentAnimTime > 2.0f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime > 7.0f)
 			roomMeshes[i].SetTime(0);
 		if (roomMeshes[i].GetSkeleton().currentAnimTime < 0.0f)
 			roomMeshes[i].SetTime(0);
 
-		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 1.1f)
+		if (roomMeshes[i].GetSkeleton().currentAnimTime >= 7.0f)
 			roomMeshes[i].SetPlayingBackwards(true);
 		if (roomMeshes[i].GetSkeleton().currentAnimTime <= 0.0f)
 			roomMeshes[i].SetPlayingBackwards(false);
@@ -59,6 +59,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 
 	// Reset collisions
 	playerCharacter->SetColliding(false);
+
 	//playerCharacter->SetHoldingObject(false);
 	for (int i = 0; i < rigids.size(); i++)
 	{
@@ -66,12 +67,10 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		//rigids[i].SetHeld(false);
 	}
 
-
-
+	//BoxHolding(playerCharacter, renderWindow);
 	if(playerCharacter->IsHoldingObject() == false)
 		if (boxEngine)
 			boxEngine->stopAllSounds();
-	//BoxHolding(playerCharacter, renderWindow);
 	DragBox(playerCharacter);
 	CheckIfBoxIsStillInbound(playerCharacter);
 
@@ -207,8 +206,10 @@ void Room::NewBoxHolding(Character * playerCharacter)
 {
 	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
 
-	if (playerCharacter->GetEntityID() >= 0) {
-		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()])) {
+	if (playerCharacter->GetEntityID() >= 0) 
+	{
+		if (playerCharacter->CheckInBound(rigids[playerCharacter->GetEntityID()])) 
+		{
 			rigids[playerCharacter->GetEntityID()].SetHeld(true);
 			playerCharacter->SetHoldingObject(true);
 			std::cout << "Box is being held" << std::endl;
@@ -218,18 +219,21 @@ void Room::NewBoxHolding(Character * playerCharacter)
 }
 void Room::ReleaseBox(Character * playerCharacter)
 {
-	for (int i = 0; i < rigids.size(); i++) {
-		if (rigids[i].IsHeld()) {
-			rigids[i].SetHeld(false);
-			playerCharacter->SetHoldingObject(false);
-			std::cout << "Box has been released" << std::endl;
-		}
+	for (int i = 0; i < rigids.size(); i++) 
+	{
+		
+		rigids[i].SetHeld(false);
+		playerCharacter->SetHoldingObject(false);
+		std::cout << "Box has been released" << std::endl;
+		
 	}
 }
 void Room::DragBox(Character * playerCharacter)
 {
-	for (int i = 0; i < rigids.size(); i++) {
-		if (rigids[i].IsHeld()) {
+	for (int i = 0; i < rigids.size(); i++) 
+	{
+		if (rigids[i].IsHeld()) 
+		{
 			rigids[i].SetVelocityX(playerCharacter->GetVelocity().x);
 			rigids[i].SetVelocityZ(playerCharacter->GetVelocity().z);
 		}
@@ -237,8 +241,10 @@ void Room::DragBox(Character * playerCharacter)
 }
 void Room::CheckIfBoxIsStillInbound(Character * playerCharacter)
 {
-	if (inBoundCheck(*playerCharacter) == -1) {
-		for (int i = 0; i < rigids.size(); i++) {
+	if (inBoundCheck(*playerCharacter) == -1) 
+	{
+		for (int i = 0; i < rigids.size(); i++) 
+		{
 			if (rigids[i].IsHeld()) {
 				rigids[i].SetHeld(false);
 			}
@@ -248,19 +254,19 @@ void Room::CheckIfBoxIsStillInbound(Character * playerCharacter)
 void Room::SetHoldPosition(Character * playerCharacter, int i)
 {
 	if (playerCharacter->GetLastDir() == 1) {
-		rigids[i].SetPositionX(playerCharacter->GetPosition().x - 1.3);
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x - (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x + 0.1f));
 		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
 	}
 	else if (playerCharacter->GetLastDir() == 2) {
-		rigids[i].SetPositionX(playerCharacter->GetPosition().x + 1.3);
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x + (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x +  0.1f));
 		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
 	}
 	else if (playerCharacter->GetLastDir() == 3) {
-		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - 1);
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().z + 0.1f));
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 	else if (playerCharacter->GetLastDir() == 4) {
-		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + 1);
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().z + 0.1f));
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 }
@@ -1430,6 +1436,7 @@ void Room::LoadLights(Loader* inLoader)
 
 	DirectionalLight dirLight;
 	dirLights.push_back(dirLight);
+	dirLights[0].SetStrength(1.0f);
 
 	for (int i = 0; i < 1; i++)
 	{
@@ -1539,8 +1546,9 @@ void Room::LoadEntities(Loader* level)
 				PressurePlate pPlate(level, i, matID, true);
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
-				pPlate.setBBY(2.0f);
-				pPlate.scaleBB(2.0f);
+				//pPlate.setBBY(2.0f);
+				pPlate.scaleBBZ(2.0f);
+				pPlate.scaleBBX(2.0f);
 				pressurePlates.push_back(pPlate);
 				meshAmount++;
 			}

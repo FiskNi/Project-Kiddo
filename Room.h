@@ -7,13 +7,11 @@
 #include "Entity.h"
 #include "RigidEntity.h"
 #include "StaticEntity.h"
-#include "puzzleNode.h"
 #include "BridgeEntity.h"
 
 #include "Mesh.h"
 #include "Camera.h"
 #include "Material.h"
-#include "puzzleNode.h"
 #include "BoxHoldEntity.h"
 #include "PressurePlate.h"
 #include "Button.h"
@@ -96,9 +94,6 @@ private:
 	std::vector<MeshGroupClass> meshGroups;
 	std::vector<glm::vec3> posOffset;
 
-	// PuzzleNodes
-	//std::vector<puzzleNode> nodes;
-
 	// Camera
 	Camera* roomCamera;
 
@@ -125,7 +120,6 @@ public:
 	std::vector<RigidEntity>& GetRigids()					{ return rigids; }
 	std::vector<StaticEntity>& GetStatics()					{ return statics; }
 	std::vector<BoxHoldEntity>& GetBoxHolds()				{ return holdBoxes; }
-	//std::vector<puzzleNode>& GetNodes()					{ return nodes; }
 	std::vector<BridgeEntity>& GetBridges()					{ return bridges; }
 	std::vector<Mesh>& GetMeshData()						{ return meshes; }
 	std::vector<Button>& getButtons()						{ return buttons; }
