@@ -453,7 +453,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 4)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Toybox].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL5]ToyBox.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
@@ -489,7 +489,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 5)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls]Closet.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL7]MushRoomForest.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
