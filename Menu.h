@@ -24,8 +24,9 @@ private:
 	GLuint pauseBackgroundTexture;
 	GLuint backgroundTexture;
 	GLuint howToPlayTexture;
+	GLuint collectibleMenuTexture;
 
-
+	// Textures for dynamic Collectible Menu
 	GLuint collHeaderTexture;
 	GLuint collEmptyTexture;
 	GLuint collTextures[9];
@@ -96,6 +97,7 @@ public:
 	void CreateCollectibleMenuButtons();
 	void CreateHTPMenuButtons();
 
+	// Function for creating textures for the dynamic collectible menu
 	void CreateCollectibleTextures();
 
 	void CreateBackgroundQuad();
