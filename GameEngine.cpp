@@ -83,7 +83,7 @@ void GameEngine::CompileRoomData()
 	vertexCount = 0;
 	for (int i = 0; i < meshCount; i++)
 	{
-		vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
+		vertexCount += mainScene.GetMeshData()[i]->GetVertices().size();
 	}
 	// Allocated memory
 	mainSceneVertexData = new vertexPolygon[vertexCount];
@@ -91,10 +91,10 @@ void GameEngine::CompileRoomData()
 	int vertexIndex = 0;
 	for (int i = 0; i < meshCount; i++)
 	{
-		int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
+		int meshVtxCount = mainScene.GetMeshData()[i]->GetVertices().size();
 		for (int j = 0; j < meshVtxCount; j++)
 		{
-			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
+			mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i]->GetVertices()[j];
 			vertexIndex++;
 		}
 	}
@@ -409,20 +409,6 @@ void GameEngine::Run()
 		}
 	
 
-
-		// Draw fullscreen quad
-		// Could be moved to the renderer
-		//glUniform1i(3, renderDepth);  // Boolean for the shadowmap toggle
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		//// Render ImGui
-		//// Update ImGui content
-		//UpdateImGui(renderDepth);
-		//ImGui::Render();
-		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-		//glfwSwapBuffers(mainRenderer.getWindow());
 	}
 
 	// SHUTDOWN

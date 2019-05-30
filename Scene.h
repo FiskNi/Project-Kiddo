@@ -62,9 +62,6 @@ private:
 	Shader shadowmapShader;
 	Shader mainMenuShader;
 
-	// Object list for the render queue
-	std::vector<Mesh> meshes;
-
 	// Materials are stored in a vector
 	std::vector<Material*> materials;
 
@@ -97,7 +94,7 @@ public:
 	std::vector<DirectionalLight>& GetDirectionalLights() 		{ return roomBuffer->GetDirectionalLights(); }
 	std::vector<Material*>& GetMaterials()						{ return materials; }
 	Shader GetShader(unsigned int i) const						{ return shaders[i]; }
-	std::vector<Mesh>& GetMeshData()							{ return roomBuffer->GetMeshData(); }
+	std::vector<Mesh*>& GetMeshData()							{ return roomBuffer->GetMeshData(); }
 	bool GetIsLoading() const									{ return isLoading; }
 	bool GetExit() const										{ return exittoMenu; }
 	bool GetRoomLoaded() const									{ return roomLoaded; }

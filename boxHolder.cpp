@@ -61,10 +61,3 @@ void boxHolder::SetBoxHolderPosition(glm::vec3 pos)
 	setPositionBBOffset(GetPositionBB());
 	aMesh.SetPosition(origPos);
 }
-
-Mesh boxHolder::GetHolderMeshData()
-{
-	return this->aMesh;
-}
-
-

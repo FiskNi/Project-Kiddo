@@ -44,7 +44,7 @@ private:
 	void PlayerRigidCollision(Character* playerCharacter);
 	void RigidRigidCollision();
 	void RigidNodeCollision();
-	int inBoundCheck(Character playerCharacter);
+	int inBoundCheck(Character* playerCharacter);
 
 	void RigidStaticCollision(Character* playerCharacter);
 	void RigidGroundCollision(Character* playerCharacter);
@@ -69,7 +69,7 @@ private:
 	std::vector<float> GetParentOffset(MeshGroupClass * childGroup);
 
 	// Object list for the render queue
-	std::vector<Mesh> meshes;
+	std::vector<Mesh*> meshes;
 	std::vector<Mesh> roomMeshes;
 
 	// Lights
@@ -121,7 +121,7 @@ public:
 	std::vector<StaticEntity>& GetStatics()					{ return statics; }
 	std::vector<BoxHoldEntity>& GetBoxHolds()				{ return holdBoxes; }
 	std::vector<BridgeEntity>& GetBridges()					{ return bridges; }
-	std::vector<Mesh>& GetMeshData()						{ return meshes; }
+	std::vector<Mesh*>& GetMeshData()						{ return meshes; }
 	std::vector<Button>& getButtons()						{ return buttons; }
 	Camera* GetCamera()										{ return roomCamera; }
 	bool GetRoomCompleted()									{ return this->isRoomCompleted; }

@@ -24,7 +24,7 @@ public:
 	void setVisible(bool aBool);
 	bool getVisible() const { return this->visible; }
 	void SetBoxHolderPosition(glm::vec3 pos);
-	Mesh GetHolderMeshData();
+	Mesh& GetHolderMeshData() {return aMesh;};
 
 
 };
