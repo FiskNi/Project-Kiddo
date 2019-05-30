@@ -167,30 +167,38 @@ void Scene::LoadMaterials(Loader* inLoader)
 		if (materials[i])
 			delete materials[i];
 	
-	materials.resize(inLoader->GetMaterialCount());
+
+	Loader characterLoader("Resources/Assets/GameReady/Rooms/CharacterAnim.meh");
+	materials.resize(inLoader->GetMaterialCount() + 1);
 	for (int i = 0; i < inLoader->GetMaterialCount(); i++)
 	{
-		materials[i] = new Material(inLoader->GetMaterial(i), i);
+		
+			materials[i] = new Material(inLoader->GetMaterial(i), i);
 	}
+	materials[materials.size() - 1] = new Material(characterLoader.GetMaterial(0), materials.size() - 1);
+
+
 }
 
 void Scene::LoadCharacter()
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
 	Loader characterLoader("Resources/Assets/GameReady/Rooms/CharacterAnim.meh");
+
 	if (playerCharacter)
 		playerCharacter;
 	playerCharacter = nullptr;
 
 	playerCharacter = new Character(&characterLoader, 0, 0);
+	playerCharacter->GetMeshData().CalculateTangents();
 	playerCharacter->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
 	playerCharacter->SetBoundingBox(
 		glm::vec3(
 			playerCharacter->GetHitboxSize().z,
 			playerCharacter->GetHitboxSize().y,
 			playerCharacter->GetHitboxSize().z));
-	playerCharacter->scaleBBX(0.8f);
-	playerCharacter->scaleBBZ(0.8f);
+	playerCharacter->scaleBBX(0.5f);
+	playerCharacter->scaleBBZ(0.5f);
 
 	playerCharacter->SetStartPosition(playerCharacter->GetPosition());
 }
@@ -354,9 +362,6 @@ void Scene::CharacterUpdates(float deltaTime)
 		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
 			playerCharacter->GetMeshData().SetTime(1.1f);
 
-
-
-
 	}
 	
 }
@@ -507,7 +512,7 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 
-		roomNr = 0;
+		roomNr = -1;
 	}
 	else
 	{
@@ -515,16 +520,16 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 
-		roomNr = 0;
+		roomNr = -1;
 		// ADD SOUND PLAY
 	}
 
 	// Set player position and reset it
+	playerCharacter->SetMaterialID(materials.size() - 1);
 	for (int i = 0; i < roomLoader->GetMeshCount(); i++)
 	{
 		if (roomLoader->GetType(i) == 8)
 		{
-			playerCharacter->SetMaterialID(0);
 			playerCharacter->SetPosition(roomLoader->GetMesh(i).translation);
 		}
 	}

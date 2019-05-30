@@ -465,7 +465,7 @@ void Mesh::CreatePlateData()
 	vertices.push_back(cubeVertex);
 
 	vertexCount = (int)vertices.size();
-	CalculateTangents();
+	//CalculateTangents();
 }
 
 void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
@@ -483,7 +483,6 @@ void Mesh::ImportMesh(Vertex* vertArr, int vertexCount)
 		newVertex.tangent	= glm::vec3(vertexData.tangent[0], vertexData.tangent[1], vertexData.tangent[2]);
 		newVertex.bitangent = glm::vec3(vertexData.bitangent[0], vertexData.bitangent[1], vertexData.bitangent[2]);
 
-		//newVertex.weights	= glm::vec4(vertexData.weight[0], vertexData.weight[1], vertexData.weight[2], vertexData.weight[3]);
 		newVertex.weights	= glm::vec4(vertexData.weight[0], vertexData.weight[1], vertexData.weight[2], vertexData.weight[3]);
 		newVertex.bones		= glm::ivec4(vertexData.bone[0], vertexData.bone[1], vertexData.bone[2], vertexData.bone[3]);
 
@@ -535,9 +534,9 @@ void Mesh::CalculateTangents()
 
 		tangent = glm::normalize(tangent);
 
-		//vertices[i].normals = normal;
-		//vertices[i + 1].normals = normal;
-		//vertices[i + 2].normals = normal;
+		vertices[i].normals = -normal;
+		vertices[i + 1].normals = -normal;
+		vertices[i + 2].normals = -normal;
 
 		vertices[i].tangent = tangent;
 		vertices[i + 1].tangent = tangent;

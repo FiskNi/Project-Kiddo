@@ -962,7 +962,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff && !bridges[j].GetIsButton())
 				{
-					if (statics[j].GetHitboxTop() > ground)
+					if (bridges[j].GetHitboxTop() > ground)
 						ground = bridges[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
@@ -1046,7 +1046,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			// If ground is close enough
 			if (abs(playerCharacter->GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 			{
-				if (statics[j].GetHitboxTop() > ground)
+				if (bridges[j].GetHitboxTop() > ground)
 					ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}	
@@ -1439,20 +1439,23 @@ void Room::LoadLights(Loader* inLoader)
 	dirLights.push_back(dirLight);
 	dirLights[0].SetStrength(1.0f);
 
-	for (int i = 0; i < 1; i++)
+	if (inLoader->GetDirLightCount() >= 1)
 	{
-		glm::vec3 pos = glm::vec3(
-			inLoader->GetDirLightPos(i)[0],
-			inLoader->GetDirLightPos(i)[1],
-			inLoader->GetDirLightPos(i)[2]);
-		glm::vec3 color = glm::vec3(
-			inLoader->GetDirLightColor(i)[0],
-			inLoader->GetDirLightColor(i)[1],
-			inLoader->GetDirLightColor(i)[2]);
+		for (int i = 0; i < 1; i++)
+		{
+			glm::vec3 pos = glm::vec3(
+				inLoader->GetDirLightPos(i)[0],
+				inLoader->GetDirLightPos(i)[1],
+				inLoader->GetDirLightPos(i)[2]);
+			glm::vec3 color = glm::vec3(
+				inLoader->GetDirLightColor(i)[0],
+				inLoader->GetDirLightColor(i)[1],
+				inLoader->GetDirLightColor(i)[2]);
 
-		dirLights[i].SetPos(pos);
-		dirLights[i].SetDiffuse(color);
-		dirLights[i].SetStrength(0.4f);
+			dirLights[i].SetPos(pos);
+			dirLights[i].SetDiffuse(color);
+			dirLights[i].SetStrength(0.4f);
+		}
 	}
 
 }
@@ -1548,8 +1551,8 @@ void Room::LoadEntities(Loader* level)
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
-				pPlate.scaleBBZ(2.0f);
-				pPlate.scaleBBX(2.0f);
+				pPlate.scaleBBZ(1.4f);
+				pPlate.scaleBBX(1.4f);
 				pressurePlates.push_back(pPlate);
 				meshAmount++;
 			}
