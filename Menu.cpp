@@ -25,7 +25,7 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/LoadingScreen.png", &loadingTexture);
 	CreateMenuTexture("Resources/Textures/MenuButtonTEMP.png", &buttonTextureBase);
 	CreateMenuTexture("Resources/Textures/PauseGUI.png", &pauseBackgroundTexture);
-	CreateMenuTexture("Resources/Textures/MainMenuRender.png", &backgroundTexture);
+	CreateMenuTexture("Resources/Textures/MainMenuRenderTEMP.png", &backgroundTexture);
 	CreateMenuTexture("Resources/Textures/HowToPlayMenu.png", &howToPlayTexture);
 
 
