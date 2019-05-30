@@ -9,6 +9,7 @@ private:
 	glm::vec3 extendDirection;
 	bool extended;
 	bool extending;
+	bool isButton;
 
 	int linkID;
 
@@ -16,7 +17,7 @@ private:
 public:
 	BridgeEntity(unsigned int i);
 	BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID);
-	BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen);
+	BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen, bool button);
 	~BridgeEntity();
 
 	void SetRestPosition(glm::vec3 position);
@@ -31,6 +32,7 @@ public:
 	void Extend();
 	void Retract();
 	void Update(float deltaTime);
+	bool GetIsButton() { return isButton; }
 	
 	bool GetExtending() { return this->extending; }
 	bool GetExtended() { return this->extended; }

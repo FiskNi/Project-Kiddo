@@ -108,7 +108,7 @@ void Entity::InitBoundingBox()
 }
 
 
-bool Entity::CheckCollision(Entity collidingCube)
+bool Entity::CheckCollision(const Entity& collidingCube)
 {
 	struct AABB
 	{
@@ -146,7 +146,7 @@ bool Entity::CheckCollision(Entity collidingCube)
 	return false;
 }
 
-bool Entity::CheckHolderCollision(Entity collidingCube)
+bool Entity::CheckHolderCollision(const Entity& collidingCube)
 {
 	struct AABB
 	{
@@ -183,7 +183,7 @@ bool Entity::CheckHolderCollision(Entity collidingCube)
 	return false;
 }
 
-bool Entity::CheckInsideCollision(Entity AABB)
+bool Entity::CheckInsideCollision(const Entity& AABB)
 {
 	if (AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x && 
 		AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x &&  

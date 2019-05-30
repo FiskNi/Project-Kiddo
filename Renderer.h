@@ -85,13 +85,13 @@ public:
 	void secondPassRenderTemp(Shader gShaderProgram);
 	void secondPassRenderPauseOverlay(Shader gShaderProgram, GLuint pauseOverlayTexture);
 	void ShadowmapRender(Shader gShaderProgram, 
-		const std::vector<Mesh>& objects, 
+		const std::vector<Mesh*>& objects, 
 		Camera camera, 
 		float gClearColour[3], 
 		std::vector<DirectionalLight> dirLightArr);
 
 	void Render(Shader gShaderProgram, 
-		std::vector<Mesh>& objects,
+		std::vector<Mesh*>& objects,
 		Camera camera, float gClearColour[3], 
 		std::vector<Light>& lightArr, 
 		std::vector<DirectionalLight>& dirLightArr, 

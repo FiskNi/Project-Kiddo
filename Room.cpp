@@ -170,7 +170,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 //=============================================================
 void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 {
-	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));	
+	playerCharacter->SetEntityID(inBoundCheck(playerCharacter));	
 
 	if (playerCharacter->GetEntityID() >= 0)
 	{
@@ -202,9 +202,9 @@ void Room::BoxHolding(Character* playerCharacter, GLFWwindow* renderWindow)
 }
 
 
-void Room::NewBoxHolding(Character * playerCharacter)
+void Room::NewBoxHolding(Character* playerCharacter)
 {
-	playerCharacter->SetEntityID(inBoundCheck(*playerCharacter));
+	playerCharacter->SetEntityID(inBoundCheck(playerCharacter));
 
 	if (playerCharacter->GetEntityID() >= 0) 
 	{
@@ -228,7 +228,7 @@ void Room::ReleaseBox(Character * playerCharacter)
 		
 	}
 }
-void Room::DragBox(Character * playerCharacter)
+void Room::DragBox(Character* playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); i++) 
 	{
@@ -239,19 +239,20 @@ void Room::DragBox(Character * playerCharacter)
 		}
 	}
 }
-void Room::CheckIfBoxIsStillInbound(Character * playerCharacter)
+void Room::CheckIfBoxIsStillInbound(Character* playerCharacter)
 {
-	if (inBoundCheck(*playerCharacter) == -1) 
+	if (inBoundCheck(playerCharacter) == -1) 
 	{
 		for (int i = 0; i < rigids.size(); i++) 
 		{
-			if (rigids[i].IsHeld()) {
+			if (rigids[i].IsHeld()) 
+			{
 				rigids[i].SetHeld(false);
 			}
 		}
 	}
 }
-void Room::SetHoldPosition(Character * playerCharacter, int i)
+void Room::SetHoldPosition(Character* playerCharacter, int i)
 {
 	if (playerCharacter->GetLastDir() == 1) {
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x - (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x + 0.1f));
@@ -270,10 +271,10 @@ void Room::SetHoldPosition(Character * playerCharacter, int i)
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 }
-int Room::inBoundCheck(Character playerCharacter)
+int Room::inBoundCheck(Character* playerCharacter)
 {
 	for (int i = 0; i < rigids.size(); i++)
-		if (playerCharacter.CheckInBound(rigids[i]))
+		if (playerCharacter->CheckInBound(rigids[i]))
 			return i;
 
 	return -1;
@@ -959,7 +960,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			if (rigids[i].CheckCollision(bridges[j]))
 			{
 				// If ground is close enough
-				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
+				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff && !bridges[j].GetIsButton())
 				{
 					if (statics[j].GetHitboxTop() > ground)
 						ground = bridges[j].GetHitboxTop();
@@ -1331,61 +1332,61 @@ void Room::CompileMeshData()
 	int j = 0;
 	for (int i = 0; i < roomMeshes.size(); i++)
 	{
-		meshes[j] = roomMeshes[i];
+		meshes[j] = &roomMeshes[i];
 		j++;
 	}
 
 	for (int i = 0; i < rigids.size(); i++)
 	{
-		meshes[j] = rigids[i].GetMeshData();
+		meshes[j] = &rigids[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < statics.size(); i++)
 	{
-		meshes[j] = statics[i].GetMeshData();
+		meshes[j] = &statics[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < bridges.size(); i++)
 	{
-		meshes[j] = bridges[i].GetMeshData();
+		meshes[j] = &bridges[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < pressurePlates.size(); i++) 
 	{
-		meshes[j] = pressurePlates[i].GetMeshData();
+		meshes[j] = &pressurePlates[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < buttons.size(); i++) 
 	{
-		meshes[j] = buttons[i].GetMeshData();
+		meshes[j] = &buttons[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < holders.size(); i++)
 	{
-		meshes[j] = holders[i].GetMeshData();
+		meshes[j] = &holders[i].GetMeshData();
 		j++;
-		meshes[j] = holders[i].GetHolderMeshData();
+		meshes[j] = &holders[i].GetHolderMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < items.size(); i++) {
 
-		meshes[j] = items[i].GetMeshData();
+		meshes[j] = &items[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < doors.size(); i++) {
-		meshes[j] = doors[i].GetMeshData();
+		meshes[j] = &doors[i].GetMeshData();
 		j++;
 	}
 
 	for (int i = 0; i < collectibles.size(); i++) {
-		meshes[j] = collectibles[i].GetMeshData();
+		meshes[j] = &collectibles[i].GetMeshData();
 		j++;
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
@@ -1510,7 +1511,7 @@ void Room::LoadEntities(Loader* level)
 
 		case 4:		// Bridge
 			{
-				BridgeEntity bridgeEntity(level, i, matID, true);
+				BridgeEntity bridgeEntity(level, i, matID, true, false);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetLinkID(level->GetMesh(i).link);
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
@@ -1546,7 +1547,7 @@ void Room::LoadEntities(Loader* level)
 				PressurePlate pPlate(level, i, matID, true);
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
-				//pPlate.setBBY(2.0f);
+				pPlate.setBBY(2.0f);
 				pPlate.scaleBBZ(2.0f);
 				pPlate.scaleBBX(2.0f);
 				pressurePlates.push_back(pPlate);
@@ -1566,6 +1567,11 @@ void Room::LoadEntities(Loader* level)
 			break;
 
 		case 10:	// Plushie
+			{
+				Mesh mesh(level, i);
+				roomMeshes.push_back(mesh);
+				meshAmount++;
+			}
 			break;
 
 		case 11:	// Light

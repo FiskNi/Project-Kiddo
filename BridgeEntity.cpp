@@ -9,6 +9,7 @@ BridgeEntity::BridgeEntity(unsigned int i) : StaticEntity (i)
 	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 	extended = false;
 	extending = false;
+	isButton = false;
 	linkID = -999;
 }
 
@@ -19,16 +20,18 @@ BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int ma
 	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 	extended = false;
 	extending = false;
+	isButton = false;
 	linkID = -999;
 }
 
-BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen) : StaticEntity(inLoader, index, matID, frozen)
+BridgeEntity::BridgeEntity(Loader* inLoader, unsigned int index, unsigned int matID, bool frozen, bool button) : StaticEntity(inLoader, index, matID, frozen)
 {
 	restPosition = GetPosition();
 	extendDistance = 2.0f;
 	extendDirection = glm::vec3(1.0f, 0.0f, 0.0f);
 	extended = false;
 	extending = false;
+	isButton = button;
 	linkID = -999;
 }
 

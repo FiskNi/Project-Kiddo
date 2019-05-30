@@ -42,9 +42,9 @@ public:
 
 	void InitBoundingBox();
 
-	bool CheckCollision(Entity collidingCube);
-	bool CheckHolderCollision(Entity collidingCube);
-	bool CheckInsideCollision(Entity AABB);
+	bool CheckCollision(const Entity& collidingCube);
+	bool CheckHolderCollision(const Entity& collidingCube);
+	bool CheckInsideCollision(const Entity& AABB);
 
 	void SetMaterialID(unsigned int materialID);
 	void SetPosition(glm::vec3 newPos);
