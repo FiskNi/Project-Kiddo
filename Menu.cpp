@@ -40,6 +40,8 @@ Menu::Menu()
 	CreateMenuTexture("Resources/Textures/ColButton8.png", &collTextures[7]);
 	CreateMenuTexture("Resources/Textures/ColButton9.png", &collTextures[8]);
 
+
+	CreateMenuTexture("Resources/Textures/ColHeader.png", &collHeaderTexture);
 	CreateMenuTexture("Resources/Textures/ColReturn.png", &collReturnTexture);
 
 	CreateCollectibleTextures();	
@@ -443,7 +445,7 @@ void Menu::CreateCollectibleTextures()
 	collectibleTextures.push_back(collTextures[7]);				// Collectible 8
 	collectibleTextures.push_back(collTextures[8]);				// Collectible 9
 	collectibleTextures.push_back(collReturnTexture);			// Return Button
-	collectibleTextures.push_back(buttonTextureBase);			// Header Button,	This last texture is the header texture due to a bug
+	collectibleTextures.push_back(collHeaderTexture);			// Header Button,	This last texture is the header texture due to a bug
 
 	//collectibleTextures.push_back(loadingTexture);
 	//collectibleTextures.push_back(pauseBackgroundTexture);
