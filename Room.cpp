@@ -959,7 +959,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			if (rigids[i].CheckCollision(bridges[j]))
 			{
 				// If ground is close enough
-				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
+				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff && !bridges[j].GetIsButton())
 				{
 					if (statics[j].GetHitboxTop() > ground)
 						ground = bridges[j].GetHitboxTop();
@@ -1510,7 +1510,7 @@ void Room::LoadEntities(Loader* level)
 
 		case 4:		// Bridge
 			{
-				BridgeEntity bridgeEntity(level, i, matID, true);
+				BridgeEntity bridgeEntity(level, i, matID, true, false);
 				// Needs to be looked over, might need values from maya
 				bridgeEntity.SetLinkID(level->GetMesh(i).link);
 				bridgeEntity.SetExtendingDir(level->GetMesh(i).dir);
@@ -1546,7 +1546,7 @@ void Room::LoadEntities(Loader* level)
 				PressurePlate pPlate(level, i, matID, true);
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
-				//pPlate.setBBY(2.0f);
+				pPlate.setBBY(2.0f);
 				pPlate.scaleBBZ(2.0f);
 				pPlate.scaleBBX(2.0f);
 				pressurePlates.push_back(pPlate);
@@ -1566,6 +1566,11 @@ void Room::LoadEntities(Loader* level)
 			break;
 
 		case 10:	// Plushie
+			{
+				Mesh mesh(level, i);
+				roomMeshes.push_back(mesh);
+				meshAmount++;
+			}
 			break;
 
 		case 11:	// Light
