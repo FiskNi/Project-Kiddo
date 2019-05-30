@@ -175,16 +175,22 @@ void Scene::LoadMaterials(Loader* inLoader)
 void Scene::LoadCharacter()
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
-	Loader characterLoader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+	Loader characterLoader("Resources/Assets/GameReady/Rooms/AnimWalking15.meh");
 	if (playerCharacter)
 		playerCharacter;
 	playerCharacter = nullptr;
 
-	playerCharacter = new Character(&characterLoader, 0, 0, true);
-	playerCharacter->SetScale(glm::vec3(1.5f, 1.5f, 1.5f));
-	playerCharacter->scaleBBY(1.5f);
+	playerCharacter = new Character(&characterLoader, 0, 0);
+	playerCharacter->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+	//playerCharacter->SetBoundingBox(glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//playerCharacter->scaleBBY(0.5f);
 	//playerCharacter->scaleBB(0.5f);
-	//playerCharacter->scaleBBZ(0.8f);
+	playerCharacter->SetBoundingBox(
+		glm::vec3(
+			playerCharacter->GetHitboxSize().z,
+			playerCharacter->GetHitboxSize().y,
+			playerCharacter->GetHitboxSize().z));
 
 	playerCharacter->SetStartPosition(playerCharacter->GetPosition());
 }
@@ -234,6 +240,12 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 			if (glm::length(playerCharacter->GetVelocity()) >= 0.5f)
 			{
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0);
+
 				//bool test = walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3");
 				if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
 				{
@@ -241,9 +253,16 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 				}
 			}
 			else
+			{
+				playerCharacter->GetMeshData().SetTime(0);
+
+
+
 				if (walkingEngine)
 					walkingEngine->stopAllSounds();
-				
+			}
+
+						
 			
 			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 			{
@@ -406,12 +425,11 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 99)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AniTest.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AnimWalking15.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 
 		roomNr = 0;
-		//	ADD SOUND PLAY
 	}
 	else
 	{

@@ -77,6 +77,7 @@ public:
 	void setPositionBBOffset(glm::vec3 newPos);
 
 	void SetBoundingBox(glm::vec3 BBoxCenter, glm::vec3 BBoxHalfSize); // Should be private maybe 
+	void SetBoundingBox(glm::vec3 size);
 	void scaleBB(float x);
 	void scaleBBX(float x);
 	void scaleBBZ(float z);
@@ -88,12 +89,14 @@ public:
 
 	Mesh* GetMeshDataPointer()				{ return &entityMesh; }
 
-	glm::vec3 GetPosition() const			{ return  entityMesh.GetPosition(); }
+	glm::vec3 GetPosition() const			{ return entityMesh.GetPosition(); }
 	glm::vec3 GetPositionBB() const			{ return GetPosition() + boundingBoxCenter; }
 	glm::vec3 GetHitboxSize() const			{ return boundingBoxSize; }
 	glm::vec3 GetHitboxOffset() const		{ return boundingBoxCenter; }
 	float GetHitboxBottom() const			{ return GetPosition().y - boundingBoxSize.y + boundingBoxCenter.y; }
+	//float GetHitboxBottom() const			{ return boundingBoxCenter.y + boundingBoxSize.y; }
 	float GetHitboxTop() const				{ return GetPosition().y + boundingBoxSize.y + boundingBoxCenter.y; }
+	//float GetHitboxTop() const			{ return boundingBoxCenter.yboundingBoxSize.y; }
 
 	float GetHitboxBottomOffsetBB() const	{ return GetHitboxOffset().y - boundingBoxSize.y; }
 	float GetHitboxTopOffsetBB() const		{ return GetHitboxOffset().y + boundingBoxSize.y; }

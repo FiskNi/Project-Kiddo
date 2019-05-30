@@ -99,9 +99,6 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="puzzleNode.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -210,9 +207,6 @@
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="RigidEntity.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="puzzleNode.h">
       <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">

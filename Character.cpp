@@ -52,7 +52,6 @@ Character::Character(Loader* inLoader, unsigned int index, unsigned int matID) :
 	entityID = -1;
 	inputVector = glm::vec3(0.0f);
 	respawnPos = glm::vec3(0.0f);
-
 }
 
 Character::~Character()

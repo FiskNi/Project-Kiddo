@@ -134,7 +134,7 @@ void RigidEntity::Update(float deltaTime)
 		float bbBottom = GetHitboxSize().y;
 		float bbCenter = GetHitboxOffset().y;
 		velocity.y = 0.0f;
-		calculatedPosition.y = groundLevel + bbBottom + bbCenter;
+		calculatedPosition.y = groundLevel + (bbBottom - bbCenter);
 	}
 
 	// Move this entity 

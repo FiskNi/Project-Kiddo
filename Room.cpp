@@ -66,11 +66,10 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 		//rigids[i].SetHeld(false);
 	}
 
-	BoxHolding(playerCharacter, renderWindow);
+	//BoxHolding(playerCharacter, renderWindow);
 	if(playerCharacter->IsHoldingObject() == false)
 		if (boxEngine)
 			boxEngine->stopAllSounds();
-	//BoxHolding(playerCharacter, renderWindow);
 	DragBox(playerCharacter);
 	CheckIfBoxIsStillInbound(playerCharacter);
 
@@ -1429,6 +1428,7 @@ void Room::LoadLights(Loader* inLoader)
 
 	DirectionalLight dirLight;
 	dirLights.push_back(dirLight);
+	dirLights[0].SetStrength(1.0f);
 
 	for (int i = 0; i < 1; i++)
 	{
