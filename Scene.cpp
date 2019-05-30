@@ -552,7 +552,7 @@ void Scene::LoadRoom()
 void Scene::Gravity()
 {
 	// Our downward acceleration
-	const float gravity = -0.982;
+	const float gravity = -1.982;
 
 	// Entity boxes
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)

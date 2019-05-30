@@ -242,9 +242,6 @@ void GameEngine::Run()
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
-		if (deltaTime > 1.0f)
-			deltaTime = 0.0f;
-
 
 		if (mainMenu.GetIsMenuRunning() == true)
 		{
@@ -284,6 +281,7 @@ void GameEngine::Run()
 		{
 			// Main updates to a scene
 			// Includes all interactions in the game world
+
 			mainScene.Update(mainRenderer.getWindow(), deltaTime);
 
 			// PrePass render for Shadow mapping 
