@@ -420,7 +420,6 @@ void Scene::LoadRoom()
 	if (roomNr == 0)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
-		//roomLoader = new Loader("Resources/Assets/GameReady/Rooms/LevelBedroom.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
@@ -552,7 +551,7 @@ void Scene::LoadRoom()
 void Scene::Gravity()
 {
 	// Our downward acceleration
-	const float gravity = -1.982;
+	const float gravity = -0.582;
 
 	// Entity boxes
 	for (int i = 0; i < roomBuffer->GetRigids().size(); i++)

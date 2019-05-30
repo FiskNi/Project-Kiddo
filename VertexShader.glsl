@@ -36,7 +36,6 @@ void main()
 {	
 	gl_Position = vec4(vertex_position, 1.0f);
 
-
 	if (hasAnimation)
 	{
 		gl_Position  = (boneMat[bones[0]] * vec4(vertex_position, 1.0f)) * weights.x;
@@ -81,5 +80,4 @@ void main()
 
 	vs_out.shadow_coord = SHADOW_MAT * model * gl_Position; 
 	gl_Position			= proj * view * model * gl_Position;
-
 }

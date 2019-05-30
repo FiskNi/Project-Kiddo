@@ -255,19 +255,19 @@ void Room::CheckIfBoxIsStillInbound(Character* playerCharacter)
 void Room::SetHoldPosition(Character* playerCharacter, int i)
 {
 	if (playerCharacter->GetLastDir() == 1) {
-		rigids[i].SetPositionX(playerCharacter->GetPosition().x - (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x + 0.1f));
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x - (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x + 0.2f));
 		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
 	}
 	else if (playerCharacter->GetLastDir() == 2) {
-		rigids[i].SetPositionX(playerCharacter->GetPosition().x + (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x +  0.1f));
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x + (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x +  0.2f));
 		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
 	}
 	else if (playerCharacter->GetLastDir() == 3) {
-		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().z + 0.1f));
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().x + 0.2f));
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 	else if (playerCharacter->GetLastDir() == 4) {
-		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().z + 0.1f));
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().x + 0.2f));
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 }
