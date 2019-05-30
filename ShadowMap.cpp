@@ -4,8 +4,8 @@
 
 ShadowMap::ShadowMap()
 {
-	SHADOW_WIDTH = 512;
-	SHADOW_HEIGHT = 512;
+	SHADOW_WIDTH = 1024;
+	SHADOW_HEIGHT = 1024;
 
 	shadow_id = -1;
 }

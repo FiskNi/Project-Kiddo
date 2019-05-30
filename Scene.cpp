@@ -199,7 +199,7 @@ void Scene::CompileMeshData()
 {
 	// Compile the mesh data of the first room
 	roomBuffer->CompileMeshData();
-	roomBuffer->GetMeshData()[roomBuffer->GetMeshData().size() - 1] = playerCharacter->GetMeshData();
+	roomBuffer->GetMeshData()[roomBuffer->GetMeshData().size() - 1] = &playerCharacter->GetMeshData();
 	// Compile character data
 }
 
