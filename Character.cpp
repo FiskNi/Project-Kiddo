@@ -208,7 +208,7 @@ void Character::Move(GLFWwindow* window)
 	{
 		if (!holdingObject) 
 		{
-			glm::vec3 forwardZ(0.0, 0.0f, 1.0f);
+			glm::vec3 forwardZ(0.0f, 0.0f, 1.0f);
 			float cosRotation = glm::dot(forwardZ, glm::normalize(GetVelocity()));
 			float rotation = acos(cosRotation);
 

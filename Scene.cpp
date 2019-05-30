@@ -175,22 +175,20 @@ void Scene::LoadMaterials(Loader* inLoader)
 void Scene::LoadCharacter()
 {
 	// Could be improved instead of having a specific integer #, example a named integer "playerMaterial"
-	Loader characterLoader("Resources/Assets/GameReady/Rooms/AnimWalking15.meh");
+	Loader characterLoader("Resources/Assets/GameReady/Rooms/CharacterAnim.meh");
 	if (playerCharacter)
 		playerCharacter;
 	playerCharacter = nullptr;
 
 	playerCharacter = new Character(&characterLoader, 0, 0);
 	playerCharacter->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
-	//playerCharacter->SetBoundingBox(glm::vec3(1.0f, 1.0f, 1.0f));
-
-	//playerCharacter->scaleBBY(0.5f);
-	//playerCharacter->scaleBB(0.5f);
 	playerCharacter->SetBoundingBox(
 		glm::vec3(
 			playerCharacter->GetHitboxSize().z,
 			playerCharacter->GetHitboxSize().y,
 			playerCharacter->GetHitboxSize().z));
+	playerCharacter->scaleBBX(0.9f);
+	playerCharacter->scaleBBZ(0.9f);
 
 	playerCharacter->SetStartPosition(playerCharacter->GetPosition());
 }
@@ -238,29 +236,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			}
 			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
 
-			if (glm::length(playerCharacter->GetVelocity()) >= 0.5f)
-			{
-				playerCharacter->GetMeshData().ForwardTime(deltaTime);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
-					playerCharacter->GetMeshData().SetTime(0);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
-					playerCharacter->GetMeshData().SetTime(0);
-
-				//bool test = walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3");
-				if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
-				{
-					walkingEngine->play2D("irrKlang/media/walking.mp3", false);
-				}
-			}
-			else
-			{
-				playerCharacter->GetMeshData().SetTime(0);
-
-
-
-				if (walkingEngine)
-					walkingEngine->stopAllSounds();
-			}
 
 						
 			
@@ -274,6 +249,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 				roomBuffer->GetBridges()[i].Update(deltaTime);
 			}
 			playerCharacter->Update(deltaTime);
+			CharacterUpdates(deltaTime);
 
 			Gravity();
 			//menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
@@ -287,6 +263,91 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		// Might want to handle mouse picking here
 	}
 
+}
+
+void Scene::CharacterUpdates(float deltaTime)
+{
+
+	if (glm::length(playerCharacter->GetVelocity()) >= 0.8f)
+	{
+		if (playerCharacter->IsHoldingObject())
+		{
+			glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
+			dirVec = rotationMat * dirVec;
+			float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
+
+			if (angle < 0)
+				playerCharacter->GetMeshData().SetPlayingBackwards(true);
+			else
+				playerCharacter->GetMeshData().SetPlayingBackwards(false);
+
+			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+			{
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0.0f);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0.0f);
+			}
+			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+			{
+				playerCharacter->GetMeshData().BackwardTime(deltaTime);
+
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0.98f);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0.98f);
+			}		
+		}
+		else
+		{
+
+			glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
+			dirVec = rotationMat * dirVec;
+			float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
+
+			if (angle < 0)
+				playerCharacter->GetMeshData().SetPlayingBackwards(true);
+			else
+				playerCharacter->GetMeshData().SetPlayingBackwards(false);
+
+			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+				playerCharacter->GetMeshData().BackwardTime(deltaTime);
+
+
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
+				playerCharacter->GetMeshData().SetTime(1.1f);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 1.0f)
+				playerCharacter->GetMeshData().SetTime(1.1f);
+		}
+
+
+		//bool test = walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3");
+		if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
+		{
+			walkingEngine->play2D("irrKlang/media/walking.mp3", false);
+		}
+	}
+	else
+	{
+		
+		playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
+		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
+			playerCharacter->GetMeshData().SetTime(2.15f);
+		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
+			playerCharacter->GetMeshData().SetTime(2.15f);
+		
+	
+
+		if (walkingEngine)
+			walkingEngine->stopAllSounds();
+	}
 }
 
 void Scene::ResetRoom()
@@ -431,7 +492,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 99)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/AnimWalking15.meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/CharacterAnim.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 

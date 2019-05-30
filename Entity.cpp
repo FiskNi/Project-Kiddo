@@ -185,12 +185,10 @@ bool Entity::CheckHolderCollision(Entity collidingCube)
 
 bool Entity::CheckInsideCollision(Entity AABB)
 {
-	if (AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x
-		&& AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x
-		&& AABB.GetPositionBB().y + AABB.boundingBoxSize.y < this->GetPositionBB().y + boundingBoxSize.y
-		&& AABB.GetPositionBB().y - AABB.boundingBoxSize.y > this->GetPositionBB().y - boundingBoxSize.y
-		&& AABB.GetPositionBB().z + AABB.boundingBoxSize.z < this->GetPositionBB().z + boundingBoxSize.z
-		&& AABB.GetPositionBB().z - AABB.boundingBoxSize.z > this->GetPositionBB().z - boundingBoxSize.z)
+	if (AABB.GetPositionBB().x + AABB.boundingBoxSize.x < this->GetPositionBB().x + boundingBoxSize.x && 
+		AABB.GetPositionBB().x - AABB.boundingBoxSize.x > this->GetPositionBB().x - boundingBoxSize.x &&  
+		AABB.GetPositionBB().z + AABB.boundingBoxSize.z < this->GetPositionBB().z + boundingBoxSize.z && 
+		AABB.GetPositionBB().z - AABB.boundingBoxSize.z > this->GetPositionBB().z - boundingBoxSize.z)
 	{
 		return true;
 	}

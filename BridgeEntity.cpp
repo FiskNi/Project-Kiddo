@@ -124,7 +124,8 @@ void BridgeEntity::Update(float deltaTime)
 					SetPosition(calculatedPosition);
 				}
 				else
-				{
+				{	
+					SetPosition((restPosition + (extendDirection * extendDistance)));
 					extended = true;
 					extending = false;
 				}
@@ -137,6 +138,7 @@ void BridgeEntity::Update(float deltaTime)
 				}
 				else
 				{
+					SetPosition((restPosition + (extendDirection * extendDistance)));
 					extended = true;
 					extending = false;
 				}
@@ -149,6 +151,7 @@ void BridgeEntity::Update(float deltaTime)
 				}
 				else
 				{
+					SetPosition((restPosition + (extendDirection * extendDistance)));
 					extended = true;
 					extending = false;
 				}
@@ -161,6 +164,7 @@ void BridgeEntity::Update(float deltaTime)
 				}
 				else
 				{
+					SetPosition((restPosition + (extendDirection * extendDistance)));
 					extended = true;
 					extending = false;
 				}
@@ -174,6 +178,7 @@ void BridgeEntity::Update(float deltaTime)
 				}
 				else
 				{
+					SetPosition((restPosition + (extendDirection * extendDistance)));
 					extended = true;
 					extending = false;
 				}
@@ -186,6 +191,7 @@ void BridgeEntity::Update(float deltaTime)
 				}
 				else
 				{
+					SetPosition((restPosition + (extendDirection * extendDistance)));
 					extended = true;
 					extending = false;
 				}
@@ -210,12 +216,20 @@ void BridgeEntity::Update(float deltaTime)
 			{
 				SetPosition(calculatedPosition);
 			}
+			else
+			{
+				SetPosition(restPosition);
+			}
 		}
 		if (extendDirection == glm::vec3(-1.0f, 0.0f, 0.0f))
 		{
 			if (restPosition.x > GetPosition().x)
 			{
 				SetPosition(calculatedPosition);
+			}
+			else
+			{
+				SetPosition(restPosition);
 			}
 		}
 		if (extendDirection == glm::vec3(0.0f, 0.0f, 1.0f))
@@ -224,12 +238,20 @@ void BridgeEntity::Update(float deltaTime)
 			{
 				SetPosition(calculatedPosition);
 			}
+			else
+			{
+				SetPosition(restPosition);
+			}
 		}
 		if (extendDirection == glm::vec3(0.0f, 0.0f, -1.0f))
 		{
 			if (restPosition.z > GetPosition().z)
 			{
 				SetPosition(calculatedPosition);
+			}
+			else
+			{
+				SetPosition(restPosition);
 			}
 		}
 
@@ -239,12 +261,20 @@ void BridgeEntity::Update(float deltaTime)
 			{
 				SetPosition(calculatedPosition);
 			}
+			else
+			{
+				SetPosition(restPosition);
+			}
 		}
 		if (extendDirection == glm::vec3(0.0f, -1.0f, 0.0f))
 		{
 			if (restPosition.y > GetPosition().y)
 			{
 				SetPosition(calculatedPosition);
+			}
+			else
+			{
+				SetPosition(restPosition);
 			}
 		}
 

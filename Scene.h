@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "BoxHoldEntity.h"
 #include "Headers.h"
+#include <iomanip>
 
 
 
@@ -105,6 +106,7 @@ public:
 
 	void LoadRoom();
 	void Update(GLFWwindow* renderWindow, float deltaTime);
+	void CharacterUpdates(float deltaTime);
 	void ResetRoom();
 	void Exited();
 
