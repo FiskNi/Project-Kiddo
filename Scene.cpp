@@ -383,7 +383,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 3)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BridgeTutorial].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxBridgeTutorial].meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
@@ -422,6 +422,12 @@ void Scene::LoadRoom()
 		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
 		roomBuffer->GetDirectionalLights()[0].SetStrength(0.18f);
 
+	}
+	else if (roomNr == 5)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls]Closet.meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, musicEngine);
 	}
 	else if (roomNr == 99)
 	{

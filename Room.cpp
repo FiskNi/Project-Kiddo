@@ -972,7 +972,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 					{
 						holders[j].setVisible(true);
 						holders[j].boxReturn();
-						rigids[i].SetPosition(glm::vec3(999, 0, 0));
+						rigids[i].SetPosition(glm::vec3(50, 2, 2));
 					}
 					ground = holders[j].GetHitboxTopOffsetBB();
 					rigids[i].SetGrounded(true);

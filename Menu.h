@@ -25,7 +25,11 @@ private:
 	GLuint backgroundTexture;
 	GLuint howToPlayTexture;
 
-	GLuint tempCollQuit;
+
+	GLuint collHeaderTexture;
+	GLuint collEmptyTexture;
+	GLuint collTextures[9];
+	GLuint collReturnTexture;
 
 	GLuint buttonTextureBase;
 	std::vector<GLuint> buttonTextures;
@@ -119,7 +123,7 @@ public:
 	std::vector<MenuButton> GetHtpMenuButtons() const					{ return htpButtons; }
 
 	// Offset is for stacked menus, which will be used if we make a collectible menu
-	float GetCurrentOffset(int nrOfButtons) const	{ return (nrOfButtons - 1) * (buttonWidth + BUTTON_OFFSET) - 0.33f; }
+	float GetCurrentOffset(int nrOfButtons) const	{ return (nrOfButtons - 1) * (buttonWidth + BUTTON_OFFSET) - 0.415f; }
 	int GetNrOfMenuButtons() const					{ return nrOfMainButtons; }
 	int GetNrOfPauseButtons() const					{ return nrOfPauseButtons; }
 	int GetNrOfCollectibleButtons() const			{ return nrOfCollectibleButtons; }
@@ -134,6 +138,7 @@ public:
 	void SetActiveMenu(ACTIVEMENU nm)				{ this->activeMenu = nm; }
 
 	int GetLastClickedButton() const				{ return currentButtonHit; }
+	void ResetLastClickedButton()					{ this->currentButtonHit = -1; }
 	bool GetHasButtonActionExecuted() const			{ return buttonActionExecuted; }
 	void SetButtonActionExecuted(bool tf)			{ this->buttonActionExecuted = tf; }
 
