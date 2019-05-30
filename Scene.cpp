@@ -49,10 +49,12 @@ void Scene::key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			scene->_CheckPressedButtons();
 			scene->_CheckPressedBombs();
 		}
-		if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_L && action == GLFW_PRESS || key == GLFW_KEY_SPACE && action == GLFW_PRESS) 
+		{
 			scene->roomBuffer->NewBoxHolding(scene->playerCharacter);
 		}
-		if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_L && action == GLFW_RELEASE || key == GLFW_KEY_SPACE && action == GLFW_RELEASE) 
+		{
 			std::cout << "release" << std::endl;
 			scene->roomBuffer->ReleaseBox(scene->playerCharacter);
 		}
@@ -236,9 +238,6 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			}
 			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
 
-
-						
-			
 			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
 			{
 				roomBuffer->GetRigids()[i].Update(deltaTime);
@@ -336,15 +335,19 @@ void Scene::CharacterUpdates(float deltaTime)
 	}
 	else
 	{
+		if (playerCharacter->IsHoldingObject())
+		{
+			playerCharacter->GetMeshData().SetTime(0.0f);
+		}
+		else
+		{
+			playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
+				playerCharacter->GetMeshData().SetTime(2.15f);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
+				playerCharacter->GetMeshData().SetTime(2.15f);
+		}
 		
-		playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
-		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
-			playerCharacter->GetMeshData().SetTime(2.15f);
-		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
-			playerCharacter->GetMeshData().SetTime(2.15f);
-		
-	
-
 		if (walkingEngine)
 			walkingEngine->stopAllSounds();
 	}
