@@ -255,19 +255,19 @@ void Room::CheckIfBoxIsStillInbound(Character* playerCharacter)
 void Room::SetHoldPosition(Character* playerCharacter, int i)
 {
 	if (playerCharacter->GetLastDir() == 1) {
-		rigids[i].SetPositionX(playerCharacter->GetPosition().x - (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x + 0.1f));
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x - (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x + 0.2f));
 		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
 	}
 	else if (playerCharacter->GetLastDir() == 2) {
-		rigids[i].SetPositionX(playerCharacter->GetPosition().x + (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x +  0.1f));
+		rigids[i].SetPositionX(playerCharacter->GetPosition().x + (rigids[i].GetHitboxSize().x + playerCharacter->GetHitboxSize().x +  0.2f));
 		rigids[i].SetPositionZ(playerCharacter->GetPosition().z);
 	}
 	else if (playerCharacter->GetLastDir() == 3) {
-		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().z + 0.1f));
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z - (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().x + 0.2f));
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 	else if (playerCharacter->GetLastDir() == 4) {
-		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().z + 0.1f));
+		rigids[i].SetPositionZ(playerCharacter->GetPosition().z + (rigids[i].GetHitboxSize().z + playerCharacter->GetHitboxSize().x + 0.2f));
 		rigids[i].SetPositionX(playerCharacter->GetPosition().x);
 	}
 }
@@ -962,7 +962,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 				// If ground is close enough
 				if (abs(rigids[i].GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff && !bridges[j].GetIsButton())
 				{
-					if (statics[j].GetHitboxTop() > ground)
+					if (bridges[j].GetHitboxTop() > ground)
 						ground = bridges[j].GetHitboxTop();
 					rigids[i].SetGrounded(true);
 				}
@@ -1046,7 +1046,7 @@ void Room::RigidGroundCollision(Character* playerCharacter)
 			// If ground is close enough
 			if (abs(playerCharacter->GetHitboxBottom() - bridges[j].GetHitboxTop()) < maxDiff)
 			{
-				if (statics[j].GetHitboxTop() > ground)
+				if (bridges[j].GetHitboxTop() > ground)
 					ground = bridges[j].GetHitboxTop();
 				playerCharacter->SetGrounded(true);
 			}	
@@ -1209,19 +1209,10 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				{
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
+					pushDir.y = 0.0f;
+					pushDir *= 3.0f;
 
-					//pushDir.y = 0.0f;
-					//pushDir *= 3.0f;
-
-					//// Lock to 1 axis
-					//if (abs(pushDir.x) >= abs(pushDir.z))
-					//	pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-					//else
-					//	pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-					//pushDir *= 2.0f;
-
-					//rigids[i].AddVelocity(pushDir);
-
+					//rigids[i].AddVelocity(-pushDir);
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
@@ -1234,12 +1225,10 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				{
 					glm::vec3 pushDir = bridges[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
-
 					pushDir.y = 0.0f;
 					pushDir *= 3.0f;
 
-
-
+					//rigids[i].AddVelocity(-pushDir);
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
@@ -1255,13 +1244,11 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 			if (abs(statics[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
-
 				pushDir = normalize(pushDir);
-
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				//playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->AddVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
@@ -1276,11 +1263,10 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 			{
 				glm::vec3 pushDir = bridges[i].GetPosition() - playerCharacter->GetPosition();
 				pushDir = normalize(pushDir);
-
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				//playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->AddVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
@@ -1391,7 +1377,7 @@ void Room::CompileMeshData()
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
 	{
-		//meshes[j] = colPlanes[i].GetMeshData();
+		meshes[j] = &colPlanes[i].GetMeshData();
 		j++;
 	}
 
@@ -1439,20 +1425,23 @@ void Room::LoadLights(Loader* inLoader)
 	dirLights.push_back(dirLight);
 	dirLights[0].SetStrength(1.0f);
 
-	for (int i = 0; i < 1; i++)
+	if (inLoader->GetDirLightCount() >= 1)
 	{
-		glm::vec3 pos = glm::vec3(
-			inLoader->GetDirLightPos(i)[0],
-			inLoader->GetDirLightPos(i)[1],
-			inLoader->GetDirLightPos(i)[2]);
-		glm::vec3 color = glm::vec3(
-			inLoader->GetDirLightColor(i)[0],
-			inLoader->GetDirLightColor(i)[1],
-			inLoader->GetDirLightColor(i)[2]);
+		for (int i = 0; i < 1; i++)
+		{
+			glm::vec3 pos = glm::vec3(
+				inLoader->GetDirLightPos(i)[0],
+				inLoader->GetDirLightPos(i)[1],
+				inLoader->GetDirLightPos(i)[2]);
+			glm::vec3 color = glm::vec3(
+				inLoader->GetDirLightColor(i)[0],
+				inLoader->GetDirLightColor(i)[1],
+				inLoader->GetDirLightColor(i)[2]);
 
-		dirLights[i].SetPos(pos);
-		dirLights[i].SetDiffuse(color);
-		dirLights[i].SetStrength(0.4f);
+			dirLights[i].SetPos(pos);
+			dirLights[i].SetDiffuse(color);
+			dirLights[i].SetStrength(0.4f);
+		}
 	}
 
 }
@@ -1548,8 +1537,8 @@ void Room::LoadEntities(Loader* level)
 				pPlate.SetLink(level->GetMesh(i).link);
 				pPlate.SetMaterialID(matID);
 				pPlate.setBBY(2.0f);
-				pPlate.scaleBBZ(2.0f);
-				pPlate.scaleBBX(2.0f);
+				pPlate.scaleBBZ(1.4f);
+				pPlate.scaleBBX(1.4f);
 				pressurePlates.push_back(pPlate);
 				meshAmount++;
 			}

@@ -15,37 +15,6 @@ GameEngine::GameEngine()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glfwSwapBuffers(mainRenderer.getWindow());
 
-
-	// Load vertex data for the main scene
-	// Could possibly be handled inside the scene or inside the renderer
-	// Not dynamic (in constructor) but creates one large render buffer rather than
-	// relying on the mesh to have these. This buffer goes into the renderer and would be swapped between rooms.
-	// The scene handles what data this recieves
-	//meshCount = mainScene.GetMeshData().size();
-	//vertexCount = 0;
-	//for (int i = 0; i < meshCount; i++)
-	//{
-	//	vertexCount += mainScene.GetMeshData()[i].GetVertices().size();
-	//}
-	//// Allocated memory
-	//mainSceneVertexData = new vertexPolygon[vertexCount];
-
-	//int vertexIndex = 0;
-	//for (int i = 0; i < meshCount; i++)
-	//{
-	//	int meshVtxCount = mainScene.GetMeshData()[i].GetVertices().size();
-	//	for (int j = 0; j < meshVtxCount; j++)
-	//	{
-	//		mainSceneVertexData[vertexIndex] = mainScene.GetMeshData()[i].GetVertices()[j];
-	//		vertexIndex++;
-	//	}
-	//}
-	//mainRenderer.CompileVertexData(vertexCount, mainSceneVertexData);
-
-
-
-	//menuIsRunning = true;
-
 	musicEngine = irrklang::createIrrKlangDevice();
 	if (musicEngine)
 		musicEngine->play2D("irrKlang/media/sad-music-box.mp3", true);
@@ -229,6 +198,8 @@ void GameEngine::Run()
 				switchCursorOnce = false;
 				if (musicEngine)
 					musicEngine->stopAllSounds();
+				if (musicEngine)
+					musicEngine->play2D("irrKlang/media/11 Cherry.mp3", true);
 			}
 		}
 		else if (mainScene.GetExit())
@@ -242,9 +213,6 @@ void GameEngine::Run()
 
 		// Deltatime via ImGui
 		float deltaTime = ImGui::GetIO().DeltaTime;
-		if (deltaTime > 1.0f)
-			deltaTime = 0.0f;
-
 
 		if (mainMenu.GetIsMenuRunning() == true)
 		{
@@ -284,6 +252,7 @@ void GameEngine::Run()
 		{
 			// Main updates to a scene
 			// Includes all interactions in the game world
+
 			mainScene.Update(mainRenderer.getWindow(), deltaTime);
 
 			// PrePass render for Shadow mapping 
@@ -312,7 +281,6 @@ void GameEngine::Run()
 
 				UpdateImGui(renderDepth);
 				ImGui::Render();
-				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 				glfwSwapBuffers(mainRenderer.getWindow());
@@ -364,6 +332,8 @@ void GameEngine::Run()
 							mainMenu.ResetUpdateState();
 							mainScene.ExitToMainMenu();
 							mainMenu.SetIsMenuRunning(true);
+							if (musicEngine)
+								musicEngine->stopAllSounds();
 							if (musicEngine)
 								musicEngine->play2D("irrKlang/media/sad-music-box.mp3", true);
 							//std::cout << "MAIN MENU" << std::endl;

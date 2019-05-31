@@ -21,7 +21,7 @@ ColPlane::ColPlane(Loader * inLoader, int index, unsigned int matID) : StaticEnt
 
 
 	//Makes the plane "invisible". *Ahem* YEET!!
-	//SetPosition(glm::vec3(999,999,999));
+	SetPosition(glm::vec3(999,999,999));
 
 	setPositionBBOffset(temp);
 

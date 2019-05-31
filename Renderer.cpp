@@ -239,7 +239,7 @@ void Renderer::Render(Shader gShaderProgram, std::vector<Mesh*>& objects, Camera
 //=============================================================
 void Renderer::CompileVertexData(int vertexCount, vertexPolygon* vertices)
 {
-	glDeleteVertexArrays(1, &gVertexAttribute);
+	//glDeleteVertexArrays(1, &gVertexAttribute);
 
 	// Vertex Array Object (VAO), description of the inputs to the GPU 
 	glGenVertexArrays(1, &gVertexAttribute);
