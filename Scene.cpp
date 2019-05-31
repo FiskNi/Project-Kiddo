@@ -559,7 +559,7 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 
-		roomNr = -1;
+		roomNr = 0;
 		// ADD SOUND PLAY
 	}
 
