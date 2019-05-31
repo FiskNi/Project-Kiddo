@@ -449,7 +449,7 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 1)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxConundrum].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL2]Wardrobe.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 		for (int i = 0; i < roomBuffer->GetPointLights().size(); i++)
@@ -513,6 +513,12 @@ void Scene::LoadRoom()
 	else if (roomNr == 5)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL7]MushRoomForest.meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, musicEngine);
+	}
+	else if (roomNr == 6)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL10]EndRoom.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
