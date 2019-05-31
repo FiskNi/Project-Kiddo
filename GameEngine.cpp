@@ -377,8 +377,6 @@ void GameEngine::Run()
 			mainScene.LoadRoom();
 			CompileRoomData();
 		}
-	
-
 	}
 
 	// SHUTDOWN
