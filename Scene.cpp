@@ -238,42 +238,41 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		}
 		else
 		{
-			// Player movement vector
-			playerCharacter->Move(renderWindow);
-			if (!playerCharacter->IsColliding())
-			{
-				playerCharacter->AddVelocity(playerCharacter->GetInputVector());
-			}
-			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
-
-			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
-			{
-				roomBuffer->GetRigids()[i].Update(deltaTime);
-			}
-
-			for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
-			{
-				roomBuffer->GetBridges()[i].Update(deltaTime);
-			}
-
 			// Check if endgame is not completed and then update
 			if (!roomBuffer->PlushIsCollected())
 			{
+				// Player movement vector
+				playerCharacter->Move(renderWindow);
+				if (!playerCharacter->IsColliding())
+				{
+					playerCharacter->AddVelocity(playerCharacter->GetInputVector());
+				}
+				roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
+
+				for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
+				{
+					roomBuffer->GetRigids()[i].Update(deltaTime);
+				}
+
+				for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
+				{
+					roomBuffer->GetBridges()[i].Update(deltaTime);
+				}
 				CharacterUpdates(deltaTime);
 				playerCharacter->Update(deltaTime);
 			}
 			else // End game state
 			{
 				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 5.0f)
-					playerCharacter->GetMeshData().SetTime(5.0f);
+					playerCharacter->GetMeshData().SetTime(5.25f);
 
-				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+				playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5f);
 
 
 				/*if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 5.98f)
 					playerCharacter->GetMeshData().SetTime(0.0f);*/
 
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 10.98f)
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 7.00f)
 					roomBuffer->SetRoomCompleted(true);
 			}
 
@@ -447,7 +446,7 @@ void Scene::LoadRoom()
 		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 0.89f, 0.6f));
 		roomBuffer->GetDirectionalLights()[0].SetStrength(0.32f);
 	}
-	else if (roomNr == 1)
+	else if (roomNr == 11)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL2]Wardrobe.meh");
 		LoadMaterials(roomLoader);
@@ -516,11 +515,35 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
-	else if (roomNr == 6)
+	else if (roomNr == 1)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL10]EndRoom.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
+
+		roomBuffer->GetPointLights()[0].setAttenuation(3);
+		//roomBuffer->GetPointLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[0].setPower(8.0f);
+
+		roomBuffer->GetPointLights()[4].setAttenuation(1);
+		//roomBuffer->GetPointLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[4].setPower(3.0f);
+
+		roomBuffer->GetPointLights()[1].setAttenuation(3);
+		//roomBuffer->GetPointLights()[1].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[1].setPower(20.0f);
+
+		roomBuffer->GetPointLights()[2].setAttenuation(3);
+		//roomBuffer->GetPointLights()[2].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[2].setPower(20.0f);
+
+		roomBuffer->GetPointLights()[3].setAttenuation(3);
+		//roomBuffer->GetPointLights()[3].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[3].setPower(20.0f);
+
+		
+		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetDirectionalLights()[0].SetStrength(0.18f);
 	}
 	else if (roomNr == 99)
 	{

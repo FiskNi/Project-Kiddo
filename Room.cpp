@@ -82,6 +82,7 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	BoxPlateCollision(playerCharacter);
 	ButtonInteract(renderWindow, playerCharacter);
 	PlayerDoorCollision(playerCharacter);
+	PlushieCollision(playerCharacter);
 	
 	//PlayerItemCollision(playerCharacter);
 	PlayerCollectibleCollision(playerCharacter);
@@ -1579,7 +1580,7 @@ void Room::LoadEntities(Loader* level)
 
 		case 10:	// Plushie
 			{
-				Plushie plush(level, i, i, true);
+				Plushie plush(level, i, matID, true);
 				plushes.push_back(plush);
 				meshAmount++;
 			}
