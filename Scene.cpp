@@ -429,7 +429,7 @@ void Scene::LoadRoom()
 	// Additional hardcoded roomfunctions may be applied here.
 	if (roomNr == 0)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL1]Bedroom.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
@@ -462,24 +462,10 @@ void Scene::LoadRoom()
 	}
 	else if (roomNr == 2)
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[PadsNWalls].meh");
-		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, musicEngine);
-		// ADD SOUND PLAY
-	}
-	else if (roomNr == 3)
-	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[BoxBridgeTutorial].meh");
-		LoadMaterials(roomLoader);
-		roomBuffer = new Room(roomLoader, musicEngine);
-	}
-	else if (roomNr == 4)
-	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL5]ToyBox.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 		// ADD SOUND PLAY
-
 
 		roomBuffer->GetPointLights()[0].setAttenuation(3);
 		roomBuffer->GetPointLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -507,15 +493,20 @@ void Scene::LoadRoom()
 
 		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
 		roomBuffer->GetDirectionalLights()[0].SetStrength(0.18f);
-
 	}
-	else if (roomNr == 5)
+	else if (roomNr == 3)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL7]MushRoomForest.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
-	else if (roomNr == 6)
+	else if (roomNr == 4)
+	{
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL7]MushRoomForest.meh");
+		LoadMaterials(roomLoader);
+		roomBuffer = new Room(roomLoader, musicEngine);
+	}
+	else if (roomNr == 5)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL10]EndRoom.meh");
 		LoadMaterials(roomLoader);
