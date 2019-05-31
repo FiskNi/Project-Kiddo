@@ -1209,19 +1209,10 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				{
 					glm::vec3 pushDir = statics[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
+					pushDir.y = 0.0f;
+					pushDir *= 3.0f;
 
-					//pushDir.y = 0.0f;
-					//pushDir *= 3.0f;
-
-					//// Lock to 1 axis
-					//if (abs(pushDir.x) >= abs(pushDir.z))
-					//	pushDir = glm::vec3(pushDir.x, 0.0f, 0.0f);
-					//else
-					//	pushDir = glm::vec3(0.0f, 0.0f, pushDir.z);
-					//pushDir *= 2.0f;
-
-					//rigids[i].AddVelocity(pushDir);
-
+					//rigids[i].AddVelocity(-pushDir);
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
@@ -1234,12 +1225,10 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 				{
 					glm::vec3 pushDir = bridges[i].GetPosition() - rigids[i].GetPosition();
 					pushDir = normalize(pushDir);
-
 					pushDir.y = 0.0f;
 					pushDir *= 3.0f;
 
-
-
+					//rigids[i].AddVelocity(-pushDir);
 					rigids[i].SetPosition(rigids[i].GetSavedPos());
 				}
 			}
@@ -1255,13 +1244,11 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 			if (abs(statics[i].GetHitboxTop() - playerCharacter->GetHitboxBottom()) >= 0.5f)
 			{
 				glm::vec3 pushDir = statics[i].GetPosition() - playerCharacter->GetPosition();
-
 				pushDir = normalize(pushDir);
-
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				//playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->AddVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
@@ -1276,11 +1263,10 @@ void Room::RigidStaticCollision(Character* playerCharacter)
 			{
 				glm::vec3 pushDir = bridges[i].GetPosition() - playerCharacter->GetPosition();
 				pushDir = normalize(pushDir);
-
 				pushDir.y = 0.0f;
 				pushDir *= 3.0f;
 
-				//playerCharacter->SetVelocity(-pushDir);
+				playerCharacter->AddVelocity(-pushDir);
 				playerCharacter->SetPosition(playerCharacter->GetSavedPos());
 				playerCharacter->SetColliding(true);
 			}
