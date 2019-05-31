@@ -255,11 +255,30 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 			{
 				roomBuffer->GetBridges()[i].Update(deltaTime);
 			}
-			playerCharacter->Update(deltaTime);
-			CharacterUpdates(deltaTime);
+
+			// Check if endgame is not completed and then update
+			if (!roomBuffer->PlushIsCollected())
+			{
+				CharacterUpdates(deltaTime);
+				playerCharacter->Update(deltaTime);
+			}
+			else // End game state
+			{
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 5.0f)
+					playerCharacter->GetMeshData().SetTime(5.0f);
+
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+
+
+				/*if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 5.98f)
+					playerCharacter->GetMeshData().SetTime(0.0f);*/
+
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 10.98f)
+					roomBuffer->SetRoomCompleted(true);
+			}
 
 			Gravity();
-			//menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
+
 			// Compile render data for the renderer
 			CompileMeshData();
 		}	
@@ -274,94 +293,86 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 void Scene::CharacterUpdates(float deltaTime)
 {
-	if (roomNr != 11)
+	if (glm::length(playerCharacter->GetVelocity()) >= 0.5f)
 	{
-		if (glm::length(playerCharacter->GetVelocity()) >= 0.8f)
+		if (playerCharacter->IsHoldingObject())
 		{
-			if (playerCharacter->IsHoldingObject())
-			{
-				// Finds a angle between the current rotation and the players velocity to check if the player is walking backwards
-				glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
-				dirVec = rotationMat * dirVec;
-				float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
+			// Finds a angle between the current rotation and the players velocity to check if the player is walking backwards
+			glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
+			dirVec = rotationMat * dirVec;
+			float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
 
-				if (angle < 0)
-					playerCharacter->GetMeshData().SetPlayingBackwards(true);
-				else
-					playerCharacter->GetMeshData().SetPlayingBackwards(false);
-
-				if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-				{
-					playerCharacter->GetMeshData().ForwardTime(deltaTime);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
-						playerCharacter->GetMeshData().SetTime(0.0f);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
-						playerCharacter->GetMeshData().SetTime(0.0f);
-				}
-				else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-				{
-					playerCharacter->GetMeshData().BackwardTime(deltaTime);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
-						playerCharacter->GetMeshData().SetTime(0.98f);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
-						playerCharacter->GetMeshData().SetTime(0.98f);
-				}
-			}
+			if (angle < 0)
+				playerCharacter->GetMeshData().SetPlayingBackwards(true);
 			else
+				playerCharacter->GetMeshData().SetPlayingBackwards(false);
+
+			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
 			{
-				glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
-				dirVec = rotationMat * dirVec;
-				float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
-
-				if (angle < 0)
-					playerCharacter->GetMeshData().SetPlayingBackwards(true);
-				else
-					playerCharacter->GetMeshData().SetPlayingBackwards(false);
-
-				if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-					playerCharacter->GetMeshData().ForwardTime(deltaTime);
-				else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-					playerCharacter->GetMeshData().BackwardTime(deltaTime);
-
-
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
-					playerCharacter->GetMeshData().SetTime(1.1f);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 1.0f)
-					playerCharacter->GetMeshData().SetTime(1.1f);
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0.0f);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0.0f);
 			}
-
-			if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
+			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
 			{
-				walkingEngine->play2D("irrKlang/media/walking.mp3", false);
+				playerCharacter->GetMeshData().BackwardTime(deltaTime);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0.98f);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0.98f);
 			}
 		}
 		else
 		{
-			if (playerCharacter->IsHoldingObject())
-			{
-				playerCharacter->GetMeshData().SetTime(0.0f);
-			}
+			glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
+			dirVec = rotationMat * dirVec;
+			float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
+
+			if (angle < 0)
+				playerCharacter->GetMeshData().SetPlayingBackwards(true);
 			else
-			{
-				playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
-					playerCharacter->GetMeshData().SetTime(2.15f);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
-					playerCharacter->GetMeshData().SetTime(2.15f);
-			}
-			if (walkingEngine)
-				walkingEngine->stopAllSounds();
+				playerCharacter->GetMeshData().SetPlayingBackwards(false);
+
+			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+				playerCharacter->GetMeshData().BackwardTime(deltaTime);
+
+
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
+				playerCharacter->GetMeshData().SetTime(1.1f);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 1.0f)
+				playerCharacter->GetMeshData().SetTime(1.1f);
+		}
+
+		// Play walking sound
+		if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
+		{
+			walkingEngine->play2D("irrKlang/media/walking.mp3", false);
 		}
 	}
-	else if (roomNr == 11)
+	else
 	{
-		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
-			playerCharacter->GetMeshData().SetTime(1.1f);
-
+		if (playerCharacter->IsHoldingObject())
+		{
+			playerCharacter->GetMeshData().SetTime(0.0f);
+		}
+		else
+		{
+			playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
+				playerCharacter->GetMeshData().SetTime(2.15f);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
+				playerCharacter->GetMeshData().SetTime(2.15f);
+		}
+		if (walkingEngine)
+			walkingEngine->stopAllSounds();
 	}
 	
 }

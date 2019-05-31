@@ -151,6 +151,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshGroupClass.cpp" />
+    <ClCompile Include="Plushie.cpp" />
     <ClCompile Include="PressurePlate.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RigidEntity.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshGroupClass.h" />
+    <ClInclude Include="Plushie.h" />
     <ClInclude Include="PressurePlate.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RigidEntity.h" />

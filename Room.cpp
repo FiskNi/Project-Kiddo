@@ -74,7 +74,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 	DragBox(playerCharacter);
 	CheckIfBoxIsStillInbound(playerCharacter);
 
-
 	RigidGroundCollision(playerCharacter);
 	PlayerRigidCollision(playerCharacter);
 	RigidRigidCollision();
@@ -126,7 +125,6 @@ void Room::Update(Character* playerCharacter, GLFWwindow* renderWindow, float de
 							if (bridges[p].CheckLinkID(pressurePlates[i].GetLinkID()) && bridges[p].CheckLinkID(pressurePlates[j].GetLinkID()))
 							{
 								bridges[p].Retract();
-
 							}
 						}
 					}	
@@ -324,6 +322,26 @@ void Room::PlayerDoorCollision(Character* playerCharacter)
 			isRoomCompleted = true;
 		}
 	}
+}
+
+void Room::PlushieCollision(Character * playerCharacter)
+{
+	for (int i = 0; i < plushes.size(); i++)
+	{
+		if (playerCharacter->CheckCollision(plushes[i]))
+		{
+			plushes[i].SetCollected(true);
+			// PLAY SOUND
+		}
+	}
+}
+
+bool Room::PlushIsCollected()
+{
+	if (plushes.size() >= 1)
+		return plushes[0].IsCollected();
+
+	else return false;
 }
 
 void Room::PlayerCollectibleCollision(Character* playerCharacter)
@@ -1360,24 +1378,31 @@ void Room::CompileMeshData()
 		j++;
 	}
 
-	for (int i = 0; i < items.size(); i++) {
-
+	for (int i = 0; i < items.size(); i++) 
+	{
 		meshes[j] = &items[i].GetMeshData();
 		j++;
 	}
 
-	for (int i = 0; i < doors.size(); i++) {
+	for (int i = 0; i < doors.size(); i++) 
+	{
 		meshes[j] = &doors[i].GetMeshData();
 		j++;
 	}
 
-	for (int i = 0; i < collectibles.size(); i++) {
+	for (int i = 0; i < collectibles.size(); i++) 
+	{
 		meshes[j] = &collectibles[i].GetMeshData();
 		j++;
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
 	{
 		//meshes[j] = colPlanes[i].GetMeshData();
+		j++;
+	}
+	for (int i = 0; i < plushes.size(); i++) 
+	{
+		meshes[j] = &plushes[i].GetMeshData();
 		j++;
 	}
 
@@ -1497,7 +1522,6 @@ void Room::LoadEntities(Loader* level)
 				meshAmount++;
 			}
 			break;
-
 		case 4:		// Bridge
 			{
 				BridgeEntity bridgeEntity(level, i, matID, true, false);
@@ -1557,8 +1581,8 @@ void Room::LoadEntities(Loader* level)
 
 		case 10:	// Plushie
 			{
-				Mesh mesh(level, i);
-				roomMeshes.push_back(mesh);
+				Plushie plush(level, i, i, true);
+				plushes.push_back(plush);
 				meshAmount++;
 			}
 			break;
