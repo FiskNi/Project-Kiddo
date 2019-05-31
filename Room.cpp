@@ -1391,7 +1391,7 @@ void Room::CompileMeshData()
 	}
 	for (int i = 0; i < colPlanes.size(); i++)
 	{
-		//meshes[j] = colPlanes[i].GetMeshData();
+		meshes[j] = &colPlanes[i].GetMeshData();
 		j++;
 	}
 
