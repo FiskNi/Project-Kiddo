@@ -1,1 +1,0 @@
-This folder contains all the models that will be used as decorative items in a room.
