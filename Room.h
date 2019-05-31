@@ -8,6 +8,7 @@
 #include "RigidEntity.h"
 #include "StaticEntity.h"
 #include "BridgeEntity.h"
+#include "Plushie.h"
 
 #include "Mesh.h"
 #include "Camera.h"
@@ -51,6 +52,7 @@ private:
 	void BoxPlateCollision(Character* playerCharacter);
 	void ButtonInteract(GLFWwindow* window, Character* playerCharacter);
 	void PlayerDoorCollision(Character* playerCharacter);
+	void PlushieCollision(Character* playerCharacter);
 
 	void PlayerCollectibleCollision(Character* playerCharacter);
 	void PlayerItemCollision(Character* playerCharacter);
@@ -87,8 +89,9 @@ private:
 	std::vector<Door> doors;
 	std::vector<Collectible> collectibles;
 	std::vector<ColPlane> colPlanes;
-
 	std::vector<boxHolder> holders;
+	std::vector<Plushie> plushes;
+
 
 	//MeshGroups
 	std::vector<MeshGroupClass> meshGroups;
@@ -97,7 +100,7 @@ private:
 	// Camera
 	Camera* roomCamera;
 
-	bool isRoomCompleted = false;
+	bool isRoomCompleted;
 	bool firstCall;
 	int meshAmount;
 
@@ -124,9 +127,10 @@ public:
 	std::vector<Mesh*>& GetMeshData()						{ return meshes; }
 	std::vector<Button>& getButtons()						{ return buttons; }
 	Camera* GetCamera()										{ return roomCamera; }
-	bool GetRoomCompleted()									{ return this->isRoomCompleted; }
+	bool GetRoomCompleted()									{ return isRoomCompleted; }
+	bool PlushIsCollected();
 
-	void SetRoomCompleted(bool tf)							{ this->isRoomCompleted = tf; }
+	void SetRoomCompleted(bool tf)							{ isRoomCompleted = tf; }
 
 	void Update(Character* playerCharacter, GLFWwindow* renderWindow, float deltaTime);
 

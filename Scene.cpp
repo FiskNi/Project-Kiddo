@@ -238,28 +238,46 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		}
 		else
 		{
-			// Player movement vector
-			playerCharacter->Move(renderWindow);
-			if (!playerCharacter->IsColliding())
+			// Check if endgame is not completed and then update
+			if (!roomBuffer->PlushIsCollected())
 			{
-				playerCharacter->AddVelocity(playerCharacter->GetInputVector());
-			}
-			roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
+				// Player movement vector
+				playerCharacter->Move(renderWindow);
+				if (!playerCharacter->IsColliding())
+				{
+					playerCharacter->AddVelocity(playerCharacter->GetInputVector());
+				}
+				roomBuffer->Update(playerCharacter, renderWindow, deltaTime);
 
-			for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
-			{
-				roomBuffer->GetRigids()[i].Update(deltaTime);
-			}
+				for (int i = 0; i < roomBuffer->GetRigids().size(); i++)
+				{
+					roomBuffer->GetRigids()[i].Update(deltaTime);
+				}
 
-			for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
-			{
-				roomBuffer->GetBridges()[i].Update(deltaTime);
+				for (int i = 0; i < roomBuffer->GetBridges().size(); i++)
+				{
+					roomBuffer->GetBridges()[i].Update(deltaTime);
+				}
+				CharacterUpdates(deltaTime);
+				playerCharacter->Update(deltaTime);
 			}
-			playerCharacter->Update(deltaTime);
-			CharacterUpdates(deltaTime);
+			else // End game state
+			{
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 5.0f)
+					playerCharacter->GetMeshData().SetTime(5.25f);
+
+				playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5f);
+
+
+				/*if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 5.98f)
+					playerCharacter->GetMeshData().SetTime(0.0f);*/
+
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 7.00f)
+					roomBuffer->SetRoomCompleted(true);
+			}
 
 			Gravity();
-			//menuHandler.SetCollected(playerCharacter->GetCollectedCollectibles());
+
 			// Compile render data for the renderer
 			CompileMeshData();
 		}	
@@ -274,94 +292,86 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 void Scene::CharacterUpdates(float deltaTime)
 {
-	if (roomNr != 11)
+	if (glm::length(playerCharacter->GetVelocity()) >= 0.5f)
 	{
-		if (glm::length(playerCharacter->GetVelocity()) >= 0.8f)
+		if (playerCharacter->IsHoldingObject())
 		{
-			if (playerCharacter->IsHoldingObject())
-			{
-				// Finds a angle between the current rotation and the players velocity to check if the player is walking backwards
-				glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
-				dirVec = rotationMat * dirVec;
-				float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
+			// Finds a angle between the current rotation and the players velocity to check if the player is walking backwards
+			glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
+			dirVec = rotationMat * dirVec;
+			float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
 
-				if (angle < 0)
-					playerCharacter->GetMeshData().SetPlayingBackwards(true);
-				else
-					playerCharacter->GetMeshData().SetPlayingBackwards(false);
-
-				if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-				{
-					playerCharacter->GetMeshData().ForwardTime(deltaTime);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
-						playerCharacter->GetMeshData().SetTime(0.0f);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
-						playerCharacter->GetMeshData().SetTime(0.0f);
-				}
-				else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-				{
-					playerCharacter->GetMeshData().BackwardTime(deltaTime);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
-						playerCharacter->GetMeshData().SetTime(0.98f);
-					if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
-						playerCharacter->GetMeshData().SetTime(0.98f);
-				}
-			}
+			if (angle < 0)
+				playerCharacter->GetMeshData().SetPlayingBackwards(true);
 			else
+				playerCharacter->GetMeshData().SetPlayingBackwards(false);
+
+			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
 			{
-				glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
-				glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
-				dirVec = rotationMat * dirVec;
-				float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
-
-				if (angle < 0)
-					playerCharacter->GetMeshData().SetPlayingBackwards(true);
-				else
-					playerCharacter->GetMeshData().SetPlayingBackwards(false);
-
-				if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-					playerCharacter->GetMeshData().ForwardTime(deltaTime);
-				else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
-					playerCharacter->GetMeshData().BackwardTime(deltaTime);
-
-
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
-					playerCharacter->GetMeshData().SetTime(1.1f);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 1.0f)
-					playerCharacter->GetMeshData().SetTime(1.1f);
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0.0f);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0.0f);
 			}
-
-			if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
+			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
 			{
-				walkingEngine->play2D("irrKlang/media/walking.mp3", false);
+				playerCharacter->GetMeshData().BackwardTime(deltaTime);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 0.98f)
+					playerCharacter->GetMeshData().SetTime(0.98f);
+				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 0.0f)
+					playerCharacter->GetMeshData().SetTime(0.98f);
 			}
 		}
 		else
 		{
-			if (playerCharacter->IsHoldingObject())
-			{
-				playerCharacter->GetMeshData().SetTime(0.0f);
-			}
+			glm::mat3 rotationMat = glm::mat3_cast(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 eAngle = glm::eulerAngles(playerCharacter->GetMeshData().GetRotation());
+			glm::vec3 dirVec = glm::vec3(0.0f, 0.0f, 1.0f);
+			dirVec = rotationMat * dirVec;
+			float angle = glm::dot(glm::normalize(playerCharacter->GetVelocity()), dirVec);
+
+			if (angle < 0)
+				playerCharacter->GetMeshData().SetPlayingBackwards(true);
 			else
-			{
-				playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
-					playerCharacter->GetMeshData().SetTime(2.15f);
-				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
-					playerCharacter->GetMeshData().SetTime(2.15f);
-			}
-			if (walkingEngine)
-				walkingEngine->stopAllSounds();
+				playerCharacter->GetMeshData().SetPlayingBackwards(false);
+
+			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+				playerCharacter->GetMeshData().ForwardTime(deltaTime);
+			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
+				playerCharacter->GetMeshData().BackwardTime(deltaTime);
+
+
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
+				playerCharacter->GetMeshData().SetTime(1.1f);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 1.0f)
+				playerCharacter->GetMeshData().SetTime(1.1f);
+		}
+
+		// Play walking sound
+		if (walkingEngine && !walkingEngine->isCurrentlyPlaying("irrKlang/media/walking.mp3"))
+		{
+			walkingEngine->play2D("irrKlang/media/walking.mp3", false);
 		}
 	}
-	else if (roomNr == 11)
+	else
 	{
-		if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
-			playerCharacter->GetMeshData().SetTime(1.1f);
-
+		if (playerCharacter->IsHoldingObject())
+		{
+			playerCharacter->GetMeshData().SetTime(0.0f);
+		}
+		else
+		{
+			playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
+				playerCharacter->GetMeshData().SetTime(2.15f);
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 2.15f)
+				playerCharacter->GetMeshData().SetTime(2.15f);
+		}
+		if (walkingEngine)
+			walkingEngine->stopAllSounds();
 	}
 	
 }
@@ -436,7 +446,7 @@ void Scene::LoadRoom()
 		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 0.89f, 0.6f));
 		roomBuffer->GetDirectionalLights()[0].SetStrength(0.32f);
 	}
-	else if (roomNr == 1)
+	else if (roomNr == 11)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL2]Wardrobe.meh");
 		LoadMaterials(roomLoader);
@@ -505,11 +515,35 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
-	else if (roomNr == 6)
+	else if (roomNr == 1)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL10]EndRoom.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
+
+		roomBuffer->GetPointLights()[0].setAttenuation(3);
+		//roomBuffer->GetPointLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[0].setPower(8.0f);
+
+		roomBuffer->GetPointLights()[4].setAttenuation(1);
+		//roomBuffer->GetPointLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[4].setPower(3.0f);
+
+		roomBuffer->GetPointLights()[1].setAttenuation(3);
+		//roomBuffer->GetPointLights()[1].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[1].setPower(20.0f);
+
+		roomBuffer->GetPointLights()[2].setAttenuation(3);
+		//roomBuffer->GetPointLights()[2].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[2].setPower(20.0f);
+
+		roomBuffer->GetPointLights()[3].setAttenuation(3);
+		//roomBuffer->GetPointLights()[3].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetPointLights()[3].setPower(20.0f);
+
+		
+		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
+		roomBuffer->GetDirectionalLights()[0].SetStrength(0.18f);
 	}
 	else if (roomNr == 99)
 	{
