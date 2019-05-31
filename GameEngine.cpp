@@ -206,8 +206,8 @@ void GameEngine::Run()
 		{
 			mainMenu.SetActiveMenu(MAINACTIVE);
 			mainMenu.SetIsMenuRunning(true);
+			mainScene.ExitToMainMenu();
 			mainScene.Exited();
-
 		}
 
 

@@ -239,7 +239,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		else
 		{
 			// Check if endgame is not completed and then update
-			if (!roomBuffer->PlushIsCollected() && roomNr != 5)
+			if (!roomBuffer->PlushIsCollected())
 			{
 				// Player movement vector
 				playerCharacter->Move(renderWindow);
@@ -260,30 +260,27 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 				}
 				CharacterUpdates(deltaTime);
 				playerCharacter->Update(deltaTime);
+
+				Gravity();
+				// Compile render data for the renderer
+				CompileMeshData();
 			}
-			else if (roomBuffer->PlushIsCollected() && roomNr == 5)// End game state
+			else if (roomBuffer->PlushIsCollected())// End game state
 			{
 				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 5.0f)
 					playerCharacter->GetMeshData().SetTime(5.25f);
 
 				playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5f);
 
-
-				/*if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 5.98f)
-					playerCharacter->GetMeshData().SetTime(0.0f);*/
-
+				Gravity();
+				// Compile render data for the renderer
+				CompileMeshData();
 				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 7.00f)
-					roomBuffer->SetRoomCompleted(true);
-			}
-			else if (roomNr == 6)
-			{
-				ExitToMainMenu();
+				{
+					exittoMenu = true;
+				}
 			}
 
-			Gravity();
-
-			// Compile render data for the renderer
-			CompileMeshData();
 		}	
 	}
 	else
@@ -312,6 +309,7 @@ void Scene::CharacterUpdates(float deltaTime)
 			else
 				playerCharacter->GetMeshData().SetPlayingBackwards(false);
 
+			// Box grabbing animation
 			if (!playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
 			{
 				playerCharacter->GetMeshData().ForwardTime(deltaTime);
@@ -347,8 +345,8 @@ void Scene::CharacterUpdates(float deltaTime)
 			else if (playerCharacter->GetMeshData().GetSkeleton().playingBackwards)
 				playerCharacter->GetMeshData().BackwardTime(deltaTime);
 
-
-			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 1.98f)
+			// walking animation
+			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 2.0f)
 				playerCharacter->GetMeshData().SetTime(1.1f);
 			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 1.0f)
 				playerCharacter->GetMeshData().SetTime(1.1f);
@@ -368,6 +366,7 @@ void Scene::CharacterUpdates(float deltaTime)
 		}
 		else
 		{
+			// Idle animation
 			playerCharacter->GetMeshData().ForwardTime(deltaTime * 0.5);
 			if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 3.14f)
 				playerCharacter->GetMeshData().SetTime(2.15f);
