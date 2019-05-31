@@ -476,16 +476,16 @@ void Scene::LoadRoom()
 		roomBuffer->GetPointLights()[1].setPower(5.0f);
 
 		roomBuffer->GetPointLights()[2].setAttenuation(2);
-		roomBuffer->GetPointLights()[2].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
-		roomBuffer->GetPointLights()[2].setPower(5.0f);
+		roomBuffer->GetPointLights()[2].SetDiffuse(glm::vec3(1.0f, 0.3f, 0.0f));
+		roomBuffer->GetPointLights()[2].setPower(4.0f);
 
 		roomBuffer->GetPointLights()[3].setAttenuation(3);
-		roomBuffer->GetPointLights()[3].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
-		roomBuffer->GetPointLights()[3].setPower(4.0f);
+		roomBuffer->GetPointLights()[3].SetDiffuse(glm::vec3(1.0f, 0.3f, 0.0f));
+		roomBuffer->GetPointLights()[3].setPower(5.0f);
 
 		roomBuffer->GetPointLights()[4].setAttenuation(7);
-		roomBuffer->GetPointLights()[4].SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
-		roomBuffer->GetPointLights()[4].setPower(1.0f);
+		roomBuffer->GetPointLights()[4].SetDiffuse(glm::vec3(1.0f, 0.3f, 0.0f));
+		roomBuffer->GetPointLights()[4].setPower(2.0f);
 
 		roomBuffer->GetPointLights()[5].setAttenuation(2);
 		roomBuffer->GetPointLights()[5].SetDiffuse(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -550,7 +550,7 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 
-		roomNr = -1;
+		roomNr = 0;
 		// ADD SOUND PLAY
 	}
 

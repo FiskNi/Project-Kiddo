@@ -93,7 +93,7 @@ void main ()
 	projLightCoords = projLightCoords * 0.5 + 0.5;
 	float shadowMapDepth = texture(shadowMap, projLightCoords.xy).r;
 	float lightDepthValue = projLightCoords.z;
-	float bias = 0.05f;
+	float bias = 0.01f;
 	lightDepthValue -= bias;
 	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -1; x <= 1; ++x)
