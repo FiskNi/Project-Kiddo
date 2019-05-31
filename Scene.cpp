@@ -446,7 +446,7 @@ void Scene::LoadRoom()
 		roomBuffer->GetDirectionalLights()[0].SetDiffuse(glm::vec3(1.0f, 0.89f, 0.6f));
 		roomBuffer->GetDirectionalLights()[0].SetStrength(0.32f);
 	}
-	else if (roomNr == 11)
+	else if (roomNr == 1)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL2]Wardrobe.meh");
 		LoadMaterials(roomLoader);
@@ -515,7 +515,7 @@ void Scene::LoadRoom()
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 	}
-	else if (roomNr == 1)
+	else if (roomNr == 6)
 	{
 		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL10]EndRoom.meh");
 		LoadMaterials(roomLoader);
