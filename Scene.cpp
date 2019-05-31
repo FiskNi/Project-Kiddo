@@ -546,7 +546,7 @@ void Scene::LoadRoom()
 	}
 	else
 	{
-		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/Level[Bedroom].meh");
+		roomLoader = new Loader("Resources/Assets/GameReady/Rooms/[LvL1]Bedroom.meh");
 		LoadMaterials(roomLoader);
 		roomBuffer = new Room(roomLoader, musicEngine);
 
