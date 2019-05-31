@@ -239,7 +239,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 		else
 		{
 			// Check if endgame is not completed and then update
-			if (!roomBuffer->PlushIsCollected())
+			if (!roomBuffer->PlushIsCollected() && roomNr != 5)
 			{
 				// Player movement vector
 				playerCharacter->Move(renderWindow);
@@ -261,7 +261,7 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 				CharacterUpdates(deltaTime);
 				playerCharacter->Update(deltaTime);
 			}
-			else // End game state
+			else if (roomBuffer->PlushIsCollected() && roomNr == 5)// End game state
 			{
 				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime <= 5.0f)
 					playerCharacter->GetMeshData().SetTime(5.25f);
@@ -274,6 +274,10 @@ void Scene::Update(GLFWwindow* renderWindow, float deltaTime)
 
 				if (playerCharacter->GetMeshData().GetSkeleton().currentAnimTime >= 7.00f)
 					roomBuffer->SetRoomCompleted(true);
+			}
+			else if (roomNr == 6)
+			{
+				ExitToMainMenu();
 			}
 
 			Gravity();
