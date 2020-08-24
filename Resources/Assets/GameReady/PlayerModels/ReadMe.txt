@@ -1,1 +1,0 @@
-This folder contians all the player meshes

@@ -1,1 +1,0 @@
-This folder is only for assets that are ready to be used and tested in-game.

@@ -15,21 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Loader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\exporterImporterHeaders.cpp">
+    <ClCompile Include="..\Resources\exporterImporterHeaders.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\libMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MeshFormat.h">
+    <ClInclude Include="source\Loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Loader.h">
+    <ClInclude Include="source\MeshFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

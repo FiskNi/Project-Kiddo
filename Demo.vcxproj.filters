@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\imgui">
-      <UniqueIdentifier>{b24ee2d5-ea87-458d-855c-ae7bb19c2883}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\stb_image">
       <UniqueIdentifier>{8202e4d4-715f-46c7-8b61-b8ea86293527}</UniqueIdentifier>
     </Filter>
@@ -37,260 +34,251 @@
     <Filter Include="Header Files\Rendering">
       <UniqueIdentifier>{5920d936-eee5-40ad-91bc-09d1eee83a44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ImGui">
-      <UniqueIdentifier>{0757ac20-539c-4a10-a864-ab773d1d1042}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{9884d84a-546f-4419-bc83-1dedf19002a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="external\include\imgui\imgui.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\include\imgui\imgui_demo.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\include\imgui\imgui_draw.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\include\imgui\imgui_impl_glfw.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\include\imgui\imgui_impl_win32.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\include\imgui\imgui_widgets.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Entities\boxHolder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_win32.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngine.cpp">
+    <ClCompile Include="source\Entities\BridgeEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stb_image.cpp">
-      <Filter>Resource Files\stb_image</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="source\Entities\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Room.cpp">
+    <ClCompile Include="source\Entities\Character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidEntity.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticEntity.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ShadowMap.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="BridgeEntity.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="boxHolder.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
+    <ClCompile Include="source\Entities\Collectible.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PressurePlate.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="source\Entities\ColPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshGroupClass.cpp">
+    <ClCompile Include="source\Entities\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MenuButton.cpp">
+    <ClCompile Include="source\Entities\Item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="ColPlane.cpp">
+    <ClCompile Include="source\Entities\Plushie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collectible.cpp">
+    <ClCompile Include="source\Entities\PressurePlate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Plushie.cpp">
-      <Filter>Source Files\Entities</Filter>
+    <ClCompile Include="source\Entities\RigidEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\Menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\MenuButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rendering\ShadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\exporterImporterHeaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MeshGroupClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Room.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Lights\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Lights\DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Entities\StaticEntity.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui\imconfig.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imconfig.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imgui.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_win32.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imgui_impl_glfw.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imgui_impl_opengl3.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imgui_impl_win32.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imgui_internal.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imstb_rectpack.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_glfw.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imstb_textedit.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_opengl3.h">
-      <Filter>Source Files\imgui</Filter>
+    <ClInclude Include="external\include\imgui\imstb_truetype.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameEngine.h">
+    <ClInclude Include="source\Entities\BoxHoldEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers.h">
+    <ClInclude Include="source\Entities\boxHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Resource Files\stb_image</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="source\Entities\BridgeEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Room.h">
+    <ClInclude Include="source\Entities\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectionalLight.h">
-      <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticEntity.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidEntity.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ShadowMap.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="BridgeEntity.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="PressurePlate.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="boxHolder.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
+    <ClInclude Include="source\Entities\Character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MeshGroupClass.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Door.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Collectible.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuButton.h">
+    <ClInclude Include="source\Entities\Collectible.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColPlane.h">
-      <Filter>Header Files\Entities</Filter>
+    <ClInclude Include="source\Entities\ColPlane.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plushie.h">
+    <ClInclude Include="source\Entities\Door.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entities\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entities\Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entities\Plushie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entities\PressurePlate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entities\RigidEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\MenuButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rendering\ShadowMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ft2build.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Headers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MeshGroupClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Room.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Lights\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Lights\DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entities\StaticEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Fragment.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="FragmentFS.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="FragmentSM.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="VertexShader.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="VertexShaderFS.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="VertexShaderSM.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="VertexShaderMenu.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="FragmentMenu.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
+    <None Include=".gitignore" />
+    <None Include="imgui.ini" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

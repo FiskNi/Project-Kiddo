@@ -1,1 +1,0 @@
-Place photoshop related work here.
